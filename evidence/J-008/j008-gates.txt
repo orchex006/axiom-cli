@@ -1,0 +1,37 @@
+J-008 gate record — real exit codes on the frozen worktree
+==========================================================
+
+Worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j008
+Branch:   feature/j-008-linux-x64-and-macos-arm64-tiers
+Base:     7ac376b (axiom-cli origin/main)
+
+Rust gates (Windows host, cargo/rustc 1.98.1)
+---------------------------------------------
+  cargo fmt --all -- --check                              -> exit 0
+  cargo clippy --locked --all-targets -- -D warnings      -> exit 0
+  cargo test --locked --all-targets                       -> exit 0
+        unittests src/main.rs     : 0 passed, 0 failed
+        tests/argv_surface.rs     : 11 passed, 0 failed
+        tests/linux_distribution.rs: 6 passed, 0 failed
+      (17 tests total; the 11 argv_surface tests are the base suite and did not regress)
+
+Linux x64 execution gates (WSL2, final bytes)
+---------------------------------------------
+  wsl -d Debian -- sh _w10ev/run_all.sh debian
+      legs 23  failures 0  skipped 1   RESULT: PASS   -> harness exit 0
+  wsl -d Ubuntu -u thanatmet-t -- sh _w10ev/run_all.sh ubuntu
+      legs 23  failures 0  skipped 0   RESULT: PASS   -> harness exit 0
+
+The Debian skip is L16c (there is no systemd user manager on Debian, so no unit
+was generated and there is nothing to remove; L16b still proves the explicit
+--service systemd-user request is refused with exit 4, not faked). On Ubuntu the
+same leg executes and removes a real unit.
+
+Reproduce from the worktree
+---------------------------
+  cargo fmt --all -- --check
+  cargo clippy --locked --all-targets -- -D warnings
+  cargo test --locked --all-targets
+  # build the linux x64 artifact in a pinned container (see j008-build-linux-x64.txt)
+  wsl -d Debian -- sh <worktree>/tests/linux/Invoke-AxiomCliLinuxDistributionTests.sh \
+      --cli-binary <linux-native path to axiom-cli> --scratch <linux-native scratch>

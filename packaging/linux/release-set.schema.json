@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://axiom.invalid/axiom-cli/packaging/linux/release-set.schema.json",
+  "title": "axiom-cli linux-x64 release set manifest",
+  "description": "Owner: axiom-cli. Task J-008. The release set is the unit the Linux x64 installer consumes. It is deliberately a LINE-ORIENTED document: each top-level scalar is one line, user_service is one object on one line, and each artifact entry is one object on one line. The POSIX-sh installer reads it with sed, so no JSON parser is required on the target host. packaging/linux/Build-ReleaseSet.sh is the only supported producer. The installer validates the recorded sha256 and size_bytes against the artifact bytes before anything is staged, so this manifest is a claim the installer verifies rather than trusts.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "release_set_version",
+    "release_version",
+    "platform",
+    "target_triple",
+    "libc",
+    "arch",
+    "artifacts"
+  ],
+  "properties": {
+    "release_set_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Shape version of this manifest, not the release version."
+    },
+    "release_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Distribution release the whole set belongs to. Must equal VERSION in the repository root."
+    },
+    "platform": {
+      "type": "string",
+      "const": "linux-x64",
+      "description": "Installer platform profile. The Linux installer refuses any other value with exit 9 (incompatible) instead of misreading the set."
+    },
+    "target_triple": {
+      "type": "string",
+      "pattern": "^x86_64-unknown-linux-gnu$",
+      "description": "Rust target triple the artifacts were built for."
+    },
+    "libc": {
+      "type": "string",
+      "const": "glibc",
+      "description": "C library family the artifact links against. musl is not delivered by this tier."
+    },
+    "arch": {
+      "type": "string",
+      "const": "x86_64"
+    },
+    "user_service": {
+      "type": ["object", "null"],
+      "description": "Optional systemd-user unit declaration. Absent or null means the set declares no service. The installer registers it only when a user service manager answers; otherwise the service_registration block records the explicit degradation and the service is not registered.",
+      "additionalProperties": false,
+      "required": ["unit_name", "exec_start", "owner"],
+      "properties": {
+        "unit_name": { "type": "string", "pattern": "\\.service$" },
+        "description": { "type": "string" },
+        "exec_start": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["simple", "exec", "oneshot", "notify", "forking"] },
+        "owner": { "type": "string", "minLength": 1 }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every artifact this set carries. Each entry is one object on one line.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["name", "component", "version", "arch", "sha256", "size_bytes", "archive", "kind"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "description": "File name the artifact is installed as." },
+          "component": { "type": "string", "minLength": 1, "description": "Owning component, e.g. axiom-cli." },
+          "version": { "type": "string", "minLength": 1 },
+          "arch": { "type": "string", "const": "x86_64", "description": "Recorded per artifact so a mixed set cannot hide its own architecture." },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "size_bytes": { "type": "integer", "minimum": 1 },
+          "archive": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$", "description": "File name relative to the release set directory. Absolute paths and parent traversal are refused by the installer." },
+          "kind": { "type": "string", "enum": ["executable", "archive", "data"] }
+        }
+      }
+    }
+  }
+}

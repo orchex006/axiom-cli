@@ -1,0 +1,82 @@
+J-008 / axiom-cli — Linux x64 (incl. WSL2) and macOS arm64 tiers — evidence summary
+==================================================================================
+
+Repository: axiom-cli   Branch: feature/j-008-linux-x64-and-macos-arm64-tiers
+Base: 7ac376b (origin/main)   Owner: J-008 lane (subagent)
+Publication: CLOSED for this wave (no tags, releases, registries or remote contact).
+
+AC1 — install/update/uninstall path, per-user, glibc, systemd-user or explicit
+degradation, shared machine-readable envelope, WSL2 as Linux, macOS arm64 from the
+same recipe, both certified:false and not finish-first, no Bash/Docker/elevation.
+--------------------------------------------------------------------------------
+  glibc target ............. PASS  artifact's highest required symbol is GLIBC_2.34
+                                  (j008-artifact.txt); runs on glibc 2.36 and 2.43
+  per-user, no root ........ PASS  harness ran as uid 1000, elevation_required:false,
+                                  no sudo/doas/su in any script (L04, L17)
+  systemd-user when present  PASS  Ubuntu: kind=systemd-user, registered=true, unit
+                                  written + enabled + later removed (L16a/L16b/L16c,
+                                  j008-linux-systemd-user.txt)
+  explicit degradation ..... PASS  Debian: kind=none, reason names the exact failing
+                                  precondition "/run/systemd/system is absent" (L16a)
+  no silent skip ........... PASS  --service systemd-user with no user manager is
+                                  refused with exit 4, check systemd-user-available,
+                                  entrypoint rolled back (L16b)
+  shared envelope .......... PASS  exactly the 33 canonical keys in canonical order,
+                                  shell=linux-posix-sh, platform=linux-x64 (L19 and
+                                  tests/linux_distribution.rs; j008-envelope-sample-debian.json)
+  WSL2 as Linux ............ PASS  platform=linux-x64, host.os=linux, host.wsl=true,
+                                  wsl_distro_name recorded; never Windows evidence (L18)
+  macOS arm64 same recipe .. PASS (recipe) - packaging/macos-arm64/Build-ReleaseSet.sh
+                                  is shared by arm64 and x64, --arch required, arch
+                                  recorded per artifact (static guard)
+  certified:false / not finish-first  PASS  both targets documented
+                                  design-complete/test-later, certified:false
+  no Bash/Docker/elevation . PASS  L17 static guards + dash -n parse
+
+AC2 — execute the Linux x64 path, record the WSL2 run as linux-x64 evidence with
+its exact command and artifact hashes; the macOS arm64 leg stays unverified.
+--------------------------------------------------------------------------------
+  Linux x64 executed ....... PASS  Debian 12 and Ubuntu 26.04 under WSL2, 23/23 legs
+                                  each, real exit codes (j008-linux-*-harness.txt)
+  exact command ............ wsl -d Debian -- sh <worktree>/tests/linux/Invoke-AxiomCliLinuxDistributionTests.sh
+                                --cli-binary <linux path> --scratch <linux scratch>
+                             wsl -d Ubuntu -u thanatmet-t -- sh <worktree>/_w10ev/run_all.sh ubuntu
+  artifact hash ............ 494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9
+                             (same bytes installed, run and uninstalled)
+  install/update/uninstall . PASS  layout + idempotent re-apply + downgrade refusal +
+                                  transaction recovery + owned-only removal + purge
+                                  (j008-linux-install-layout.txt, legs L01-L15, L20)
+  macOS arm64 .............. NOT RUN  artifact NOT built, leg not_run,
+                                  certified:false, evidence [] (j008-macos-arm64-NOT_RUN.txt)
+
+Real kernels / distros
+----------------------
+  Debian:  Linux 6.18.33.2-microsoft-standard-WSL2 ... x86_64 GNU/Linux
+           Debian GNU/Linux 12 (bookworm)  ID=debian  VERSION_ID=12  glibc 2.36
+           init=init(Debian)  /run/systemd/system absent  systemctl --user unavailable
+  Ubuntu:  Linux 6.18.33.2-microsoft-standard-WSL2 ... x86_64 GNU/Linux
+           Ubuntu 26.04.1 LTS  ID=ubuntu  VERSION_ID=26.04  glibc 2.43
+           init=systemd  /run/systemd/system present  systemctl --user answers
+
+Limitations (honest, not hidden)
+--------------------------------
+  1. macOS arm64 is NOT built and NOT executed; the leg is not_run with
+     certified:false and empty evidence. It is never presented as finish-first.
+  2. The executed Linux x64 artifact was built in a pinned Debian container and run
+     under WSL2. WSL2 is valid linux-x64 execution evidence per contract section 8
+     rule 3, but this is not a distro-packaged native install, and one machine is
+     not certification: linux-x64 stays certified:false.
+  3. No axiom-graphd / axiom-mcp / skills artifacts exist in any release set, so
+     they are recorded as unverified_artifacts and never installed; no claim is made
+     about their state. The 'axiom' engine entrypoint does not exist here.
+  4. Every axiom-cli verb still answers NotReady (exit 4); nothing is faked.
+  5. linux/arm64, code signing/attestation, the container image and the update
+     channel (channels/stable.json, owned by J-007) are not done. Publication is
+     closed for this wave.
+  6. Linux registration covers systemd-user only; no other init/service manager is
+     supported or claimed.
+  7. axiom-cli still has no spec.lock.json (only spec.lock.example.json); the
+     immutable axiom-specs pin remains an owner decision, not this task's.
+  8. This card is dependency-blocked on J-005 (macOS host unavailable), so it is
+     recorded with an honest partial/blocked outcome: the delivered value is the
+     REAL Linux/WSL2 evidence plus the honest macOS record.

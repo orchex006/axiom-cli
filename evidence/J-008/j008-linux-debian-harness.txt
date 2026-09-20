@@ -1,0 +1,225 @@
+=== J-008 harness on debian : kernel=6.18.33.2-microsoft-standard-WSL2 uid=1000 ===
+== fixtures: building release sets from /home/thanatmet/j008-debian/bin/axiom-cli
+== host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 GNU/Linux
+== host: wsl=1 systemd_user=0 uid=1000
+
+== L01-install-plan-only (positive)
+   ok   outcome is planned [planned]
+   ok   mutated is false [false]
+   ok   dry_run is true [true]
+   ok   platform is linux-x64 [linux-x64]
+   ok   envelope_kind is install-result [install-result]
+   ok   shell is linux-posix-sh [linux-posix-sh]
+   ok   no install root was created
+   ok   artifact sha256 is the real file digest [494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9]
+   ok   release_set sha256 is the manifest digest [44ce0fdd0c8b5a211296644bc8ac661adcf56811c21d99e530e7053b11bb97fa]
+   ok   artifact arch is recorded as x86_64 [x86_64]
+   ok   exactly one verified artifact [1]
+   ok   no refusal is recorded for a clean plan []
+   ok   plan digest is a 64-char sha256 [64]
+   ok   stdout carries the JSON; diagnostics stay on stderr
+   -> exit 0 (expected 0) outcome=planned : PASS
+
+== L02-apply-without-approval (negative)
+   ok   outcome is refused [refused]
+   ok   refusal names approval-digest [approval-digest]
+   ok   nothing was installed
+   -> exit 2 (expected 2) outcome=refused : PASS
+
+== L03-apply-wrong-approval (negative)
+   ok   outcome is refused [refused]
+   ok   refusal names approval-digest [approval-digest]
+   ok   nothing was installed
+   -> exit 5 (expected 5) outcome=refused : PASS
+
+== L04-apply-approved (positive)
+   ok   outcome is installed [installed]
+   ok   mutated is true [true]
+   ok   dry_run is false [false]
+   ok   elevation_required is false [false]
+   ok   PATH rule was not applied (no hidden PATH mutation) [false]
+   ok   no machine-wide change [false]
+   ok   the entrypoint exists under bin-dir
+   ok   the entrypoint is a real file, not a symlink
+   ok   the entrypoint is mode 0755 [755]
+   ok   the installed entrypoint digest equals the artifact digest [494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9]
+   ok   the ownership record exists
+   ok   the per-user state directory exists
+   ok   the run was unelevated (uid != 0)
+   ok   no staging recovery was reported for a clean install [0]
+   -> exit 0 (expected 0) outcome=installed : PASS
+
+== L05-install-idempotent-rerun (boundary)
+   ok   outcome is already_installed [already_installed]
+   ok   an idempotent re-run mutates nothing [false]
+   ok   the entrypoint is byte-identical after the re-run [494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9]
+   -> exit 0 (expected 0) outcome=already_installed : PASS
+
+== L06-corrupted-artifact-refused (negative)
+   ok   a corrupted artifact is refused [refused]
+   ok   the refusal names artifact-digest [artifact-digest]
+   ok   nothing was installed from a corrupted release set
+   -> exit 9 (expected 9) outcome=refused : PASS
+
+== L07-unowned-entrypoint-conflict (negative)
+   ok   an unowned entrypoint is a conflict [refused]
+   ok   the refusal names unowned-entrypoint [unowned-entrypoint]
+   ok   the unowned install root was not created
+   -> exit 6 (expected 6) outcome=refused : PASS
+
+== L07b-unowned-entrypoint-forced (boundary)
+   ok   the unowned file was left untouched by the refused install [not an axiom binary]
+   ok   --force replaces the unowned file [installed]
+   ok   the forced install wrote the verified artifact [494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9]
+   -> exit 0 (expected 0) outcome=installed : PASS
+
+== L08-downgrade-refused (negative)
+   ok   the newer release installed first [installed]
+   ok   an older release set is refused [refused]
+   ok   the refusal names no-downgrade [no-downgrade]
+   -> exit 9 (expected 9) outcome=refused : PASS
+
+== L09-interrupted-install-recovery (boundary)
+   ok   outcome is recovered_and_installed [recovered_and_installed]
+   ok   interrupted_install_recovered is true [true]
+   ok   the abandoned staging directory is reported as removed [1]
+   ok   the abandoned staging directory is gone
+   ok   the recovered install placed the verified artifact [494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9]
+   -> exit 0 (expected 0) outcome=recovered_and_installed : PASS
+
+== L10-transaction-lock-held (negative)
+   ok   a held lock refuses the transaction [refused]
+   ok   the refusal names transaction-lock [transaction-lock]
+   ok   the refusal is marked retryable [true]
+   ok   no entrypoint was written while the lock was held
+   -> exit 10 (expected 10) outcome=refused : PASS
+
+== L11-uninstall-plan-only (positive)
+   ok   operation is uninstall [uninstall]
+   ok   outcome is planned [planned]
+   ok   a plan mutates nothing [false]
+   ok   the installed entrypoint is still present after a plan
+   -> exit 0 (expected 0) outcome=planned : PASS
+
+== L12-uninstall-wrong-approval (negative)
+   ok   uninstall refuses a wrong approval [refused]
+   ok   the entrypoint survived the refused uninstall
+   -> exit 5 (expected 5) outcome=refused : PASS
+
+== L13-uninstall-approved (boundary)
+   ok   outcome is removed [removed]
+   ok   the entrypoint was removed
+   ok   the ownership record was removed
+   ok   per-user state survives a plain uninstall
+   ok   the removal names the executable [1]
+   ok   the state directory is listed as preserved
+   -> exit 0 (expected 0) outcome=removed : PASS
+
+== L14-uninstall-when-absent (negative)
+   ok   outcome is not_removed [not_removed]
+   -> exit 3 (expected 3) outcome=not_removed : PASS
+
+== L15-purge-approved (boundary)
+   ok   the purge fixture installed [installed]
+   ok   purge reports removed [removed]
+   ok   --purge removed the state directory
+   ok   --purge removed the install root
+   ok   the removal names the state directory
+   -> exit 0 (expected 0) outcome=removed : PASS
+
+== L16a-service-auto-degrades-or-registers (boundary)
+   ok   the install still succeeds with a declared service [installed]
+   ok   no user manager means no registration [none]
+   ok   registered stays false when there is no user manager [false]
+   ok   the degradation reason names systemd
+   ok   the reason states the exact failing precondition
+   -> exit 0 (expected 0) outcome=installed : PASS
+
+== L16b-explicit-systemd-user-request (boundary)
+   ok   an explicit request is refused, not silently skipped, when there is no user manager [refused]
+   ok   the refusal names systemd-user-available [systemd-user-available]
+   ok   the not-ready install rolled its entrypoint back
+   -> exit 4 (expected 4) outcome=refused : PASS
+
+== L16c-generated-unit-is-removed (boundary)
+   SKIP this host has no systemd user manager, so no unit was generated and there is nothing to remove (L16b already proved the explicit request is refused, not faked)
+
+== L17-no-forbidden-dependency (boundary)
+   ok   Install-AxiomCli.sh shebang is /bin/sh [#!/bin/sh]
+   ok   Install-AxiomCli.sh never invokes sudo/doas/su [0]
+   ok   Install-AxiomCli.sh never invokes docker/curl/wget/bash [0]
+   ok   Install-AxiomCli.sh never creates a symlink [0]
+   ok   Install-AxiomCli.sh parses under dash (no bashism)
+   ok   Uninstall-AxiomCli.sh shebang is /bin/sh [#!/bin/sh]
+   ok   Uninstall-AxiomCli.sh never invokes sudo/doas/su [0]
+   ok   Uninstall-AxiomCli.sh never invokes docker/curl/wget/bash [0]
+   ok   Uninstall-AxiomCli.sh never creates a symlink [0]
+   ok   Uninstall-AxiomCli.sh parses under dash (no bashism)
+   ok   Build-ReleaseSet.sh shebang is /bin/sh [#!/bin/sh]
+   ok   Build-ReleaseSet.sh never invokes sudo/doas/su [0]
+   ok   Build-ReleaseSet.sh never invokes docker/curl/wget/bash [0]
+   ok   Build-ReleaseSet.sh never creates a symlink [0]
+   ok   Build-ReleaseSet.sh parses under dash (no bashism)
+   ok   AxiomCli.Linux.Common.sh shebang is /bin/sh [#!/bin/sh]
+   ok   AxiomCli.Linux.Common.sh never invokes sudo/doas/su [0]
+   ok   AxiomCli.Linux.Common.sh never invokes docker/curl/wget/bash [0]
+   ok   AxiomCli.Linux.Common.sh never creates a symlink [0]
+   ok   AxiomCli.Linux.Common.sh parses under dash (no bashism)
+   ok   the whole harness ran unelevated
+   -> exit 0 (expected 0) outcome=static : PASS
+
+== L18-host-facts-recorded (positive)
+   ok   host.os is linux [linux]
+   ok   host.arch is x86_64 [x86_64]
+   ok   host.wsl matches the real environment [true]
+   ok   host.systemd_user_available matches reality [false]
+   ok   host.kernel is recorded
+   ok   host.libc reports glibc
+   ok   host.distro_id is recorded
+   ok   host.distro_version is recorded
+   ok   host.wsl_distro_name names the distro under WSL
+   ok   a WSL2 run reports platform linux-x64, never windows-x64 [linux-x64]
+   -> exit 0 (expected 0) outcome=planned : PASS
+
+== L19-envelope-canonical-keys (positive)
+   ok   every canonical install-result key is present []
+   ok   spec_version is the pinned draft [2.0.0-draft.1]
+   ok   schema_version is 1 [1]
+   -> exit 0 (expected 0) outcome=shape : PASS
+
+== L20-installed-entrypoint-runs (positive)
+   ok   the run fixture installed [installed]
+   ok   the installed entrypoint answers --help with exit 0 [0]
+   ok   the installed entrypoint identifies itself
+   ok   an unbuilt verb answers NotReady with exit 4 (never a faked success) [4]
+   ok   the NotReady reason is stated
+   -> exit 0 (expected 0) outcome=installed : PASS
+
+leg                                      class      expect actual status outcome
+L01-install-plan-only                    positive        0      0   PASS planned
+L02-apply-without-approval               negative        2      2   PASS refused
+L03-apply-wrong-approval                 negative        5      5   PASS refused
+L04-apply-approved                       positive        0      0   PASS installed
+L05-install-idempotent-rerun             boundary        0      0   PASS already_installed
+L06-corrupted-artifact-refused           negative        9      9   PASS refused
+L07-unowned-entrypoint-conflict          negative        6      6   PASS refused
+L07b-unowned-entrypoint-forced           boundary        0      0   PASS installed
+L08-downgrade-refused                    negative        9      9   PASS refused
+L09-interrupted-install-recovery         boundary        0      0   PASS recovered_and_installed
+L10-transaction-lock-held                negative       10     10   PASS refused
+L11-uninstall-plan-only                  positive        0      0   PASS planned
+L12-uninstall-wrong-approval             negative        5      5   PASS refused
+L13-uninstall-approved                   boundary        0      0   PASS removed
+L14-uninstall-when-absent                negative        3      3   PASS not_removed
+L15-purge-approved                       boundary        0      0   PASS removed
+L16a-service-auto-degrades-or-registers  boundary        0      0   PASS installed
+L16b-explicit-systemd-user-request       boundary        4      4   PASS refused
+L16c-generated-unit-is-removed           boundary      n/a    n/a   SKIP this host has no systemd user manager, so no unit was generated and there is nothing to remove (L16b already proved the explicit request is refused, not faked)
+L17-no-forbidden-dependency              boundary        0      0   PASS static
+L18-host-facts-recorded                  positive        0      0   PASS planned
+L19-envelope-canonical-keys              positive        0      0   PASS shape
+L20-installed-entrypoint-runs            positive        0      0   PASS installed
+
+legs: 23   failures: 0   skipped: 1
+RESULT: PASS (23 legs met their expected exit code and every assertion held)
+HARNESS_EXIT=0

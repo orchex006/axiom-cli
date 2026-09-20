@@ -1,0 +1,24 @@
+J-008 tool versions (recorded, not assumed)
+===========================================
+
+Windows host
+  cargo / rustc      : 1.98.1 (cargo 1.98.1 (797e8a9bc 2026-08-05), rustc 1.98.1 (48a229cea 2026-09-01))
+  PowerShell         : 7.6.6
+  Docker engine      : 29.6.2
+  WSL distros        : Debian (v2, default), docker-desktop (v2), Ubuntu (v2)
+
+Container builder
+  image              : rust:1.85-slim (id sha256:8573a005bfcb..., base Debian bookworm, glibc 2.36)
+
+Debian 12 execution host (WSL2)
+  kernel             : 6.18.33.2-microsoft-standard-WSL2
+  glibc              : 2.36
+  /bin/sh            : /usr/bin/dash
+  present            : sha256sum, cp, mv, mkdir, chmod, sed, head, tail, wc, od, tar, gzip, systemctl, loginctl
+  absent             : cargo, rustc, gcc, bash-only helpers required by the path (none required)
+
+Ubuntu 26.04.1 LTS execution host (WSL2)
+  kernel             : 6.18.33.2-microsoft-standard-WSL2
+  glibc              : 2.43
+  init               : systemd (PID 1), XDG_RUNTIME_DIR=/run/user/1000
+  systemctl --user   : answers
