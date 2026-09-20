@@ -1,8 +1,10 @@
-# J-003 tool versions, host and artifact digests - recorded on this Windows host
-# generated: 2026-09-20T14:19:45.0454302+07:00
-# host OS: Microsoft Windows NT 10.0.26200.0
+# J-003 tool versions, host, revision and artifact digests - recorded on this Windows host
+# generated: 2026-09-20T18:49:05.661664+07:00
+# REFRESHED at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (lane w10-j003r, branch feature/j-003-evidence-refresh-2)
+# host OS: Microsoft Windows 11 Pro 10.0.26200.0
 # arch: AMD64
-# powershell: 7.6.6
+# powershell: 7.6.6 (pwsh) (probed with pwsh)
+# python (measurement host): 3.13.14
 
 $ rustc --version
 rustc 1.98.1 (48a229cea 2026-09-01)
@@ -10,6 +12,8 @@ $ cargo --version
 cargo 1.98.1 (797e8a9bc 2026-08-05)
 $ rustup --version
 rustup 1.29.1 (d95a37b6a 2026-08-13)
+info: This is the version for the rustup toolchain manager, not the rustc compiler.
+info: the currently active `rustc` version is `rustc 1.98.1 (48a229cea 2026-09-01)`
 $ git --version
 git version 2.45.1.windows.1
 $ python --version
@@ -18,16 +22,41 @@ Python 3.13.14
 ## pinned toolchain statement (Cargo.toml)
 rust-version = "1.85" (MSRV); Cargo.lock commits the resolved graph; verified host compiler rustc 1.98.1
 
+## repository / revision facts measured at capture time
+  repo identity (remote): https://github.com/orchex006/axiom-cli.git
+  branch: feature/j-003-evidence-refresh-2
+  HEAD revision: c73c53c6c1d707ebe31574541eb5d4bcaee1813d
+  HEAD subject: Merge feature/j-008-linux-x64-and-macos-arm64-tiers: Linux x64 + macOS arm64
+  commits reachable: 11
+  worktree status at refresh start: clean (git status --porcelain was empty before this refresh wrote its evidence)
+  worktree path: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r
+
 ## offline / no-prerequisite evidence
-cargo build and cargo test both ran with --offline: no network fetch, no Node.js, no WSL, no Docker, no Bash and no elevation
+cargo build --locked and cargo test --locked ran without a network fetch: no Node.js, no WSL, no Docker, no Bash and no elevation
+cargo tree --locked -> a single package; cargo metadata -> 0 dependencies (no third-party crate)
 
-## artifact digests
-target/release/axiom-cli.exe sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
+## artifact digests (this host, measured)
+target/debug/axiom-cli.exe   size=1302528 bytes sha256=c5ad186940c1db97ea52b0f7608c67b055b7a9d201536dc8a008b1d1a7889666
+  (this is the binary the argv matrix and help inventory exercised)
+target/release/axiom-cli.exe size=859648 bytes sha256=568c021d95c212389225209e122c46c9b34a35b6dc7bae6e4086b3bd5ca74319
+  (release artifacts from two clean rebuilds are NOT byte-reproducible on this host; see below)
 
-## source digests (created/owned by J-003)
-Cargo.toml sha256=7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed
-Cargo.lock sha256=d033fccd3e92182b4688a5c087ee1a52e71e1c61ed48d5b8579870ca1a22aeab
-src/main.rs sha256=22f8254e7f8c232f8c2f22a4b44497f20ba938a9a0f58acf5a123d7df1ece04a
-src/cli.rs sha256=dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf
-tests/argv_surface.rs sha256=c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581
-docs/40-CLI-ARGV-SURFACE.md sha256=5d2454dd510b3d2ec71cfb5c6c2f7f6326cc18f9807f5900961e2a6318a2b384
+## non-reproducibility of the release binary (measured, not assumed)
+  two consecutive `cargo clean --release` + `cargo build --release --locked` runs of the same revision/toolchain:
+    run 1: size=859648 bytes sha256=ed77afbb60d3af39d094361574c4819cebb6b6d95e4029681ea7b76e1ab13a12
+    run 2: size=859648 bytes sha256=568c021d95c212389225209e122c46c9b34a35b6dc7bae6e4086b3bd5ca74319
+  identical size, different digest: the release artifact is one build, NOT a reproducible build identity.
+  target/debug/axiom-cli.exe is likewise non-identical across rebuilds at the same 1302528 bytes
+  (first build 30e1df72488b776efbe680b3136cc1bd82d35643bb0a18ea106a37c574c9fa84, post-drift rebuild c5ad186940c1db97ea52b0f7608c67b055b7a9d201536dc8a008b1d1a7889666).
+
+## source digests (created/owned by J-003, plus the J-003 guide)
+## METHOD: size/sha256 are of the LF-normalised content = the bytes git stores in the blob
+##         (repo .gitattributes: '* text=auto' plus eol=lf for md/json/toml/rs/sh; *.txt has no eol rule,
+##          so a fresh checkout rewrites it to CRLF while the committed blob stays LF).
+Cargo.toml size=820 sha256=b4c30d11e4cce212e673522842175f36248205d7e68f97041ee08f0545132af8 [blob-match]
+Cargo.lock size=157 sha256=d033fccd3e92182b4688a5c087ee1a52e71e1c61ed48d5b8579870ca1a22aeab [blob-match]
+src/main.rs size=455 sha256=933482032237f3a1ab71933e751d08b4fc5b1f17e21bea52e61734019de125f4 [blob-match]
+src/cli.rs size=30838 sha256=a253e0a2a78aaa02c043104c021ad81eddfbe07c42347be9437b1d49fbba05b9 [blob-match]
+tests/argv_surface.rs size=14619 sha256=a601c7e84dfe49aeb79dc0c1fedf6d5fac4c68491941cf509a4f97fe5825e8a8 [blob-match]
+docs/40-CLI-ARGV-SURFACE.md size=4314 sha256=5d2454dd510b3d2ec71cfb5c6c2f7f6326cc18f9807f5900961e2a6318a2b384 [blob-match]
+
