@@ -1,0 +1,29 @@
+# J-006 verb matrix: native binary vs container image (same revision)
+# native = D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j006\target\release\axiom-cli.exe
+# image  = axiom-cli:j006-local
+case	argv	native_exit	container_exit	match	container_stdout_bytes	container_stderr_bytes
+c01	--help	0	0	MATCH	1939	0
+c02	version	4	4	MATCH	0	192
+c03	doctor	4	4	MATCH	0	184
+c04	install	4	4	MATCH	0	309
+c05	uninstall	4	4	MATCH	0	187
+c06	update check	4	4	MATCH	0	237
+c07	install --dry-run	4	4	MATCH	0	309
+c08	install --apply --approve-digest aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa	4	4	MATCH	0	309
+c09	frobnicate	2	2	MATCH	0	80
+c10	install --apply	2	2	MATCH	0	157
+c11	install --apply --approve-digest deadbeef	2	2	MATCH	0	132
+c12	update	2	2	MATCH	0	124
+c13	--json doctor	4	4	MATCH	535	0
+c14	--json version	4	4	MATCH	552	0
+c15	--json install	4	4	MATCH	800	0
+c16	uninstall --purge-data	2	2	MATCH	0	184
+c17	install --dry-run --apply	2	2	MATCH	0	116
+c18	version --dry-run	2	2	MATCH	0	100
+# container with explicit empty argv (CMD bypassed): exit=2 stderr=axiom-cli: error: no verb supplied; expected one of install, update, doctor, version, uninstall
+axiom-cli: try `axiom-cli --help`
+# runtime identity:
+#   uid=10001(axiom) gid=10001(axiom) groups=10001(axiom)
+#   HOME=/home/axiom
+#   PWD=/home/axiom
+# mismatches=0

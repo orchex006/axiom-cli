@@ -1,0 +1,39 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src\main.rs (target\debug\deps\axiom_cli-f632370333037e96.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\argv_surface.rs (target\debug\deps\argv_surface-76ac42208004967a.exe)
+
+running 11 tests
+test help_lists_exactly_the_documented_verbs ... ok
+test json_flag_is_accepted_before_and_after_the_verb ... ok
+test validation_in_json_mode_carries_the_canonical_envelope ... ok
+test approve_digest_boundary_is_enforced ... ok
+test unbuilt_verb_never_answers_success_and_states_a_reason ... ok
+test every_documented_verb_is_reachable_from_argv ... ok
+test json_mode_writes_exactly_one_object_on_every_path ... ok
+test usage_text_and_dispatcher_cannot_drift ... ok
+test help_freezes_the_canonical_exit_vocabulary ... ok
+test help_exits_zero_and_is_available_per_verb ... ok
+test validation_defects_exit_two ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests\container_distribution.rs (target\debug\deps\container_distribution-f8282f832bf63c23.exe)
+
+running 9 tests
+test entrypoint_forwards_the_argv_vector_unchanged ... ok
+test runtime_user_is_non_root_and_the_revision_is_not_invented ... ok
+test oci_label_set_is_complete ... ok
+test workflow_records_the_digest_and_keeps_publication_opt_in ... ok
+test dockerfile_version_default_matches_the_version_file ... ok
+test the_container_is_declared_a_non_native_channel ... ok
+test owner_documentation_covers_the_channel_and_the_air_gapped_variant ... ok
+test every_base_image_is_pinned_by_digest ... ok
+test workflow_builds_with_buildx_and_publishes_immutable_tags_only ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

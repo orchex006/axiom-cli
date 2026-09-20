@@ -1,0 +1,2 @@
+    Checking axiom-cli v0.0.0-dev (D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j006)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.30s

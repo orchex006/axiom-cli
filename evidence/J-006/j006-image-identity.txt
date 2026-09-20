@@ -1,0 +1,9 @@
+# image axiom-cli:j006-local
+# id=sha256:843e184865ccb2f161036a149330526a4952750708caa14a4528a8fa49c54d56
+# repodigests=[] (empty: never pushed to a registry)
+# size_bytes=75218565
+# labels={"io.orchex006.axiom.channel":"container-linux-x64","io.orchex006.axiom.native-evidence":"false","org.opencontainers.image.created":"2026-09-20T14:43:20+07:00","org.opencontainers.image.description":"Axiom ecosystem distribution entrypoint: install, update, doctor, version, uninstall. Additional container delivery channel; not native runtime evidence for any target.","org.opencontainers.image.documentation":"https://github.com/orchex006/axiom-cli/blob/main/docs/50-CONTAINER-CHANNEL.md","org.opencontainers.image.licenses":"UNLICENSED","org.opencontainers.image.revision":"7ac376b5e5e0f52f4fe3af7fb97971d220277d38","org.opencontainers.image.source":"https://github.com/orchex006/axiom-cli","org.opencontainers.image.title":"axiom-cli","org.opencontainers.image.url":"https://github.com/orchex006/axiom-cli","org.opencontainers.image.version":"0.0.0-dev"}
+# user=10001:10001
+# arch=amd64/linux
+# entrypoint=["/usr/local/bin/axiom-cli-entrypoint"]
+# cmd=["--help"]
