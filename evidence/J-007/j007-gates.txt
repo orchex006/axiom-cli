@@ -1,0 +1,148 @@
+# J-007 gates - real commands, real exit codes (windows-x64, native)
+# generated: 2026-09-20T18:06:14.9620841+07:00
+# revision under test: HEAD=7ac376b5e5e0f52f4fe3af7fb97971d220277d38 on feature/j-007-update-channel-and-rollback
+
+toolchain:
+  rustc 1.98.1 (48a229cea 2026-09-01)
+  cargo 1.98.1 (797e8a9bc 2026-08-05)
+  rustfmt 1.9.0-stable (48a229ceae 2026-09-01)
+  clippy 0.1.98 (48a229ceae 2026-09-01)
+  os: Microsoft Windows 11 Pro build 26200 64-bit
+
+================================================================================
+GATE: cargo fmt --all -- --check
+\$ cargo fmt --all -- --check
+  
+exit=0
+
+================================================================================
+GATE: cargo clippy --locked --all-targets -- -D warnings
+\$ cargo clippy --locked --all-targets -- -D warnings
+      Checking axiom-cli v0.0.0-dev (D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j007)
+      Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.88s
+exit=0
+
+================================================================================
+GATE: cargo test --locked --all-targets
+\$ cargo test --locked --all-targets
+      Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+       Running unittests src\main.rs (target\debug\deps\axiom_cli-f632370333037e96.exe)
+  
+  running 61 tests
+  test update::apply::tests::an_install_root_is_compared_after_normalising_separators_and_trailing_slashes ... ok
+  test update::apply::tests::a_transaction_id_is_lowercase_stamped_and_prefixed ... ok
+  test update::apply::tests::plan_rows_read_every_component_row_and_skip_the_rest ... ok
+  test update::channel::tests::a_declared_component_with_a_published_artifact_parses ... ok
+  test update::channel::tests::a_forbidden_pin_is_refused_as_a_revision ... ok
+  test update::channel::tests::a_forbidden_pin_is_refused_as_an_artifact_url ... ok
+  test update::channel::tests::a_non_https_artifact_url_is_refused ... ok
+  test update::channel::tests::a_missing_needs_restart_is_refused ... ok
+  test update::channel::tests::an_empty_component_set_cannot_resolve_anything ... ok
+  test update::channel::tests::a_pep440_version_is_not_normalised_into_semver ... ok
+  test update::channel::tests::an_undeclared_component_cannot_smuggle_a_version ... ok
+  test update::channel::tests::a_forbidden_pin_is_refused_as_a_version ... ok
+  test update::channel::tests::an_undeclared_component_is_recorded_with_its_source_and_carries_no_version ... ok
+  test update::channel::tests::an_unresolved_placeholder_is_refused ... ok
+  test update::channel::tests::an_unsigned_channel_is_refused ... ok
+  test update::channel::tests::duplicate_components_are_refused ... ok
+  test update::error::tests::an_unreachable_channel_is_not_ready_and_a_malformed_one_is_validation ... ok
+  test update::error::tests::classes_map_onto_the_canonical_exit_vocabulary ... ok
+  test update::error::tests::only_a_transient_class_is_retryable ... ok
+  test update::channel::tests::structural_defects_are_named ... ok
+  test update::fetch::tests::a_cache_key_may_not_smuggle_a_separator_or_a_drive_letter ... ok
+  test update::fetch::tests::an_https_artifact_without_a_cache_entry_is_unreachable_not_installed ... ok
+  test update::fetch::tests::the_cache_key_is_the_last_segment_without_a_query ... ok
+  test update::fetch::tests::the_install_root_text_uses_forward_slashes ... ok
+  test update::generation::tests::a_generation_id_with_a_separator_cannot_be_read ... ok
+  test update::generation::tests::a_backslash_payload_path_is_refused ... ok
+  test update::generation::tests::a_generation_round_trips_with_its_probe ... ok
+  test update::generation::tests::the_installed_map_and_restart_set_follow_the_entries ... ok
+  test update::health::tests::a_relative_probe_program_is_resolved_inside_the_generation ... ok
+  test update::health::tests::an_absolute_probe_program_is_used_as_written ... ok
+  test update::journal::tests::a_journal_round_trips ... ok
+  test update::journal::tests::advancing_journal_stamps_the_new_state ... ok
+  test update::journal::tests::only_settled_states_end_a_transaction ... ok
+  test update::json::tests::a_float_literal_is_refused_by_name ... ok
+  test update::json::tests::a_lone_surrogate_is_refused ... ok
+  test update::json::tests::a_repeated_key_keeps_the_last_member ... ok
+  test update::json::tests::canonical_form_matches_the_python_reference ... ok
+  test update::json::tests::integers_are_normalised_without_a_leading_zero ... ok
+  test update::json::tests::key_order_in_the_input_does_not_change_the_canonical_bytes ... ok
+  test update::json::tests::deep_nesting_is_refused_instead_of_overflowing_the_stack ... ok
+  test update::json::tests::non_ascii_and_del_are_not_escaped ... ok
+  test update::json::tests::structural_faults_are_refused ... ok
+  test update::report::tests::a_report_renders_as_one_json_object_with_the_frozen_envelope_keys ... ok
+  test update::report::tests::exit_classes_map_to_the_canonical_vocabulary ... ok
+  test update::rules::tests::digest_and_revision_are_lowercase_hex_only ... ok
+  test update::rules::tests::placeholders_and_pins_are_detected ... ok
+  test update::rules::tests::plan_ids_freeze_the_schema_pattern ... ok
+  test update::rules::tests::semver_accepts_the_owner_declared_versions_and_refuses_pep440 ... ok
+  test update::rules::tests::relative_paths_cannot_escape_a_root ... ok
+  test update::rules::tests::urls_must_be_https ... ok
+  test update::sha256::tests::matches_the_published_vectors ... ok
+  test update::state::tests::a_generation_id_may_not_carry_a_separator ... ok
+  test update::state::tests::a_record_round_trips_through_its_canonical_text ... ok
+  test update::sha256::tests::exactly_sixty_four_bytes_is_the_block_boundary ... ok
+  test update::state::tests::a_short_digest_is_refused_rather_than_trusted ... ok
+  test update::state::tests::the_override_env_var_wins_for_the_install_root ... ok
+  test update::time::tests::epoch_and_known_instants_round_trip ... ok
+  test update::state::tests::an_unknown_channel_name_is_refused ... ok
+  test update::time::tests::expiry_comparison_is_an_instant_comparison ... ok
+  test update::time::tests::malformed_timestamps_are_rejected_not_guessed ... ok
+  test update::sha256::tests::chunking_does_not_change_the_digest ... ok
+  
+  test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  
+       Running tests\argv_surface.rs (target\debug\deps\argv_surface-76ac42208004967a.exe)
+  
+  running 11 tests
+  test help_lists_exactly_the_documented_verbs ... ok
+  test json_flag_is_accepted_before_and_after_the_verb ... ok
+  test validation_in_json_mode_carries_the_canonical_envelope ... ok
+  test every_documented_verb_is_reachable_from_argv ... ok
+  test approve_digest_boundary_is_enforced ... ok
+  test unbuilt_verb_never_answers_success_and_states_a_reason ... ok
+  test help_freezes_the_canonical_exit_vocabulary ... ok
+  test json_mode_writes_exactly_one_object_on_every_path ... ok
+  test usage_text_and_dispatcher_cannot_drift ... ok
+  test help_exits_zero_and_is_available_per_verb ... ok
+  test validation_defects_exit_two ... ok
+  
+  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.59s
+  
+       Running tests\update_channel.rs (target\debug\deps\update_channel-9fcb4525ac74b999.exe)
+  
+  running 23 tests
+  test a_forbidden_pin_is_never_resolved ... ok
+  test apply_refuses_an_unreachable_artifact_while_offline ... ok
+  test apply_refuses_an_approval_digest_that_does_not_match_the_plan ... ok
+  test an_unsigned_channel_is_never_resolved ... ok
+  test apply_re_verifies_the_trust_window_of_the_recorded_manifest ... ok
+  test apply_refuses_a_plan_whose_recorded_digest_is_not_in_the_recorded_manifest ... ok
+  test apply_refuses_while_the_coordinator_lock_is_held ... ok
+  test an_expired_trust_window_refuses_installation ... ok
+  test apply_refuses_a_tampered_artifact_digest ... ok
+  test apply_recovers_an_interrupted_transaction_before_it_starts ... ok
+  test the_test_local_sha256_matches_the_published_vectors ... ok
+  test check_with_no_installed_release_and_no_named_manifest_is_not_ready ... ok
+  test check_reads_the_recorded_manifest_and_changes_nothing ... ok
+  test rollback_refuses_when_no_previous_generation_is_retained ... ok
+  test the_committed_channel_manifest_parses_and_declares_the_component_set ... ok
+  test apply_is_idempotent_on_a_re_run ... ok
+  test plan_resolves_only_the_version_the_recorded_manifest_declares ... ok
+  test the_recorded_digest_must_match_the_installed_bytes ... ok
+  test apply_rolls_back_when_the_health_check_fails ... ok
+  test apply_swaps_atomically_and_keeps_the_previous_generation ... ok
+  test rollback_refuses_a_stale_approval_digest ... ok
+  test rollback_restores_the_retained_generation ... ok
+  test the_transaction_never_touches_state_outside_the_install_root ... ok
+  
+  test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+  
+exit=0
+
+================================================================================"
+gate exit codes (all three MUST be 0):
+  cargo fmt --all -- --check                      exit=0
+  cargo clippy --locked --all-targets -- -D warnings exit=0
+  cargo test --locked --all-targets               exit=0

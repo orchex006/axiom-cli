@@ -8,6 +8,7 @@
 //! profile or mutates `PATH`.
 
 mod cli;
+mod update;
 
 fn main() {
     let code = cli::run(std::env::args_os());

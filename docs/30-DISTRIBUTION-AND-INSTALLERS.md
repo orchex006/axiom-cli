@@ -32,16 +32,18 @@ Design-complete, verification later: Linux x64 including the WSL2 lane, and macO
 
 Installing is transactional and reversible. Verify release provenance and the per-artifact SHA256 before unpacking; unpack into a user-writable install directory; never require root, never bypass Gatekeeper, never mutate a global PATH and never use `curl | sh`. Then delegate to the engine to register the solution, bind logical repositories to native absolute paths and apply managed bootstrap with an approved plan digest. Re-running install must be idempotent.
 
-## Update
+## ## Update
 
-- Read the update channel manifest pinned to an immutable revision.
-- Compare the installed component versions against the manifest; refuse an undeclared or downgrade transition.
-- Verify every artifact digest before use.
-- Stop affected writers, preserve the durable queue and state, swap atomically, and update `axiom-cli` itself inside the same transaction.
-- Keep a rollback artifact and a transactional journal; recover an interrupted update to the previous consistent state.
-- Never update without an explicit approved request.
+J-007 implements the update path in `src/update/` with the channel manifest in `channels/stable.json`; `docs/50-UPDATE-CHANNEL.md` records what runs today and what does not. Implemented now:
 
-## Uninstall
+- `update check`, `update plan`, `update apply` and `update rollback` resolve a version only from the channel manifest the installed release recorded; a branch tip, a tag alias, a network `latest` and an unsigned channel are refused.
+- Every artifact's length and sha256 are verified before it is used, and `axiom-cli` self-updates inside the same transaction under one approval digest.
+- The swap keeps the previous generation until the new one passes its health probe; a failed verification or health check restores the previous generation, and an interrupted apply is recovered from the journal. Every changed component is reported under `needs_restart`.
+- An update is never applied without an explicit approved request.
+
+Still design-complete, not yet running here: stopping affected writers and preserving the durable queue, plus the engine's activation and restart, are owned by `axiom-graphd` (I-003/I-004). A real signed channel with published artifacts stays closed for this wave.
+
+Uninstall
 
 Uninstall removes only owned executables and startup entries by default. Workspace data, checkpoints and private state require a separate, explicit deletion approval. Never recursively delete `.axiom`.
 

@@ -1,0 +1,33 @@
+# J-007 - the plan this CLI builds is accepted by the canonical axiom-specs contract tool
+# generated: 2026-09-20T18:06:04.2167567+07:00
+
+canonical tool: D:\SP-Billy\axiom-worktrees\axiom-specs-main\tools\update_plan_contract.py
+  (3.13.14 on PATH; reads only local files, no network)
+plan built by: axiom-cli.exe update plan --to 0.0.1-dev --out plan-selfupdate.json --json
+plan file sha256: 424722e6ca26e429bfb0158e5fd2beace620cab13a0755fb2a7e3bb29f6f70b5
+
+1) positive - plan wrapped as {plan, approved_digest} and evaluated by the canonical tool
+   \$ python tools/update_plan_contract.py plan-contract-document.json
+   accepted D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j007\_w10ev\fx\a-published\plan-contract-document.json
+   exit=0
+   \$ python tools/update_plan_contract.py plan-contract-document.json --json
+   {
+     "ok": true,
+     "reasons": [],
+     "structural_reasons": [],
+     "approval_reasons": [],
+     "plan_digest": "d2ae741d998502d2c91aeb75430216864391c8690126a8b1a152514c44a00919"
+   }
+   exit=0
+
+   the Rust implementation and the canonical Python tool compute the same digest:
+     rust:      d2ae741d998502d2c91aeb75430216864391c8690126a8b1a152514c44a00919
+     canonical: d2ae741d998502d2c91aeb75430216864391c8690126a8b1a152514c44a00919
+     identical: True
+
+2) negative - the same plan with one component version changed after approval is rejected
+   \$ python tools/update_plan_contract.py plan-contract-tampered.json
+   rejected D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j007\_w10ev\fx\a-published\plan-contract-tampered.json
+     plan_digest_mismatch
+     approval_stale
+   exit=2

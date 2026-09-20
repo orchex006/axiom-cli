@@ -1,0 +1,169 @@
+# J-007 fixture inventory - local, on-disk, never published
+# generated: 2026-09-20T18:05:17.1681057+07:00
+# every fixture below is deleted and rebuilt by _w10ev/run-ac2.ps1; none is committed
+
+fixture: a-published
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d
+  root/installed.json      {"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t000000z-00000001","installed_at":"2026-09-20T11:04:46Z","previous_generation":"g-20260920t110446z-29744788","schema_version":1}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  generation g-20260920t110446z-29744788: 5 file(s)
+    payload axiom-0.0.1-dev.zip sha256=42933e88d2de2fc45e518d817f4d484177289fd262fd18c640b5ef9f988858bb (53 bytes)
+    payload axiom-cli-0.0.1-dev.zip sha256=dd311fc808a6f9a4e6e95e3749a7af1af151c92a79cf039610f6f2373ac32dd2 (57 bytes)
+    payload axiom-graphd-0.0.1-dev.zip sha256=cae30230c9680a76f9f1c353bd1f221665db6be06c0da9fbbf8dbd9a9294686d (60 bytes)
+    payload skills-0.1.0-draft.1.zip sha256=0fc7ed538d69d1f15483d231a7fe63f6895ab1451e1071185410e0c0121e1b49 (58 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+  journal: t-20260920t110446z-28baa2d4.json
+
+fixture: b-tampered
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=87fd17d01e3d4041 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: c-offline
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: d-interrupted
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d
+  root/installed.json      {"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t110447z-939eb28c","installed_at":"2026-09-20T11:04:47Z","previous_generation":"g-20260920t000000z-00000001","schema_version":1}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  generation g-20260920t110447z-939eb28c: 5 file(s)
+    payload axiom-0.0.1-dev.zip sha256=42933e88d2de2fc45e518d817f4d484177289fd262fd18c640b5ef9f988858bb (53 bytes)
+    payload axiom-cli-0.0.1-dev.zip sha256=dd311fc808a6f9a4e6e95e3749a7af1af151c92a79cf039610f6f2373ac32dd2 (57 bytes)
+    payload axiom-graphd-0.0.1-dev.zip sha256=cae30230c9680a76f9f1c353bd1f221665db6be06c0da9fbbf8dbd9a9294686d (60 bytes)
+    payload skills-0.1.0-draft.1.zip sha256=0fc7ed538d69d1f15483d231a7fe63f6895ab1451e1071185410e0c0121e1b49 (58 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+  journal: t-20260920t000000z-deadbeef.json, t-20260920t110447z-92ddac7c.json
+
+fixture: e-healthfail
+  manifest.json            sha256=db49fa909642296330b377a57bdb2a04fb92cbe5871271c843eddf4d71e9db65  (2511 bytes)
+  root/recorded-manifest   sha256=db49fa909642296330b377a57bdb2a04fb92cbe5871271c843eddf4d71e9db65
+  root/installed.json      {"channel":"stable","channel_manifest_sha256":"db49fa909642296330b377a57bdb2a04fb92cbe5871271c843eddf4d71e9db65","current_generation":"g-20260920t000000z-00000001","installed_at":"2026-09-20T11:04:47Z","previous_generation":null,"schema_version":1}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  generation g-20260920t110447z-7f2633e0: 5 file(s)
+    payload axiom-0.0.1-dev.zip sha256=42933e88d2de2fc45e518d817f4d484177289fd262fd18c640b5ef9f988858bb (53 bytes)
+    payload axiom-cli-0.0.1-dev.zip sha256=dd311fc808a6f9a4e6e95e3749a7af1af151c92a79cf039610f6f2373ac32dd2 (57 bytes)
+    payload axiom-graphd-0.0.1-dev.zip sha256=cae30230c9680a76f9f1c353bd1f221665db6be06c0da9fbbf8dbd9a9294686d (60 bytes)
+    payload skills-0.1.0-draft.1.zip sha256=0fc7ed538d69d1f15483d231a7fe63f6895ab1451e1071185410e0c0121e1b49 (58 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+  journal: t-20260920t110447z-7fb10fcc.json
+
+fixture: f2-expired-late
+  manifest.json            sha256=a49f526e08b37ddccb33605a240b9de4a3e9a483a18fac34e19d1b5d51d8995b  (2507 bytes)
+  root/recorded-manifest   sha256=a49f526e08b37ddccb33605a240b9de4a3e9a483a18fac34e19d1b5d51d8995b
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"a49f526e08b37ddccb33605a240b9de4a3e9a483a18fac34e19d1b5d51d8995b","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: f-expired
+  manifest.json            sha256=a49f526e08b37ddccb33605a240b9de4a3e9a483a18fac34e19d1b5d51d8995b  (2507 bytes)
+  root/recorded-manifest   sha256=a49f526e08b37ddccb33605a240b9de4a3e9a483a18fac34e19d1b5d51d8995b
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"a49f526e08b37ddccb33605a240b9de4a3e9a483a18fac34e19d1b5d51d8995b","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: g-unsigned
+  manifest.json            sha256=795c8651dee5019363dfcc5d27653d1b56e909f8c06643bf3a2b1739677b8ed8  (2383 bytes)
+  root/recorded-manifest   sha256=795c8651dee5019363dfcc5d27653d1b56e909f8c06643bf3a2b1739677b8ed8
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"795c8651dee5019363dfcc5d27653d1b56e909f8c06643bf3a2b1739677b8ed8","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: h-forbidden
+  manifest.json            sha256=cc4ef0519054721333d34ce5cedbc85c455c2ef704e2cbf747ffd166845e50a3  (2504 bytes)
+  root/recorded-manifest   sha256=cc4ef0519054721333d34ce5cedbc85c455c2ef704e2cbf747ffd166845e50a3
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"cc4ef0519054721333d34ce5cedbc85c455c2ef704e2cbf747ffd166845e50a3","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: i-none
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: j-lock
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: k-recorded-mismatch
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=5e9c046911d7e86b05ae41c1bc33ca6d66d22204db4f4e2271fcdfc1e5b873ac
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: l-stale
+  manifest.json            sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d  (2507 bytes)
+  root/recorded-manifest   sha256=ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"ee58d681ecadcedb9b20a5882c9e77d29ef0b5b1f21cf7c08a4764816df3ae1d","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
+fixture: m-plan-not-in-manifest
+  manifest.json            sha256=2f34e85816052ee72301583979e12f51398bf16e34545fd9a1437d060aa481a9  (2507 bytes)
+  root/recorded-manifest   sha256=2f34e85816052ee72301583979e12f51398bf16e34545fd9a1437d060aa481a9
+  root/installed.json      {"schema_version":1,"channel":"stable","channel_manifest_sha256":"2f34e85816052ee72301583979e12f51398bf16e34545fd9a1437d060aa481a9","current_generation":"g-20260920t000000z-00000001","previous_generation":null,"installed_at":"2026-09-20T00:00:00Z"}
+  generation g-20260920t000000z-00000001: 5 file(s)
+    payload axiom-0.0.0-seed.zip sha256=e3be7072f0e993451dbec7e95392d312a33a0fd98df4ce4307f516181537a1cd (40 bytes)
+    payload axiom-cli-0.0.0-seed.zip sha256=26dbd4cc2129c3b87a21efcab5df01d31f2a9914c0231808039552dc00c6ceaf (44 bytes)
+    payload axiom-graphd-0.0.0-seed.zip sha256=568c137fcdc5feab974547ad4bedc08a736df3dc80f56dda5c0a99205c2ea73b (47 bytes)
+    payload skills-0.0.0-seed.zip sha256=b81d3a42d17d764288809d8717284541d1e2a547e10939c64778bdc4610f9c3e (41 bytes)
+  cache: axiom-0.0.1-dev.zip=42933e88d2de2fc4 axiom-cli-0.0.1-dev.zip=dd311fc808a6f9a4 axiom-graphd-0.0.1-dev.zip=cae30230c9680a76 skills-0.1.0-draft.1.zip=0fc7ed538d69d1f1
+
