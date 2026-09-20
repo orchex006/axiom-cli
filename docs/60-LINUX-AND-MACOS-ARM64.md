@@ -2,8 +2,8 @@
 
 Owner: axiom-cli. Task: `J-008`. This guide is the owner-side runbook for the two
 **design-complete / test-later** delivery tiers. The normative rules live in
-[contracts/axiom-cli-distribution-contract.md](../../../contracts/axiom-cli-distribution-contract.md)
-in `axiom-specs`; this file does not restate a shared schema.
+`axiom-specs/contracts/axiom-cli-distribution-contract.md`;
+this file does not restate a shared schema.
 
 ## Tier position
 

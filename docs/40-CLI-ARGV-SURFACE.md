@@ -1,8 +1,8 @@
 # CLI argv surface — axiom-cli
 
 Owner: axiom-cli. Frozen by task `J-003`. The normative rules stay in
-[contracts/axiom-cli-distribution-contract.md](../../../contracts/axiom-cli-distribution-contract.md)
-section 2 and [docs/16-CLI-AND-CONTROL-API.md](../../../docs/16-CLI-AND-CONTROL-API.md) sections 1, 6
+`axiom-specs/contracts/axiom-cli-distribution-contract.md`
+section 2 and `axiom-specs/docs/16-CLI-AND-CONTROL-API.md` sections 1, 6
 and 7 of the pinned `axiom-specs` revision. This guide is the owner-side description of the
 implemented surface and must not restate a shared schema as an alternative edition.
 

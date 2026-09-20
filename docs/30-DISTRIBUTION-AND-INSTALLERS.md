@@ -1,6 +1,6 @@
 # Distribution and installers — axiom-cli
 
-Owner: axiom-cli. **Intended distribution contract; no downloadable runtime release is included in this seed.** The normative rules live in [contracts/axiom-cli-distribution-contract.md](../../../contracts/axiom-cli-distribution-contract.md) in `axiom-specs`; this guide is the owner-side runbook and must not restate a shared schema or protocol.
+Owner: axiom-cli. **Intended distribution contract; no downloadable runtime release is included in this seed.** The normative rules live in `axiom-specs/contracts/axiom-cli-distribution-contract.md`; this guide is the owner-side runbook and must not restate a shared schema or protocol.
 
 ## Scope
 
