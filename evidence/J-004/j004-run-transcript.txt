@@ -1,5 +1,5 @@
 J-004 Windows x64 distribution acceptance run
-generated_at: 2026-09-20T09:52:39Z
+generated_at: 2026-09-20T09:59:19Z
 host: Microsoft Windows 11 Pro 10.0.26200
 shipped shell: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
 harness session elevated: True
@@ -33,8 +33,14 @@ L15c-purge-approved                    boundary    0   0 yes  removed
 L16a-install-with-service              positive    0   0 yes  installed
 L16b-uninstall-service-plan            positive    0   0 yes  planned
 L16c-uninstall-removes-service         boundary    0   0 yes  removed
+L17a-cleanup-unowned-plan              boundary    0   0 yes  planned
+L17a-cleanup-unowned-apply             boundary    0   0 yes  removed
+L17b-cleanup-downgrade-plan            boundary    0   0 yes  planned
+L17b-cleanup-downgrade-apply           boundary    0   0 yes  removed
+L17c-cleanup-recover-plan              boundary    0   0 yes  planned
+L17c-cleanup-recover-apply             boundary    0   0 yes  removed
 
-legs: 26   failures: 0
+legs: 32   failures: 0
 
 --- transcript ---
 host: Microsoft Windows 11 Pro 10.0.26200
@@ -42,12 +48,12 @@ shipped shell: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
 harness elevated: True
 scratch: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run
 evidence: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\evidence\J-004
-path snapshot before: present=True kind=ExpandString value='C:\Users\006006\.cargo\bin;C:\Users\006006\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\006006\AppData\Local\Programs\Python\Python313\;C:\Users\006006\AppData\Local\Programs\OpenAI\Codex\bin;D:\Programs\Anaconda;D:\Programs\Anaconda\Library\mingw-w64\bin;D:\Programs\Anaconda\Library\usr\bin;D:\Programs\Anaconda\Library\bin;D:\Programs\Anaconda\Scripts;D:\Programs\Anaconda\bin;D:\Programs\Anaconda\condabin;C:\Windows;C:\Windows\system32;C:\Windows\system32\Wbem;C:\Program Files\Docker\Docker\resources\bin\docker;C:\Program Files\Docker\Docker\resources\bin\docker.exe;C:\Users\006006\.dotnet\tools;C:\Users\006006\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\006006\AppData\Local\Programs\Python\Python38;C:\Users\006006\AppData\Local\Programs\Python\Python38\Scripts;C:\Users\006006\AppData\Local\Microsoft\WindowsApps;C:\Users\006006\.dotnet\tools;C:\Users\006006\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;D:\Projects\46_ArgiMap\Projects\AgriMapPlatform\standards\tools\installation\installation-script;D:\Projects\46_ArgiMap\Projects\AgriMapPlatform\standards\tools\installation\installation-script\;C:\Users\006006\AppData\Local\Microsoft\WinGet\Links;C:\Users\006006\.local\bin;C:\Users\006006\AppData\Roaming\Python\Python313\Scripts;C:\Users\006006\AppData\Local\Programs\glab;C:\Users\006006\AppData\Roaming\npm;C:\Users\006006\bin;D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\install-recover\bin'
+path snapshot before: present=True kind=ExpandString value='C:\Users\006006\.cargo\bin;C:\Users\006006\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\006006\AppData\Local\Programs\Python\Python313\;C:\Users\006006\AppData\Local\Programs\OpenAI\Codex\bin;D:\Programs\Anaconda;D:\Programs\Anaconda\Library\mingw-w64\bin;D:\Programs\Anaconda\Library\usr\bin;D:\Programs\Anaconda\Library\bin;D:\Programs\Anaconda\Scripts;D:\Programs\Anaconda\bin;D:\Programs\Anaconda\condabin;C:\Windows;C:\Windows\system32;C:\Windows\system32\Wbem;C:\Program Files\Docker\Docker\resources\bin\docker;C:\Program Files\Docker\Docker\resources\bin\docker.exe;C:\Users\006006\.dotnet\tools;C:\Users\006006\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\006006\AppData\Local\Programs\Python\Python38;C:\Users\006006\AppData\Local\Programs\Python\Python38\Scripts;C:\Users\006006\AppData\Local\Microsoft\WindowsApps;C:\Users\006006\.dotnet\tools;C:\Users\006006\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;D:\Projects\46_ArgiMap\Projects\AgriMapPlatform\standards\tools\installation\installation-script;D:\Projects\46_ArgiMap\Projects\AgriMapPlatform\standards\tools\installation\installation-script\;C:\Users\006006\AppData\Local\Microsoft\WinGet\Links;C:\Users\006006\.local\bin;C:\Users\006006\AppData\Roaming\Python\Python313\Scripts;C:\Users\006006\AppData\Local\Programs\glab;C:\Users\006006\AppData\Roaming\npm;C:\Users\006006\bin'
 
 === build release sets ===
 [PASS] positive leg=B01-build-main                     expected=0   actual=0   outcome=assembled 
 main release set: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\release-set.json
-main plan digest: b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a
+main plan digest: 5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d
 [PASS] positive leg=B02-build-alpha                    expected=0   actual=0   outcome=assembled 
 [PASS] positive leg=B03-build-service                  expected=0   actual=0   outcome=assembled 
 corrupted artifact: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-corrupt\axiom-cli.exe (one byte flipped at offset 1000)
@@ -154,6 +160,18 @@ staged an interrupted install at D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\
 [PASS] boundary leg=L16c-uninstall-removes-service     expected=0   actual=0   outcome=removed 
 [PASS] assert L16c: the envelope reports the service registration removed
 [PASS] assert L16c: Get-ScheduledTask no longer finds the task
+
+=== harness cleanup: uninstall the installations the earlier legs left behind ===
+[PASS] boundary leg=L17a-cleanup-unowned-plan          expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L17a-cleanup-unowned-apply         expected=0   actual=0   outcome=removed 
+[PASS] assert L17a-cleanup-unowned: the leftover installation at install-unowned was removed
+[PASS] boundary leg=L17b-cleanup-downgrade-plan        expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L17b-cleanup-downgrade-apply       expected=0   actual=0   outcome=removed 
+[PASS] assert L17b-cleanup-downgrade: the leftover installation at install-downgrade was removed
+[PASS] boundary leg=L17c-cleanup-recover-plan          expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L17c-cleanup-recover-apply         expected=0   actual=0   outcome=removed 
+[PASS] assert L17c-cleanup-recover: the leftover installation at install-recover was removed
+[PASS] assert L17-cleanup-path-hygiene: no per-user PATH entry under the scratch root survives the harness (found 0)
 [PASS] assert L17-machine-path: the machine-wide PATH is byte-identical before and after the whole run
 
 === non-elevated leg (AC1: the install path requires no elevation) ===
@@ -167,23 +185,23 @@ staged an interrupted install at D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\
 
 === artifact digests ===
 J-004 artifact digests (real bytes on this host)
-generated_at: 2026-09-20T09:52:36Z
+generated_at: 2026-09-20T09:59:18Z
 
 axiom-cli.exe (source)       size_bytes=159232     sha256=8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\target\release\axiom-cli.exe
-release-set.json (main)      size_bytes=4338       sha256=b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\release-set.json
+release-set.json (main)      size_bytes=4338       sha256=5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\release-set.json
 axiom-cli.exe (main set)     size_bytes=159232     sha256=8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\axiom-cli.exe
-release-set.json (alpha)     size_bytes=4344       sha256=7f9d5fa799a909c409e8551f7a42d24b11771ba4be472df1da6fbbe808456059 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-alpha\release-set.json
-release-set.json (service)   size_bytes=4371       sha256=1061c76bc3d81d33b1b3d2d5452845d5aa9618fb1f9f17e654ce7069356f9b55 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-service\release-set.json
+release-set.json (alpha)     size_bytes=4344       sha256=dd75815285ec6f02b44bcebb2be5512b13655f8dd4a0e37cb24175492780ad77 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-alpha\release-set.json
+release-set.json (service)   size_bytes=4371       sha256=39268bf727442f270173df07b6db0c32a488f5de1ca69809dad127f79c869236 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-service\release-set.json
 install-result.schema.json   size_bytes=7838       sha256=98d0a6498c759996ccdedda12f68da5f40f9ff858ecdc6691d21eef5df09d1e8 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\packaging\install-result.schema.json
 
-main plan digest (approval):      b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a
-alpha plan digest (approval):     7f9d5fa799a909c409e8551f7a42d24b11771ba4be472df1da6fbbe808456059
-service plan digest (approval):   1061c76bc3d81d33b1b3d2d5452845d5aa9618fb1f9f17e654ce7069356f9b55
+main plan digest (approval):      5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d
+alpha plan digest (approval):     dd75815285ec6f02b44bcebb2be5512b13655f8dd4a0e37cb24175492780ad77
+service plan digest (approval):   39268bf727442f270173df07b6db0c32a488f5de1ca69809dad127f79c869236
 uninstall plan digest (approval): e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a
 purge plan digest (approval):     76ae53a156122f34b4d91baa124e998caa5920ade73600630bb34b005d4ab399
 
 === envelope schema validation ===
-[PASS] assert L18-envelope-schema: every captured envelope validates against packaging/install-result.schema.json (24 files)
+[PASS] assert L18-envelope-schema: every captured envelope validates against packaging/install-result.schema.json (30 files)
 
 PATH guard: restored the pre-run HKCU user Path value
-RESULT: PASS (26 legs met their expected exit code and every assertion held)
+RESULT: PASS (32 legs met their expected exit code and every assertion held)

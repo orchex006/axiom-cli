@@ -6,7 +6,7 @@
   "outcome": "removed",
   "exit_code": 0,
   "status": "ok",
-  "message": "removed release 0.0.0-dev from D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main: 4 item(s) removed, user data preserved",
+  "message": "removed release 0.0.0-dev from D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover: 4 item(s) removed, user data preserved",
   "retryable": false,
   "platform": "windows-x64",
   "host": {
@@ -16,13 +16,13 @@
     "powershell_version": "5.1.26100.9444",
     "session_elevated": true
   },
-  "install_root": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main",
-  "bin_dir": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin",
+  "install_root": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover",
+  "bin_dir": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin",
   "dry_run": false,
   "mutated": true,
-  "plan_digest": "e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a",
-  "approved_digest": "e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a",
-  "transaction_id": "txn-20260920T095839-8da29037",
+  "plan_digest": "72cf0f68d3cf9c1fd92e3280bf8277eba00421c2fba6ee7986bf7b47dbea85d4",
+  "approved_digest": "72cf0f68d3cf9c1fd92e3280bf8277eba00421c2fba6ee7986bf7b47dbea85d4",
+  "transaction_id": "txn-20260920T095905-8d7ba18f",
   "interrupted_install_recovered": false,
   "release_set": null,
   "artifacts": [
@@ -33,7 +33,7 @@
       "sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2",
       "size_bytes": 159232,
       "verified": true,
-      "installed_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin\\axiom-cli.exe",
+      "installed_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin\\axiom-cli.exe",
       "source": "local-build"
     }
   ],
@@ -51,7 +51,7 @@
     "scope": "user",
     "registry_key": "HKCU\\Environment",
     "value_name": "Path",
-    "entry": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin",
+    "entry": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin",
     "applied": false,
     "machine_wide_change": false,
     "previous_present": true
@@ -66,7 +66,7 @@
   },
   "preserved": [
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover",
       "reason": "the per-user install root is preserved by default; pass -PurgeData (a separate plan digest) to remove it"
     },
     {
@@ -74,25 +74,25 @@
       "reason": "the per-project graph output root is user data; uninstall never touches it and never recursively deletes .axiom"
     },
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\install-manifest.json",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\install-manifest.json",
       "reason": "the shared per-user install manifest is preserved when other components still have rows in it"
     }
   ],
   "removed": [
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin\\axiom-cli.exe",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin\\axiom-cli.exe",
       "kind": "executable"
     },
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\cli\\generations\\0.0.0-dev",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\cli\\generations\\0.0.0-dev",
       "kind": "generation"
     },
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin",
       "kind": "path-entry"
     },
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\cli",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\cli",
       "kind": "state-directory"
     }
   ],
@@ -101,6 +101,6 @@
   "limitations": [
     "this uninstaller is the Windows x64 lane of the axiom-cli distribution; other delivery platforms are separate installers"
   ],
-  "generated_at": "2026-09-20T09:58:39Z",
-  "request_id": "axiom-cli-windows-32964-8df16fdbef5817e"
+  "generated_at": "2026-09-20T09:59:05Z",
+  "request_id": "axiom-cli-windows-5116-8df16fdce2a7104"
 }

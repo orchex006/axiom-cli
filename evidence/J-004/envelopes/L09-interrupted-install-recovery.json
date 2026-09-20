@@ -20,13 +20,13 @@
   "bin_dir": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin",
   "dry_run": false,
   "mutated": true,
-  "plan_digest": "b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a",
-  "approved_digest": "b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a",
-  "transaction_id": "txn-20260920T095200-377e11ad",
+  "plan_digest": "5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d",
+  "approved_digest": "5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d",
+  "transaction_id": "txn-20260920T095834-d44b82a8",
   "interrupted_install_recovered": true,
   "release_set": {
     "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json",
-    "sha256": "b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a",
+    "sha256": "5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d",
     "release_version": "0.0.0-dev"
   },
   "artifacts": [
@@ -68,7 +68,7 @@
       "component": "axiom-cli",
       "installed_version": "0.0.0-dev",
       "artifact_sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2",
-      "version_source": "release-set.json (sha256 b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a)"
+      "version_source": "release-set.json (sha256 5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d)"
     }
   ],
   "refusals": [],
@@ -79,7 +79,7 @@
     "entry": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\bin",
     "applied": true,
     "machine_wide_change": false,
-    "previous_present": true
+    "previous_present": false
   },
   "service_registration": {
     "kind": "none",
@@ -115,6 +115,6 @@
     "the installed entrypoint answered 'axiom-cli.exe --help' with exit 0 after commit",
     "the per-user PATH entry is written to HKCU\\Environment; a shell that was already running keeps its old environment until it is restarted"
   ],
-  "generated_at": "2026-09-20T09:52:00Z",
-  "request_id": "axiom-cli-windows-18944-8df16fcd11a3258"
+  "generated_at": "2026-09-20T09:58:34Z",
+  "request_id": "axiom-cli-windows-40216-8df16fdbb9fd3b0"
 }

@@ -6,7 +6,7 @@
   "outcome": "planned",
   "exit_code": 0,
   "status": "ok",
-  "message": "planned removal of release 0.0.0-dev; nothing was changed",
+  "message": "planned removal of release 0.0.0-alpha; nothing was changed",
   "retryable": false,
   "platform": "windows-x64",
   "host": {
@@ -16,11 +16,11 @@
     "powershell_version": "5.1.26100.9444",
     "session_elevated": true
   },
-  "install_root": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service",
-  "bin_dir": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service\\bin",
+  "install_root": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade",
+  "bin_dir": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\\bin",
   "dry_run": true,
   "mutated": false,
-  "plan_digest": "06b81257717d6afa8f8ad516dd79f2f63ecd33b417d7d909740b2f86b2cc7817",
+  "plan_digest": "8cf32f4e4dac53477b7dc6e41a28d67462fb91419dafc5014ef9e5dbe22bf5e9",
   "approved_digest": null,
   "transaction_id": null,
   "interrupted_install_recovered": false,
@@ -29,11 +29,11 @@
     {
       "name": "axiom-cli.exe",
       "component": "axiom-cli",
-      "version": "0.0.0-dev",
+      "version": "0.0.0-alpha",
       "sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2",
       "size_bytes": 159232,
       "verified": true,
-      "installed_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service\\bin\\axiom-cli.exe",
+      "installed_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\\bin\\axiom-cli.exe",
       "source": "local-build"
     }
   ],
@@ -41,7 +41,7 @@
   "components": [
     {
       "component": "axiom-cli",
-      "installed_version": "0.0.0-dev",
+      "installed_version": "0.0.0-alpha",
       "artifact_sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2",
       "version_source": "axiom-cli-install-state (recorded by the install transaction)"
     }
@@ -57,16 +57,16 @@
     "previous_present": false
   },
   "service_registration": {
-    "kind": "scheduled-task-at-logon",
-    "task_name": "AxiomCliJ004HarnessService",
+    "kind": "none",
+    "task_name": null,
     "owner": "axiom-cli",
-    "registered": true,
+    "registered": false,
     "removed": false,
     "reason": "planning only: the recorded managed-service registration is not removed until this plan is approved"
   },
   "preserved": [
     {
-      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service",
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade",
       "reason": "planning only: nothing was removed and nothing was touched"
     }
   ],
@@ -76,6 +76,6 @@
   "limitations": [
     "this uninstaller is the Windows x64 lane of the axiom-cli distribution; other delivery platforms are separate installers"
   ],
-  "generated_at": "2026-09-20T09:58:50Z",
-  "request_id": "axiom-cli-windows-2784-8df16fdc55f2f02"
+  "generated_at": "2026-09-20T09:59:00Z",
+  "request_id": "axiom-cli-windows-19312-8df16fdcb64514f"
 }

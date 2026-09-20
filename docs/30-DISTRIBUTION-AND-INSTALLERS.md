@@ -135,6 +135,12 @@ Records `evidence/J-004/`: `j004-run-transcript.txt`, `j004-step-records.json`,
 `j004-artifact-digests.txt`, `j004-schema-validation.txt`, `envelopes\` (install-result envelopes,
 validated against the schema) and `release-set-reports\`.
 
+The harness is self-cleaning: the legs that deliberately leave an installation behind
+(`L07b` forced unowned install, `L08b` allowed downgrade, `L09` interrupted-install recovery) are
+uninstalled by explicit `L17a-c` cleanup legs, and `L17-cleanup-path-hygiene` asserts that no
+`_j004-run` per-user PATH entry survives. Run it twice in a row: the second run proves the cleanup is
+idempotent and a previously leaked PATH entry cannot be re-masked by the pre-run PATH guard.
+
 ### Verified vs unverified on Windows x64
 
 Verified by the executed harness on Windows 11 Pro 10.0.26200 x64: per-user install, idempotent

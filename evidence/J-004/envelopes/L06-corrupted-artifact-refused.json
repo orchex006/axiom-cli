@@ -20,13 +20,13 @@
   "bin_dir": null,
   "dry_run": true,
   "mutated": false,
-  "plan_digest": "b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a",
+  "plan_digest": "5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d",
   "approved_digest": null,
   "transaction_id": null,
   "interrupted_install_recovered": false,
   "release_set": {
     "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-corrupt\\release-set.json",
-    "sha256": "b787b567bfac1e654bb499714b64bcf945b5e20b37230ba6457d06ad8ea0bf3a",
+    "sha256": "5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d",
     "release_version": "0.0.0-dev"
   },
   "artifacts": [],
@@ -68,6 +68,6 @@
     "this release set is assembled from a local build; it is not a published release and carries no signature. Publication, signing and the update channel are owned by separate tasks",
     "the installation engine, the daemon service lifecycle and the per-component update transaction stay owned by axiom-graphd; this release set wraps them and never re-implements them"
   ],
-  "generated_at": "2026-09-20T09:51:51Z",
-  "request_id": "axiom-cli-windows-38484-8df16fccb912d16"
+  "generated_at": "2026-09-20T09:58:25Z",
+  "request_id": "axiom-cli-windows-40168-8df16fdb6ae3232"
 }

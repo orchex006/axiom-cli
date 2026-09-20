@@ -579,6 +579,27 @@ $l16c = Invoke-Leg -Leg 'L16c-uninstall-removes-service' -Class 'boundary' -Scri
 Assert-Axiom -Leg 'L16c' -Condition ($l16c.envelope.service_registration.removed -eq $true) -Detail 'the envelope reports the service registration removed'
 Assert-Axiom -Leg 'L16c' -Condition ($null -eq (Get-ScheduledTask -TaskName $serviceTaskName -ErrorAction SilentlyContinue)) -Detail 'Get-ScheduledTask no longer finds the task'
 
+Write-Log ''
+Write-Log '=== harness cleanup: uninstall the installations the earlier legs left behind ==='
+
+# L07b, L08b and L09 each leave a real installation behind. Uninstall them explicitly instead of
+# relying on the final PATH guard to mask a leaked per-user PATH entry: a guard that restores
+# whatever it saw before the run would otherwise preserve a leak from an earlier run forever.
+foreach ($leftover in @(
+        [ordered]@{ prefix = 'L17a-cleanup-unowned'; root = $rootUnowned },
+        [ordered]@{ prefix = 'L17b-cleanup-downgrade'; root = $rootDowngrade },
+        [ordered]@{ prefix = 'L17c-cleanup-recover'; root = $rootRecover })) {
+    $cleanupPlan = Invoke-Leg -Leg ($leftover.prefix + '-plan') -Class 'boundary' -ScriptPath $uninstallScript `
+        -ScriptArgs @('-InstallRoot', $leftover.root, '-Json') -Expect 0
+    $cleanupApply = Invoke-Leg -Leg ($leftover.prefix + '-apply') -Class 'boundary' -ScriptPath $uninstallScript `
+        -ScriptArgs @('-InstallRoot', $leftover.root, '-Apply', '-ApproveDigest', ([string]$cleanupPlan.envelope.plan_digest), '-Json') -Expect 0
+    Assert-Axiom -Leg ($leftover.prefix) -Condition ($cleanupApply.envelope.outcome -eq 'removed') -Detail ('the leftover installation at {0} was removed' -f (Split-Path -Leaf $leftover.root))
+}
+
+$hygienePath = Get-AxiomUserPathSnapshot
+$leakedEntries = @(($hygienePath.value -split ';') | Where-Object { $_ -and $_.TrimEnd('\').StartsWith($ScratchRoot, [System.StringComparison]::OrdinalIgnoreCase) })
+Assert-Axiom -Leg 'L17-cleanup-path-hygiene' -Condition ($leakedEntries.Count -eq 0) -Detail ('no per-user PATH entry under the scratch root survives the harness (found {0})' -f $leakedEntries.Count)
+
 $machinePathAfterRun = Get-AxiomMachinePathSnapshot
 Assert-Axiom -Leg 'L17-machine-path' -Condition ($machinePathBeforeRun -eq $machinePathAfterRun) -Detail 'the machine-wide PATH is byte-identical before and after the whole run'
 
