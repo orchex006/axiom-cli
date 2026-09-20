@@ -181,30 +181,40 @@ NOTES:
 /// Verb-specific help text, printed by `axiom-cli <verb> --help`.
 pub fn verb_help(verb: Verb) -> String {
     let options = match verb {
-        Verb::Install => "\
+        Verb::Install => {
+            "\
     --dry-run                  Validate and report the plan without changing the host
     --apply                    Apply the transaction; requires --approve-digest
     --approve-digest <sha256>  Approval bound to the canonical plan digest
     --from <path>              Read the release set from a local path instead of the channel
-",
-        Verb::Update => "\
+"
+        }
+        Verb::Update => {
+            "\
     update check [--all]                                  Report available transitions
     update plan --to <version> [--out <file>]             Write the canonical plan
     update apply --plan <file> --approve-digest <sha256>  Apply the approved plan
     update rollback --transaction <id>                    Restore the previous generation
-",
-        Verb::Doctor => "\
+"
+        }
+        Verb::Doctor => {
+            "\
     --all  Probe every declared component, not only the pinned set
-",
-        Verb::Version => "\
+"
+        }
+        Verb::Version => {
+            "\
     --all  Report core, MCP, skills and pinned spec provenance
-",
-        Verb::Uninstall => "\
+"
+        }
+        Verb::Uninstall => {
+            "\
     --dry-run                  Report what would be removed without removing it
     --apply                    Remove owned binaries and startup entries; requires --approve-digest
     --approve-digest <sha256>  Approval bound to the canonical plan digest
     --purge-data               Also delete workspace data; needs --apply and separate approval
-",
+"
+        }
     };
     format!(
         "\
@@ -318,9 +328,7 @@ where
             } else {
                 match Verb::from_name(&token) {
                     Some(found) => verb = Some(found),
-                    None => {
-                        return fail(json, verbose, None, &format!("unknown verb `{token}`"))
-                    }
+                    None => return fail(json, verbose, None, &format!("unknown verb `{token}`")),
                 }
             }
         } else if token == "--json" {
