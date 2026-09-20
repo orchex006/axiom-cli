@@ -4,6 +4,21 @@
 
 V2 seed adopts `2.0.0-draft.1`, `.axiom` workspace layout and component-owned docs/tests. Distribution, installer and update-channel implementation and platform certification are pending.
 
+### W10-DOCTRUTH — documentation links that escaped the repository
+
+- Removed the four relative Markdown links that used `../../../` and resolved outside `axiom-cli`, in
+  `docs/30-DISTRIBUTION-AND-INSTALLERS.md`, `docs/40-CLI-ARGV-SURFACE.md` and
+  `docs/60-LINUX-AND-MACOS-ARM64.md`. They pointed at `contracts/axiom-cli-distribution-contract.md` and
+  `docs/16-CLI-AND-CONTROL-API.md` relative to a parent of the repository, which exists on no machine.
+- Both documents are canonical in `axiom-specs` and cannot be linked relatively from this repository, so
+  each reference is now plain text naming the canonical path — `axiom-specs/contracts/axiom-cli-distribution-contract.md`
+  and `axiom-specs/docs/16-CLI-AND-CONTROL-API.md` — matching the existing convention in
+  `packaging/macos-arm64/README.md` and `docs/50-CONTAINER-CHANNEL.md`. No URL was invented and no
+  unresolvable link remains.
+- Verified: every remaining relative link in the repository's Markdown resolves inside `axiom-cli`, and both
+  named `axiom-specs` documents exist at the sibling checkout. Documentation-only change; no entrypoint,
+  installer, container or channel behavior changed. `spec.lock.json` is still unset.
+
 ### J-006 — container delivery channel (`ghcr.io/orchex006/axiom-cli`)
 
 - Added `containers/Dockerfile`: a builder and a runtime stage, both base images pinned by digest (`rust:1.85-slim-bookworm`, `debian:bookworm-slim`), a complete OCI label set (title, description, source, url, documentation, version, revision, created, licences), the non-native delimiters `io.orchex006.axiom.channel` and `io.orchex006.axiom.native-evidence="false"`, and a non-root runtime user `axiom` (uid/gid `10001`). The release build is `cargo build --release --locked --offline`, so it fetches nothing beyond the two pinned base images.
