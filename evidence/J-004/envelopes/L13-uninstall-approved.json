@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "spec_version": "2.0.0-draft.1",
+  "envelope_kind": "install-result",
+  "operation": "uninstall",
+  "outcome": "removed",
+  "exit_code": 0,
+  "status": "ok",
+  "message": "removed release 0.0.0-dev from D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main: 4 item(s) removed, user data preserved",
+  "retryable": false,
+  "platform": "windows-x64",
+  "host": {
+    "os": "windows",
+    "arch": "x86_64",
+    "windows_version": "Microsoft Windows 11 Pro 10.0.26200",
+    "powershell_version": "5.1.26100.9444",
+    "session_elevated": true
+  },
+  "install_root": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main",
+  "bin_dir": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin",
+  "dry_run": false,
+  "mutated": true,
+  "plan_digest": "e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a",
+  "approved_digest": "e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a",
+  "transaction_id": "txn-20260920T095206-b6bd68f2",
+  "interrupted_install_recovered": false,
+  "release_set": null,
+  "artifacts": [
+    {
+      "name": "axiom-cli.exe",
+      "component": "axiom-cli",
+      "version": "0.0.0-dev",
+      "sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2",
+      "size_bytes": 159232,
+      "verified": true,
+      "installed_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin\\axiom-cli.exe",
+      "source": "local-build"
+    }
+  ],
+  "unverified_artifacts": [],
+  "components": [
+    {
+      "component": "axiom-cli",
+      "installed_version": "0.0.0-dev",
+      "artifact_sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2",
+      "version_source": "axiom-cli-install-state (recorded by the install transaction)"
+    }
+  ],
+  "refusals": [],
+  "path_rule": {
+    "scope": "user",
+    "registry_key": "HKCU\\Environment",
+    "value_name": "Path",
+    "entry": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin",
+    "applied": false,
+    "machine_wide_change": false,
+    "previous_present": true
+  },
+  "service_registration": {
+    "kind": "none",
+    "task_name": null,
+    "owner": "axiom-cli",
+    "registered": false,
+    "removed": false,
+    "reason": "the recorded managed-service registration is removed by uninstall; the daemon itself is owned by axiom-graphd"
+  },
+  "preserved": [
+    {
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main",
+      "reason": "the per-user install root is preserved by default; pass -PurgeData (a separate plan digest) to remove it"
+    },
+    {
+      "path": "<project>\\.axiom\\graph",
+      "reason": "the per-project graph output root is user data; uninstall never touches it and never recursively deletes .axiom"
+    },
+    {
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\install-manifest.json",
+      "reason": "the shared per-user install manifest is preserved when other components still have rows in it"
+    }
+  ],
+  "removed": [
+    {
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin\\axiom-cli.exe",
+      "kind": "executable"
+    },
+    {
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\cli\\generations\\0.0.0-dev",
+      "kind": "generation"
+    },
+    {
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\bin",
+      "kind": "path-entry"
+    },
+    {
+      "path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\\cli",
+      "kind": "state-directory"
+    }
+  ],
+  "elevation_required": false,
+  "shell": "windows-powershell",
+  "limitations": [
+    "this uninstaller is the Windows x64 lane of the axiom-cli distribution; other delivery platforms are separate installers"
+  ],
+  "generated_at": "2026-09-20T09:52:06Z",
+  "request_id": "axiom-cli-windows-34360-8df16fcd4891acb"
+}

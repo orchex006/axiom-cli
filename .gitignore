@@ -7,3 +7,8 @@ target/
 .axiom/tmp/
 .axiom/graph/**/live/
 .axiom/graph/**/.staging/
+
+# Local scratch. _j004-run is the working directory of tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1
+# and _probe holds throwaway investigation scripts; neither is a deliverable and neither is committed.
+_j004-run/
+_probe/

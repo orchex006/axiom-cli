@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:axiom:cli:install-result:1",
+  "title": "install-result",
+  "description": "Machine-readable envelope emitted by an axiom-cli install or uninstall transaction on any delivery platform. Owned by axiom-cli. The distribution contract (axiom-specs/contracts/axiom-cli-distribution-contract.md section 8 rule 6) requires that the envelope name every installed artifact, its version and its sha256; this schema is that envelope. Platform-specific installers emit the same shape so a Windows, macOS or Linux install is comparable without translation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "spec_version",
+    "envelope_kind",
+    "operation",
+    "outcome",
+    "exit_code",
+    "status",
+    "message",
+    "retryable",
+    "platform",
+    "host",
+    "install_root",
+    "bin_dir",
+    "dry_run",
+    "mutated",
+    "plan_digest",
+    "approved_digest",
+    "transaction_id",
+    "interrupted_install_recovered",
+    "release_set",
+    "artifacts",
+    "unverified_artifacts",
+    "components",
+    "refusals",
+    "path_rule",
+    "service_registration",
+    "preserved",
+    "removed",
+    "elevation_required",
+    "shell",
+    "limitations",
+    "generated_at",
+    "request_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "spec_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "envelope_kind": {
+      "const": "install-result"
+    },
+    "operation": {
+      "enum": ["install", "uninstall"]
+    },
+    "outcome": {
+      "enum": [
+        "planned",
+        "installed",
+        "already_installed",
+        "recovered_and_installed",
+        "refused",
+        "rolled_back",
+        "removed",
+        "not_removed"
+      ]
+    },
+    "exit_code": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "enum": ["ok", "refused", "error"]
+    },
+    "message": {
+      "type": "string"
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "platform": {
+      "enum": ["windows-x64"]
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "arch", "windows_version", "powershell_version", "session_elevated"],
+      "properties": {
+        "os": { "enum": ["windows"] },
+        "arch": { "type": "string", "minLength": 1 },
+        "windows_version": { "type": "string", "minLength": 1 },
+        "powershell_version": { "type": "string", "minLength": 1 },
+        "session_elevated": { "type": "boolean" }
+      }
+    },
+    "install_root": { "type": ["string", "null"] },
+    "bin_dir": { "type": ["string", "null"] },
+    "dry_run": { "type": "boolean" },
+    "mutated": { "type": "boolean" },
+    "plan_digest": {
+      "type": ["string", "null"],
+      "pattern": "^([0-9a-f]{64})?$"
+    },
+    "approved_digest": {
+      "type": ["string", "null"],
+      "pattern": "^([0-9a-f]{64})?$"
+    },
+    "transaction_id": { "type": ["string", "null"] },
+    "interrupted_install_recovered": { "type": "boolean" },
+    "release_set": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["path", "sha256", "release_version"],
+      "properties": {
+        "path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "release_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "component", "version", "sha256", "size_bytes", "verified", "installed_path", "source"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "component": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "verified": { "const": true },
+          "installed_path": { "type": ["string", "null"] },
+          "source": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "unverified_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "component", "reason"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "component": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component", "installed_version", "artifact_sha256", "version_source"],
+        "properties": {
+          "component": { "type": "string", "minLength": 1 },
+          "installed_version": { "type": ["string", "null"] },
+          "artifact_sha256": { "type": ["string", "null"] },
+          "version_source": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "refusals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check", "artifact", "expected_sha256", "actual_sha256", "reason"],
+        "properties": {
+          "check": { "type": "string", "minLength": 1 },
+          "artifact": { "type": "string", "minLength": 1 },
+          "expected_sha256": { "type": ["string", "null"] },
+          "actual_sha256": { "type": ["string", "null"] },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "path_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "registry_key", "value_name", "entry", "applied", "machine_wide_change", "previous_present"],
+      "properties": {
+        "scope": { "enum": ["user", "none"] },
+        "registry_key": { "type": "string" },
+        "value_name": { "type": "string" },
+        "entry": { "type": "string" },
+        "applied": { "type": "boolean" },
+        "machine_wide_change": { "const": false },
+        "previous_present": { "type": "boolean" }
+      }
+    },
+    "service_registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "task_name", "owner", "registered", "removed", "reason"],
+      "properties": {
+        "kind": { "enum": ["none", "scheduled-task-at-logon"] },
+        "task_name": { "type": ["string", "null"] },
+        "owner": { "type": ["string", "null"] },
+        "registered": { "type": "boolean" },
+        "removed": { "type": "boolean" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "preserved": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "reason"],
+        "properties": {
+          "path": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "removed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind"],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "enum": ["executable", "generation", "path-entry", "service-registration", "staging", "state-directory", "install-root"] }
+        }
+      }
+    },
+    "elevation_required": { "const": false },
+    "shell": { "type": "string", "minLength": 1 },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "request_id": { "type": "string", "minLength": 1 }
+  }
+}

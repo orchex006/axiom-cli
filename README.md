@@ -27,5 +27,17 @@ wired to the engine, so each one answers `NotReady` (exit `4`) with a stated rea
 empty success. See [docs/40-CLI-ARGV-SURFACE.md](docs/40-CLI-ARGV-SURFACE.md). The installation
 engine stays in `axiom-graphd`; nothing here installs, updates or removes anything yet.
 
+Card `J-004` added the first real, executed distribution slice: a per-user Windows x64 installer and
+uninstaller plus the release-set packaging step, all runnable from the shipped Windows shell with no
+WSL, Bash, Docker or elevation. `installers/windows/` holds `AxiomCli.Windows.Common.ps1`,
+`Install-AxiomCli.ps1` and `Uninstall-AxiomCli.ps1`; `packaging/windows/Build-ReleaseSet.ps1` produces
+the release set whose sha256 is the single approval digest, and `packaging/install-result.schema.json`
+is the install-result envelope schema. `tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1`
+executes 26 legs and writes `evidence/J-004/`. See
+[docs/30-DISTRIBUTION-AND-INSTALLERS.md](docs/30-DISTRIBUTION-AND-INSTALLERS.md). The released
+`axiom-cli.exe` itself is still an argv surface whose verbs answer `NotReady`; the installer verifies
+and installs artifacts but `axiom-graphd` core artifacts are not built yet, so they stay recorded as
+unverified rather than installed. `windows-x64` is not certified.
+
 `spec.lock.json` is still unset: this seed ships only `spec.lock.example.json`, and a verified
 immutable `axiom-specs` pin has not been recorded.
