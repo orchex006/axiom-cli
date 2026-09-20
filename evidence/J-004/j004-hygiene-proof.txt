@@ -1,0 +1,22 @@
+J-004 host hygiene proof (real, this host, after two consecutive harness runs)
+generated_at: 2026-09-20T10:00:40Z
+host: Microsoft Windows 11 Pro 10.0.26200 (x86_64)
+
+command (run twice, back to back):
+  powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\tests\windows\Invoke-AxiomCliWindowsDistributionTests.ps1
+
+run 1: exit 0, RESULT: PASS (32 legs), L18 validated 30 envelopes
+run 2: exit 0, RESULT: PASS (32 legs), L18 validated 30 envelopes
+
+L17-cleanup-path-hygiene: PASS (no per-user PATH entry under _j004-run survives)
+L17-machine-path:          PASS (machine-wide PATH byte-identical before/after)
+
+post-run host state:
+  HKCU\Environment\Path entries matching *_j004-run*: 0
+  AxiomCli* scheduled tasks remaining: 0
+
+note: an earlier run had leaked
+  D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\install-recover\bin
+into HKCU\Environment\Path, which the pre-run PATH guard faithfully restored on every later run.
+The leaked entry was removed manually, the harness was extended with the L17a-c cleanup legs plus the
+L17-cleanup-path-hygiene assertion, and two consecutive runs now leave the host with zero leaks.

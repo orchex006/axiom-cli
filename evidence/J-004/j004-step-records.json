@@ -1,0 +1,311 @@
+{
+  "schema_version": 1,
+  "host": {
+    "os": "windows",
+    "arch": "x86_64",
+    "windows_version": "Microsoft Windows 11 Pro 10.0.26200",
+    "powershell_version": "5.1.26100.9444",
+    "session_elevated": true
+  },
+  "shell": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "repo_revision": "75b919b9f9a789bf99af99180e2c55645f17b142",
+  "steps": [
+    {
+      "leg": "B01-build-main",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\packaging\\windows\\Build-ReleaseSet.ps1\" \"-OutDir\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\" \"-CliExe\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\target\\release\\axiom-cli.exe\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "assembled",
+      "stdout_sha256": "da61b1c5810bf10bc9b9decbf99e2d5dbb1564e167572bbc2f12b13b5468a9e7",
+      "stderr": ""
+    },
+    {
+      "leg": "B02-build-alpha",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\packaging\\windows\\Build-ReleaseSet.ps1\" \"-OutDir\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-alpha\" \"-CliExe\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\target\\release\\axiom-cli.exe\" \"-Version\" \"0.0.0-alpha\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "assembled",
+      "stdout_sha256": "6c0f86adb3b0d657110915d3db64a9eb710a8b093898edb5cc6d8b2e46df3625",
+      "stderr": ""
+    },
+    {
+      "leg": "B03-build-service",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\packaging\\windows\\Build-ReleaseSet.ps1\" \"-OutDir\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-service\" \"-CliExe\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\target\\release\\axiom-cli.exe\" \"-Json\" \"-ServiceTaskName\" \"AxiomCliJ004HarnessService\" \"-ServiceArgv\" \"--help\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "assembled",
+      "stdout_sha256": "cd9ff0cb0ae04dfab9eed95167332c48324e5e2f284ff90fe5f8843b82e0f446",
+      "stderr": ""
+    },
+    {
+      "leg": "L01-install-plan-only",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "a24a318681b893cd7144171b13caa99602ed8e7b7b7b7ef2bb8eabd8e58c57dd",
+      "stderr": "powershell.exe : plan: release 0.0.0-dev, 1 artifact(s), platform windows-x64\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (plan: release 0...orm windows-x64:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest 5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d"
+    },
+    {
+      "leg": "L02-apply-without-approval",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Apply\" \"-Json\"",
+      "exit_code": 2,
+      "envelope_valid": true,
+      "outcome": "refused",
+      "stdout_sha256": "993d49c1334eb80762672d29faafe277d57c350baf8bf9f54ba2cccc5079c48f",
+      "stderr": ""
+    },
+    {
+      "leg": "L03-apply-wrong-approval",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Apply\" \"-ApproveDigest\" \"0000000000000000000000000000000000000000000000000000000000000000\" \"-Json\"",
+      "exit_code": 5,
+      "envelope_valid": true,
+      "outcome": "refused",
+      "stdout_sha256": "6d3ffb5da5026dd8d44d49cae5d14155be224d834b075f9024e831c1bc7ac0f6",
+      "stderr": ""
+    },
+    {
+      "leg": "L04-apply-approved",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "aa444b12be0baa5c84b54b00a2b290bc6a672f78be65349f48197cf9ccfcf387",
+      "stderr": ""
+    },
+    {
+      "leg": "L05-install-idempotent-rerun",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "already_installed",
+      "stdout_sha256": "f2e2b24bdea06f97fb39c4507ad8f42002d8d95aa2151287900ed099fb7e772c",
+      "stderr": ""
+    },
+    {
+      "leg": "L06-corrupted-artifact-refused",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-corrupt\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-corrupt\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 9,
+      "envelope_valid": true,
+      "outcome": "refused",
+      "stdout_sha256": "3fda12a4f4684344039128d2182a2384e7c7e30572ba5494db1a9774c3206bc6",
+      "stderr": ""
+    },
+    {
+      "leg": "L07-unowned-entrypoint-conflict",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-unowned\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 6,
+      "envelope_valid": true,
+      "outcome": "refused",
+      "stdout_sha256": "1a253cd73562c8e52708ab2bea579d5045720b364f8c9aeec5c706d4cd9ac9f9",
+      "stderr": ""
+    },
+    {
+      "leg": "L07b-unowned-entrypoint-forced",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-unowned\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Force\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "34c3c9b045fc19f4cbab972a913d5207129c498a8f98753adbb3d85ebb214e10",
+      "stderr": ""
+    },
+    {
+      "leg": "L08-setup-install-main",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "89876f27979a41a9a80aa8033eecfeca8d6801c0b655a7006db6cb2fcbba8fb3",
+      "stderr": ""
+    },
+    {
+      "leg": "L08-downgrade-refused",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-alpha\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\" \"-Apply\" \"-ApproveDigest\" \"dd75815285ec6f02b44bcebb2be5512b13655f8dd4a0e37cb24175492780ad77\" \"-Json\"",
+      "exit_code": 9,
+      "envelope_valid": true,
+      "outcome": "refused",
+      "stdout_sha256": "da722f9b4dfad8a3356225b9dc7ec9a9c4d25b3f4427131965c652a915c464ff",
+      "stderr": ""
+    },
+    {
+      "leg": "L08b-downgrade-allowed",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-alpha\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\" \"-Apply\" \"-ApproveDigest\" \"dd75815285ec6f02b44bcebb2be5512b13655f8dd4a0e37cb24175492780ad77\" \"-AllowDowngrade\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "1c3ef1700a1c0199708d798e69faaf1a912f9a6998bc53f1f12a741f962c964c",
+      "stderr": ""
+    },
+    {
+      "leg": "L09-interrupted-install-recovery",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "recovered_and_installed",
+      "stdout_sha256": "322bdcb4fd9014efae005f2b70a0c4d0a1ac9e5d3c192d1eb0b8ae95583ab95b",
+      "stderr": "powershell.exe : recovered an interrupted install from \r\nD:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\\cli\\journal.json\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (recovered an in...li\\journal.json:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError"
+    },
+    {
+      "leg": "L10-transaction-lock-held",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-lock\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 10,
+      "envelope_valid": true,
+      "outcome": "refused",
+      "stdout_sha256": "29bf005f6f15cb0f7bf48788dffad5b3a4680f9d2d52f10e48d9aa7bd2b7dbcd",
+      "stderr": ""
+    },
+    {
+      "leg": "L11-uninstall-plan-only",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "57bd6ee9f15f2161aa6bbfb1f52dca7b2d71c6e381bc2bc111e11093ceb14394",
+      "stderr": "powershell.exe : uninstall plan for release 0.0.0-dev at D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (uninstall plan ...un\\install-main:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a"
+    },
+    {
+      "leg": "L12-uninstall-wrong-approval",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Apply\" \"-ApproveDigest\" \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\" \"-Json\"",
+      "exit_code": 5,
+      "envelope_valid": true,
+      "outcome": "not_removed",
+      "stdout_sha256": "a56c3ea1f136dbd5a2e79c8d0ecb71f88e50667c61590592ebb2120a7b7eeda6",
+      "stderr": ""
+    },
+    {
+      "leg": "L13-uninstall-approved",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Apply\" \"-ApproveDigest\" \"e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "removed",
+      "stdout_sha256": "ce295386ee2b9fed69d54e71e6b30088abd8d19731dbd2d4dd027e6d031244d7",
+      "stderr": ""
+    },
+    {
+      "leg": "L14-uninstall-when-absent",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-main\" \"-Json\"",
+      "exit_code": 3,
+      "envelope_valid": true,
+      "outcome": "not_removed",
+      "stdout_sha256": "39fa5ddbc7c1f1ed5d89c64f0f440a05adc3e3fe9a63dc67a5f5dde1835e54e1",
+      "stderr": ""
+    },
+    {
+      "leg": "L15a-install-for-purge",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-purge\" \"-Apply\" \"-ApproveDigest\" \"5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "43561a56134fef1a63b3f3a8e69ffaa593c19503d43509d81e2e25c817aa8904",
+      "stderr": ""
+    },
+    {
+      "leg": "L15b-purge-plan",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-purge\" \"-PurgeData\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "dc93283ecf12d91d9ea228f256386be5a5220562805767a8675bbf1fbae74a0b",
+      "stderr": "powershell.exe : uninstall plan for release 0.0.0-dev at D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-purge\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (uninstall plan ...n\\install-purge:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest 76ae53a156122f34b4d91baa124e998caa5920ade73600630bb34b005d4ab399"
+    },
+    {
+      "leg": "L15c-purge-approved",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-purge\" \"-PurgeData\" \"-Apply\" \"-ApproveDigest\" \"76ae53a156122f34b4d91baa124e998caa5920ade73600630bb34b005d4ab399\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "removed",
+      "stdout_sha256": "c915806fbc87b9bdf6d52f77c4e34162bfc500b5cb171dc566ce49ec71a9c75e",
+      "stderr": ""
+    },
+    {
+      "leg": "L16a-install-with-service",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" \"-ReleaseSet\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-service\\release-set.json\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service\" \"-Apply\" \"-ApproveDigest\" \"39268bf727442f270173df07b6db0c32a488f5de1ca69809dad127f79c869236\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "cffa6f770e5dca42fce48e9d9a9986279b34bfd64d85f3c1e9ff7354a625b0e5",
+      "stderr": ""
+    },
+    {
+      "leg": "L16b-uninstall-service-plan",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "ae388a53d29965370a78bc4ff8434cb3d46ed464ca2820801ada47fdb58eb365",
+      "stderr": "powershell.exe : uninstall plan for release 0.0.0-dev at D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (uninstall plan ...install-service:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest 06b81257717d6afa8f8ad516dd79f2f63ecd33b417d7d909740b2f86b2cc7817"
+    },
+    {
+      "leg": "L16c-uninstall-removes-service",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-service\" \"-Apply\" \"-ApproveDigest\" \"06b81257717d6afa8f8ad516dd79f2f63ecd33b417d7d909740b2f86b2cc7817\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "removed",
+      "stdout_sha256": "153822eeeabd421d2033a890a7b91516e6a5faf6b9398cc572ad77d1d536800e",
+      "stderr": ""
+    },
+    {
+      "leg": "L17a-cleanup-unowned-plan",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-unowned\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "80c58fc2236a573365a55bc22d5c235c294a738b77526dc0de690414e70cba54",
+      "stderr": "powershell.exe : uninstall plan for release 0.0.0-dev at D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-unowned\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (uninstall plan ...install-unowned:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest 12bd8d8ce2c826fb960a09d9e07d4cf008c70ae5f874483bebb399035eb511c1"
+    },
+    {
+      "leg": "L17a-cleanup-unowned-apply",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-unowned\" \"-Apply\" \"-ApproveDigest\" \"12bd8d8ce2c826fb960a09d9e07d4cf008c70ae5f874483bebb399035eb511c1\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "removed",
+      "stdout_sha256": "d8d99811f1808942d534c170380232fb683a6c35dec958543b87334edd55314b",
+      "stderr": ""
+    },
+    {
+      "leg": "L17b-cleanup-downgrade-plan",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "882c49837764afd52979f37fef5df0729b8c27b84d39f31b3a251b6e1f537e4e",
+      "stderr": "powershell.exe : uninstall plan for release 0.0.0-alpha at \r\nD:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (uninstall plan ...stall-downgrade:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest 8cf32f4e4dac53477b7dc6e41a28d67462fb91419dafc5014ef9e5dbe22bf5e9"
+    },
+    {
+      "leg": "L17b-cleanup-downgrade-apply",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-downgrade\" \"-Apply\" \"-ApproveDigest\" \"8cf32f4e4dac53477b7dc6e41a28d67462fb91419dafc5014ef9e5dbe22bf5e9\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "removed",
+      "stdout_sha256": "60e18eb21e2fabc1653d058e9e6d8b15c9583a344e134259be7da04eee70da16",
+      "stderr": ""
+    },
+    {
+      "leg": "L17c-cleanup-recover-plan",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "planned",
+      "stdout_sha256": "8e4208a05018b94139e1115b07eccdf2e6a2e564d57dbfecc6ea41850a86348b",
+      "stderr": "powershell.exe : uninstall plan for release 0.0.0-dev at D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\r\nAt D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsDistributionTests.ps1:133 char:9\r\n+         & $shippedShell -NoProfile -NonInteractive -ExecutionPolicy B ...\r\n+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (uninstall plan ...install-recover:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\napprove with: -Apply -ApproveDigest 72cf0f68d3cf9c1fd92e3280bf8277eba00421c2fba6ee7986bf7b47dbea85d4"
+    },
+    {
+      "leg": "L17c-cleanup-recover-apply",
+      "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" \"-InstallRoot\" \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-recover\" \"-Apply\" \"-ApproveDigest\" \"72cf0f68d3cf9c1fd92e3280bf8277eba00421c2fba6ee7986bf7b47dbea85d4\" \"-Json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "removed",
+      "stdout_sha256": "0819925ea068278aea2d776f9ad675d06cdc38f896b280bbbf6582e7be7d273c",
+      "stderr": ""
+    },
+    {
+      "leg": "L19-unelevated-install-uninstall",
+      "command": "schtasks(Limited) \"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\tests\\windows\\Invoke-AxiomCliWindowsUnprivilegedLeg.ps1\" -InstallScript \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Install-AxiomCli.ps1\" -UninstallScript \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\installers\\windows\\Uninstall-AxiomCli.ps1\" -ReleaseSet \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json\" -ApproveDigest 5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d -InstallRoot \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\install-unelevated\" -ResultPath \"D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\unelevated-leg-result.json\"",
+      "exit_code": 0,
+      "envelope_valid": true,
+      "outcome": "installed",
+      "stdout_sha256": "1276754d58f40139a8c76119f8e9c45c522179f149500bb509faac936add9fff",
+      "stderr": ""
+    }
+  ]
+}

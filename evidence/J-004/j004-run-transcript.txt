@@ -1,0 +1,207 @@
+J-004 Windows x64 distribution acceptance run
+generated_at: 2026-09-20T09:59:19Z
+host: Microsoft Windows 11 Pro 10.0.26200
+shipped shell: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+harness session elevated: True
+scratch root: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run
+
+leg                                    class     exp act pass outcome
+-------------------------------------- --------- --- --- ---- ----------------------
+B01-build-main                         positive    0   0 yes  assembled
+B02-build-alpha                        positive    0   0 yes  assembled
+B03-build-service                      positive    0   0 yes  assembled
+L01-install-plan-only                  positive    0   0 yes  planned
+L02-apply-without-approval             negative    2   2 yes  refused
+L03-apply-wrong-approval               negative    5   5 yes  refused
+L04-apply-approved                     positive    0   0 yes  installed
+L05-install-idempotent-rerun           boundary    0   0 yes  already_installed
+L06-corrupted-artifact-refused         negative    9   9 yes  refused
+L07-unowned-entrypoint-conflict        negative    6   6 yes  refused
+L07b-unowned-entrypoint-forced         boundary    0   0 yes  installed
+L08-setup-install-main                 boundary    0   0 yes  installed
+L08-downgrade-refused                  negative    9   9 yes  refused
+L08b-downgrade-allowed                 boundary    0   0 yes  installed
+L09-interrupted-install-recovery       boundary    0   0 yes  recovered_and_installed
+L10-transaction-lock-held              negative   10  10 yes  refused
+L11-uninstall-plan-only                positive    0   0 yes  planned
+L12-uninstall-wrong-approval           negative    5   5 yes  not_removed
+L13-uninstall-approved                 boundary    0   0 yes  removed
+L14-uninstall-when-absent              negative    3   3 yes  not_removed
+L15a-install-for-purge                 positive    0   0 yes  installed
+L15b-purge-plan                        positive    0   0 yes  planned
+L15c-purge-approved                    boundary    0   0 yes  removed
+L16a-install-with-service              positive    0   0 yes  installed
+L16b-uninstall-service-plan            positive    0   0 yes  planned
+L16c-uninstall-removes-service         boundary    0   0 yes  removed
+L17a-cleanup-unowned-plan              boundary    0   0 yes  planned
+L17a-cleanup-unowned-apply             boundary    0   0 yes  removed
+L17b-cleanup-downgrade-plan            boundary    0   0 yes  planned
+L17b-cleanup-downgrade-apply           boundary    0   0 yes  removed
+L17c-cleanup-recover-plan              boundary    0   0 yes  planned
+L17c-cleanup-recover-apply             boundary    0   0 yes  removed
+
+legs: 32   failures: 0
+
+--- transcript ---
+host: Microsoft Windows 11 Pro 10.0.26200
+shipped shell: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+harness elevated: True
+scratch: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run
+evidence: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\evidence\J-004
+path snapshot before: present=True kind=ExpandString value='C:\Users\006006\.cargo\bin;C:\Users\006006\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\006006\AppData\Local\Programs\Python\Python313\;C:\Users\006006\AppData\Local\Programs\OpenAI\Codex\bin;D:\Programs\Anaconda;D:\Programs\Anaconda\Library\mingw-w64\bin;D:\Programs\Anaconda\Library\usr\bin;D:\Programs\Anaconda\Library\bin;D:\Programs\Anaconda\Scripts;D:\Programs\Anaconda\bin;D:\Programs\Anaconda\condabin;C:\Windows;C:\Windows\system32;C:\Windows\system32\Wbem;C:\Program Files\Docker\Docker\resources\bin\docker;C:\Program Files\Docker\Docker\resources\bin\docker.exe;C:\Users\006006\.dotnet\tools;C:\Users\006006\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\006006\AppData\Local\Programs\Python\Python38;C:\Users\006006\AppData\Local\Programs\Python\Python38\Scripts;C:\Users\006006\AppData\Local\Microsoft\WindowsApps;C:\Users\006006\.dotnet\tools;C:\Users\006006\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;D:\Projects\46_ArgiMap\Projects\AgriMapPlatform\standards\tools\installation\installation-script;D:\Projects\46_ArgiMap\Projects\AgriMapPlatform\standards\tools\installation\installation-script\;C:\Users\006006\AppData\Local\Microsoft\WinGet\Links;C:\Users\006006\.local\bin;C:\Users\006006\AppData\Roaming\Python\Python313\Scripts;C:\Users\006006\AppData\Local\Programs\glab;C:\Users\006006\AppData\Roaming\npm;C:\Users\006006\bin'
+
+=== build release sets ===
+[PASS] positive leg=B01-build-main                     expected=0   actual=0   outcome=assembled 
+main release set: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\release-set.json
+main plan digest: 5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d
+[PASS] positive leg=B02-build-alpha                    expected=0   actual=0   outcome=assembled 
+[PASS] positive leg=B03-build-service                  expected=0   actual=0   outcome=assembled 
+corrupted artifact: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-corrupt\axiom-cli.exe (one byte flipped at offset 1000)
+
+=== positive legs ===
+[PASS] positive leg=L01-install-plan-only              expected=0   actual=0   outcome=planned 
+[PASS] assert L01: outcome is planned
+[PASS] assert L01: mutated is false
+[PASS] assert L01: no install root was created
+[PASS] assert L01: plan digest matches the release set
+[PASS] assert L01: one digest-verified artifact is named
+[PASS] assert L01: artifact sha256 matches the real file
+[PASS] assert L01: diagnostics are on stderr, not stdout
+[PASS] negative leg=L02-apply-without-approval         expected=2   actual=2   outcome=refused 
+[PASS] assert L02: outcome is refused
+[PASS] assert L02: nothing was installed
+[PASS] negative leg=L03-apply-wrong-approval           expected=5   actual=5   outcome=refused 
+[PASS] assert L03: outcome is refused
+[PASS] assert L03: a refusal records expected vs actual digest
+[PASS] positive leg=L04-apply-approved                 expected=0   actual=0   outcome=installed 
+[PASS] assert L04: outcome is installed
+[PASS] assert L04: mutated is true
+[PASS] assert L04: elevation_required is false
+[PASS] assert L04: the per-user PATH rule was applied
+[PASS] assert L04: no machine-wide change
+[PASS] assert L04: entrypoint is installed under bin\
+[PASS] assert L04: installed entrypoint digest matches the envelope
+[PASS] assert L04: install state is recorded
+[PASS] assert L04: install manifest is recorded
+[PASS] assert L04: the user PATH now contains the install bin directory
+[PASS] boundary leg=L05-install-idempotent-rerun       expected=0   actual=0   outcome=already_installed 
+[PASS] assert L05: outcome is already_installed
+[PASS] assert L05: an idempotent re-run mutates nothing
+[PASS] assert L05: the installed entrypoint is byte-identical after the re-run
+
+=== negative legs ===
+[PASS] negative leg=L06-corrupted-artifact-refused     expected=9   actual=9   outcome=refused 
+[PASS] assert L06: a corrupted artifact is refused
+[PASS] assert L06: the refusal names the digest mismatch
+[PASS] assert L06: nothing was installed from a corrupted release set
+[PASS] negative leg=L07-unowned-entrypoint-conflict    expected=6   actual=6   outcome=refused 
+[PASS] assert L07: an unowned file at the entrypoint path is a conflict
+[PASS] assert L07: the unowned file was left untouched
+[PASS] boundary leg=L07b-unowned-entrypoint-forced     expected=0   actual=0   outcome=installed 
+[PASS] assert L07b: -Force replaces the unowned file
+[PASS] assert L07b: the forced install wrote the verified artifact
+
+=== boundary legs ===
+[PASS] boundary leg=L08-setup-install-main             expected=0   actual=0   outcome=installed 
+[PASS] negative leg=L08-downgrade-refused              expected=9   actual=9   outcome=refused 
+[PASS] assert L08: an older release is refused
+[PASS] boundary leg=L08b-downgrade-allowed             expected=0   actual=0   outcome=installed 
+[PASS] assert L08b: -AllowDowngrade installs the older release
+[PASS] assert L08b: the older release version is recorded
+staged an interrupted install at D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\install-recover (journal + leftover generation + leftover staging)
+[PASS] boundary leg=L09-interrupted-install-recovery   expected=0   actual=0   outcome=recovered_and_installed 
+[PASS] assert L09: outcome is recovered_and_installed
+[PASS] assert L09: interrupted_install_recovered is true
+[PASS] assert L09: the interrupted generation was rolled back
+[PASS] assert L09: the interrupted staging directory was dropped
+[PASS] assert L09: the journal was cleared
+[PASS] assert L09: the recovered install wrote the verified artifact
+[PASS] negative leg=L10-transaction-lock-held          expected=10  actual=10  outcome=refused 
+[PASS] assert L10: a held lock refuses the transaction
+[PASS] assert L10: the refusal is marked retryable
+[PASS] assert L10: the held lock was not stolen
+
+=== uninstall legs ===
+[PASS] positive leg=L11-uninstall-plan-only            expected=0   actual=0   outcome=planned 
+[PASS] assert L11: outcome is planned
+[PASS] assert L11: an uninstall plan mutates nothing
+[PASS] assert L11: the entrypoint is still installed after planning
+[PASS] assert L11: the uninstall plan digest is a sha256
+[PASS] negative leg=L12-uninstall-wrong-approval       expected=5   actual=5   outcome=not_removed 
+[PASS] assert L12: a wrong approval removes nothing
+[PASS] assert L12: the entrypoint is still installed after a refused uninstall
+[PASS] boundary leg=L13-uninstall-approved             expected=0   actual=0   outcome=removed 
+[PASS] assert L13: outcome is removed
+[PASS] assert L13: the entrypoint was removed
+[PASS] assert L13: the state directory was removed
+[PASS] assert L13: the install manifest was removed
+[PASS] assert L13: user data under the install root was preserved
+[PASS] assert L13: preserved user data is byte-identical
+[PASS] assert L13: the per-user PATH entry was removed
+[PASS] assert L13: no machine-wide change during uninstall
+[PASS] negative leg=L14-uninstall-when-absent          expected=3   actual=3   outcome=not_removed 
+[PASS] assert L14: a second uninstall reports not_removed
+
+=== purge-data leg (separate approval) ===
+[PASS] positive leg=L15a-install-for-purge             expected=0   actual=0   outcome=installed 
+[PASS] positive leg=L15b-purge-plan                    expected=0   actual=0   outcome=planned 
+[PASS] assert L15b: purge is a different plan and therefore a different approval
+[PASS] boundary leg=L15c-purge-approved                expected=0   actual=0   outcome=removed 
+[PASS] assert L15c: the approved purge reports removed
+[PASS] assert L15c: the install root was removed by the approved purge
+
+=== managed service registration leg ===
+[PASS] positive leg=L16a-install-with-service          expected=0   actual=0   outcome=installed 
+[PASS] assert L16a: the declared scheduled task was registered
+[PASS] assert L16a: the envelope names the registered task
+[PASS] assert L16a: Get-ScheduledTask finds the registered task
+[PASS] assert L16a: the task runs at Limited run level (no elevation)
+[PASS] positive leg=L16b-uninstall-service-plan        expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L16c-uninstall-removes-service     expected=0   actual=0   outcome=removed 
+[PASS] assert L16c: the envelope reports the service registration removed
+[PASS] assert L16c: Get-ScheduledTask no longer finds the task
+
+=== harness cleanup: uninstall the installations the earlier legs left behind ===
+[PASS] boundary leg=L17a-cleanup-unowned-plan          expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L17a-cleanup-unowned-apply         expected=0   actual=0   outcome=removed 
+[PASS] assert L17a-cleanup-unowned: the leftover installation at install-unowned was removed
+[PASS] boundary leg=L17b-cleanup-downgrade-plan        expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L17b-cleanup-downgrade-apply       expected=0   actual=0   outcome=removed 
+[PASS] assert L17b-cleanup-downgrade: the leftover installation at install-downgrade was removed
+[PASS] boundary leg=L17c-cleanup-recover-plan          expected=0   actual=0   outcome=planned 
+[PASS] boundary leg=L17c-cleanup-recover-apply         expected=0   actual=0   outcome=removed 
+[PASS] assert L17c-cleanup-recover: the leftover installation at install-recover was removed
+[PASS] assert L17-cleanup-path-hygiene: no per-user PATH entry under the scratch root survives the harness (found 0)
+[PASS] assert L17-machine-path: the machine-wide PATH is byte-identical before and after the whole run
+
+=== non-elevated leg (AC1: the install path requires no elevation) ===
+[PASS] assert L19: the transaction ran in a non-elevated token (IsInRole Administrator = False)
+[PASS] assert L19: a non-elevated install succeeded (exit 0)
+[PASS] assert L19: the non-elevated install reports outcome=installed
+[PASS] assert L19: the non-elevated install reports elevation_required=false
+[PASS] assert L19: the envelope records a non-elevated session
+[PASS] assert L19: a non-elevated uninstall succeeded (exit 0)
+[PASS] assert L19: the non-elevated uninstall removed the entrypoint
+
+=== artifact digests ===
+J-004 artifact digests (real bytes on this host)
+generated_at: 2026-09-20T09:59:18Z
+
+axiom-cli.exe (source)       size_bytes=159232     sha256=8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\target\release\axiom-cli.exe
+release-set.json (main)      size_bytes=4338       sha256=5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\release-set.json
+axiom-cli.exe (main set)     size_bytes=159232     sha256=8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-main\axiom-cli.exe
+release-set.json (alpha)     size_bytes=4344       sha256=dd75815285ec6f02b44bcebb2be5512b13655f8dd4a0e37cb24175492780ad77 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-alpha\release-set.json
+release-set.json (service)   size_bytes=4371       sha256=39268bf727442f270173df07b6db0c32a488f5de1ca69809dad127f79c869236 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\_j004-run\release-set-service\release-set.json
+install-result.schema.json   size_bytes=7838       sha256=98d0a6498c759996ccdedda12f68da5f40f9ff858ecdc6691d21eef5df09d1e8 path=D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j004\packaging\install-result.schema.json
+
+main plan digest (approval):      5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d
+alpha plan digest (approval):     dd75815285ec6f02b44bcebb2be5512b13655f8dd4a0e37cb24175492780ad77
+service plan digest (approval):   39268bf727442f270173df07b6db0c32a488f5de1ca69809dad127f79c869236
+uninstall plan digest (approval): e107d29256c6564e5f93f85cd141b1eb2d703b11f41a990465cd3baae0c3da9a
+purge plan digest (approval):     76ae53a156122f34b4d91baa124e998caa5920ade73600630bb34b005d4ab399
+
+=== envelope schema validation ===
+[PASS] assert L18-envelope-schema: every captured envelope validates against packaging/install-result.schema.json (30 files)
+
+PATH guard: restored the pre-run HKCU user Path value
+RESULT: PASS (32 legs met their expected exit code and every assertion held)

@@ -1,0 +1,15 @@
+{
+  "outcome": "assembled",
+  "release_set_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-service\\release-set.json",
+  "release_version": "0.0.0-dev",
+  "plan_digest": "39268bf727442f270173df07b6db0c32a488f5de1ca69809dad127f79c869236",
+  "artifact_count": 1,
+  "artifacts": [
+    {
+      "name": "axiom-cli.exe",
+      "version": "0.0.0-dev",
+      "size_bytes": 159232,
+      "sha256": "8064f145f14bc6a66c6f24e9626922e94da65c14db3bf31287be751eef0eeed2"
+    }
+  ]
+}
