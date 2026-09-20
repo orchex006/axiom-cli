@@ -1,0 +1,33 @@
+# J-003 tool versions, host and artifact digests - recorded on this Windows host
+# generated: 2026-09-20T14:19:45.0454302+07:00
+# host OS: Microsoft Windows NT 10.0.26200.0
+# arch: AMD64
+# powershell: 7.6.6
+
+$ rustc --version
+rustc 1.98.1 (48a229cea 2026-09-01)
+$ cargo --version
+cargo 1.98.1 (797e8a9bc 2026-08-05)
+$ rustup --version
+rustup 1.29.1 (d95a37b6a 2026-08-13)
+$ git --version
+git version 2.45.1.windows.1
+$ python --version
+Python 3.13.14
+
+## pinned toolchain statement (Cargo.toml)
+rust-version = "1.85" (MSRV); Cargo.lock commits the resolved graph; verified host compiler rustc 1.98.1
+
+## offline / no-prerequisite evidence
+cargo build and cargo test both ran with --offline: no network fetch, no Node.js, no WSL, no Docker, no Bash and no elevation
+
+## artifact digests
+target/release/axiom-cli.exe sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
+
+## source digests (created/owned by J-003)
+Cargo.toml sha256=7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed
+Cargo.lock sha256=d033fccd3e92182b4688a5c087ee1a52e71e1c61ed48d5b8579870ca1a22aeab
+src/main.rs sha256=22f8254e7f8c232f8c2f22a4b44497f20ba938a9a0f58acf5a123d7df1ece04a
+src/cli.rs sha256=dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf
+tests/argv_surface.rs sha256=c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581
+docs/40-CLI-ARGV-SURFACE.md sha256=5d2454dd510b3d2ec71cfb5c6c2f7f6326cc18f9807f5900961e2a6318a2b384

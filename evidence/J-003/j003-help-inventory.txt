@@ -1,0 +1,230 @@
+# J-003 help inventory - usage text vs dispatcher, real runs
+# generated: 2026-09-20T14:21:16.9466914+07:00
+# usage verbs are parsed from the VERBS: block of --help.
+# the dispatcher is probed with an explicit string[] per verb: exit 4 = accepted and NotReady, 2 = rejected.
+
+=========== axiom-cli --help ===========
+axiom-cli 0.0.0-dev - Axiom ecosystem distribution entrypoint
+
+USAGE:
+    axiom-cli [GLOBAL OPTIONS] <verb> [verb options]
+
+VERBS:
+    install      Install or repair this platform's pinned component set
+    update       check | plan | apply | rollback through the update channel
+    doctor       Report prerequisites, installed versions, digests and target state
+    version      Report installed and available versions per component and per target
+    uninstall    Remove binaries and service registration; preserve user data
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+VERB OPTIONS:
+    install      --dry-run | --apply, --approve-digest <sha256>, --from <path>
+    update       check [--all] | plan --to <version> [--out <file>] |
+                 apply --plan <file> --approve-digest <sha256> |
+                 rollback --transaction <id> [--approve-digest <sha256>]
+    doctor       [--all]
+    version      [--all]
+    uninstall    --dry-run | --apply, --approve-digest <sha256>, [--purge-data]
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    A verb the distribution contract declares but whose production behaviour is not
+    built answers NotReady with exit code 4 and a stated reason. It never returns 0
+    and never emits an empty success envelope.
+    A destructive install/update/uninstall transaction needs its approval bound to the
+    canonical plan digest through --approve-digest <sha256>; supplying --plan is not
+    approval.
+    The installation engine stays owned by axiom-graphd; this layer wraps it.
+
+=========== axiom-cli install --help (exit 0) ===========
+axiom-cli install - Install or repair this platform's pinned component set
+
+USAGE:
+    axiom-cli install [options]
+
+OPTIONS:
+--dry-run                  Validate and report the plan without changing the host
+    --apply                    Apply the transaction; requires --approve-digest
+    --approve-digest <sha256>  Approval bound to the canonical plan digest
+    --from <path>              Read the release set from a local path instead of the channel
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+
+=========== axiom-cli update --help (exit 0) ===========
+axiom-cli update - check | plan | apply | rollback through the update channel
+
+USAGE:
+    axiom-cli update [options]
+
+OPTIONS:
+update check [--all]                                  Report available transitions
+    update plan --to <version> [--out <file>]             Write the canonical plan
+    update apply --plan <file> --approve-digest <sha256>  Apply the approved plan
+    update rollback --transaction <id>                    Restore the previous generation
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+
+=========== axiom-cli doctor --help (exit 0) ===========
+axiom-cli doctor - Report prerequisites, installed versions, digests and target state
+
+USAGE:
+    axiom-cli doctor [options]
+
+OPTIONS:
+--all  Probe every declared component, not only the pinned set
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+
+=========== axiom-cli version --help (exit 0) ===========
+axiom-cli version - Report installed and available versions per component and per target
+
+USAGE:
+    axiom-cli version [options]
+
+OPTIONS:
+--all  Report core, MCP, skills and pinned spec provenance
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+
+=========== axiom-cli uninstall --help (exit 0) ===========
+axiom-cli uninstall - Remove binaries and service registration; preserve user data
+
+USAGE:
+    axiom-cli uninstall [options]
+
+OPTIONS:
+--dry-run                  Report what would be removed without removing it
+    --apply                    Remove owned binaries and startup entries; requires --approve-digest
+    --approve-digest <sha256>  Approval bound to the canonical plan digest
+    --purge-data               Also delete workspace data; needs --apply and separate approval
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+
+=========== extracted usage verbs (order preserved) ===========
+usage_verbs = install, update, doctor, version, uninstall
+count = 5
+
+=========== dispatcher probe ===========
+  install    argv_count=1 usage=listed  dispatch_exit=4
+  update     argv_count=2 usage=listed  dispatch_exit=4
+  doctor     argv_count=1 usage=listed  dispatch_exit=4
+  version    argv_count=1 usage=listed  dispatch_exit=4
+  uninstall  argv_count=1 usage=listed  dispatch_exit=4
+  undocumented verbs advertised by usage: (none)
+  documented verbs missing from usage: (none)

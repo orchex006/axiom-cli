@@ -1,0 +1,93 @@
+# J-003 SUMMARY - create the axiom-cli repository and freeze its argv surface
+# generated: 2026-09-20T14:25:02.2725912+07:00
+
+## scope and identity
+  card: J-003 (Repository: axiom-cli; work package axiom-cli-distribution; requirements R22, R06, R16)
+  worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003
+  branch: feature/j-003-cli-core
+  base revision: 94d4df0a42378bf891be40bbc16116dd6a47ed46 (axiom-cli main; repo was empty except a 13-byte README.md)
+  spec pin: task-provided axiom-specs-main worktree revision 5bbaec0c32e930c339d76b736f4340600e8ff04964
+  remote: origin https://github.com/orchex006/axiom-cli.git (identity matches the workspace AGENTS.md canonical repository)
+  language/runtime: Rust (per repo-seeds/axiom-cli/Development.md and docs/30-DISTRIBUTION-AND-INSTALLERS.md)
+  dependencies: axiom-cli is a THIN distribution layer; the installation engine stays owned by axiom-graphd (I-003/I-004).
+  ledger: J-002/I-003/I-004 are NOT closed, so the J-003 ledger card is not closed here; axiom-specs was not touched.
+
+## what was created
+  seed brought in from axiom-specs/repo-seeds/axiom-cli (byte-preserved):
+    README.md (seed body kept; 'Implemented surface' section appended), Development.md, AGENTS.md, Changelog.md,
+    VERSION, spec.lock.example.json, .gitignore, .gitattributes, .editorconfig,
+    .github/pull_request_template.md, docs/README.md, docs/30-DISTRIBUTION-AND-INSTALLERS.md
+  new for J-003:
+    Cargo.toml, Cargo.lock, src/main.rs, src/cli.rs, tests/argv_surface.rs, docs/40-CLI-ARGV-SURFACE.md
+
+## AC1 -> evidence
+  AC1.1 Rust binary 'axiom-cli' builds from the pinned toolchain with no mandatory Node/WSL/Docker/Bash/elevation
+        cargo clean; cargo build --offline; cargo build --release --offline   -> exit 0, 0 warnings
+        cargo metadata --offline -> resolved package graph = axiom-cli 0.0.0-dev only (no third-party deps)
+        artifact target/release/axiom-cli.exe 159232 bytes sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
+        (see j003-build.txt, j003-tool-versions.txt)
+  AC1.2 '--help' lists install, update, doctor, version and uninstall
+        axiom-cli --help -> exit 0; usage_verbs = install, update, doctor, version, uninstall (count 5)
+        undocumented verbs advertised by usage: (none); documented verbs missing from usage: (none)   (see j003-help-inventory.txt)
+  AC1.3 '--json' writes exactly one JSON object to stdout, diagnostics on stderr
+        envelope {code,status,message,retryable,details,request_id}; covered by json_mode_writes_exactly_one_object_on_every_path
+        and validation_in_json_mode_carries_the_canonical_envelope (11 passed / 0 failed)
+  AC1.4 every documented verb is reachable from argv
+        every_documented_verb_is_reachable_from_argv; argv matrix rows for install/update/doctor/version/uninstall  (see j003-argv-matrix.txt)
+  AC1.5 unknown verb / missing option value / invalid flag combination -> validation exit code
+        cases 33-41 return exit=2 (validation); covered by validation_defects_exit_two
+  AC1.6 an unbuilt verb answers NotReady with a stated reason instead of an empty success
+        every verb dispatches exit=4 with status not_ready, retryable=false, a stated reason and engine_owner=axiom-graphd;
+        no verb returns 0. Rule pinned by unbuilt_verb_never_answers_success_and_states_a_reason.
+  AC1.7 removing a verb from the dispatcher while leaving it in the usage text, or the reverse, fails the test
+        mutation 1 (dispatcher line removed) -> cargo test exit 101, 7 failed / 4 passed, byte-restored -> green
+        mutation 2 (usage row removed)      -> cargo test exit 101, 2 failed / 9 passed, byte-restored -> green
+        restored src/cli.rs sha256 = dc1dd799...cf (byte-identical to baseline)   (see j003-negative-drift.txt)
+  AC1.8 the distribution layer delegates to axiom-graphd and re-implements no installation behaviour
+        src/cli.rs contains no installer/updater/service logic; every dispatch path emits engine_owner=axiom-graphd and
+        'Nothing was installed, repaired or downloaded.' No network, filesystem or service write occurs in this slice.
+
+## AC2 -> evidence
+  AC2.1 positive/negative/boundary checks against the real argv surface, with actual command output + exit codes
+        j003-argv-matrix.txt: 41 real invocations of target/release/axiom-cli.exe on this host
+        exit counts: 0=7, 2=17, 4=17  (help paths 0; validation defects 2; unbuilt verbs NotReady 4)
+  AC2.2 a verb that stays NotReady is recorded as unbuilt, never turned into a success envelope
+        j003-help-inventory.txt dispatch_exit=4 for all five verbs; SUMMARY and Changelog.md J-003 section state this.
+
+## exact commands and exit codes (this host)
+  cargo clean                                                                         exit 0
+  cargo build --offline                                                               exit 0  (0 warnings)
+  cargo build --release --offline                                                     exit 0  (0 warnings)
+  cargo test --offline                                                                exit 0  (11 passed, 0 failed)
+  cargo test --offline --locked                                                       exit 0  (11 passed, 0 failed)
+  target\release\axiom-cli.exe --help                                                 exit 0
+  target\release\axiom-cli.exe <41 argv cases>                                        exit 0/2/4 (see matrix)
+  mutation -> cargo test --offline                                                    exit 101 (expected); restore -> exit 0
+  (full literal command lines and captured stdout/stderr are in the evidence files)
+
+## verification summary
+  cargo test: 11 passed, 0 failed across 2 suites (1 unit suite with 0 tests, 1 integration suite tests\argv_surface.rs)
+  all tests run against the real built target\debug\axiom-cli.exe via CARGO_BIN_EXE_axiom-cli
+  negative/drift regression: 2 independent mutations both fail the suite; byte-restore verified by sha256 twice
+
+## limitations and blockers (real, not assumed)
+  1. All five verbs remain NotReady (exit 4). The engine handoff depends on I-003/I-004 and the channel manifest on J-007,
+     which are not available here. No install/update/uninstall behaviour exists yet.
+  2. spec.lock.json is absent and unpinned; spec.lock.example.json is explicitly not a valid pin. The spec revision used is
+     5bbaec0c32e930c339d76b736f4340600e8ff04964 (task-provided axiom-specs-main worktree).
+  3. Only a windows-x64 native run is recorded. No macOS/Linux/WSL/container evidence and no platform certification.
+  4. VERSION stays 0.0.0-dev; no release version, tag, release, or publish is produced by this card.
+  5. This is a LOCAL commit only on feature/j-003-cli-core: nothing was pushed, merged, rebased, tagged or force-pushed.
+  6. specctl begin/validate/complete was NOT run: specctl lives in axiom-specs, which this task must not touch.
+     The orchestrator closes the J-003 ledger card later.
+
+## evidence files
+  j003-repo-inventory.txt  file tree + sizes + sha256 (excludes target/, .git, evidence/; evidence digests listed inside)
+  j003-build.txt           clean offline debug+release build, warnings, artifact digest, package graph
+  j003-tests.txt           exact test counts, per-test names, reproducibility run, skipped legs
+  j003-argv-matrix.txt     41 real argv -> exit -> stdout/stderr rows
+  j003-help-inventory.txt  usage_verbs vs dispatcher vs argv reachability
+  j003-negative-drift.txt  mutate -> fail -> byte-restore -> green with sha256 proof
+  j003-tool-versions.txt   host, toolchain, source + artifact digests
+  SUMMARY.txt              this file
+

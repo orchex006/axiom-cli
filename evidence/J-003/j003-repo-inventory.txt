@@ -1,0 +1,50 @@
+# J-003 repository inventory - axiom-cli seed at feature/j-003-cli-core
+# generated: 2026-09-20T14:26:05.1004572+07:00
+# worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003
+# base revision: 94d4df0a42378bf891be40bbc16116dd6a47ed46 (axiom-cli main)
+# excludes: target/ (cargo build output, gitignored), .git (worktree gitlink), and evidence/ (listed separately below)
+# every listed file is LF-only (verified); see .gitattributes / .editorconfig
+
+## worktree files (excl. target/, .git, evidence/)
+       983  e13a5e491ab1769ee7dd91f869515c359432e995315e8b8f18ac23b463b7fcdf  AGENTS.md
+       157  d033fccd3e92182b4688a5c087ee1a52e71e1c61ed48d5b8579870ca1a22aeab  Cargo.lock
+       540  7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed  Cargo.toml
+      1616  7e7d596ff2e36aab390f0e88399c8340f227786a95fa8273774911ff39d70a7b  Changelog.md
+      2158  df08ee4f36882bbdb57d54491ca5e9feac01a9c03590b99414f70d5befca9083  Development.md
+      4578  d25649a977b52cbac02630189bcb80cb5adfb1db5ea4c29bc3179e4deab1f711  docs/30-DISTRIBUTION-AND-INSTALLERS.md
+      4314  5d2454dd510b3d2ec71cfb5c6c2f7f6326cc18f9807f5900961e2a6318a2b384  docs/40-CLI-ARGV-SURFACE.md
+       648  6becf3d8a9b9a9d202ecdc0557d5a7dbcc85244dd5363682e781fa296df3b083  docs/README.md
+       127  89140271a138afc74b1b75c51795061c68e5be22cc64d95d2151f0e0868ee579  .editorconfig
+       158  bdca86cd373226c40b268cfbed11517d18187dbebf019649fd5622c7681c78e7  .gitattributes
+       747  672e16cba9771ea2838febd200e9d279fa0e5f7cf33db08f8ad2ae7e8269f55a  .github/pull_request_template.md
+       126  172526e532f70c6d377838ce96b088b90b4c780a165cb30120b4b9a58ff3accc  .gitignore
+      2730  e546b551d851ddc7d54eb0830d250ce6f0b5e9ef9347581ceee2469d07b3bb24  README.md
+       303  420e425ef31562a9b02c09d9efb91a4cd7c8e1d8b7b864196b41dca88be7a00d  spec.lock.example.json
+     28276  dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf  src/cli.rs
+       443  22f8254e7f8c232f8c2f22a4b44497f20ba938a9a0f58acf5a123d7df1ece04a  src/main.rs
+     14551  c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581  tests/argv_surface.rs
+        10  fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4  VERSION
+
+total files: 18
+
+## seed-derived vs new
+  seed-derived (verbatim byte copy from axiom-specs/repo-seeds/axiom-cli):
+    AGENTS.md, Development.md, Changelog.md (J-003 section appended), VERSION, spec.lock.example.json,
+    .gitignore, .gitattributes, .editorconfig, .github/pull_request_template.md,
+    docs/README.md (40-CLI-ARGV-SURFACE.md link appended), docs/30-DISTRIBUTION-AND-INSTALLERS.md
+  seed-derived + agent-extended (seed body preserved, new section appended):
+    README.md (seed 'axiom-cli' body preserved; added 'Implemented surface' section)
+  new (created by J-003):
+    Cargo.toml, Cargo.lock, src/main.rs, src/cli.rs, tests/argv_surface.rs, docs/40-CLI-ARGV-SURFACE.md
+
+## evidence files (also present in the worktree; excluded from the tree above)
+# this file (j003-repo-inventory.txt) is intentionally omitted from its own list to avoid a self-referential digest.
+# recompute its digest with (PowerShell 7):
+#   (Get-FileHash -Algorithm SHA256 evidence\J-003\j003-repo-inventory.txt).Hash.ToLower()
+     20867  8689301c33e4815c776c23b87d75283efa667ec7b5b4d83f00191fcce5e80f82  evidence/J-003/j003-argv-matrix.txt
+       732  11a9ba27e42eeef00089f68e4be7581f13e6aab786ce21cc2d8a1f248c9ff2ca  evidence/J-003/j003-build.txt
+      7881  363fed98360b3cd217e7c1a6139c21ba3a23117d504f05f6fb66e8eb570d3ed0  evidence/J-003/j003-help-inventory.txt
+      4091  91aa66f3bd8a9d926c5eedada56c7d782749f50169fd0acd1ae401d66e405ec3  evidence/J-003/j003-negative-drift.txt
+      3958  9689e6969f90ca0985c07d880cda32accf3e4b25b2dcb535425bdc0e6b0450cf  evidence/J-003/j003-tests.txt
+      1458  cb31fc254540fc14f50d9fb82a28b2a56d7127d0424d792a2a31eb5b00aae304  evidence/J-003/j003-tool-versions.txt
+      7704  fb3e5fcf5d076dcc09ab14c1ad26ba7a03157f8c376d71db5fc41d2722b225d2  evidence/J-003/SUMMARY.txt

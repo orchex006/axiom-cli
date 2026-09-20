@@ -1,0 +1,21 @@
+[package]
+name = "axiom-cli"
+version = "0.0.0-dev"
+edition = "2021"
+rust-version = "1.85"
+description = "Axiom ecosystem distribution entrypoint: thin distribution layer over the axiom-graphd installation engine"
+license = "UNLICENSED"
+publish = false
+
+# No third-party dependencies. The distribution layer must build from a pinned
+# toolchain with no network fetch, no Node.js, no WSL, no Docker and no elevation.
+[dependencies]
+
+[[bin]]
+name = "axiom-cli"
+path = "src/main.rs"
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true

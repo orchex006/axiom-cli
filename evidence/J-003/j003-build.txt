@@ -1,0 +1,18 @@
+# J-003 build - clean offline build of axiom-cli from source, this Windows host
+# generated: 2026-09-20T14:19:31.6324874+07:00
+# sequence: cargo clean ; cargo build --offline ; cargo build --release --offline
+
+   Compiling axiom-cli v0.0.0-dev (<worktree>)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.68s
+   Compiling axiom-cli v0.0.0-dev (<worktree>)
+    Finished `release` profile [optimized] target(s) in 3.23s
+
+exit codes: debug=0 release=0
+warning lines: 0
+
+## produced artifact
+target/release/axiom-cli.exe size=159232 bytes
+target/release/axiom-cli.exe sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
+
+## resolved package graph (cargo metadata --offline)
+  axiom-cli 0.0.0-dev

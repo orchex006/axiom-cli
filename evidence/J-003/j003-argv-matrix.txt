@@ -1,0 +1,423 @@
+# J-003 argv matrix - one real axiom-cli.exe invocation per row, this Windows host
+# binary: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003\target\release\axiom-cli.exe
+# host: Microsoft Windows NT 10.0.26200.0 / AMD64
+# method: & exe <argv> 1>stdout.txt 2>stderr.txt ; recorded exit = $LASTEXITCODE
+# marker: axiom-cli-argv-matrix-begin
+
+## case 1 : argv = "--help"
+exit=0
+stdout=axiom-cli 0.0.0-dev - Axiom ecosystem distribution entrypoint
+
+USAGE:
+    axiom-cli [GLOBAL OPTIONS] <verb> [verb options]
+
+VERBS:
+    install      Install or repair this platform's pinned component set
+    update       check | plan | apply | rollback through the update channel
+    doctor       Report prerequisites, installed versions, digests and target state
+    version      Report installed and available versions per component and per target
+    uninstall    Remove binaries and service registration; preserve user data
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+VERB OPTIONS:
+    install      --dry-run | --apply, --approve-digest <sha256>, --from <path>
+    update       check [--all] | plan --to <version> [--out <file>] |
+                 apply --plan <file> --approve-digest <sha256> |
+                 rollback --transaction <id> [--approve-digest <sha256>]
+    doctor       [--all]
+    version      [--all]
+    uninstall    --dry-run | --apply, --approve-digest <sha256>, [--purge-data]
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    A verb the distribution contract declares but whose production behaviour is not
+    built answers NotReady with exit code 4 and a stated reason. It never returns 0
+    and never emits an empty success envelope.
+    A destructive install/update/uninstall transaction needs its approval bound to the
+    canonical plan digest through --approve-digest <sha256>; supplying --plan is not
+    approval.
+    The installation engine stays owned by axiom-graphd; this layer wraps it.
+stderr=(empty)
+
+## case 2 : argv = "install" "--help"
+exit=0
+stdout=axiom-cli install - Install or repair this platform's pinned component set
+
+USAGE:
+    axiom-cli install [options]
+
+OPTIONS:
+--dry-run                  Validate and report the plan without changing the host
+    --apply                    Apply the transaction; requires --approve-digest
+    --approve-digest <sha256>  Approval bound to the canonical plan digest
+    --from <path>              Read the release set from a local path instead of the channel
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+stderr=(empty)
+
+## case 3 : argv = "update" "--help"
+exit=0
+stdout=axiom-cli update - check | plan | apply | rollback through the update channel
+
+USAGE:
+    axiom-cli update [options]
+
+OPTIONS:
+update check [--all]                                  Report available transitions
+    update plan --to <version> [--out <file>]             Write the canonical plan
+    update apply --plan <file> --approve-digest <sha256>  Apply the approved plan
+    update rollback --transaction <id>                    Restore the previous generation
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+stderr=(empty)
+
+## case 4 : argv = "doctor" "--help"
+exit=0
+stdout=axiom-cli doctor - Report prerequisites, installed versions, digests and target state
+
+USAGE:
+    axiom-cli doctor [options]
+
+OPTIONS:
+--all  Probe every declared component, not only the pinned set
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+stderr=(empty)
+
+## case 5 : argv = "version" "--help"
+exit=0
+stdout=axiom-cli version - Report installed and available versions per component and per target
+
+USAGE:
+    axiom-cli version [options]
+
+OPTIONS:
+--all  Report core, MCP, skills and pinned spec provenance
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+stderr=(empty)
+
+## case 6 : argv = "uninstall" "--help"
+exit=0
+stdout=axiom-cli uninstall - Remove binaries and service registration; preserve user data
+
+USAGE:
+    axiom-cli uninstall [options]
+
+OPTIONS:
+--dry-run                  Report what would be removed without removing it
+    --apply                    Remove owned binaries and startup entries; requires --approve-digest
+    --approve-digest <sha256>  Approval bound to the canonical plan digest
+    --purge-data               Also delete workspace data; needs --apply and separate approval
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    The production behaviour of this verb is not built in this slice. It answers
+    NotReady with exit code 4 and a stated reason; it never returns 0.
+stderr=(empty)
+
+## case 7 : argv = "install"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: install: NotReady: install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.
+
+## case 8 : argv = "update" "check"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: update: NotReady: the update transaction and its pinned channel manifest (channels/stable.json, J-007) are not built, so no mutating update was started and no version was resolved. Nothing was swapped, rolled back or pushed.
+
+## case 9 : argv = "doctor"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: doctor: NotReady: doctor needs the installed-component and prerequisite probe owned by axiom-graphd (I-003/I-004); this slice exposes argv only and did not probe the host.
+
+## case 10 : argv = "version"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: version: NotReady: component version resolution needs the pinned update-channel manifest (channels/stable.json, J-007); no installed or available version was resolved or invented.
+
+## case 11 : argv = "uninstall"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: uninstall: NotReady: ownership-scoped removal is not built in this slice, so nothing was removed. Deleting workspace data would additionally need an explicit approval digest.
+
+## case 12 : argv = "--json" "install"
+exit=4
+stdout={"code":4,"status":"not_ready","message":"`install` is not ready: install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.","retryable":false,"details":{"verb":"install","engine_owner":"axiom-graphd","reason":"install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.","parsed":"install mode=unspecified from=-"},"request_id":"axiom-cli-dd0-18d6f65124700b9c"}
+stderr=(empty)
+
+## case 13 : argv = "install" "--json"
+exit=4
+stdout={"code":4,"status":"not_ready","message":"`install` is not ready: install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.","retryable":false,"details":{"verb":"install","engine_owner":"axiom-graphd","reason":"install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.","parsed":"install mode=unspecified from=-"},"request_id":"axiom-cli-4edc-18d6f65126752238"}
+stderr=(empty)
+
+## case 14 : argv = "--json" "update" "check"
+exit=4
+stdout={"code":4,"status":"not_ready","message":"`update` is not ready: the update transaction and its pinned channel manifest (channels/stable.json, J-007) are not built, so no mutating update was started and no version was resolved. Nothing was swapped, rolled back or pushed.","retryable":false,"details":{"verb":"update","engine_owner":"axiom-graphd","reason":"the update transaction and its pinned channel manifest (channels/stable.json, J-007) are not built, so no mutating update was started and no version was resolved. Nothing was swapped, rolled back or pushed.","parsed":"update check all=false"},"request_id":"axiom-cli-9340-18d6f65127ff18e8"}
+stderr=(empty)
+
+## case 15 : argv = "--json" "doctor"
+exit=4
+stdout={"code":4,"status":"not_ready","message":"`doctor` is not ready: doctor needs the installed-component and prerequisite probe owned by axiom-graphd (I-003/I-004); this slice exposes argv only and did not probe the host.","retryable":false,"details":{"verb":"doctor","engine_owner":"axiom-graphd","reason":"doctor needs the installed-component and prerequisite probe owned by axiom-graphd (I-003/I-004); this slice exposes argv only and did not probe the host.","parsed":"doctor all=false"},"request_id":"axiom-cli-506c-18d6f65129aead48"}
+stderr=(empty)
+
+## case 16 : argv = "--json" "version"
+exit=4
+stdout={"code":4,"status":"not_ready","message":"`version` is not ready: component version resolution needs the pinned update-channel manifest (channels/stable.json, J-007); no installed or available version was resolved or invented.","retryable":false,"details":{"verb":"version","engine_owner":"axiom-graphd","reason":"component version resolution needs the pinned update-channel manifest (channels/stable.json, J-007); no installed or available version was resolved or invented.","parsed":"version all=false"},"request_id":"axiom-cli-6258-18d6f6512b2ef380"}
+stderr=(empty)
+
+## case 17 : argv = "--json" "uninstall"
+exit=4
+stdout={"code":4,"status":"not_ready","message":"`uninstall` is not ready: ownership-scoped removal is not built in this slice, so nothing was removed. Deleting workspace data would additionally need an explicit approval digest.","retryable":false,"details":{"verb":"uninstall","engine_owner":"axiom-graphd","reason":"ownership-scoped removal is not built in this slice, so nothing was removed. Deleting workspace data would additionally need an explicit approval digest.","parsed":"uninstall mode=unspecified purge_data=false"},"request_id":"axiom-cli-2cc8-18d6f6512d11768c"}
+stderr=(empty)
+
+## case 18 : argv = "frobnicate"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: unknown verb `frobnicate`
+axiom-cli: try `axiom-cli --help`
+
+## case 19 : argv = "--json" "frobnicate"
+exit=2
+stdout={"code":2,"status":"validation_error","message":"unknown verb `frobnicate`","retryable":false,"details":{},"request_id":"axiom-cli-94c4-18d6f65130dd58e4"}
+stderr=(empty)
+
+## case 20 : argv = "install" "--approve-digest"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: option `--approve-digest` requires a value
+axiom-cli: try `axiom-cli --help`
+
+## case 21 : argv = "install" "--dry-run" "--apply"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `--dry-run` and `--apply` are mutually exclusive on `install`
+axiom-cli: try `axiom-cli --help`
+
+## case 22 : argv = "install" "--apply"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `install --apply` requires `--approve-digest <sha256>`; approval is bound to the canonical plan digest
+axiom-cli: try `axiom-cli --help`
+
+## case 23 : argv = "install" "--apply" "--approve-digest" "<64 x hex-a digest>"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: install: NotReady: install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.
+
+## case 24 : argv = "install" "--apply" "--approve-digest" "deadbeef"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `--approve-digest` must be a 64-character hex sha256 digest, got 8 characters
+axiom-cli: try `axiom-cli --help`
+
+## case 25 : argv = "install" "--apply" "--approve-digest" "<63 x hex-a digest>"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `--approve-digest` must be a 64-character hex sha256 digest, got 63 characters
+axiom-cli: try `axiom-cli --help`
+
+## case 26 : argv = "install" "--apply" "--approve-digest" "<65 x hex-a digest>"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `--approve-digest` must be a 64-character hex sha256 digest, got 65 characters
+axiom-cli: try `axiom-cli --help`
+
+## case 27 : argv = "update"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `update` requires a subcommand: one of check, plan, apply or rollback
+axiom-cli: try `axiom-cli --help`
+
+## case 28 : argv = "update" "frobnicate"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: unknown update subcommand `frobnicate`; expected check, plan, apply or rollback
+axiom-cli: try `axiom-cli --help`
+
+## case 29 : argv = "update" "plan" "--to"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: option `--to` requires a value
+axiom-cli: try `axiom-cli --help`
+
+## case 30 : argv = "update" "plan" "--to" "latest-compatible" "--out" "plan.json"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: update: NotReady: the update transaction and its pinned channel manifest (channels/stable.json, J-007) are not built, so no mutating update was started and no version was resolved. Nothing was swapped, rolled back or pushed.
+
+## case 31 : argv = "update" "apply" "--plan" "plan.json"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `update apply` requires `--approve-digest <sha256>`; supplying `--plan` alone is not approval
+axiom-cli: try `axiom-cli --help`
+
+## case 32 : argv = "update" "apply" "--plan" "plan.json" "--approve-digest" "<64 x hex-a digest>"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: update: NotReady: the update transaction and its pinned channel manifest (channels/stable.json, J-007) are not built, so no mutating update was started and no version was resolved. Nothing was swapped, rolled back or pushed.
+
+## case 33 : argv = "update" "rollback" "--transaction" "txn-1"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: update: NotReady: the update transaction and its pinned channel manifest (channels/stable.json, J-007) are not built, so no mutating update was started and no version was resolved. Nothing was swapped, rolled back or pushed.
+
+## case 34 : argv = "uninstall" "--purge-data"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: `--purge-data` requires `uninstall --apply --approve-digest <sha256>`; deleting workspace data needs a separate explicit approval
+axiom-cli: try `axiom-cli --help`
+
+## case 35 : argv = "uninstall" "--apply" "--approve-digest" "<64 x hex-a digest>" "--purge-data"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: uninstall: NotReady: ownership-scoped removal is not built in this slice, so nothing was removed. Deleting workspace data would additionally need an explicit approval digest.
+
+## case 36 : argv = "uninstall" "--apply" "--approve-digest" "<64 x hex-a digest>"
+exit=4
+stdout=(empty)
+stderr=axiom-cli: uninstall: NotReady: ownership-scoped removal is not built in this slice, so nothing was removed. Deleting workspace data would additionally need an explicit approval digest.
+
+## case 37 : argv = "version" "--dry-run"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: unknown option `--dry-run` for verb `version`
+axiom-cli: try `axiom-cli --help`
+
+## case 38 : argv = "install" "--bogus"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: unknown option `--bogus` for verb `install`
+axiom-cli: try `axiom-cli --help`
+
+## case 39 : argv = "doctor" "extra"
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: unexpected positional argument `extra` for verb `doctor`
+axiom-cli: try `axiom-cli --help`
+
+## case 40 : argv = (no arguments)
+exit=2
+stdout=(empty)
+stderr=axiom-cli: error: no verb supplied; expected one of install, update, doctor, version, uninstall
+axiom-cli: try `axiom-cli --help`
+
+## case 41 : argv = "--json" "--help"
+exit=0
+stdout={"code":0,"status":"ok","message":"help","retryable":false,"details":{"usage":"axiom-cli 0.0.0-dev - Axiom ecosystem distribution entrypoint\n\nUSAGE:\n    axiom-cli [GLOBAL OPTIONS] <verb> [verb options]\n\nVERBS:\n    install      Install or repair this platform's pinned component set\n    update       check | plan | apply | rollback through the update channel\n    doctor       Report prerequisites, installed versions, digests and target state\n    version      Report installed and available versions per component and per target\n    uninstall    Remove binaries and service registration; preserve user data\n\nGLOBAL OPTIONS:\n    -h, --help    Print this help and exit 0\n    --json        Machine-readable mode: exactly one JSON object on stdout\n    --verbose     Emit diagnostics on stderr\n\nVERB OPTIONS:\n    install      --dry-run | --apply, --approve-digest <sha256>, --from <path>\n    update       check [--all] | plan --to <version> [--out <file>] |\n                 apply --plan <file> --approve-digest <sha256> |\n                 rollback --transaction <id> [--approve-digest <sha256>]\n    doctor       [--all]\n    version      [--all]\n    uninstall    --dry-run | --apply, --approve-digest <sha256>, [--purge-data]\n\nEXIT CODES:\n    0   success\n    2   validation\n    3   not found\n    4   not ready / stale\n    5   authorization\n    6   conflict\n    7   timeout / busy\n    8   I/O internal\n    9   incompatible\n    10  lock unavailable\n    20  partial multi-repository operation\n\nNOTES:\n    A verb the distribution contract declares but whose production behaviour is not\n    built answers NotReady with exit code 4 and a stated reason. It never returns 0\n    and never emits an empty success envelope.\n    A destructive install/update/uninstall transaction needs its approval bound to the\n    canonical plan digest through --approve-digest <sha256>; supplying --plan is not\n    approval.\n    The installation engine stays owned by axiom-graphd; this layer wraps it.\n"},"request_id":"axiom-cli-3130-18d6f6516d54f304"}
+stderr=(empty)
+
+# marker: axiom-cli-argv-matrix-end
