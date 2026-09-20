@@ -1,0 +1,53 @@
+J-008 macOS arm64 leg — NOT RUN (no macOS host available)
+========================================================
+
+Executable:  packaging/macos-arm64/Build-ReleaseSet.sh
+Intended command on a native macOS host (documented, NOT executed here):
+
+  sh packaging/macos-arm64/Build-ReleaseSet.sh \
+      --arch arm64 --out-dir out/macos-arm64 --build --json
+
+Status recorded
+---------------
+  macos-arm64 recipe:      present (shared with macos-x64 via --arch)
+  macos-arm64 artifact:    NOT BUILT
+  macos-arm64 execution:   not_run
+  macos-arm64 certified:   false
+  macos-arm64 evidence:    []   (empty)
+
+Why it is not run
+-----------------
+The J-008 execution host is Windows 11 x64 with WSL2 and Docker. Neither can
+produce evidence for a macOS target: a cross-compiled Mach-O is not a native
+execution record (contract section 8 rule 4) and a container run is not runtime
+evidence for any native target (rule 5). The recipe refuses to run off a Darwin
+host and prints a NOT_RUN record with exit 4, so an off-platform cross-compile can
+never be mistaken for macOS evidence. The target stays in the
+`design-complete-test-later` tier and is never presented as finish-first.
+
+The recipe's architecture guarantee is covered by a static guard in
+`tests/linux_distribution.rs` (`--arch` is required, both `aarch64-apple-darwin`
+and `x86_64-apple-darwin` triples exist, every artifact records its `arch`, and
+the Mach-O `cputype` is checked back against `--arch`).
+
+Also not run in this lane
+-------------------------
+  linux/arm64 artifact              -> not built (no arm64 Linux host)
+  code signing / attestation        -> not run
+  container image publication       -> not run (publication is CLOSED for this wave)
+  channels/stable.json update channel -> owned by J-007; no version invented here
+Observed refusal on this host (executed, real exit code)
+--------------------------------------------------------
+Command (inside WSL2 Debian):
+
+  sh packaging/macos-arm64/Build-ReleaseSet.sh --arch arm64 --out-dir /tmp/macos-arm64 --build --json
+
+Observed stdout:
+
+  {"platform":"macos-arm64","arch":"arm64","outcome":"not_run","built":false,"exit_code":4,"reason":"the build host is Linux, not Darwin; a macOS artifact is never cross-built off-platform, so this target stays not_run and unverified"}
+
+Observed exit code: 4
+
+No macOS artifact was produced; /tmp/macos-arm64 was not created. This is the
+machine-checkable proof that the recipe refuses to fabricate an off-platform
+macOS artifact.

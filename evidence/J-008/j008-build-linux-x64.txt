@@ -1,0 +1,28 @@
+J-008 Linux x64 build record (container-built, then executed under WSL2)
+=======================================================================
+
+Builder host:   Windows 11 x64, Docker Desktop engine 29.6.2 (linux/amd64)
+Base image tag: rust:1.85-slim
+Base image id:  sha256:8573a005bfcb44d5f462a33f6ad6e85d231f51e759b60c8061777422becfcb94
+Base repo digest: rust@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+Base OS/glibc:  Debian GNU/Linux 12 (bookworm), glibc 2.36
+
+Exact build command (run from the worktree root; scratch script _w10ev/build_linux_x64.ps1):
+
+  docker run --rm --name j008build \
+    --mount "type=bind,source=<worktree>,target=/src,readonly" \
+    --mount "type=bind,source=<worktree>/_w10ev/out,target=/out" \
+    rust:1.85-slim \
+    sh -c 'set -e; mkdir -p /build; cp -a /src/. /build/; cd /build; rm -rf target; \
+           cargo build --release --locked --offline 2>&1 | tail -5; \
+           cp target/release/axiom-cli /out/axiom-cli; chmod 0755 /out/axiom-cli; \
+           /out/axiom-cli --help | head -3; echo BUILD_EXIT=True'
+
+Result: the container build succeeded and /out/axiom-cli was produced with
+SHA256 494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9.
+
+Honest accounting: building the artifact inside a Linux container and executing
+it under WSL2 is valid `linux-x64` execution evidence (the distribution contract
+section 8 rule 3 records the WSL2 lane as linux-x64 evidence). It is NOT a native
+distribution-package install, and a container build is not itself runtime
+evidence. The target stays `certified: false`.

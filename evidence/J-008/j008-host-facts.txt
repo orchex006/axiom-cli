@@ -1,0 +1,40 @@
+J-008 host facts (verified on this machine, not assumed)
+Captured: 2026-09-20 (Asia/Bangkok)
+====================================================================
+
+WSL distro inventory (`wsl -l -v`): Debian (default, v2), docker-desktop (v2), Ubuntu (v2).
+
+Debian target
+-------------
+Linux thanatmet-t 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+VERSION_ID="12"
+VERSION_CODENAME=bookworm
+ID=debian
+
+libc: glibc 2.36
+init: init(Debian)
+systemd-dir: absent
+sh: /usr/bin/dash
+user: thanatmet uid=1000
+systemctl --user: unavailable
+
+Ubuntu target (systemd contrast case)
+-------------------------------------
+Linux thanatmet-t 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+VERSION_ID="26.04"
+VERSION_CODENAME=resolute
+ID=ubuntu
+
+libc: glibc 2.43
+init: systemd
+systemd-dir: present
+user: thanatmet-t uid=1000
+XDG_RUNTIME_DIR: /run/user/1000
+systemctl --user: answers
+
+Note: the hostname reported by `uname -a` is the Windows host name for both
+distros; the distro identity is the `/etc/os-release` block above.

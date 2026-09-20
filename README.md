@@ -51,3 +51,17 @@ unverified rather than installed. `windows-x64` is not certified.
 
 `spec.lock.json` is still unset: this seed ships only `spec.lock.example.json`, and a verified
 immutable `axiom-specs` pin has not been recorded.
+
+Card `J-008` added the **design-complete / test-later** delivery tiers. `installers/linux/` now
+contains a per-user, transactional Linux x64 install/update/uninstall path written in POSIX `sh`
+(no Bash, Docker, elevation or symlink), with a `systemd --user` registration step that degrades
+explicitly when no user manager is reachable, and `packaging/linux/` carries the release-set builder
+and the Linux profile of the shared 33-key `install-result` envelope. The WSL2 lane runs the same
+path as Linux and records the real kernel and distribution. `packaging/macos-arm64/` carries the one
+macOS recipe shared by `arm64` and `x64`, parameterised by `--arch`; the macOS arm64 artifact is
+**not built** on this host, so that leg stays `not_run` with `certified: false`. See
+[docs/60-LINUX-AND-MACOS-ARM64.md](docs/60-LINUX-AND-MACOS-ARM64.md).
+
+Both tiers remain `certified: false` and are never presented as finish-first. The executed evidence
+is a WSL2 run against a container-built Linux x64 artifact; a native distro-package run, signing,
+`linux/arm64`, the container image and the update channel (`J-007`) are not done.

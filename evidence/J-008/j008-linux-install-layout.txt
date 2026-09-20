@@ -1,0 +1,43 @@
+### host
+Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 GNU/Linux
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+VERSION_ID="12"
+ID=debian
+glibc 2.36
+### artifact
+494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9  /home/thanatmet/j008-demo-debian/axiom-cli
+### build release set (v0.0.0-dev)
+44ce0fdd0c8b5a211296644bc8ac661adcf56811c21d99e530e7053b11bb97fa  /home/thanatmet/j008-demo-debian/release/release-set.json
+### plan
+axiom-cli: plan digest 81fb616650432cbcc65ad18fbcb968aa1e7382b2b47e9bbf4ab132fb42ccd60e
+exit=0
+plan_digest=81fb616650432cbcc65ad18fbcb968aa1e7382b2b47e9bbf4ab132fb42ccd60e
+### apply
+axiom-cli: installed release 0.0.0-dev into /home/thanatmet/j008-demo-debian/.local/share/axiom-cli/generations/0.0.0-dev-81fb61665043; entrypoint at /home/thanatmet/j008-demo-debian/.local/bin/axiom-cli
+exit=0
+### installed layout under /home/thanatmet/j008-demo-debian/.local/share/axiom-cli
+/home/thanatmet/j008-demo-debian/.local/share/axiom-cli
+/home/thanatmet/j008-demo-debian/.local/share/axiom-cli/.axiom-cli-owner
+/home/thanatmet/j008-demo-debian/.local/share/axiom-cli/generations
+/home/thanatmet/j008-demo-debian/.local/share/axiom-cli/generations/0.0.0-dev-81fb61665043
+/home/thanatmet/j008-demo-debian/.local/share/axiom-cli/generations/0.0.0-dev-81fb61665043/axiom-cli
+### entrypoint
+-rwxr-xr-x 1 thanatmet thanatmet 379288 Sep 20 17:55 /home/thanatmet/j008-demo-debian/.local/bin/axiom-cli
+494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9  /home/thanatmet/j008-demo-debian/.local/bin/axiom-cli
+### entrypoint answers --help
+help_exit=0
+install_verb_exit=4
+### re-apply (idempotent update)
+axiom-cli: the requested release is already installed at /home/thanatmet/j008-demo-debian/.local/share/axiom-cli; nothing was changed
+exit=0
+reapply_outcome=already_installed
+### uninstall (plan+apply)
+axiom-cli: plan digest c312fba3a63a507cc4a7b083b04abfd3611857145255b623c995b9708d6822fc
+axiom-cli: removed the axiom-cli installation owned by this installer from /home/thanatmet/j008-demo-debian/.local/share/axiom-cli
+exit=0
+### layout after uninstall
+total 0
+install_root_removed
+state_preserved
+### envelope keys (apply)
+71

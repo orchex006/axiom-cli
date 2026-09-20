@@ -39,3 +39,32 @@ V2 seed adopts `2.0.0-draft.1`, `.axiom` workspace layout and component-owned do
 - Reused the frozen exit vocabulary: `0` success, `2` validation, `3` not found, `4` not ready, `6` conflict, `8` I/O or internal, `9` incompatible, `10` lock unavailable. `--json` still writes exactly one object carrying `details.reason_code` and `details.reason`.
 - Publication is closed for this wave: `channels/stable.json` has `published: false` and no artifact entries, and its `trust_root` is a documented development seed rather than a release signing root, so nothing was pushed, tagged or released.
 - Evidence is windows-x64 only, against local on-disk fixtures, recorded under `evidence/J-007/`. `linux-x64`, `macos-arm64` and `macos-x64` stay unverified; a WSL2 run is Linux evidence and is never Windows evidence.
+
+### J-008 — Linux x64 (including the WSL2 lane) and macOS arm64 tiers
+
+- Added the Linux x64 per-user distribution path in POSIX `sh` under `installers/linux/`:
+  `AxiomCli.Linux.Common.sh` (shared helpers, host facts, envelope builder, transaction lock,
+  `systemd --user` probe), `Install-AxiomCli.sh` (transactional install/update) and
+  `Uninstall-AxiomCli.sh` (owned-only removal with `--purge` gated behind separate approval).
+  No path requires Bash, Docker, elevation or a symlink, and every mutation requires an approved
+  plan digest.
+- Added `packaging/linux/`: the release-set builder (`Build-ReleaseSet.sh`, refuses a non-ELF or
+  non-x86_64 input and invents no version), the line-oriented `release-set.schema.json`, and
+  `install-result.schema.json` — the Linux profile of the shared 33-key machine-readable
+  `install-result` envelope, equal key-for-key to the Windows profile.
+- The Linux install registers a `systemd --user` unit when a user manager answers and degrades
+  explicitly when it does not; with `--service systemd-user` an unreachable manager is a refusal
+  (exit `4`, check `systemd-user-available`) that rolls the entrypoint back rather than silently
+  skipping registration. The reference artifact's highest glibc requirement is `GLIBC_2.34`.
+- Added `packaging/macos-arm64/`: one macOS recipe shared by `arm64` and `x64`, parameterised by
+  `--arch`, gated on `Darwin`, recording the architecture of every artifact from its Mach-O
+  `cputype`. **No macOS artifact is built on this host**: the arm64 leg stays `not_run` with
+  `certified: false` and empty evidence.
+- Added `tests/linux/Invoke-AxiomCliLinuxDistributionTests.sh` (23 executable Linux legs, L01–L20)
+  and `tests/linux_distribution.rs` (static guards for the POSIX shell, the envelope key order, the
+  schema and the macOS "not built" record).
+- Executed the Linux x64 path under WSL2 on Debian 12 (bookworm, glibc 2.36, no systemd) and on
+  Ubuntu 26.04.1 LTS (glibc 2.43, systemd as init): 23/23 legs, 0 failures, and the systemd-user
+  leg registered and removed a real unit on Ubuntu. The WSL2 lane is recorded as `linux-x64`
+  evidence and never as Windows evidence. `linux/arm64`, signing/attestation, the container image
+  and the update channel (`J-007`) are not done; `spec.lock.json` is still unset.
