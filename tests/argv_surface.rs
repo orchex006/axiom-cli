@@ -115,7 +115,10 @@ fn assert_single_json_object(text: &str) {
         }
     }
     assert_eq!(depth, 0, "unbalanced braces in: {text:?}");
-    assert_eq!(top_level, 1, "expected exactly one JSON object, got {top_level}");
+    assert_eq!(
+        top_level, 1,
+        "expected exactly one JSON object, got {top_level}"
+    );
 }
 
 /// Minimal JSON string-field reader: enough to inspect the frozen envelope keys.
@@ -224,7 +227,10 @@ fn unbuilt_verb_never_answers_success_and_states_a_reason() {
         let mut argv = vec!["--json"];
         argv.extend(minimal_argv(verb));
         let outcome = run(&argv);
-        assert_ne!(outcome.code, SUCCESS, "`{verb}` must never answer 0 while unbuilt");
+        assert_ne!(
+            outcome.code, SUCCESS,
+            "`{verb}` must never answer 0 while unbuilt"
+        );
         assert_eq!(
             outcome.code, NOT_READY,
             "`{verb}` must answer exit 4; stdout={}",
@@ -276,7 +282,10 @@ fn validation_defects_exit_two() {
         ("unknown verb", vec!["frobnicate"]),
         ("no verb", vec![]),
         ("missing option value", vec!["install", "--approve-digest"]),
-        ("missing option value in plan", vec!["update", "plan", "--to"]),
+        (
+            "missing option value in plan",
+            vec!["update", "plan", "--to"],
+        ),
         (
             "missing option value in rollback",
             vec!["update", "rollback", "--transaction"],
@@ -427,10 +436,7 @@ fn help_freezes_the_canonical_exit_vocabulary() {
 
 #[test]
 fn json_flag_is_accepted_before_and_after_the_verb() {
-    for argv in [
-        vec!["--json", "doctor"],
-        vec!["doctor", "--json"],
-    ] {
+    for argv in [vec!["--json", "doctor"], vec!["doctor", "--json"]] {
         let outcome = run(&argv);
         assert_eq!(outcome.code, NOT_READY, "argv={argv:?}");
         assert_single_json_object(&outcome.stdout);

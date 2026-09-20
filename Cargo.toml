@@ -1,3 +1,9 @@
+# This repository is canonical on its own and may be checked out inside a
+# directory that already contains an unrelated `Cargo.toml`. An empty
+# `[workspace]` table keeps it a standalone package instead of letting cargo
+# adopt an ancestor manifest it does not own.
+[workspace]
+
 [package]
 name = "axiom-cli"
 version = "0.0.0-dev"
