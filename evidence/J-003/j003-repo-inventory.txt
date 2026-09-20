@@ -8,7 +8,7 @@
 ## worktree files (excl. target/, .git, evidence/)
        983  e13a5e491ab1769ee7dd91f869515c359432e995315e8b8f18ac23b463b7fcdf  AGENTS.md
        157  d033fccd3e92182b4688a5c087ee1a52e71e1c61ed48d5b8579870ca1a22aeab  Cargo.lock
-       540  7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed  Cargo.toml
+       820  b4c30d11e4cce212e673522842175f36248205d7e68f97041ee08f0545132af8  Cargo.toml
       1616  7e7d596ff2e36aab390f0e88399c8340f227786a95fa8273774911ff39d70a7b  Changelog.md
       2158  df08ee4f36882bbdb57d54491ca5e9feac01a9c03590b99414f70d5befca9083  Development.md
       4578  d25649a977b52cbac02630189bcb80cb5adfb1db5ea4c29bc3179e4deab1f711  docs/30-DISTRIBUTION-AND-INSTALLERS.md
@@ -20,9 +20,9 @@
        126  172526e532f70c6d377838ce96b088b90b4c780a165cb30120b4b9a58ff3accc  .gitignore
       2730  e546b551d851ddc7d54eb0830d250ce6f0b5e9ef9347581ceee2469d07b3bb24  README.md
        303  420e425ef31562a9b02c09d9efb91a4cd7c8e1d8b7b864196b41dca88be7a00d  spec.lock.example.json
-     28276  dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf  src/cli.rs
+     28344  3f80af6d9e6c09fb2d6c325009d36ee436cd24c6cb315d9bc62459fb5e5f35b5  src/cli.rs
        443  22f8254e7f8c232f8c2f22a4b44497f20ba938a9a0f58acf5a123d7df1ece04a  src/main.rs
-     14551  c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581  tests/argv_surface.rs
+     14619  a601c7e84dfe49aeb79dc0c1fedf6d5fac4c68491941cf509a4f97fe5825e8a8  tests/argv_surface.rs
         10  fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4  VERSION
 
 total files: 18
@@ -47,4 +47,4 @@ total files: 18
       4091  91aa66f3bd8a9d926c5eedada56c7d782749f50169fd0acd1ae401d66e405ec3  evidence/J-003/j003-negative-drift.txt
       3958  9689e6969f90ca0985c07d880cda32accf3e4b25b2dcb535425bdc0e6b0450cf  evidence/J-003/j003-tests.txt
       1458  cb31fc254540fc14f50d9fb82a28b2a56d7127d0424d792a2a31eb5b00aae304  evidence/J-003/j003-tool-versions.txt
-      7704  fb3e5fcf5d076dcc09ab14c1ad26ba7a03157f8c376d71db5fc41d2722b225d2  evidence/J-003/SUMMARY.txt
+     11003  74c820d6272157e83eec724bcc21c19331cd1afc8946cb4c259bd8242e3fdea3  evidence/J-003/SUMMARY.txt

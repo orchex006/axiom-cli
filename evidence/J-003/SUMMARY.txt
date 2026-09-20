@@ -24,7 +24,8 @@
   AC1.1 Rust binary 'axiom-cli' builds from the pinned toolchain with no mandatory Node/WSL/Docker/Bash/elevation
         cargo clean; cargo build --offline; cargo build --release --offline   -> exit 0, 0 warnings
         cargo metadata --offline -> resolved package graph = axiom-cli 0.0.0-dev only (no third-party deps)
-        artifact target/release/axiom-cli.exe 159232 bytes sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
+        artifact target/release/axiom-cli.exe 159232 bytes sha256=574ff8d52f1efb74c321236e6e28c06de9715d5e9596251aca557235cf9eba2a
+# note: this digest was measured post-merge at 7ac376b; see the post-merge refresh note at the end of this file
         (see j003-build.txt, j003-tool-versions.txt)
   AC1.2 '--help' lists install, update, doctor, version and uninstall
         axiom-cli --help -> exit 0; usage_verbs = install, update, doctor, version, uninstall (count 5)
@@ -91,3 +92,42 @@
   j003-tool-versions.txt   host, toolchain, source + artifact digests
   SUMMARY.txt              this file
 
+## post-merge refresh note (lane w10-j003-evidence)
+  This bundle was generated on feature/j-003-cli-core, based on 94d4df0a with pre-merge implementation
+  revision 6d0fe98, so it did NOT describe the bytes the J-003 merge produced. It was refreshed here at the
+  merged revision 7ac376b5e5e0f52f4fe3af7fb97971d220277d38 (git rev-parse HEAD, equal to origin/main at refresh time) because the merge
+  changed Cargo.toml, src/cli.rs and tests/argv_surface.rs: three inventory rows and the release-artifact
+  digest above recorded pre-merge bytes only. Every regenerated value below was measured on this host at
+  that revision with recorded commands and exit codes; nothing here is estimated.
+
+  regenerated rows in evidence/J-003/j003-repo-inventory.txt (old size/digest -> new size/digest):
+    Cargo.toml             540 B  7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed
+                     ->    820 B  b4c30d11e4cce212e673522842175f36248205d7e68f97041ee08f0545132af8
+    src/cli.rs           28276 B  dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf
+                     ->  28344 B  3f80af6d9e6c09fb2d6c325009d36ee436cd24c6cb315d9bc62459fb5e5f35b5
+    tests/argv_surface.rs 14551 B  c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581
+                     ->  14619 B  a601c7e84dfe49aeb79dc0c1fedf6d5fac4c68491941cf509a4f97fe5825e8a8
+  regenerated in this file:
+    release artifact digest 114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39 (pre-merge)
+                     ->  574ff8d52f1efb74c321236e6e28c06de9715d5e9596251aca557235cf9eba2a
+  regenerated for this file:
+    the size+sha256 row for evidence/J-003/SUMMARY.txt inside j003-repo-inventory.txt, recomputed after the
+    note above was appended (a file cannot carry its own final digest, so it is applied exactly once, last).
+
+  CARRIED OVER UNCHANGED BY DESIGN: the AC1.7 line above still cites the pre-merge src/cli.rs digest
+  dc1dd799050eb108... . That line is a faithful citation of evidence/J-003/j003-negative-drift.txt, an
+  untouched historical record of the J-003 mutation test; rewriting it here would desynchronise the two
+  files.
+
+  DIGEST STABILITY CAVEAT (measured, not assumed): the executable is NOT byte-reproducible on this host.
+  Three consecutive clean rebuilds of the same revision and toolchain produced three different sha256
+  values at an identical 159232 B size. The release digest recorded here therefore identifies ONE build,
+  not a reproducible build identity; any later rebuild will legitimately differ.
+
+  CHECKOUT CAVEAT (measured): this repository sets core.autocrlf=true and .gitattributes applies
+  '* text=auto', so a .txt file is rewritten to CRLF by a normal git checkout, while every size and digest
+  in this bundle describes the LF byte sequence that git itself stores and commits. Verify digests against
+  the committed blob (git cat-file blob HEAD:<path>), not against a freshly checked-out .txt file.
+
+  Scope: only the three stale inventory rows, the release-artifact digest, this note and the recomputed
+  SUMMARY.txt row were regenerated. No other recorded value was changed and no other file was touched.
