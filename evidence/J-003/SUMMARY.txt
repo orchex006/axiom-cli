@@ -1,93 +1,161 @@
-# J-003 SUMMARY - create the axiom-cli repository and freeze its argv surface
-# generated: 2026-09-20T14:25:02.2725912+07:00
+# J-003 SUMMARY - the axiom-cli argv surface, evidence RE-REFRESHED at c73c53c
+# generated: 2026-09-20T18:59:28.635098+07:00
+#
+# REFRESH STATEMENT: this bundle was regenerated at axiom-cli main revision
+#   c73c53c6c1d707ebe31574541eb5d4bcaee1813d
+# (lane w10-j003r, worktree D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r,
+#  branch feature/j-003-evidence-refresh-2, based on origin/main). the earlier recorded rows described the 94d4df0a / 7ac376b5 revisions,
+# so every recorded size, sha256 and exit code was re-measured here at c73c53c on this Windows host.
+# Nothing below is estimated, copied forward or forced to match an expectation.
 
 ## scope and identity
   card: J-003 (Repository: axiom-cli; work package axiom-cli-distribution; requirements R22, R06, R16)
-  worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003
-  branch: feature/j-003-cli-core
-  base revision: 94d4df0a42378bf891be40bbc16116dd6a47ed46 (axiom-cli main; repo was empty except a 13-byte README.md)
-  spec pin: task-provided axiom-specs-main worktree revision 5bbaec0c32e930c339d76b736f4340600e8ff04964
-  remote: origin https://github.com/orchex006/axiom-cli.git (identity matches the workspace AGENTS.md canonical repository)
-  language/runtime: Rust (per repo-seeds/axiom-cli/Development.md and docs/30-DISTRIBUTION-AND-INSTALLERS.md)
-  dependencies: axiom-cli is a THIN distribution layer; the installation engine stays owned by axiom-graphd (I-003/I-004).
-  ledger: J-002/I-003/I-004 are NOT closed, so the J-003 ledger card is not closed here; axiom-specs was not touched.
+  repo identity (remote): https://github.com/orchex006/axiom-cli.git (matches the canonical workspace identity)
+  worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r
+  branch: feature/j-003-evidence-refresh-2   base revision: c73c53c6c1d707ebe31574541eb5d4bcaee1813d (axiom-cli main)
+  worktree clean before this refresh wrote its evidence: yes (git status --porcelain was empty)
+  toolchain: rustc 1.98.1 / cargo 1.98.1 / rustup 1.29.1 / git 2.45.1.windows.1 / python 3.13.14
+  host: Windows 11 x64 (Microsoft Windows 11 Pro 10.0.26200.0), PowerShell 7.6.6
+  MSRV pinned in Cargo.toml: rust-version = "1.85"; Cargo.lock commits the resolved graph
+  dependencies: cargo metadata -> 1 package, 0 dependencies; cargo tree -> axiom-cli only
+  The binary is a thin distribution layer; the installation engine stays owned by axiom-graphd (I-003/I-004).
 
-## what was created
-  seed brought in from axiom-specs/repo-seeds/axiom-cli (byte-preserved):
-    README.md (seed body kept; 'Implemented surface' section appended), Development.md, AGENTS.md, Changelog.md,
-    VERSION, spec.lock.example.json, .gitignore, .gitattributes, .editorconfig,
-    .github/pull_request_template.md, docs/README.md, docs/30-DISTRIBUTION-AND-INSTALLERS.md
-  new for J-003:
-    Cargo.toml, Cargo.lock, src/main.rs, src/cli.rs, tests/argv_surface.rs, docs/40-CLI-ARGV-SURFACE.md
+## the surface verbs, real exit codes observed at c73c53c6c1d707ebe31574541eb5d4bcaee1813d
+  --help (global and per verb)                  exit 0   (six help legs, all 0)
+  install    (accepted, NotReady, reason on stderr) exit 4
+  update     (accepted, NotReady, reason on stderr) exit 4
+  doctor     (accepted, NotReady, reason on stderr) exit 4
+  version    (accepted, NotReady, reason on stderr) exit 4
+  uninstall  (accepted, NotReady, reason on stderr) exit 4
+  --json NotReady legs                          exit 4   (status=not_ready, retryable=false, one JSON object on stdout)
+  validation legs (unknown verb/option, missing value, bad digest, bad flag combination) exit 2
+  unknown verb                                  exit 2   (`frobnicate`, with or without --json)
 
-## AC1 -> evidence
-  AC1.1 Rust binary 'axiom-cli' builds from the pinned toolchain with no mandatory Node/WSL/Docker/Bash/elevation
-        cargo clean; cargo build --offline; cargo build --release --offline   -> exit 0, 0 warnings
-        cargo metadata --offline -> resolved package graph = axiom-cli 0.0.0-dev only (no third-party deps)
-        artifact target/release/axiom-cli.exe 159232 bytes sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
-        (see j003-build.txt, j003-tool-versions.txt)
-  AC1.2 '--help' lists install, update, doctor, version and uninstall
-        axiom-cli --help -> exit 0; usage_verbs = install, update, doctor, version, uninstall (count 5)
-        undocumented verbs advertised by usage: (none); documented verbs missing from usage: (none)   (see j003-help-inventory.txt)
-  AC1.3 '--json' writes exactly one JSON object to stdout, diagnostics on stderr
-        envelope {code,status,message,retryable,details,request_id}; covered by json_mode_writes_exactly_one_object_on_every_path
-        and validation_in_json_mode_carries_the_canonical_envelope (11 passed / 0 failed)
-  AC1.4 every documented verb is reachable from argv
-        every_documented_verb_is_reachable_from_argv; argv matrix rows for install/update/doctor/version/uninstall  (see j003-argv-matrix.txt)
-  AC1.5 unknown verb / missing option value / invalid flag combination -> validation exit code
-        cases 33-41 return exit=2 (validation); covered by validation_defects_exit_two
-  AC1.6 an unbuilt verb answers NotReady with a stated reason instead of an empty success
-        every verb dispatches exit=4 with status not_ready, retryable=false, a stated reason and engine_owner=axiom-graphd;
-        no verb returns 0. Rule pinned by unbuilt_verb_never_answers_success_and_states_a_reason.
-  AC1.7 removing a verb from the dispatcher while leaving it in the usage text, or the reverse, fails the test
-        mutation 1 (dispatcher line removed) -> cargo test exit 101, 7 failed / 4 passed, byte-restored -> green
-        mutation 2 (usage row removed)      -> cargo test exit 101, 2 failed / 9 passed, byte-restored -> green
-        restored src/cli.rs sha256 = dc1dd799...cf (byte-identical to baseline)   (see j003-negative-drift.txt)
-  AC1.8 the distribution layer delegates to axiom-graphd and re-implements no installation behaviour
-        src/cli.rs contains no installer/updater/service logic; every dispatch path emits engine_owner=axiom-graphd and
-        'Nothing was installed, repaired or downloaded.' No network, filesystem or service write occurs in this slice.
+  DEVIATION FROM THE PREVIOUS RECORDING (real observation, not forced):
+  case 32 `update apply --plan plan.json --approve-digest <64 hex>` now exits 3 (not found) because the
+  named plan document genuinely does not exist; the earlier recording had every non-help leg at 0/2/4.
+  The {0:7, 4:16, 2:17, 3:1} distribution below is what this host actually produced.
 
-## AC2 -> evidence
-  AC2.1 positive/negative/boundary checks against the real argv surface, with actual command output + exit codes
-        j003-argv-matrix.txt: 41 real invocations of target/release/axiom-cli.exe on this host
-        exit counts: 0=7, 2=17, 4=17  (help paths 0; validation defects 2; unbuilt verbs NotReady 4)
-  AC2.2 a verb that stays NotReady is recorded as unbuilt, never turned into a success envelope
-        j003-help-inventory.txt dispatch_exit=4 for all five verbs; SUMMARY and Changelog.md J-003 section state this.
+## argv matrix - the 41 real legs (see j003-argv-matrix.txt for full stdout/stderr)
+  case  1  exit=0  argv = "--help"
+  case  2  exit=0  argv = "install" "--help"
+  case  3  exit=0  argv = "update" "--help"
+  case  4  exit=0  argv = "doctor" "--help"
+  case  5  exit=0  argv = "version" "--help"
+  case  6  exit=0  argv = "uninstall" "--help"
+  case  7  exit=4  argv = "install"
+  case  8  exit=4  argv = "update" "check"
+  case  9  exit=4  argv = "doctor"
+  case 10  exit=4  argv = "version"
+  case 11  exit=4  argv = "uninstall"
+  case 12  exit=4  argv = "--json" "install"
+  case 13  exit=4  argv = "install" "--json"
+  case 14  exit=4  argv = "--json" "update" "check"
+  case 15  exit=4  argv = "--json" "doctor"
+  case 16  exit=4  argv = "--json" "version"
+  case 17  exit=4  argv = "--json" "uninstall"
+  case 18  exit=2  argv = "frobnicate"
+  case 19  exit=2  argv = "--json" "frobnicate"
+  case 20  exit=2  argv = "install" "--approve-digest"
+  case 21  exit=2  argv = "install" "--dry-run" "--apply"
+  case 22  exit=2  argv = "install" "--apply"
+  case 23  exit=4  argv = "install" "--apply" "--approve-digest" "<64 x hex-a digest>"
+  case 24  exit=2  argv = "install" "--apply" "--approve-digest" "deadbeef"
+  case 25  exit=2  argv = "install" "--apply" "--approve-digest" "<63 x hex-a digest>"
+  case 26  exit=2  argv = "install" "--apply" "--approve-digest" "<65 x hex-a digest>"
+  case 27  exit=2  argv = "update"
+  case 28  exit=2  argv = "update" "frobnicate"
+  case 29  exit=2  argv = "update" "plan" "--to"
+  case 30  exit=4  argv = "update" "plan" "--to" "latest-compatible" "--out" "plan.json"
+  case 31  exit=2  argv = "update" "apply" "--plan" "plan.json"
+  case 32  exit=3  argv = "update" "apply" "--plan" "plan.json" "--approve-digest" "<64 x hex-a digest>"
+  case 33  exit=4  argv = "update" "rollback" "--transaction" "txn-1"
+  case 34  exit=2  argv = "uninstall" "--purge-data"
+  case 35  exit=4  argv = "uninstall" "--apply" "--approve-digest" "<64 x hex-a digest>" "--purge-data"
+  case 36  exit=4  argv = "uninstall" "--apply" "--approve-digest" "<64 x hex-a digest>"
+  case 37  exit=2  argv = "version" "--dry-run"
+  case 38  exit=2  argv = "install" "--bogus"
+  case 39  exit=2  argv = "doctor" "extra"
+  case 40  exit=2  argv = (no arguments)
+  case 41  exit=0  argv = "--json" "--help"
 
-## exact commands and exit codes (this host)
-  cargo clean                                                                         exit 0
-  cargo build --offline                                                               exit 0  (0 warnings)
-  cargo build --release --offline                                                     exit 0  (0 warnings)
-  cargo test --offline                                                                exit 0  (11 passed, 0 failed)
-  cargo test --offline --locked                                                       exit 0  (11 passed, 0 failed)
-  target\release\axiom-cli.exe --help                                                 exit 0
-  target\release\axiom-cli.exe <41 argv cases>                                        exit 0/2/4 (see matrix)
-  mutation -> cargo test --offline                                                    exit 101 (expected); restore -> exit 0
-  (full literal command lines and captured stdout/stderr are in the evidence files)
+  exit code counts: 0=7  2=17  3=1  4=16
 
-## verification summary
-  cargo test: 11 passed, 0 failed across 2 suites (1 unit suite with 0 tests, 1 integration suite tests\argv_surface.rs)
-  all tests run against the real built target\debug\axiom-cli.exe via CARGO_BIN_EXE_axiom-cli
-  negative/drift regression: 2 independent mutations both fail the suite; byte-restore verified by sha256 twice
+## AC1 -> evidence at this revision
+  AC1.1 Rust binary builds from the pinned toolchain with no Node/WSL/Docker/Bash/elevation
+        cargo clean exit 0 ; cargo build --locked exit 0 (0 warnings) ; cargo test --locked --all-targets exit 0
+        target/debug/axiom-cli.exe   1302528 bytes sha256=c5ad186940c1db97ea52b0f7608c67b055b7a9d201536dc8a008b1d1a7889666 (the binary the argv matrix exercised)
+        target/release/axiom-cli.exe 859648 bytes sha256=568c021d95c212389225209e122c46c9b34a35b6dc7bae6e4086b3bd5ca74319 (see j003-build.txt)
+        cargo tree --locked -> axiom-cli only; cargo metadata -> 0 dependencies
+  AC1.2 '--help' lists the five verbs  usage_verbs = install, update, doctor, version, uninstall ; advertised-but-undocumented: (none) ; documented-but-missing: (none)
+        every verb --help exits 0 (see j003-help-inventory.txt)
+  AC1.3 '--json' writes exactly one JSON object on stdout, diagnostics on stderr (11 argv_surface tests, all ok)
+  AC1.4 every documented verb is reachable from argv - j003-help-inventory.txt dispatch probs: install=4, update=4, doctor=4, version=4, uninstall=4
+  AC1.5 unknown verb, missing option value and invalid flag combination return the validation code 2 (cases 18-29, 31, 34, 37-40)
+  AC1.6 an unbuilt verb answers NotReady with a stated reason instead of an empty success: install/doctor/version/uninstall
+        exit 4 with status=not_ready and a reason; update exits 4 here with 'no installed release is recorded'
+  AC1.7 removing a verb from the dispatcher, or from the usage text only, fails the suite (see j003-negative-drift.txt)
+  AC1.8 the layer re-implements no installation/update behaviour of its own; every NotReady path names engine_owner=axiom-graphd
+
+## AC2 -> evidence at this revision
+  AC2.1 positive/negative/boundary checks against the real argv surface with actual output + exit codes:
+        j003-argv-matrix.txt = 41 real invocations; exit counts 0=7  2=17  3=1  4=16
+  AC2.2 a verb that stays NotReady is recorded as unbuilt, never turned into a success envelope: no leg returns 0 for a verb
+
+## exact commands and exit codes (this host, at c73c53c6c1d707ebe31574541eb5d4bcaee1813d)
+  cargo clean                                                       exit 0
+  cargo build --locked                                              exit 0   (0 warnings)
+  cargo build --release --locked (after cargo clean --release) x2   exit 0 / 0
+  cargo test --locked --all-targets                                 exit 0   (110 passed, 0 failed)
+  target\debug\axiom-cli.exe <41 argv cases>                       exit codes in the table above
+  mutation 1 (dispatcher line removed) -> cargo test --locked        exit 101 (expected non-zero)
+  mutation 2 (usage row removed)       -> cargo test --locked        exit 101 (expected non-zero)
+  both mutations byte-restored -> cargo test --locked                exit 0 (green again)
+
+## refresh digest set (LF-normalised bytes; see the method note below)
+  The refreshed artifact digest for the argv-surface binary is:
+    target/debug/axiom-cli.exe size=1302528 sha256=c5ad186940c1db97ea52b0f7608c67b055b7a9d201536dc8a008b1d1a7889666
+    evidence/J-003/j003-argv-matrix.txt       size=22203   sha256=b4f9ed9d7b13adaacc9fcd61c991ec9b1c4647bf218e1fac976097c3fd8da629
+    evidence/J-003/j003-help-inventory.txt    size=8378    sha256=3772a259ca3441fd666ddb382a1297280c7ed0d8b48923f24e0ff1346ce3e009
+    evidence/J-003/j003-negative-drift.txt    size=5490    sha256=430914f4e18cf74494fbcbe232cf8ad11f1dd35d988a9fad15ac6dcaf8cc9ca1
+    evidence/J-003/j003-build.txt             size=2601    sha256=3b62193cc073568fcae13a38f77f1b569ddb5fe660ebb33473243ce20678cf14
+    evidence/J-003/j003-tests.txt             size=18903   sha256=dd00c07ba00c24a14900377ec21b26f8a82f51c5fa7653e3ca88954e1b375530
+    evidence/J-003/j003-tool-versions.txt     size=3982    sha256=9c1630333341020b44fdf4f2c7d1021f7d1418ce29944ddfadbbbd876182fff9
+  (These are the sibling artifacts. j003-repo-inventory.txt is NOT listed here on purpose: it is the file
+   that carries this SUMMARY.txt's digest, so recording its digest here would be self-referential and
+   unverifiable. The inventory is deliberately omitted from its own evidence list there too, and its own
+   digest is recorded one-way in the lane report and is recomputable with:
+     (Get-FileHash -Algorithm SHA256 evidence\J-003\j003-repo-inventory.txt).Hash.ToLower())
+
+## known real defects handled honestly
+  1. The release binary is NOT byte-reproducible on this host (measured). Two consecutive `cargo clean --release`
+     + `cargo build --release --locked` runs produced the same 859648 bytes with different digests:
+       run 1 sha256=ed77afbb60d3af39d094361574c4819cebb6b6d95e4029681ea7b76e1ab13a12
+       run 2 sha256=568c021d95c212389225209e122c46c9b34a35b6dc7bae6e4086b3bd5ca74319
+     No reproducibility is claimed. The target/debug binary likewise differs across rebuilds at the same 1302528 bytes.
+  2. CRLF false-staleness (measured). The repository sets core.autocrlf=true and `.gitattributes` applies
+     '* text=auto' with eol=lf only for md/json/yaml/yml/toml/py/rs/sh. There is NO eol=lf for *.txt, so a fresh
+     checkout rewrites every evidence .txt to CRLF while the committed blob stays LF. Every size and sha256 here
+     is therefore the LF-normalised value = exactly the bytes git stores (`git cat-file blob HEAD:<path>`), and every
+     tracked row was cross-checked against its blob before this file was written. Verify with git, not with a raw
+     hash of a freshly checked-out .txt file. Cargo.lock and *.ps1 are in the same class: CRLF in the worktree, LF in the blob.
 
 ## limitations and blockers (real, not assumed)
-  1. All five verbs remain NotReady (exit 4). The engine handoff depends on I-003/I-004 and the channel manifest on J-007,
-     which are not available here. No install/update/uninstall behaviour exists yet.
-  2. spec.lock.json is absent and unpinned; spec.lock.example.json is explicitly not a valid pin. The spec revision used is
-     5bbaec0c32e930c339d76b736f4340600e8ff04964 (task-provided axiom-specs-main worktree).
-  3. Only a windows-x64 native run is recorded. No macOS/Linux/WSL/container evidence and no platform certification.
-  4. VERSION stays 0.0.0-dev; no release version, tag, release, or publish is produced by this card.
-  5. This is a LOCAL commit only on feature/j-003-cli-core: nothing was pushed, merged, rebased, tagged or force-pushed.
-  6. specctl begin/validate/complete was NOT run: specctl lives in axiom-specs, which this task must not touch.
-     The orchestrator closes the J-003 ledger card later.
+  1. install, doctor, version and uninstall still answer NotReady (exit 4): the transactional installer and the
+     axiom-graphd engine delegation are not built here (I-003/I-004).
+  2. update is now wired to the J-007 update channel, but on this host it also answers NotReady (exit 4) because no
+     installed release is recorded under the host install root and no candidate manifest was named. No version is invented.
+  3. Only a Windows x64 native run is recorded. No macOS/Linux/container runtime was executed; those targets stay unverified.
+  4. spec.lock.json is absent and unpinned; spec.lock.example.json is explicitly not a valid pin.
+  5. specctl begin/validate/complete was NOT run: specctl lives in axiom-specs, which this lane must not touch.
+  6. This refresh leaves its work uncommitted by explicit instruction: no commit, push, merge, tag or release.
 
-## evidence files
-  j003-repo-inventory.txt  file tree + sizes + sha256 (excludes target/, .git, evidence/; evidence digests listed inside)
-  j003-build.txt           clean offline debug+release build, warnings, artifact digest, package graph
-  j003-tests.txt           exact test counts, per-test names, reproducibility run, skipped legs
-  j003-argv-matrix.txt     41 real argv -> exit -> stdout/stderr rows
-  j003-help-inventory.txt  usage_verbs vs dispatcher vs argv reachability
-  j003-negative-drift.txt  mutate -> fail -> byte-restore -> green with sha256 proof
-  j003-tool-versions.txt   host, toolchain, source + artifact digests
+## evidence files in this bundle
+  j003-repo-inventory.txt  file tree + LF-normalised sizes + sha256 (excludes target/, .git, evidence/; evidence rows inside)
+  j003-build.txt           clean locked debug build + two release rebuilds, warnings, artifact digests, package graph
+  j003-tests.txt           cargo test --locked --all-targets: exact counts, per-test names, skipped legs
+  j003-argv-matrix.txt     41 real argv -> exit -> stdout/stderr rows for target\debug\axiom-cli.exe
+  j003-help-inventory.txt  usage text vs dispatcher vs argv reachability, real runs
+  j003-negative-drift.txt  mutate -> fail the suite -> byte-restore -> green, with sha256 proof
+  j003-tool-versions.txt   host, toolchain, revision facts and artifact/source digests
   SUMMARY.txt              this file
-

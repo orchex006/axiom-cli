@@ -1,50 +1,162 @@
-# J-003 repository inventory - axiom-cli seed at feature/j-003-cli-core
-# generated: 2026-09-20T14:26:05.1004572+07:00
-# worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003
-# base revision: 94d4df0a42378bf891be40bbc16116dd6a47ed46 (axiom-cli main)
-# excludes: target/ (cargo build output, gitignored), .git (worktree gitlink), and evidence/ (listed separately below)
-# every listed file is LF-only (verified); see .gitattributes / .editorconfig
+# J-003 repository inventory - axiom-cli at main c73c53c6c1
+# generated: 2026-09-20T18:59:28.787200+07:00
+# REFRESHED at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (lane w10-j003r)
+# worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r
+# base revision: c73c53c6c1d707ebe31574541eb5d4bcaee1813d (axiom-cli main; equal to origin/main at refresh time)
+# excludes: target/ (cargo build output, gitignored), .git (worktree gitlink), evidence/ (listed separately below),
+#           and _j003r/ plus _j003r_lane_report.txt (this lane's own untracked measurement scratch and
+#           report, not repository content)
+#
+# METHOD: size + sha256 are of the LF-normalised content, i.e. exactly the bytes git stores in the blob.
+#   The repo has core.autocrlf=true and .gitattributes '* text=auto' with eol=lf only for md/json/yaml/yml/toml/py/rs/sh.
+#   *.txt has no eol rule, so a fresh checkout rewrites it to CRLF while the committed blob stays LF; Cargo.lock and
+#   *.ps1 are in the same class. A raw hash of a freshly checked-out file can therefore look falsely stale.
+#   Every tracked row below was cross-checked against `git cat-file blob HEAD:<path>` and matched.
 
-## worktree files (excl. target/, .git, evidence/)
+## worktree files (excl. target/, .git, evidence/, _j003r/)
+        23  075f07d582a11578a67e3a65308195429fcf09e17e6ef1a296be5670e55d742d  .dockerignore
+       127  89140271a138afc74b1b75c51795061c68e5be22cc64d95d2151f0e0868ee579  .editorconfig
+       175  c620625d5baf87088c9c1347103890ff1996ab50e213ea74ca8d7f1e31d26da6  .gitattributes
+       747  672e16cba9771ea2838febd200e9d279fa0e5f7cf33db08f8ad2ae7e8269f55a  .github/pull_request_template.md
+      6229  f131c2f833431ac6fce3835f7a44efe371fbffe970c9a11e51cd2fb4e833eed1  .github/workflows/publish-container.yml
+       361  711c8c2055d9ec07ce3ab2759d712fdb9e4584753f84fe6def067ce36db8d267  .gitignore
        983  e13a5e491ab1769ee7dd91f869515c359432e995315e8b8f18ac23b463b7fcdf  AGENTS.md
        157  d033fccd3e92182b4688a5c087ee1a52e71e1c61ed48d5b8579870ca1a22aeab  Cargo.lock
-       540  7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed  Cargo.toml
-      1616  7e7d596ff2e36aab390f0e88399c8340f227786a95fa8273774911ff39d70a7b  Changelog.md
+       820  b4c30d11e4cce212e673522842175f36248205d7e68f97041ee08f0545132af8  Cargo.toml
+     11075  745885c46dc3dbb4c03b79fabd52dee55e8f52616578cd9383a188e2e64f5a73  Changelog.md
+      2645  a36e07663389b3660f10910fc417a780c86dd66801a9e7533b1dae20dc5ddb43  channels/stable.json
+      3550  a681de3d721e075e3ded05efe36b570d28a45ff68a37c514f6a2ca2fe0ecfb29  containers/Dockerfile
+       871  a68fdce7ea99fbecb149ff0c65c29e10661299ae53e81a5bd3a5fc2eba20b2d2  containers/entrypoint.sh
       2158  df08ee4f36882bbdb57d54491ca5e9feac01a9c03590b99414f70d5befca9083  Development.md
-      4578  d25649a977b52cbac02630189bcb80cb5adfb1db5ea4c29bc3179e4deab1f711  docs/30-DISTRIBUTION-AND-INSTALLERS.md
+     10720  3d9372d8879203415e6c6ee5c42a60708d558c100b5627bd09fe99695d09a4a8  docs/30-DISTRIBUTION-AND-INSTALLERS.md
       4314  5d2454dd510b3d2ec71cfb5c6c2f7f6326cc18f9807f5900961e2a6318a2b384  docs/40-CLI-ARGV-SURFACE.md
-       648  6becf3d8a9b9a9d202ecdc0557d5a7dbcc85244dd5363682e781fa296df3b083  docs/README.md
-       127  89140271a138afc74b1b75c51795061c68e5be22cc64d95d2151f0e0868ee579  .editorconfig
-       158  bdca86cd373226c40b268cfbed11517d18187dbebf019649fd5622c7681c78e7  .gitattributes
-       747  672e16cba9771ea2838febd200e9d279fa0e5f7cf33db08f8ad2ae7e8269f55a  .github/pull_request_template.md
-       126  172526e532f70c6d377838ce96b088b90b4c780a165cb30120b4b9a58ff3accc  .gitignore
-      2730  e546b551d851ddc7d54eb0830d250ce6f0b5e9ef9347581ceee2469d07b3bb24  README.md
+     11713  e2902d86f7ae2d5d1e8f8c61fdc7fab6e766c8e9e894c7e12fdeebde0a0a6a74  docs/50-CONTAINER-CHANNEL.md
+     10996  6b040821f1e7eff5a9d18b612d2d09a611de6d6ba345ca2a8127399e5f456f28  docs/50-UPDATE-CHANNEL.md
+      9278  a2037a8fe99df31625e3c41affd45014ccf3c8a38d6f2072d3cc2edd1ed86fe1  docs/60-LINUX-AND-MACOS-ARM64.md
+       800  7156de834bcbfa3e7b26947616cb50bbc6707fa58a5d0db26bf691f39d102477  docs/README.md
+      9036  89c3d0ec6858d950dcb7e09acc3a0d6da3114d8ca2f60f91236e84a5a7986513  installers/linux/AxiomCli.Linux.Common.sh
+     36898  279e5f668e6a76f842ee6ebb560cab1e6897e0bdbe044016614fd7a007af81fc  installers/linux/Install-AxiomCli.sh
+     15594  8f21d8c1aadee3d70c60cdea8adb22f93c66179e73c6f06d55f4988583272b73  installers/linux/Uninstall-AxiomCli.sh
+     18347  5da4f9d61e05d8be84a577e3318368f5456c025e79a607e7162e1bf7090fd104  installers/windows/AxiomCli.Windows.Common.ps1
+     50896  31518141af37fdec94e57d414fb43126a8913b8f8fa714b0631829c5314ddc76  installers/windows/Install-AxiomCli.ps1
+     22645  fd951609a75536149293c7c942b07212e3e68c178915eb66556673462d1c606f  installers/windows/Uninstall-AxiomCli.ps1
+      7838  98d0a6498c759996ccdedda12f68da5f40f9ff858ecdc6691d21eef5df09d1e8  packaging/install-result.schema.json
+     11073  e5b43f73bbe6ac9f48fdcaa038f066e96105f63f10c25cc5097fe4039f4b5614  packaging/linux/Build-ReleaseSet.sh
+      9069  871bd85919bbda22867012f240cdb19d8b99a180e406a23755104af1126e8397  packaging/linux/install-result.schema.json
+      4100  448f45f3f6f97bf12d37f0a27091c0d081849222e0c56347cb3d86ff2633f718  packaging/linux/release-set.schema.json
+      8983  18c3810feebb9b5948d4aaf72edacc19e3f2966f434efa192d131ee4300dc83a  packaging/macos-arm64/Build-ReleaseSet.sh
+      3085  c113cd33a3bcf2d8821e5e811e0391972961e0e16f9cf54ef1afcb81510de60e  packaging/macos-arm64/README.md
+     15872  672d0deae2a664549eebe6d02e36e76aec7d8d6fe36776de827b6fac5c0e5721  packaging/windows/Build-ReleaseSet.ps1
+      5719  0210da70c9241ed8f1d8ccd1528e123c47bb029fa37852a6dec6fcac92b55445  README.md
        303  420e425ef31562a9b02c09d9efb91a4cd7c8e1d8b7b864196b41dca88be7a00d  spec.lock.example.json
-     28276  dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf  src/cli.rs
-       443  22f8254e7f8c232f8c2f22a4b44497f20ba938a9a0f58acf5a123d7df1ece04a  src/main.rs
-     14551  c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581  tests/argv_surface.rs
+     30838  a253e0a2a78aaa02c043104c021ad81eddfbe07c42347be9437b1d49fbba05b9  src/cli.rs
+       455  933482032237f3a1ab71933e751d08b4fc5b1f17e21bea52e61734019de125f4  src/main.rs
+     57525  2504fe02f3c6936937d1ad798d28b5abe1200d1b74fca9803a8fbed60edf95ae  src/update/apply.rs
+     36364  0cc849e3a2d1f943f8618f85fe43e71da21afeb6815f87a46047354bbd736bfb  src/update/channel.rs
+      5933  8934fff6d4d40851090daddb4cc1612c6c639a4e2040484204788f0bdc6baad7  src/update/error.rs
+      9201  2d6f60d8a71ff4829d50b83887854b12c5fb0f0d800cd8df4094e35d4c9da32d  src/update/fetch.rs
+     20718  ef0296d02279213c25d6418d4d6eec861eebc2205fc26bb65a31e3175dabd864  src/update/generation.rs
+      3919  2268cdf6a48085b2d963c2a2c99e08186e41d5922d60da6d43a9f3985169e503  src/update/health.rs
+     15696  fcb05aa98cc0b03c41e261091097ccf2b6fb463f6712a93f7ac521bcb77e5967  src/update/journal.rs
+     21310  7c0919e42b82deda5c074f7b14231c7c3ae9b969f4b27cd0a9da53b2b804ae9e  src/update/json.rs
+      2088  8c2812bf45bfc5f4824305d3bc6dbbf837d2c73a03b8282a4fd879f3aff25546  src/update/mod.rs
+     42993  e86e2f34831c5dcfe68041de854aa4f3e537b56f6788e99b8efe4f69cf7dbe0e  src/update/plan.rs
+      6428  8f39eb2f482ed2c49d0c5f6aad0ca19d66f17d5235f9a6180a64a6f9dbac2c33  src/update/report.rs
+      9407  c53ec46640eff5ed14ebf525d92b7a8cc179e1194f8766e80da8b72c7899fa28  src/update/rules.rs
+      8346  96e71fd2fe389fcfc3254747264c84b7fe35558620a52285ebf2baa0f36b86ff  src/update/sha256.rs
+     19753  8770a1f4bbb5bee0d8eff782079a43cb1786c8daca2ac6a83f739babc780d75a  src/update/state.rs
+      8621  2025b750d6f4e335fe83f658131d86256de8a3f0e40ab7b279a1c040da2bcf48  src/update/time.rs
+     14619  a601c7e84dfe49aeb79dc0c1fedf6d5fac4c68491941cf509a4f97fe5825e8a8  tests/argv_surface.rs
+     13739  1c2874101f83bf728cc43268f4f382cbed4dbf52e1b13451da2d7e0bc398c877  tests/container_distribution.rs
+     33744  dbf54ebe345ab0a48ec3c0b16cdec9399ef35769448e02d003f1fc069ca29608  tests/linux/Invoke-AxiomCliLinuxDistributionTests.sh
+      8670  f47597f3d50b6d07eeddb9c98397bc52add05e12939df7a4785f3c2959bbb464  tests/linux_distribution.rs
+     47014  d4b208b5e1365da9d81b8d3b1de12e480635f2efd8cfb6c1bba02129a7a45eea  tests/update_channel.rs
+     49394  0493792c58174d72ab61190681bd0e95230adcfd5393c2d11be9cc92c6af9bc1  tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1
+      3648  e4f6e71405a4d836bbb0b3287fd46a95083935e2d0e0ce77326118c646c5a1da  tests/windows/Invoke-AxiomCliWindowsUnprivilegedLeg.ps1
         10  fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4  VERSION
 
-total files: 18
+total files: 60
 
-## seed-derived vs new
-  seed-derived (verbatim byte copy from axiom-specs/repo-seeds/axiom-cli):
-    AGENTS.md, Development.md, Changelog.md (J-003 section appended), VERSION, spec.lock.example.json,
-    .gitignore, .gitattributes, .editorconfig, .github/pull_request_template.md,
-    docs/README.md (40-CLI-ARGV-SURFACE.md link appended), docs/30-DISTRIBUTION-AND-INSTALLERS.md
-  seed-derived + agent-extended (seed body preserved, new section appended):
-    README.md (seed 'axiom-cli' body preserved; added 'Implemented surface' section)
-  new (created by J-003):
-    Cargo.toml, Cargo.lock, src/main.rs, src/cli.rs, tests/argv_surface.rs, docs/40-CLI-ARGV-SURFACE.md
-
-## evidence files (also present in the worktree; excluded from the tree above)
+## evidence files (evidence/J-003/*, also present in the worktree; excluded from the tree above)
 # this file (j003-repo-inventory.txt) is intentionally omitted from its own list to avoid a self-referential digest.
 # recompute its digest with (PowerShell 7):
 #   (Get-FileHash -Algorithm SHA256 evidence\J-003\j003-repo-inventory.txt).Hash.ToLower()
-     20867  8689301c33e4815c776c23b87d75283efa667ec7b5b4d83f00191fcce5e80f82  evidence/J-003/j003-argv-matrix.txt
-       732  11a9ba27e42eeef00089f68e4be7581f13e6aab786ce21cc2d8a1f248c9ff2ca  evidence/J-003/j003-build.txt
-      7881  363fed98360b3cd217e7c1a6139c21ba3a23117d504f05f6fb66e8eb570d3ed0  evidence/J-003/j003-help-inventory.txt
-      4091  91aa66f3bd8a9d926c5eedada56c7d782749f50169fd0acd1ae401d66e405ec3  evidence/J-003/j003-negative-drift.txt
-      3958  9689e6969f90ca0985c07d880cda32accf3e4b25b2dcb535425bdc0e6b0450cf  evidence/J-003/j003-tests.txt
-      1458  cb31fc254540fc14f50d9fb82a28b2a56d7127d0424d792a2a31eb5b00aae304  evidence/J-003/j003-tool-versions.txt
-      7704  fb3e5fcf5d076dcc09ab14c1ad26ba7a03157f8c376d71db5fc41d2722b225d2  evidence/J-003/SUMMARY.txt
+     22203  b4f9ed9d7b13adaacc9fcd61c991ec9b1c4647bf218e1fac976097c3fd8da629  evidence/J-003/j003-argv-matrix.txt
+      2601  3b62193cc073568fcae13a38f77f1b569ddb5fe660ebb33473243ce20678cf14  evidence/J-003/j003-build.txt
+      8378  3772a259ca3441fd666ddb382a1297280c7ed0d8b48923f24e0ff1346ce3e009  evidence/J-003/j003-help-inventory.txt
+      5490  430914f4e18cf74494fbcbe232cf8ad11f1dd35d988a9fad15ac6dcaf8cc9ca1  evidence/J-003/j003-negative-drift.txt
+     18903  dd00c07ba00c24a14900377ec21b26f8a82f51c5fa7653e3ca88954e1b375530  evidence/J-003/j003-tests.txt
+      3982  9c1630333341020b44fdf4f2c7d1021f7d1418ce29944ddfadbbbd876182fff9  evidence/J-003/j003-tool-versions.txt
+     12498  04f686472fd8e3f947ebe01d826f34d3d0430b73fd785331b503639ff3d287e5  evidence/J-003/SUMMARY.txt
+
+## evidence subtrees owned by other tasks (counted, not restated here)
+  evidence/J-004/  39 files (owned by that task's own bundle)
+  evidence/J-006/  13 files (owned by that task's own bundle)
+  evidence/J-007/  6 files (owned by that task's own bundle)
+  evidence/J-008/  13 files (owned by that task's own bundle)
+
+## refresh accounting (vs the previously committed inventory at HEAD)
+  rows written in this refresh: 67  (60 worktree + 7 evidence)
+  rows whose size/digest differ from the previously committed inventory: 59
+    NEW ROW  .dockerignore -> 23 B 075f07d582a11578a67e3a65308195429fcf09e17e6ef1a296be5670e55d742d
+    .gitattributes  158 B bdca86cd373226c40b268cfbed11517d18187dbebf019649fd5622c7681c78e7 -> 175 B c620625d5baf87088c9c1347103890ff1996ab50e213ea74ca8d7f1e31d26da6
+    NEW ROW  .github/workflows/publish-container.yml -> 6229 B f131c2f833431ac6fce3835f7a44efe371fbffe970c9a11e51cd2fb4e833eed1
+    .gitignore  126 B 172526e532f70c6d377838ce96b088b90b4c780a165cb30120b4b9a58ff3accc -> 361 B 711c8c2055d9ec07ce3ab2759d712fdb9e4584753f84fe6def067ce36db8d267
+    Cargo.toml  540 B 7612ee8e1636f209b22e1f5af17022b1d264a1cd252b13d4802a645256d530ed -> 820 B b4c30d11e4cce212e673522842175f36248205d7e68f97041ee08f0545132af8
+    Changelog.md  1616 B 7e7d596ff2e36aab390f0e88399c8340f227786a95fa8273774911ff39d70a7b -> 11075 B 745885c46dc3dbb4c03b79fabd52dee55e8f52616578cd9383a188e2e64f5a73
+    NEW ROW  channels/stable.json -> 2645 B a36e07663389b3660f10910fc417a780c86dd66801a9e7533b1dae20dc5ddb43
+    NEW ROW  containers/Dockerfile -> 3550 B a681de3d721e075e3ded05efe36b570d28a45ff68a37c514f6a2ca2fe0ecfb29
+    NEW ROW  containers/entrypoint.sh -> 871 B a68fdce7ea99fbecb149ff0c65c29e10661299ae53e81a5bd3a5fc2eba20b2d2
+    docs/30-DISTRIBUTION-AND-INSTALLERS.md  4578 B d25649a977b52cbac02630189bcb80cb5adfb1db5ea4c29bc3179e4deab1f711 -> 10720 B 3d9372d8879203415e6c6ee5c42a60708d558c100b5627bd09fe99695d09a4a8
+    NEW ROW  docs/50-CONTAINER-CHANNEL.md -> 11713 B e2902d86f7ae2d5d1e8f8c61fdc7fab6e766c8e9e894c7e12fdeebde0a0a6a74
+    NEW ROW  docs/50-UPDATE-CHANNEL.md -> 10996 B 6b040821f1e7eff5a9d18b612d2d09a611de6d6ba345ca2a8127399e5f456f28
+    NEW ROW  docs/60-LINUX-AND-MACOS-ARM64.md -> 9278 B a2037a8fe99df31625e3c41affd45014ccf3c8a38d6f2072d3cc2edd1ed86fe1
+    docs/README.md  648 B 6becf3d8a9b9a9d202ecdc0557d5a7dbcc85244dd5363682e781fa296df3b083 -> 800 B 7156de834bcbfa3e7b26947616cb50bbc6707fa58a5d0db26bf691f39d102477
+    NEW ROW  installers/linux/AxiomCli.Linux.Common.sh -> 9036 B 89c3d0ec6858d950dcb7e09acc3a0d6da3114d8ca2f60f91236e84a5a7986513
+    NEW ROW  installers/linux/Install-AxiomCli.sh -> 36898 B 279e5f668e6a76f842ee6ebb560cab1e6897e0bdbe044016614fd7a007af81fc
+    NEW ROW  installers/linux/Uninstall-AxiomCli.sh -> 15594 B 8f21d8c1aadee3d70c60cdea8adb22f93c66179e73c6f06d55f4988583272b73
+    NEW ROW  installers/windows/AxiomCli.Windows.Common.ps1 -> 18347 B 5da4f9d61e05d8be84a577e3318368f5456c025e79a607e7162e1bf7090fd104
+    NEW ROW  installers/windows/Install-AxiomCli.ps1 -> 50896 B 31518141af37fdec94e57d414fb43126a8913b8f8fa714b0631829c5314ddc76
+    NEW ROW  installers/windows/Uninstall-AxiomCli.ps1 -> 22645 B fd951609a75536149293c7c942b07212e3e68c178915eb66556673462d1c606f
+    NEW ROW  packaging/install-result.schema.json -> 7838 B 98d0a6498c759996ccdedda12f68da5f40f9ff858ecdc6691d21eef5df09d1e8
+    NEW ROW  packaging/linux/Build-ReleaseSet.sh -> 11073 B e5b43f73bbe6ac9f48fdcaa038f066e96105f63f10c25cc5097fe4039f4b5614
+    NEW ROW  packaging/linux/install-result.schema.json -> 9069 B 871bd85919bbda22867012f240cdb19d8b99a180e406a23755104af1126e8397
+    NEW ROW  packaging/linux/release-set.schema.json -> 4100 B 448f45f3f6f97bf12d37f0a27091c0d081849222e0c56347cb3d86ff2633f718
+    NEW ROW  packaging/macos-arm64/Build-ReleaseSet.sh -> 8983 B 18c3810feebb9b5948d4aaf72edacc19e3f2966f434efa192d131ee4300dc83a
+    NEW ROW  packaging/macos-arm64/README.md -> 3085 B c113cd33a3bcf2d8821e5e811e0391972961e0e16f9cf54ef1afcb81510de60e
+    NEW ROW  packaging/windows/Build-ReleaseSet.ps1 -> 15872 B 672d0deae2a664549eebe6d02e36e76aec7d8d6fe36776de827b6fac5c0e5721
+    README.md  2730 B e546b551d851ddc7d54eb0830d250ce6f0b5e9ef9347581ceee2469d07b3bb24 -> 5719 B 0210da70c9241ed8f1d8ccd1528e123c47bb029fa37852a6dec6fcac92b55445
+    src/cli.rs  28276 B dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf -> 30838 B a253e0a2a78aaa02c043104c021ad81eddfbe07c42347be9437b1d49fbba05b9
+    src/main.rs  443 B 22f8254e7f8c232f8c2f22a4b44497f20ba938a9a0f58acf5a123d7df1ece04a -> 455 B 933482032237f3a1ab71933e751d08b4fc5b1f17e21bea52e61734019de125f4
+    NEW ROW  src/update/apply.rs -> 57525 B 2504fe02f3c6936937d1ad798d28b5abe1200d1b74fca9803a8fbed60edf95ae
+    NEW ROW  src/update/channel.rs -> 36364 B 0cc849e3a2d1f943f8618f85fe43e71da21afeb6815f87a46047354bbd736bfb
+    NEW ROW  src/update/error.rs -> 5933 B 8934fff6d4d40851090daddb4cc1612c6c639a4e2040484204788f0bdc6baad7
+    NEW ROW  src/update/fetch.rs -> 9201 B 2d6f60d8a71ff4829d50b83887854b12c5fb0f0d800cd8df4094e35d4c9da32d
+    NEW ROW  src/update/generation.rs -> 20718 B ef0296d02279213c25d6418d4d6eec861eebc2205fc26bb65a31e3175dabd864
+    NEW ROW  src/update/health.rs -> 3919 B 2268cdf6a48085b2d963c2a2c99e08186e41d5922d60da6d43a9f3985169e503
+    NEW ROW  src/update/journal.rs -> 15696 B fcb05aa98cc0b03c41e261091097ccf2b6fb463f6712a93f7ac521bcb77e5967
+    NEW ROW  src/update/json.rs -> 21310 B 7c0919e42b82deda5c074f7b14231c7c3ae9b969f4b27cd0a9da53b2b804ae9e
+    NEW ROW  src/update/mod.rs -> 2088 B 8c2812bf45bfc5f4824305d3bc6dbbf837d2c73a03b8282a4fd879f3aff25546
+    NEW ROW  src/update/plan.rs -> 42993 B e86e2f34831c5dcfe68041de854aa4f3e537b56f6788e99b8efe4f69cf7dbe0e
+    NEW ROW  src/update/report.rs -> 6428 B 8f39eb2f482ed2c49d0c5f6aad0ca19d66f17d5235f9a6180a64a6f9dbac2c33
+    NEW ROW  src/update/rules.rs -> 9407 B c53ec46640eff5ed14ebf525d92b7a8cc179e1194f8766e80da8b72c7899fa28
+    NEW ROW  src/update/sha256.rs -> 8346 B 96e71fd2fe389fcfc3254747264c84b7fe35558620a52285ebf2baa0f36b86ff
+    NEW ROW  src/update/state.rs -> 19753 B 8770a1f4bbb5bee0d8eff782079a43cb1786c8daca2ac6a83f739babc780d75a
+    NEW ROW  src/update/time.rs -> 8621 B 2025b750d6f4e335fe83f658131d86256de8a3f0e40ab7b279a1c040da2bcf48
+    tests/argv_surface.rs  14551 B c41de1ab9d3a363b78b239ff1953b9191afbac06b93ac9f3ff79213b99e7e581 -> 14619 B a601c7e84dfe49aeb79dc0c1fedf6d5fac4c68491941cf509a4f97fe5825e8a8
+    NEW ROW  tests/container_distribution.rs -> 13739 B 1c2874101f83bf728cc43268f4f382cbed4dbf52e1b13451da2d7e0bc398c877
+    NEW ROW  tests/linux/Invoke-AxiomCliLinuxDistributionTests.sh -> 33744 B dbf54ebe345ab0a48ec3c0b16cdec9399ef35769448e02d003f1fc069ca29608
+    NEW ROW  tests/linux_distribution.rs -> 8670 B f47597f3d50b6d07eeddb9c98397bc52add05e12939df7a4785f3c2959bbb464
+    NEW ROW  tests/update_channel.rs -> 47014 B d4b208b5e1365da9d81b8d3b1de12e480635f2efd8cfb6c1bba02129a7a45eea
+    NEW ROW  tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1 -> 49394 B 0493792c58174d72ab61190681bd0e95230adcfd5393c2d11be9cc92c6af9bc1
+    NEW ROW  tests/windows/Invoke-AxiomCliWindowsUnprivilegedLeg.ps1 -> 3648 B e4f6e71405a4d836bbb0b3287fd46a95083935e2d0e0ce77326118c646c5a1da
+    evidence/J-003/j003-argv-matrix.txt  20867 B 8689301c33e4815c776c23b87d75283efa667ec7b5b4d83f00191fcce5e80f82 -> 22203 B b4f9ed9d7b13adaacc9fcd61c991ec9b1c4647bf218e1fac976097c3fd8da629
+    evidence/J-003/j003-build.txt  732 B 11a9ba27e42eeef00089f68e4be7581f13e6aab786ce21cc2d8a1f248c9ff2ca -> 2601 B 3b62193cc073568fcae13a38f77f1b569ddb5fe660ebb33473243ce20678cf14
+    evidence/J-003/j003-help-inventory.txt  7881 B 363fed98360b3cd217e7c1a6139c21ba3a23117d504f05f6fb66e8eb570d3ed0 -> 8378 B 3772a259ca3441fd666ddb382a1297280c7ed0d8b48923f24e0ff1346ce3e009
+    evidence/J-003/j003-negative-drift.txt  4091 B 91aa66f3bd8a9d926c5eedada56c7d782749f50169fd0acd1ae401d66e405ec3 -> 5490 B 430914f4e18cf74494fbcbe232cf8ad11f1dd35d988a9fad15ac6dcaf8cc9ca1
+    evidence/J-003/j003-tests.txt  3958 B 9689e6969f90ca0985c07d880cda32accf3e4b25b2dcb535425bdc0e6b0450cf -> 18903 B dd00c07ba00c24a14900377ec21b26f8a82f51c5fa7653e3ca88954e1b375530
+    evidence/J-003/j003-tool-versions.txt  1458 B cb31fc254540fc14f50d9fb82a28b2a56d7127d0424d792a2a31eb5b00aae304 -> 3982 B 9c1630333341020b44fdf4f2c7d1021f7d1418ce29944ddfadbbbd876182fff9
+    evidence/J-003/SUMMARY.txt  7704 B fb3e5fcf5d076dcc09ab14c1ad26ba7a03157f8c376d71db5fc41d2722b225d2 -> 12498 B 04f686472fd8e3f947ebe01d826f34d3d0430b73fd785331b503639ff3d287e5
+
+  evidence rows refreshed in this file: 7 (SUMMARY.txt is one of them, which is why SUMMARY.txt had to be
+  written before this inventory: the inventory carries SUMMARY.txt's digest, and a file cannot carry its own.)

@@ -1,18 +1,54 @@
-# J-003 build - clean offline build of axiom-cli from source, this Windows host
-# generated: 2026-09-20T14:19:31.6324874+07:00
-# sequence: cargo clean ; cargo build --offline ; cargo build --release --offline
+# J-003 build - locked build of axiom-cli from source, this Windows host
+# generated: 2026-09-20T18:49:31.209584+07:00
+# REFRESHED at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (lane w10-j003r)
+# toolchain: rustc 1.98.1 / cargo 1.98.1 (see j003-tool-versions.txt)
+# commands run offline with a committed lockfile; no network fetch occurred or was required
 
-   Compiling axiom-cli v0.0.0-dev (<worktree>)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.68s
-   Compiling axiom-cli v0.0.0-dev (<worktree>)
-    Finished `release` profile [optimized] target(s) in 3.23s
+## captured command output (PowerShell 7, `*>&1 | Tee-Object -FilePath ...`)
 
-exit codes: debug=0 release=0
+$ cargo clean
+     Removed 0 files
+exit=0
+
+$ cargo build --locked
+   Compiling axiom-cli v0.0.0-dev (D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.08s
+exit=0
 warning lines: 0
 
-## produced artifact
-target/release/axiom-cli.exe size=159232 bytes
-target/release/axiom-cli.exe sha256=114a552e1bfec5acae2685372510d31b1c016352c2af508741a44cb9fe73ca39
+## release profile (run twice after `cargo clean --release`, for the reproducibility measurement)
+=== release build #1 (after cargo clean --release) ===
+     Removed 0 files
+clean1_exit=0
+   Compiling axiom-cli v0.0.0-dev (D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r)
+    Finished `release` profile [optimized] target(s) in 26.74s
+release1_exit=0
+release1 size=859648 sha256=ed77afbb60d3af39d094361574c4819cebb6b6d95e4029681ea7b76e1ab13a12
+=== release build #2 (after cargo clean --release) ===
+     Removed 13 files, 4.4MiB total
+clean2_exit=0
+   Compiling axiom-cli v0.0.0-dev (D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r)
+    Finished `release` profile [optimized] target(s) in 22.01s
+release2_exit=0
+release2 size=859648 sha256=568c021d95c212389225209e122c46c9b34a35b6dc7bae6e4086b3bd5ca74319
+same_size=True same_sha=False
 
-## resolved package graph (cargo metadata --offline)
-  axiom-cli 0.0.0-dev
+## produced artifacts
+target/debug/axiom-cli.exe   size=1302528 bytes sha256=c5ad186940c1db97ea52b0f7608c67b055b7a9d201536dc8a008b1d1a7889666
+target/release/axiom-cli.exe size=859648 bytes sha256=568c021d95c212389225209e122c46c9b34a35b6dc7bae6e4086b3bd5ca74319
+
+## reproducibility (measured)
+The release artifact is NOT byte-reproducible on this host: two clean rebuilds of the same revision and
+toolchain produced two different sha256 values at an identical 859648 bytes. The digest above identifies
+one build, not a reproducible build identity. See j003-tool-versions.txt for both measured digests.
+The debug binary differs across rebuilds too (1302528 bytes, two distinct sha256 values recorded there).
+
+## resolved package graph (cargo tree --locked / cargo metadata --locked --offline)
+=== cargo tree --locked --offline ===
+axiom-cli v0.0.0-dev (D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r)
+tree_exit=0
+=== cargo metadata --locked --offline (package names + versions) ===
+metadata_exit=0
+  axiom-cli 0.0.0-dev dependencies=0 rust_version=1.85
+resolve nodes=1
+

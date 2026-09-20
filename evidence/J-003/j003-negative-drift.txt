@@ -1,19 +1,24 @@
 # J-003 negative / drift regression - mutate one side, observe the suite fail, byte-restore, observe green
-# generated: 2026-09-20T14:22:18.1091774+07:00
+# refreshed at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (lane w10-j003r)
 # rule under test: removing a verb from the dispatcher while leaving it in the usage text,
 #                 or the reverse, must fail the suite (distribution contract section 2 rule 1).
+# command per stage: cargo test --locked (all targets, real exit code)
 
 ## baseline
-src/cli.rs sha256 (before) = dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf
-cargo test --offline exit=0  passed=11  failed=0
-  test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+src/cli.rs sha256 (before) = a253e0a2a78aaa02c043104c021ad81eddfbe07c42347be9437b1d49fbba05b9
+cargo test --locked exit=0  passed/failed per suite:
+  test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+  test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+  test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+  test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.60s
+failing tests: (none)
 
 ## mutation 1 - verb removed from the dispatcher only
 removed line: `            "doctor" => Some(Verb::Doctor),` from Verb::from_name (the usage text is untouched)
-src/cli.rs sha256 (mutated) = b30590e1ba9c110be5e68dc5fb52f8645c07c2c67970e841538fb9b408c50753
+src/cli.rs sha256 (mutated) = 3bf961a3b0660125705efad5019bb6a4e06a600cf2e9a13f6cd1fc3ec5340933
 sha changed vs baseline: True
-cargo test --offline exit=101  (non-zero expected)
+cargo test --locked exit=101  (non-zero expected)
 failing tests:
   json_flag_is_accepted_before_and_after_the_verb
   json_mode_writes_exactly_one_object_on_every_path
@@ -22,46 +27,56 @@ failing tests:
   help_freezes_the_canonical_exit_vocabulary
   usage_text_and_dispatcher_cannot_drift
   help_exits_zero_and_is_available_per_verb
-  test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-  test result: FAILED. 4 passed; 7 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+  test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  test result: FAILED. 4 passed; 7 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.48s
 observed failure detail:
-thread 'json_flag_is_accepted_before_and_after_the_verb' (21660) panicked at tests\argv_surface.rs:435:9:
-thread 'json_mode_writes_exactly_one_object_on_every_path' (39132) panicked at tests\argv_surface.rs:79:5:
-thread 'every_documented_verb_is_reachable_from_argv' (14312) panicked at tests\argv_surface.rs:171:9:
+  thread 'json_flag_is_accepted_before_and_after_the_verb' (13872) panicked at tests\argv_surface.rs:441:9:
+  thread 'json_mode_writes_exactly_one_object_on_every_path' (33384) panicked at tests\argv_surface.rs:79:5:
+  thread 'every_documented_verb_is_reachable_from_argv' (26452) panicked at tests\argv_surface.rs:174:9:
+  thread 'unbuilt_verb_never_answers_success_and_states_a_reason' (21740) panicked at tests\argv_surface.rs:234:9:
+  thread 'help_freezes_the_canonical_exit_vocabulary' (17116) panicked at tests\argv_surface.rs:429:13:
+  thread 'usage_text_and_dispatcher_cannot_drift' (40724) panicked at tests\argv_surface.rs:201:9:
+  thread 'help_exits_zero_and_is_available_per_verb' (14600) panicked at tests\argv_surface.rs:404:9:
 
 ## restore after mutation 1
-src/cli.rs sha256 (restored) = dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf
+src/cli.rs sha256 (restored) = a253e0a2a78aaa02c043104c021ad81eddfbe07c42347be9437b1d49fbba05b9
 byte-identical to baseline: True
-cargo test --offline exit=0  passed=11  failed=0
-  test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+cargo test --locked exit=0  passed/failed per suite:
+  test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+  test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+  test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+  test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
 
 ## mutation 2 - verb removed from the usage text only
 removed line: the `doctor` row of the USAGE_VERBS block (the dispatcher is untouched)
-src/cli.rs sha256 (mutated) = c880438f36d16b879164ed92a59fcd666e7d1cca3bc44d8870fa00484058b7d2
+src/cli.rs sha256 (mutated) = 76fbe3073fc5fbcc71d7d30823bcb897ef4f0ec2255f9ead09d908900bd97668
 sha changed vs baseline: True
-cargo test --offline exit=101  (non-zero expected)
+cargo test --locked exit=101  (non-zero expected)
 failing tests:
   help_lists_exactly_the_documented_verbs
   usage_text_and_dispatcher_cannot_drift
-  test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-  test result: FAILED. 9 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.10s
+  test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  test result: FAILED. 9 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
 observed failure detail:
-thread 'help_lists_exactly_the_documented_verbs' (38224) panicked at tests\argv_surface.rs:160:5:
-assertion `left == right` failed: the usage text must list exactly the five documented verbs, in contract order
-thread 'usage_text_and_dispatcher_cannot_drift' (2356) panicked at tests\argv_surface.rs:207:9:
+  thread 'help_lists_exactly_the_documented_verbs' (12096) panicked at tests\argv_surface.rs:163:5:
+  assertion `left == right` failed: the usage text must list exactly the five documented verbs, in contract order
+  thread 'usage_text_and_dispatcher_cannot_drift' (26044) panicked at tests\argv_surface.rs:210:9:
 
 ## final restore
-src/cli.rs sha256 (restored) = dc1dd799050eb108326ddef2f28c59ab303533a2446736678adef1c9d3c73fcf
+src/cli.rs sha256 (restored) = a253e0a2a78aaa02c043104c021ad81eddfbe07c42347be9437b1d49fbba05b9
 byte-identical to baseline: True
-cargo test --offline exit=0  passed=11  failed=0
-  test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+cargo test --locked exit=0  passed/failed per suite:
+  test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+  test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+  test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+  test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.83s
 
-## git working-tree proof after restore (src/cli.rs must be unchanged vs HEAD/index)
-git status --porcelain=v1 -- src/cli.rs => ?? src/cli.rs
-(src/cli.rs is untracked at this point, so a clean index entry is expected until the task commit)
+## git working-tree proof after restore (src/cli.rs must be unchanged vs HEAD)
+git status --porcelain=v1 -- src/cli.rs => (clean)
+git diff --stat -- src/cli.rs => (empty)
 
 ## verdict
-baseline green: True; dispatcher-only mutation failed the suite: True; usage-only mutation failed the suite: True
+baseline green: see baseline exit above; dispatcher-only mutation failed the suite: True; usage-only mutation failed the suite: True
 byte restore verified twice by sha256 and the suite returned green: True
