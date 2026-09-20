@@ -1,0 +1,60 @@
+{
+  "manifest_version": 1,
+  "channel": "stable",
+  "updated_at": "2026-09-20T00:00:00Z",
+  "published": false,
+  "note": "Development seed for the axiom-cli update channel (task J-007). It declares the component versions and revisions the owning repositories actually declare today, with an empty artifact set because publication is closed for this wave: nothing has been published, so nothing is offered for download and no digest is invented. The trust root is a development root whose preimage is documented in docs/50-UPDATE-CHANNEL.md; it is not a release signing root and MUST be replaced, with published set to true and real artifact entries added, before any install resolves from this channel.",
+  "trust": {
+    "metadata_version": 1,
+    "metadata_expiry": "2027-09-20T00:00:00Z",
+    "trust_root": "23e4845c8e76c7cf8642b2c47f759d401345424309aec6b3bf4ad8413b40ee7a",
+    "signature_artifact": null
+  },
+  "components": [
+    {
+      "component": "axiom-graphd",
+      "status": "declared",
+      "version": "0.0.0-dev",
+      "revision": "3599dfb76f26b6393063906035c92ee677352c50",
+      "declared_source": "axiom-graphd/Cargo.toml (package version) and the pinned build revision",
+      "needs_restart": true,
+      "artifacts": []
+    },
+    {
+      "component": "axiom-mcp",
+      "status": "undeclared",
+      "version": null,
+      "revision": null,
+      "declared_source": "axiom-mcp/pyproject.toml declares the PEP 440 version 0.0.0.dev0, which is not SemVer, so this channel records it as undeclared instead of normalising it",
+      "needs_restart": true,
+      "artifacts": []
+    },
+    {
+      "component": "axiom",
+      "status": "declared",
+      "version": "0.0.0-dev",
+      "revision": "3599dfb76f26b6393063906035c92ee677352c50",
+      "declared_source": "axiom-specs/docs/20-VERSION-CHECK-UPDATE-RELEASE.md version axis: the axiom entrypoint shares the axiom-graphd core release version and revision",
+      "needs_restart": true,
+      "artifacts": []
+    },
+    {
+      "component": "axiom-cli",
+      "status": "declared",
+      "version": "0.0.0-dev",
+      "revision": "7ac376b5e5e0f52f4fe3af7fb97971d220277d38",
+      "declared_source": "axiom-cli/Cargo.toml (package version) and axiom-cli/VERSION, at the seed revision",
+      "needs_restart": true,
+      "artifacts": []
+    },
+    {
+      "component": "skills",
+      "status": "declared",
+      "version": "0.1.0-draft.1",
+      "revision": "2ca284217d5fb4c02d953c488928f9ca2320ceaa",
+      "declared_source": "axiom-skills/release/skills-manifest.json (bundle version and pack revision)",
+      "needs_restart": true,
+      "artifacts": []
+    }
+  ]
+}

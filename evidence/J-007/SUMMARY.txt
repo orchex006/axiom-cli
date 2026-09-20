@@ -1,0 +1,120 @@
+# J-007 SUMMARY - implement the update channel with verification, atomic swap and rollback
+# generated: 2569-09-20T18:11:58.2015331+07:00
+
+## scope and identity
+  card: J-007 (Repository: axiom-cli; work package axiom-cli-distribution; requirements R16, R22, R06)
+  worktree: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j007
+  branch: feature/j-007-update-channel-and-rollback
+  base revision: 7ac376b5e5e0f52f4fe3af7fb97971d220277d38 (axiom-cli origin/main)
+  spec pin: task-provided axiom-specs-main worktree revision ca5829722f24e9dbf1a564ea5334592152b8c1d3
+  remote: origin https://github.com/orchex006/axiom-cli.git (identity matches the workspace AGENTS.md canonical repository)
+  toolchain: rustc/cargo 1.98.1 (windows-x64 native)
+  dependencies: J-003 done (argv surface frozen); I-003/I-004 engine handoff and V2-021 are not exercised here.
+  ledger: the J-007 ledger card is closed by the orchestrator, not inside this worktree; axiom-specs was not modified.
+  publication: CLOSED for this wave - no image, tag, release or remote contact.
+
+## path decision (recorded)
+  The card proposed src/update/ and channels/stable.json; both were created exactly there. Nothing was
+  widened or renamed, and nothing was added outside axiom-cli. Full module table: docs/50-UPDATE-CHANNEL.md.
+
+## what was created
+  new: src/update/{mod,apply,channel,error,fetch,generation,health,journal,json,plan,report,rules,sha256,state,time}.rs
+       channels/stable.json (development seed, published:false), tests/update_channel.rs (23 legs),
+       docs/50-UPDATE-CHANNEL.md, evidence/J-007/**
+  modified: src/main.rs (mod update;), src/cli.rs (parse_update + the four update arms)
+
+## AC1 -> evidence
+  AC1.1 versions resolve only from the recorded channel manifest
+        check/plan/apply read the manifest the installed release recorded; a forbidden pin is refused
+        (leg H exit 2), an unsigned channel is refused (leg G exit 2), an expired window is 9 (leg F).
+        No branch tip, tag alias or network latest exists in the code path.  (j007-ac2-transcript.txt)
+  AC1.2 a sha256 is verified for every artifact before it is used
+        a tampered digest is refused before any swap (leg B exit 2, generations stay [seed]); a copy
+        that fails its length or digest is deleted, never left in the install root.
+  AC1.3 an atomic swap keeps the previous generation until the new one is verified
+        leg A: apply 0 -> generations [seed,new], current=new, previous=seed. A directory rename plus a
+        single active-pointer swap, inside one install root.
+  AC1.4 roll back to the previous generation on failed verification or failed health check
+        leg B: nothing is swapped. leg E: a failing health probe -> exit 6, back on seed, previous null.
+  AC1.5 report needs_restart per component
+        the applied plan and the JSON details carry a per-component needs_restart row.
+  AC1.6 never resolve a branch tip / tag alias / network latest / unsigned channel
+        leg H (forbidden_pin:latest, 2) and leg G (unsigned_channel, 2); FORBIDDEN_PINS =
+        main, master, develop, latest, HEAD, *.
+  AC1.7 never push to any remote
+        the update layer opens no socket and follows no redirect; acquisition is a local cache or a
+        file:// location, and a non-cached https artifact answers artifact_unreachable (leg C exit 4).
+  AC1.8 never modify user data, the graph output root or portable workspace state
+        the only writes are inside the install root: installed.json, generations/, staging/, journal/ and
+        update.lock. No workspace or graph path is written.
+  AC1.9 self-update and component updates are ONE transaction with ONE approval digest
+        axiom-cli is one row of the same plan, 0.0.0-seed -> 0.0.1-dev, with exactly one plan_digest
+        d2ae741d998502d2c91aeb75430216864391c8690126a8b1a152514c44a00919 (j007-self-update-single-digest.txt).
+  AC1.10 the plan is refused when the recorded digest does not match the installed bytes
+        leg K: editing recorded-manifest.json -> 2 recorded_manifest_digest_mismatch.
+        leg M: a plan whose artifact digest is no longer in the manifest -> 2 plan_not_in_recorded_manifest.
+
+## AC2 -> evidence
+  closed fully by j007-ac2-transcript.txt: 13 legs A-M driven through target\release\axiom-cli.exe on this host.
+  AC2.1 tampered artifact digest      leg B -> exit 2 artifact_digest_mismatch, generations [seed]
+  AC2.2 offline / unreachable channel leg C -> exit 4 artifact_unreachable, generations [seed]
+  AC2.3 interrupted apply             leg D -> apply 0 with recovered=true, staging gone, lock gone, journal state abandoned
+  AC2.4 rollback after failed health  leg E -> exit 6 health_check_failed:axiom-cli, back on seed, previous null,
+                                             then rollback --transaction previous -> 6 no_previous_generation
+  AC2.5 idempotent re-run             leg A -> a second apply exits 0 with idempotent:true and no new generation
+  AC2.6 an unverifiable artifact stays unverified
+        leg C: the verb answers not ready (4); no code path reports an unapplied update as applied.
+  AC2.7 canonical contract cross-check
+        j007-canonical-contract.txt: tools/update_plan_contract.py accepts the CLI-built plan (ok:true, same
+        digest as Rust) and rejects a post-approval edit with plan_digest_mismatch + approval_stale (2).
+  AC2.8 fixture inventory             j007-fixtures.txt: per-fixture manifest/recorded/installed/generation/
+                                      payload SHA256, so the run is reproducible.
+  AC2.9 self-update single digest     j007-self-update-single-digest.txt: axiom-cli is one row, one digest.
+
+## exact commands and exit codes (this host)
+  cargo fmt --all -- --check                              exit 0
+  cargo clippy --locked --all-targets -- -D warnings      exit 0
+  cargo test --locked --all-targets                       exit 0  (61 unit + 11 argv_surface + 23 update_channel = 95 passed, 0 failed)
+  cargo build --release --locked                          exit 0  (target\release\axiom-cli.exe 859648 bytes)
+  update check/plan/apply/rollback <13 legs>              exit 0/2/4/6/9/10  (j007-ac2-transcript.txt)
+  The acceptance harness is scratch under _w10ev/ (never committed) and rebuilds its own fixtures each run.
+
+## preflight (six canonical checks)
+  P1 read pinned spec/contracts/Development.md/card ... done; specs rev ca58297, card tasks/J/J-007.md
+  P2 dependencies done; single owner ................. J-003 done; I-003/I-004/V2-021 out of scope; one owner (this lane)
+  P3 repo/branch/base and authority .................. worktree/branch/base above; commit+push of THIS feature branch authorized
+  P4 allowed files and interface impact .............. src/update/**, channels/stable.json, tests/update_channel.rs, docs/50, docs/README, docs/30, Changelog.md, evidence/J-007
+  P5 positive/negative commands and evidence defined first  tests/update_channel.rs + the _w10ev/run-ac2.ps1 harness
+  P6 preflight evidence and before-stage validation .. evidence/J-007/**; specctl NOT run (it lives in axiom-specs, which this task must not modify)
+
+## completion (eight canonical checks)
+  D1 implement only this slice; review diff ......... yes; no installer/engine behaviour added outside src/update
+  D2 run each AC and attach output + hashes ......... j007-ac2-transcript.txt + j007-gates.txt
+  D3 targeted negative/boundary regression .......... legs B-H and J-M (11 negative/boundary legs)
+  D4 compatibility, migration, limitations .......... install-root-only writes; limits recorded below and in docs/50
+  D5 update owned docs and Changelog.md ............. docs/50-UPDATE-CHANNEL.md, docs/README.md, docs/30, Changelog.md (### J-007)
+  D6 scan outputs for secrets; preserve human files . no credentials or private bodies in evidence; no pre-existing change reverted
+  D7 update checklist/evidence; run required checks . gates exit 0; specctl not run (see P6)
+  D8 record scoped commit/push; no false publication  feature branch committed and pushed; nothing published, tagged or released
+
+## limitations and blockers (real, not assumed)
+  1. Only a windows-x64 native run is recorded. linux-x64, macos-arm64 and macos-x64 are unverified; a WSL2
+     run is Linux evidence and is never Windows evidence. No platform is certified.
+  2. Publication is closed: channels/stable.json is a development seed (published:false, no artifacts) and its
+     trust root is a documented development seed, not a release signing root. Real signed-channel resolution
+     is unverified by construction.
+  3. The engine's activation and restart of a component's canonical executable path is owned by axiom-graphd
+     (I-003/I-004) and is not exercised here; this layer moves the pointer and the generations.
+  4. On Windows a rename cannot replace a currently running executable, so a change is reported under
+     needs_restart rather than as live.
+  5. VERSION stays 0.0.0-dev; no release version, tag or release is produced by this card.
+  6. specctl begin/validate/complete was NOT run: specctl lives in axiom-specs, which this task must not
+     modify. The orchestrator closes the J-007 ledger card and writes evidence/preflight|completion/J-007.json.
+
+## evidence files (sha256)
+  j007-ac2-transcript.txt             f26fcf251ea2ff0854bad059be4c145d2e23ec407784b468a9fb4d70afb5a44c
+  j007-canonical-contract.txt         748b7517b87762b274db8539eabf1849cadd30f9a6be2b78281cfabb1435d5a7
+  j007-fixtures.txt                   fe2191ebc28354ef01828f965ed9c46a378c77be640e1d665aadd082f845ddba
+  j007-gates.txt                      6cbad66e72b7559b0e6bfd31b2637b2f5f7788c242f9780c7d89ef0c525cdaa3
+  j007-self-update-single-digest.txt  889537997921160091a7ac49df229bf7b323819d52f19be51299d7713967d6ea
+  SUMMARY.txt                         this file (hashed by the orchestrator after staging)

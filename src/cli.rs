@@ -15,6 +15,7 @@
 //! `tests/argv_surface.rs`: removing a verb from the dispatcher while leaving it in the
 //! usage text - or the reverse - fails that test.
 
+use crate::update::{self, Request, Subcommand};
 use std::ffi::OsString;
 
 /// Canonical CLI exit vocabulary.
@@ -272,9 +273,33 @@ impl OptKind {
     }
 }
 
+/// A parsed invocation, plus the structured `update` request when the verb is `update`.
 struct Invocation {
     verb: Verb,
+    /// The frozen one-line parse summary the `NotReady` envelope reports.
     detail: String,
+    /// The structured `update` request; `None` for every verb but `update`.
+    update: Option<Request>,
+}
+
+impl Invocation {
+    /// Build an invocation for a verb whose slice answers without a structured request.
+    fn plain(verb: Verb, detail: String) -> Invocation {
+        Invocation {
+            verb,
+            detail,
+            update: None,
+        }
+    }
+
+    /// Build an `update` invocation from the structured request and its parse summary.
+    fn update(request: Request, detail: String) -> Invocation {
+        Invocation {
+            verb: Verb::Update,
+            detail,
+            update: Some(request),
+        }
+    }
 }
 
 /// Parse the program argv and return the process exit code.
@@ -376,7 +401,10 @@ where
         Err(message) => return fail(json, verbose, Some(verb.name()), &message),
     };
 
-    not_ready(json, verbose, invocation)
+    match invocation.update {
+        Some(request) => update::run_update(request, json, verbose),
+        None => not_ready(json, verbose, invocation),
+    }
 }
 
 fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
@@ -436,10 +464,10 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
                 "unspecified"
             };
             let from = value(&values, OptKind::From).unwrap_or_else(|| "-".to_string());
-            Ok(Invocation {
+            Ok(Invocation::plain(
                 verb,
-                detail: format!("install mode={mode} from={from}"),
-            })
+                format!("install mode={mode} from={from}"),
+            ))
         }
         Verb::Uninstall => {
             reject_positionals(verb, &positionals)?;
@@ -469,24 +497,24 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
             } else {
                 "unspecified"
             };
-            Ok(Invocation {
+            Ok(Invocation::plain(
                 verb,
-                detail: format!("uninstall mode={mode} purge_data={purge}"),
-            })
+                format!("uninstall mode={mode} purge_data={purge}"),
+            ))
         }
         Verb::Doctor => {
             reject_positionals(verb, &positionals)?;
-            Ok(Invocation {
+            Ok(Invocation::plain(
                 verb,
-                detail: format!("doctor all={}", has(&flags, OptKind::All)),
-            })
+                format!("doctor all={}", has(&flags, OptKind::All)),
+            ))
         }
         Verb::Version => {
             reject_positionals(verb, &positionals)?;
-            Ok(Invocation {
+            Ok(Invocation::plain(
                 verb,
-                detail: format!("version all={}", has(&flags, OptKind::All)),
-            })
+                format!("version all={}", has(&flags, OptKind::All)),
+            ))
         }
     }
 }
@@ -510,8 +538,16 @@ fn parse_update(
         }
     };
 
-    match subcommand {
-        "check" => {
+    // The parsed token and the structured request share one vocabulary: a subcommand that the
+    // request type does not know is refused by name instead of falling through to a default.
+    let Some(kind) = Subcommand::from_name(subcommand) else {
+        return Err(format!(
+            "unknown update subcommand `{subcommand}`; expected check, plan, apply or rollback"
+        ));
+    };
+
+    match kind {
+        Subcommand::Check => {
             for flag in flags {
                 if *flag != OptKind::All {
                     return Err(format!(
@@ -526,12 +562,20 @@ fn parse_update(
                     kind.flag()
                 ));
             }
-            Ok(Invocation {
-                verb: Verb::Update,
-                detail: format!("update check all={}", has(flags, OptKind::All)),
-            })
+            Ok(Invocation::update(
+                Request {
+                    subcommand: Subcommand::Check,
+                    all: has(flags, OptKind::All),
+                    to: None,
+                    out: None,
+                    plan_path: None,
+                    approve_digest: None,
+                    transaction: None,
+                },
+                format!("update check all={}", has(flags, OptKind::All)),
+            ))
         }
-        "plan" => {
+        Subcommand::Plan => {
             reject_update_flags(flags, subcommand)?;
             for (kind, _) in values {
                 if !matches!(kind, OptKind::To | OptKind::Out) {
@@ -544,12 +588,20 @@ fn parse_update(
             let to = value(values, OptKind::To)
                 .ok_or_else(|| "`update plan` requires `--to <version>`".to_string())?;
             let out = value(values, OptKind::Out).unwrap_or_else(|| "-".to_string());
-            Ok(Invocation {
-                verb: Verb::Update,
-                detail: format!("update plan to={to} out={out}"),
-            })
+            Ok(Invocation::update(
+                Request {
+                    subcommand: Subcommand::Plan,
+                    all: false,
+                    to: Some(to.clone()),
+                    out: Some(out.clone()),
+                    plan_path: None,
+                    approve_digest: None,
+                    transaction: None,
+                },
+                format!("update plan to={to} out={out}"),
+            ))
         }
-        "apply" => {
+        Subcommand::Apply => {
             reject_update_flags(flags, subcommand)?;
             for (kind, _) in values {
                 if !matches!(kind, OptKind::Plan | OptKind::ApproveDigest) {
@@ -566,12 +618,20 @@ fn parse_update(
                     .to_string()
             })?;
             check_digest(&digest)?;
-            Ok(Invocation {
-                verb: Verb::Update,
-                detail: format!("update apply plan={plan}"),
-            })
+            Ok(Invocation::update(
+                Request {
+                    subcommand: Subcommand::Apply,
+                    all: false,
+                    to: None,
+                    out: None,
+                    plan_path: Some(plan.clone()),
+                    approve_digest: Some(digest.clone()),
+                    transaction: None,
+                },
+                format!("update apply plan={plan}"),
+            ))
         }
-        "rollback" => {
+        Subcommand::Rollback => {
             reject_update_flags(flags, subcommand)?;
             for (kind, _) in values {
                 if !matches!(kind, OptKind::Transaction | OptKind::ApproveDigest) {
@@ -586,14 +646,19 @@ fn parse_update(
             if let Some(digest) = value(values, OptKind::ApproveDigest) {
                 check_digest(&digest)?;
             }
-            Ok(Invocation {
-                verb: Verb::Update,
-                detail: format!("update rollback transaction={transaction}"),
-            })
+            Ok(Invocation::update(
+                Request {
+                    subcommand: Subcommand::Rollback,
+                    all: false,
+                    to: None,
+                    out: None,
+                    plan_path: None,
+                    approve_digest: value(values, OptKind::ApproveDigest),
+                    transaction: Some(transaction.clone()),
+                },
+                format!("update rollback transaction={transaction}"),
+            ))
         }
-        other => Err(format!(
-            "unknown update subcommand `{other}`; expected check, plan, apply or rollback"
-        )),
     }
 }
 
@@ -682,9 +747,9 @@ fn reason_for(verb: Verb) -> &'static str {
              installed, repaired or downloaded."
         }
         Verb::Update => {
-            "the update transaction and its pinned channel manifest (channels/stable.json, \
-             J-007) are not built, so no mutating update was started and no version was \
-             resolved. Nothing was swapped, rolled back or pushed."
+            "the update channel is built in this slice: `update check`, `update plan`, \
+             `update apply` and `update rollback` dispatch to the channel machinery in \
+             src/update/ and report their own result, so this fallback is not reached."
         }
         Verb::Doctor => {
             "doctor needs the installed-component and prerequisite probe owned by axiom-graphd \

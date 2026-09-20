@@ -1,0 +1,27 @@
+# J-007 - self-update and component updates are ONE transaction with ONE approval digest
+# generated: 2026-09-20T18:05:29.2540983+07:00
+
+command: axiom-cli.exe update plan --to 0.0.1-dev --out plan-selfupdate.json --json
+exit=0
+plan file: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j007\_w10ev\fx\a-published\plan-selfupdate.json
+plan file sha256: 424722e6ca26e429bfb0158e5fd2beace620cab13a0755fb2a7e3bb29f6f70b5
+
+# note: the component table is rendered from the stored plan JSON above (identical sha256), because
+# the first console render laid the version column out too narrowly and clipped its last character.
+
+plan_id     = update-stable-axiom-cli
+plan_digest = d2ae741d998502d2c91aeb75430216864391c8690126a8b1a152514c44a00919   <-- the single digest that covers every row below
+target      = component axiom-cli / host windows-x64 / install_root D:/SP-Billy/axiom-worktrees/axiom-cli-w10-j007/_w10ev/fx/a-published/root
+approval    = unapproved (approved_digest=)
+
+components in this one plan (installed_version -> target_version, action, artifact_sha256):
+  axiom-graphd   0.0.0-seed -> 0.0.1-dev      upgrade  cae30230c9680a76f9f1c353bd1f221665db6be06c0da9fbbf8dbd9a9294686d
+  axiom          0.0.0-seed -> 0.0.1-dev      upgrade  42933e88d2de2fc45e518d817f4d484177289fd262fd18c640b5ef9f988858bb
+  axiom-cli      0.0.0-seed -> 0.0.1-dev      upgrade  dd311fc808a6f9a4e6e95e3749a7af1af151c92a79cf039610f6f2373ac32dd2
+  skills         0.0.0-seed -> 0.1.0-draft.1  upgrade  0fc7ed538d69d1f15483d231a7fe63f6895ab1451e1071185410e0c0121e1b49
+
+axiom-cli (the running distribution itself) IS a row in the plan: 1 row(s), action=upgrade
+distinct plan digests carried by this plan: 1 (the plan body carries exactly one)
+
+so one `update apply --plan ... --approve-digest <that digest>` covers the CLI and every component
+together; there is no separate self-update path and no second approval.
