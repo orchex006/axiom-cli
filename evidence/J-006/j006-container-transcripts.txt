@@ -1,0 +1,83 @@
+# J-006 container transcripts (real, unedited stdout/stderr and exit codes)
+# image axiom-cli:j006-local = sha256:843e184865ccb2f161036a149330526a4952750708caa14a4528a8fa49c54d56
+
+$ docker run --rm axiom-cli:j006-local --help
+exit_code=0
+out: axiom-cli 0.0.0-dev - Axiom ecosystem distribution entrypoint
+out: 
+out: USAGE:
+out:     axiom-cli [GLOBAL OPTIONS] <verb> [verb options]
+out: 
+out: VERBS:
+out:     install      Install or repair this platform's pinned component set
+out:     update       check | plan | apply | rollback through the update channel
+out:     doctor       Report prerequisites, installed versions, digests and target state
+out:     version      Report installed and available versions per component and per target
+out:     uninstall    Remove binaries and service registration; preserve user data
+out: 
+out: GLOBAL OPTIONS:
+out:     -h, --help    Print this help and exit 0
+out:     --json        Machine-readable mode: exactly one JSON object on stdout
+out:     --verbose     Emit diagnostics on stderr
+out: 
+out: VERB OPTIONS:
+out:     install      --dry-run | --apply, --approve-digest <sha256>, --from <path>
+out:     update       check [--all] | plan --to <version> [--out <file>] |
+out:                  apply --plan <file> --approve-digest <sha256> |
+out:                  rollback --transaction <id> [--approve-digest <sha256>]
+out:     doctor       [--all]
+out:     version      [--all]
+out:     uninstall    --dry-run | --apply, --approve-digest <sha256>, [--purge-data]
+out: 
+out: EXIT CODES:
+out:     0   success
+out:     2   validation
+out:     3   not found
+out:     4   not ready / stale
+out:     5   authorization
+out:     6   conflict
+out:     7   timeout / busy
+out:     8   I/O internal
+out:     9   incompatible
+out:     10  lock unavailable
+out:     20  partial multi-repository operation
+out: 
+out: NOTES:
+out:     A verb the distribution contract declares but whose production behaviour is not
+out:     built answers NotReady with exit code 4 and a stated reason. It never returns 0
+out:     and never emits an empty success envelope.
+out:     A destructive install/update/uninstall transaction needs its approval bound to the
+out:     canonical plan digest through --approve-digest <sha256>; supplying --plan is not
+out:     approval.
+out:     The installation engine stays owned by axiom-graphd; this layer wraps it.
+
+$ docker run --rm axiom-cli:j006-local version
+exit_code=4
+out: axiom-cli: version: NotReady: component version resolution needs the pinned update-channel manifest (channels/stable.json, J-007); no installed or available version was resolved or invented.
+
+$ docker run --rm axiom-cli:j006-local doctor
+exit_code=4
+out: axiom-cli: doctor: NotReady: doctor needs the installed-component and prerequisite probe owned by axiom-graphd (I-003/I-004); this slice exposes argv only and did not probe the host.
+
+$ docker run --rm axiom-cli:j006-local --json doctor
+exit_code=4
+out: {"code":4,"status":"not_ready","message":"`doctor` is not ready: doctor needs the installed-component and prerequisite probe owned by axiom-graphd (I-003/I-004); this slice exposes argv only and did not probe the host.","retryable":false,"details":{"verb":"doctor","engine_owner":"axiom-graphd","reason":"doctor needs the installed-component and prerequisite probe owned by axiom-graphd (I-003/I-004); this slice exposes argv only and did not probe the host.","parsed":"doctor all=false"},"request_id":"axiom-cli-1-18d6fd5a05e708a8"}
+
+$ docker run --rm axiom-cli:j006-local frobnicate
+exit_code=2
+out: axiom-cli: error: unknown verb `frobnicate`
+out: axiom-cli: try `axiom-cli --help`
+
+$ docker run --rm axiom-cli:j006-local install --apply --approve-digest <64 hex a>
+exit_code=4
+out: axiom-cli: install: NotReady: install is declared by the distribution contract, but the transactional installer and the axiom-graphd engine delegation are not built in this slice: J-003 delivers the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was installed, repaired or downloaded.
+
+$ docker run --rm --entrypoint /usr/local/bin/axiom-cli axiom-cli:j006-local   # empty argv, CMD bypassed
+exit_code=2
+out: axiom-cli: error: no verb supplied; expected one of install, update, doctor, version, uninstall
+out: axiom-cli: try `axiom-cli --help`
+
+$ docker run --rm --entrypoint /bin/sh axiom-cli:j006-local -c 'id; ...'
+out: uid=10001(axiom) gid=10001(axiom) groups=10001(axiom)
+out: HOME=/home/axiom
+out: PWD=/home/axiom

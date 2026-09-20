@@ -1,0 +1,7 @@
+# base image pin resolution (docker buildx imagetools inspect) 2026-09-20
+# tag=rust:1.85-slim-bookworm
+# Name:      docker.io/library/rust:1.85-slim-bookworm
+# Digest:    sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+# tag=debian:bookworm-slim
+# Name:      docker.io/library/debian:bookworm-slim
+# Digest:    sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251

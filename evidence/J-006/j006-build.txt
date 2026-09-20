@@ -1,0 +1,57 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.59kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/rust:1.85-slim-bookworm@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 63B done
+#4 DONE 0.0s
+
+#5 [runtime 1/5] FROM docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#5 DONE 0.0s
+
+#6 [builder 1/5] FROM docker.io/library/rust:1.85-slim-bookworm@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 30.03kB 0.0s done
+#7 DONE 0.0s
+
+#8 [builder 4/5] COPY src ./src
+#8 CACHED
+
+#9 [builder 5/5] RUN cargo build --release --locked --offline --bin axiom-cli
+#9 CACHED
+
+#10 [runtime 3/5] COPY --from=builder --chown=0:0 --chmod=0755 /src/target/release/axiom-cli /usr/local/bin/axiom-cli
+#10 CACHED
+
+#11 [runtime 2/5] RUN groupadd --gid 10001 axiom  && useradd --uid 10001 --gid 10001 --no-create-home --home-dir /home/axiom --shell /usr/sbin/nologin axiom  && install -d -o 10001 -g 10001 -m 0755 /home/axiom
+#11 CACHED
+
+#12 [builder 2/5] WORKDIR /src
+#12 CACHED
+
+#13 [runtime 4/5] COPY --chown=0:0 --chmod=0755 containers/entrypoint.sh /usr/local/bin/axiom-cli-entrypoint
+#13 CACHED
+
+#14 [builder 3/5] COPY Cargo.toml Cargo.lock ./
+#14 CACHED
+
+#15 [runtime 5/5] WORKDIR /home/axiom
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers done
+#16 writing image sha256:843e184865ccb2f161036a149330526a4952750708caa14a4528a8fa49c54d56 done
+#16 naming to docker.io/library/axiom-cli:j006-local 0.0s done
+#16 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/rhesqd37nclzjkidukju7w1wh

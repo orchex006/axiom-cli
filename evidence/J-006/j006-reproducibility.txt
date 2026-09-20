@@ -1,0 +1,25 @@
+# J-006 reproducibility experiments
+# host builder: Docker Desktop 29.6.2, engine linux/amd64
+# SOURCE_DATE_EPOCH=1789890200 (commit time of 7ac376b5e5e0f52f4fe3af7fb97971d220277d38)
+# Each experiment: two clean --no-cache builds of the same inputs, layers compared.
+
+[e1-pinned-base-plus-one-run] exit=0/0 layers=DIFFERENT
+  build A layers: ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d","sha256:0e76f239da4119bcdfde0ef33845a80edc8c853634526a87d22d04b39357fcfe"]
+  build B layers: ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d","sha256:d1953abe622922ed7cb08ec3f6d33da7623775c3475652bd07b8bf8322873794"]
+
+[e3-copy-from-context] exit=0/0 layers=DIFFERENT
+  build A layers: ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d","sha256:3330ae552c8bb66832eabf955eded21889356b2cdd1af4a02966ee00a7c5f4e9"]
+  build B layers: ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d","sha256:ddd5087b9ef259c720b92a0ab55fc2d39c89914b5423403cadf09581e62555d1"]
+
+[e4-copy-from-stage] exit=0/0 layers=DIFFERENT
+  build A layers: ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d","sha256:aa31e319c23fe0d24ac740cd9c5d2264d4d0b3b94f7b2987a28e646a91e2b172"]
+  build B layers: ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d","sha256:5a14d2e9931c6029dc3e91213e37ea7c7abc65362a90bb1a71ca67ebfbc6eeee"]
+
+# application payload across clean builds (file bytes are identical; proven by sha256 inside the image):
+  axiom-cli      494a88903d13da47fa94ca8876bd611f8f9ef4bb4dd6ce8808d29b1aeb00c8d9  /usr/local/bin/axiom-cli
+  entrypoint.sh  a68fdce7ea99fbecb149ff0c65c29e10661299ae53e81a5bd3a5fc2eba20b2d2  /usr/local/bin/axiom-cli-entrypoint
+# pinned base image layer (stable across clean builds):
+  ["sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d"]
+# CONCLUSION: the pinned base layer and the application payload are deterministic, but a clean
+# rebuild of any RUN or COPY step is not bit-identical on this builder. The digest is an
+# output to record, never a value to predict.

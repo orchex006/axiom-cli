@@ -27,5 +27,15 @@ wired to the engine, so each one answers `NotReady` (exit `4`) with a stated rea
 empty success. See [docs/40-CLI-ARGV-SURFACE.md](docs/40-CLI-ARGV-SURFACE.md). The installation
 engine stays in `axiom-graphd`; nothing here installs, updates or removes anything yet.
 
+Card `J-006` added the container delivery channel (`container-linux-x64`): `containers/Dockerfile`
+with both base images pinned by digest, a non-root runtime user and a complete OCI label set;
+`containers/entrypoint.sh`, which forwards argv verbatim so the container exposes the same five
+verbs with the same exit codes; and `.github/workflows/publish-container.yml`, which builds with
+buildx, publishes immutable version and commit tags only, keeps pushing opt-in and records the
+resolved digest. See [docs/50-CONTAINER-CHANNEL.md](docs/50-CONTAINER-CHANNEL.md). The image is an
+additional channel and is never native runtime evidence for a target. The channel is defined and
+locally verified but **not published**: no image was pushed, no tag was created, and
+`distribution.container.published_image_digest` in the platform matrix is still `null`.
+
 `spec.lock.json` is still unset: this seed ships only `spec.lock.example.json`, and a verified
 immutable `axiom-specs` pin has not been recorded.

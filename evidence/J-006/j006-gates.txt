@@ -1,0 +1,8 @@
+# J-006 gate rollup (real exit codes)
+cargo fmt --all -- --check                          exit=0
+cargo clippy --locked --all-targets -- -D warnings   exit=0
+cargo test --locked --all-targets                   exit=0   (0 unit + 11 argv_surface + 9 container_distribution = 20 passed, 0 failed)
+docker build -f containers/Dockerfile                exit=0
+docker build (cache-warm repeat, same args)          exit=0   image id sha256:843e184865ccb2f161036a149330526a4952750708caa14a4528a8fa49c54d56 reproduced
+# baseline preserved: tests/argv_surface.rs still 11/11, unchanged from J-003
+# re-run after the final doc/evidence edits; branch feature/j-006-container-distribution
