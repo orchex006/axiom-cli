@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### 0.1.0 experimental Windows distribution
+
+Set the distributed CLI package and Dockerfile default to `0.1.0`. The Windows
+release set is unsigned; `axiom-cli version` currently returns `not_ready` until
+the pinned update channel is configured. macOS Intel has not been tested.
+
 V2 seed adopts `2.0.0-draft.1`, `.axiom` workspace layout and component-owned docs/tests. Distribution, installer and update-channel implementation and platform certification are pending.
 
 ### W10-DOCTRUTH — documentation links that escaped the repository

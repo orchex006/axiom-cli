@@ -71,13 +71,13 @@ the Windows PowerShell that ships with Windows — no WSL, Bash, Docker, Node.js
 | `installers/windows/AxiomCli.Windows.Common.ps1` | Shared helpers: canonical JSON, sha256, per-user PATH rules, transaction lock, host info. |
 | `installers/windows/Install-AxiomCli.ps1` | Transactional per-user install, repair and recovery. |
 | `installers/windows/Uninstall-AxiomCli.ps1` | Transactional removal that preserves user data unless a separate purge plan is approved. |
-| `tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1` | The executed acceptance harness (26 legs) that produces `evidence/J-004/`. |
+| `tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1` | The executed acceptance harness (32 legs) that produces `evidence/J-004/`. |
 
 ### Step 1 — assemble the release set and obtain the approval digest
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File packaging\windows\Build-ReleaseSet.ps1 `
-  -OutDir .\_out\release-set -CliExe .\target\release\axiom-cli.exe -Version 0.0.0-dev -Json
+  -OutDir .\_out\release-set -CliExe .\target\release\axiom-cli.exe -Version 0.1.0 -Json
 ```
 
 Writes `<_out>\release-set.json` plus the carried artifact bytes. The report is a release-set
