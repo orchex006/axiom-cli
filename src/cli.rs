@@ -16,6 +16,7 @@
 //! usage text - or the reverse - fails that test.
 
 use crate::update::{self, Request, Subcommand};
+use crate::{doctor, lifecycle, version};
 use std::ffi::OsString;
 
 /// Canonical CLI exit vocabulary.
@@ -168,11 +169,15 @@ VERB OPTIONS:
 EXIT CODES:
 {USAGE_EXIT_CODES}
 NOTES:
-    A verb the distribution contract declares but whose production behaviour is not
-    built answers NotReady with exit code 4 and a stated reason. It never returns 0
-    and never emits an empty success envelope.
-    A destructive install/update/uninstall transaction needs its approval bound to the
-    canonical plan digest through --approve-digest <sha256>; supplying --plan is not
+    Every documented verb is dispatched to real work. A verb that cannot complete
+    answers its canonical failure code with a stated reason on stderr and exactly one
+    JSON object on stdout; it never returns 0 and never emits an empty success
+    envelope.
+    install and uninstall require an explicit mode: --dry-run reports the plan and
+    changes nothing, --apply runs the transaction. A bare verb is a validation error,
+    because a mutating verb must never answer the success code for work it did not do.
+    Any mutating install, update or uninstall needs its approval bound to the canonical
+    plan digest through --approve-digest <sha256>; supplying --plan or --from is not
     approval.
     The installation engine stays owned by {ENGINE_OWNER}; this layer wraps it.
 "
@@ -180,42 +185,38 @@ NOTES:
 }
 
 /// Verb-specific help text, printed by `axiom-cli <verb> --help`.
+///
+/// Written with [`concat!`] and explicit `\n` separators for the same reason as
+/// [`USAGE_EXIT_CODES`]: a `\`-continued literal swallows the leading indentation of the line that
+/// follows the escape, which silently unindented the first option of every verb.
 pub fn verb_help(verb: Verb) -> String {
     let options = match verb {
-        Verb::Install => {
-            "\
-    --dry-run                  Validate and report the plan without changing the host
-    --apply                    Apply the transaction; requires --approve-digest
-    --approve-digest <sha256>  Approval bound to the canonical plan digest
-    --from <path>              Read the release set from a local path instead of the channel
-"
-        }
-        Verb::Update => {
-            "\
-    update check [--all]                                  Report available transitions
-    update plan --to <version> [--out <file>]             Write the canonical plan
-    update apply --plan <file> --approve-digest <sha256>  Apply the approved plan
-    update rollback --transaction <id>                    Restore the previous generation
-"
-        }
+        Verb::Install => concat!(
+            "    One of --dry-run or --apply is required; a bare `install` is a validation error.\n",
+            "    --dry-run                  Validate and report the plan without changing the host\n",
+            "    --apply                    Apply the transaction; requires --approve-digest\n",
+            "    --approve-digest <sha256>  Approval bound to the canonical plan digest\n",
+            "    --from <path>              Read the release set from a local path instead of the channel\n",
+        ),
+        Verb::Update => concat!(
+            "    update check [--all]                                  Report available transitions\n",
+            "    update plan --to <version> [--out <file>]             Write the canonical plan\n",
+            "    update apply --plan <file> --approve-digest <sha256>  Apply the approved plan\n",
+            "    update rollback --transaction <id>                    Restore the previous generation\n",
+        ),
         Verb::Doctor => {
-            "\
-    --all  Probe every declared component, not only the pinned set
-"
+            "    --all  Probe every declared component, not only the pinned set\n"
         }
         Verb::Version => {
-            "\
-    --all  Report core, MCP, skills and pinned spec provenance
-"
+            "    --all  Report every declared component, not only the installed set\n"
         }
-        Verb::Uninstall => {
-            "\
-    --dry-run                  Report what would be removed without removing it
-    --apply                    Remove owned binaries and startup entries; requires --approve-digest
-    --approve-digest <sha256>  Approval bound to the canonical plan digest
-    --purge-data               Also delete workspace data; needs --apply and separate approval
-"
-        }
+        Verb::Uninstall => concat!(
+            "    One of --dry-run or --apply is required; a bare `uninstall` is a validation error.\n",
+            "    --dry-run                  Report what would be removed without removing it\n",
+            "    --apply                    Remove owned binaries and startup entries; requires --approve-digest\n",
+            "    --approve-digest <sha256>  Approval bound to the canonical plan digest\n",
+            "    --purge-data               Also delete workspace data; needs --apply and separate approval\n",
+        ),
     };
     format!(
         "\
@@ -234,8 +235,9 @@ GLOBAL OPTIONS:
 EXIT CODES:
 {USAGE_EXIT_CODES}
 NOTES:
-    The production behaviour of this verb is not built in this slice. It answers
-    NotReady with exit code 4 and a stated reason; it never returns 0.
+    Every documented verb is dispatched to real work. A verb that cannot complete
+    answers its canonical failure code with a stated reason; it never returns 0 and
+    never emits an empty success envelope.
 ",
         verb_name = verb.name(),
         summary = verb.summary(),
@@ -273,31 +275,76 @@ impl OptKind {
     }
 }
 
-/// A parsed invocation, plus the structured `update` request when the verb is `update`.
+/// The concrete work one parsed invocation dispatches to.
+///
+/// Every documented verb has an action, so the dispatcher has no "unbuilt verb" fallback. A verb
+/// that cannot complete still reports its own precise refusal from inside its action; it never
+/// falls through to a blanket answer.
+enum Action {
+    /// `update check|plan|apply|rollback`.
+    Update(Request),
+    /// `install`.
+    Install(lifecycle::InstallRequest),
+    /// `uninstall`.
+    Uninstall(lifecycle::UninstallRequest),
+    /// `doctor`.
+    Doctor { all: bool },
+    /// `version`.
+    Version { all: bool },
+}
+
+/// A parsed invocation: the verb, its frozen one-line parse summary, and the action to run.
 struct Invocation {
     verb: Verb,
     /// The frozen one-line parse summary the `NotReady` envelope reports.
     detail: String,
-    /// The structured `update` request; `None` for every verb but `update`.
-    update: Option<Request>,
+    /// The work this invocation dispatches to.
+    action: Action,
 }
 
 impl Invocation {
-    /// Build an invocation for a verb whose slice answers without a structured request.
-    fn plain(verb: Verb, detail: String) -> Invocation {
-        Invocation {
-            verb,
-            detail,
-            update: None,
-        }
-    }
-
     /// Build an `update` invocation from the structured request and its parse summary.
     fn update(request: Request, detail: String) -> Invocation {
         Invocation {
             verb: Verb::Update,
             detail,
-            update: Some(request),
+            action: Action::Update(request),
+        }
+    }
+
+    /// Build an `install` invocation.
+    fn install(request: lifecycle::InstallRequest, detail: String) -> Invocation {
+        Invocation {
+            verb: Verb::Install,
+            detail,
+            action: Action::Install(request),
+        }
+    }
+
+    /// Build an `uninstall` invocation.
+    fn uninstall(request: lifecycle::UninstallRequest, detail: String) -> Invocation {
+        Invocation {
+            verb: Verb::Uninstall,
+            detail,
+            action: Action::Uninstall(request),
+        }
+    }
+
+    /// Build a `doctor` invocation.
+    fn doctor(all: bool, detail: String) -> Invocation {
+        Invocation {
+            verb: Verb::Doctor,
+            detail,
+            action: Action::Doctor { all },
+        }
+    }
+
+    /// Build a `version` invocation.
+    fn version(all: bool, detail: String) -> Invocation {
+        Invocation {
+            verb: Verb::Version,
+            detail,
+            action: Action::Version { all },
         }
     }
 }
@@ -327,8 +374,14 @@ where
         }
     }
 
-    let mut json = false;
-    let mut verbose = false;
+    // The machine-readable contract belongs to the invocation, not to token order: `--json`
+    // anywhere in argv must be honoured even when the refusal happens before the scan below
+    // reaches it (`axiom-cli unknown-verb --json`). Without this pre-scan that invocation
+    // answered prose on stderr with an empty stdout, so the same request answered differently
+    // depending on where the flag sat. Latched here so every refusal on this path already knows
+    // it owes stdout exactly one JSON object.
+    let mut json = tokens.iter().any(|token| token == "--json");
+    let mut verbose = tokens.iter().any(|token| token == "--verbose");
     let mut help = false;
     let mut verb: Option<Verb> = None;
     let mut rest: Vec<String> = Vec::new();
@@ -401,9 +454,19 @@ where
         Err(message) => return fail(json, verbose, Some(verb.name()), &message),
     };
 
-    match invocation.update {
-        Some(request) => update::run_update(request, json, verbose),
-        None => not_ready(json, verbose, invocation),
+    if verbose && !json {
+        eprintln!(
+            "{PROGRAM}: diagnostic: parsed {} invocation: {}",
+            invocation.verb.name(),
+            invocation.detail
+        );
+    }
+    match invocation.action {
+        Action::Update(request) => update::run_update(request, json, verbose),
+        Action::Install(request) => lifecycle::run_install(request, json, verbose),
+        Action::Uninstall(request) => lifecycle::run_uninstall(request, json, verbose),
+        Action::Doctor { all } => doctor::run_doctor(all, json, verbose),
+        Action::Version { all } => version::run_version(all, json, verbose),
     }
 }
 
@@ -456,17 +519,15 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
             if let Some(digest) = value(&values, OptKind::ApproveDigest) {
                 check_digest(&digest)?;
             }
-            let mode = if has(&flags, OptKind::Apply) {
-                "apply"
-            } else if has(&flags, OptKind::DryRun) {
-                "dry-run"
-            } else {
-                "unspecified"
-            };
+            let mode = mode_of(verb, &flags)?;
             let from = value(&values, OptKind::From).unwrap_or_else(|| "-".to_string());
-            Ok(Invocation::plain(
-                verb,
-                format!("install mode={mode} from={from}"),
+            Ok(Invocation::install(
+                lifecycle::InstallRequest {
+                    mode,
+                    from: value(&values, OptKind::From),
+                    approve_digest: value(&values, OptKind::ApproveDigest),
+                },
+                format!("install mode={} from={from}", mode.name()),
             ))
         }
         Verb::Uninstall => {
@@ -490,32 +551,48 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
             if let Some(digest) = value(&values, OptKind::ApproveDigest) {
                 check_digest(&digest)?;
             }
-            let mode = if apply {
-                "apply"
-            } else if has(&flags, OptKind::DryRun) {
-                "dry-run"
-            } else {
-                "unspecified"
-            };
-            Ok(Invocation::plain(
-                verb,
-                format!("uninstall mode={mode} purge_data={purge}"),
+            let mode = mode_of(verb, &flags)?;
+            Ok(Invocation::uninstall(
+                lifecycle::UninstallRequest {
+                    mode,
+                    approve_digest: value(&values, OptKind::ApproveDigest),
+                    purge_data: purge,
+                },
+                format!("uninstall mode={} purge_data={purge}", mode.name()),
             ))
         }
         Verb::Doctor => {
             reject_positionals(verb, &positionals)?;
-            Ok(Invocation::plain(
-                verb,
-                format!("doctor all={}", has(&flags, OptKind::All)),
-            ))
+            let all = has(&flags, OptKind::All);
+            Ok(Invocation::doctor(all, format!("doctor all={all}")))
         }
         Verb::Version => {
             reject_positionals(verb, &positionals)?;
-            Ok(Invocation::plain(
-                verb,
-                format!("version all={}", has(&flags, OptKind::All)),
-            ))
+            let all = has(&flags, OptKind::All);
+            Ok(Invocation::version(all, format!("version all={all}")))
         }
+    }
+}
+
+/// The transaction mode an `install` or `uninstall` invocation names.
+///
+/// The mode is required, never inferred. `docs/16-CLI-AND-CONTROL-API.md` section 6 rule 4 makes a
+/// non-interactive command that writes or removes state carry either `--dry-run` or `--apply`, and
+/// this layer adds the reason: a bare verb would have to answer the success code for an install
+/// that never ran, which is indistinguishable from a real one to any argv-only consumer. Refusing
+/// the ambiguity is cheaper than a script that believes a preview installed the product.
+fn mode_of(verb: Verb, flags: &[OptKind]) -> Result<lifecycle::Mode, String> {
+    if has(flags, OptKind::Apply) {
+        Ok(lifecycle::Mode::Apply)
+    } else if has(flags, OptKind::DryRun) {
+        Ok(lifecycle::Mode::DryRun)
+    } else {
+        Err(format!(
+            "`{}` requires an explicit mode: `--dry-run` reports the plan and changes nothing, \
+             `--apply --approve-digest <sha256>` runs the transaction. Neither flag was supplied, \
+             and this layer never infers an intent to mutate or a success from a bare verb",
+            verb.name()
+        ))
     }
 }
 
@@ -733,70 +810,6 @@ fn check_digest(digest: &str) -> Result<(), String> {
             digest.len()
         ))
     }
-}
-
-/// Why a declared verb cannot answer yet.
-///
-/// These reasons are stated on purpose: an unbuilt slice must never look like a success.
-fn reason_for(verb: Verb) -> &'static str {
-    match verb {
-        Verb::Install => {
-            "install is declared by the distribution contract, but the transactional installer \
-             and the axiom-graphd engine delegation are not built in this slice: J-003 delivers \
-             the argv surface only, and the engine handoff awaits I-003/I-004. Nothing was \
-             installed, repaired or downloaded."
-        }
-        Verb::Update => {
-            "the update channel is built in this slice: `update check`, `update plan`, \
-             `update apply` and `update rollback` dispatch to the channel machinery in \
-             src/update/ and report their own result, so this fallback is not reached."
-        }
-        Verb::Doctor => {
-            "doctor needs the installed-component and prerequisite probe owned by axiom-graphd \
-             (I-003/I-004); this slice exposes argv only and did not probe the host."
-        }
-        Verb::Version => {
-            "component version resolution needs the pinned update-channel manifest \
-             (channels/stable.json, J-007); no installed or available version was resolved or \
-             invented."
-        }
-        Verb::Uninstall => {
-            "ownership-scoped removal is not built in this slice, so nothing was removed. \
-             Deleting workspace data would additionally need an explicit approval digest."
-        }
-    }
-}
-
-fn not_ready(json: bool, verbose: bool, invocation: Invocation) -> i32 {
-    let verb = invocation.verb;
-    let reason = reason_for(verb);
-    if json {
-        let message = format!("`{}` is not ready: {reason}", verb.name());
-        println!(
-            "{}",
-            envelope(
-                exit::NOT_READY,
-                "not_ready",
-                &message,
-                false,
-                &[
-                    ("verb", verb.name()),
-                    ("engine_owner", ENGINE_OWNER),
-                    ("reason", reason),
-                    ("parsed", invocation.detail.as_str()),
-                ],
-            )
-        );
-    } else {
-        eprintln!("{PROGRAM}: {}: NotReady: {reason}", verb.name());
-        if verbose {
-            eprintln!(
-                "{PROGRAM}: diagnostic: parsed invocation: {}",
-                invocation.detail
-            );
-        }
-    }
-    exit::NOT_READY
 }
 
 fn fail(json: bool, verbose: bool, verb: Option<&str>, message: &str) -> i32 {

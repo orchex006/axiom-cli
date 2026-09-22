@@ -1045,7 +1045,7 @@ fn apply_refuses_an_approval_digest_that_does_not_match_the_plan() {
     let _approved = plan_once(&fixture);
     let (code, out, err) = apply_with(&fixture, ZERO_DIGEST);
     assert_eq!(
-        code, VALIDATION,
+        code, CONFLICT,
         "a digest that does not cover the plan body is stale\nstdout={out}\nstderr={err}"
     );
     assert_eq!(field(&out, "reason_code"), "approval_stale");
@@ -1090,6 +1090,7 @@ fn apply_refuses_a_plan_whose_recorded_digest_is_not_in_the_recorded_manifest() 
 }
 /// `10` lock unavailable, from the canonical exit vocabulary.
 const LOCK_UNAVAILABLE: i32 = 10;
+const IO_ERROR: i32 = 8;
 
 #[test]
 fn an_unsigned_channel_is_never_resolved() {
@@ -1180,6 +1181,62 @@ fn apply_refuses_while_the_coordinator_lock_is_held() {
         vec![SEED_GENERATION.to_string()],
         "a refused transaction must not create a generation"
     );
+}
+
+#[test]
+fn an_unreadable_installed_record_is_an_io_error_not_a_missing_release() {
+    // Exit 8 had no test: an installed record that exists but cannot be read is an internal I/O
+    // failure of this host, and must not be reported as "nothing is installed" (which would tell
+    // an operator their install is gone when it is merely unreadable).
+    if unsafe { libc_geteuid() } == 0 {
+        eprintln!("skipping: root ignores file permissions, so the record stays readable");
+        return;
+    }
+    let fixture = Fixture::new("unreadable-record", Mode::Published);
+    let record = fixture.root.join("installed.json");
+    assert!(record.is_file(), "the fixture must have written a record");
+    let mut permissions = std::fs::metadata(&record)
+        .expect("the record must be statable")
+        .permissions();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        permissions.set_mode(0o000);
+    }
+    std::fs::set_permissions(&record, permissions).expect("the record must be made unreadable");
+
+    let (code, out, err) = run(&fixture, &["update", "check", "--json"]);
+
+    // Restore before the fixture drops, so its cleanup can remove the tree.
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mut restored = std::fs::metadata(&record)
+            .expect("the record must be statable")
+            .permissions();
+        restored.set_mode(0o644);
+        let _ = std::fs::set_permissions(&record, restored);
+    }
+    assert_eq!(
+        code, IO_ERROR,
+        "an unreadable record is an I/O failure\nstdout={out}\nstderr={err}"
+    );
+    assert_eq!(field(&out, "reason_code"), "installed_unreadable");
+    assert!(
+        !out.contains("no_installed_release"),
+        "an unreadable record must not be reported as absent: {out}"
+    );
+}
+
+/// The process's effective uid, without pulling in a dependency.
+///
+/// `axiom-cli` has zero third-party dependencies, so the test reaches the C library directly:
+/// `geteuid` takes no arguments and cannot fail.
+unsafe fn libc_geteuid() -> u32 {
+    unsafe extern "C" {
+        fn geteuid() -> u32;
+    }
+    unsafe { geteuid() }
 }
 
 #[test]

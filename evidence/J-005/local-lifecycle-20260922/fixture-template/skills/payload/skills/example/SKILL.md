@@ -1,0 +1,3 @@
+# Local lifecycle fixture
+
+hello

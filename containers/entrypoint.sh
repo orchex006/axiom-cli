@@ -10,10 +10,11 @@
 #   * argv is forwarded as a program plus an argument vector - never re-split,
 #     re-quoted or concatenated into a shell string;
 #   * no verb is intercepted, renamed or re-implemented;
-#   * exit codes come from the binary unchanged, including `4` NotReady for a
-#     declared-but-unbuilt verb and `2` for a missing verb.
+#   * exit codes come from the binary unchanged, including `2` for a missing verb
+#     and each verb's own typed refusal (for example `4` when the engine handoff
+#     cannot proceed).
 #
-# The container must never turn an unbuilt verb into a success, and a run inside it
+# The container must never turn a refusal into a success, and a run inside it
 # must never look like native evidence for a native target.
 
 set -eu

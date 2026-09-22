@@ -44,6 +44,10 @@ fn run(args: &[&str]) -> Outcome {
 fn minimal_argv(verb: &str) -> Vec<&str> {
     match verb {
         "update" => vec!["update", "check"],
+        // `install` and `uninstall` require an explicit transaction mode, so the minimal
+        // invocation a documented verb must be reachable through names that mode. A bare verb is a
+        // validation error by design, and `validation_defects_exit_two` locks that separately.
+        "install" | "uninstall" => vec![verb, "--dry-run"],
         other => vec![other],
     }
 }
@@ -176,16 +180,20 @@ fn every_documented_verb_is_reachable_from_argv() {
             "`{verb}` is documented, so argv must not reject it as validation; stderr={}",
             outcome.stderr
         );
-        assert_eq!(
-            outcome.code, NOT_READY,
-            "`{verb}` is declared but unbuilt, so it must answer NotReady (4); stdout={}",
-            outcome.stdout
-        );
         assert!(
-            outcome.stderr.contains("NotReady") && outcome.stderr.len() > 40,
-            "`{verb}` must state a NotReady reason on stderr; stderr={}",
+            CANONICAL_EXIT_CODES.contains(&outcome.code),
+            "`{verb}` must answer a canonical exit code, got {}; stderr={}",
+            outcome.code,
             outcome.stderr
         );
+        // A verb that cannot complete states why in plain mode, on stderr rather than stdout.
+        if outcome.code == NOT_READY {
+            assert!(
+                outcome.stderr.contains("NotReady") && outcome.stderr.len() > 40,
+                "`{verb}` must state a NotReady reason on stderr; stderr={}",
+                outcome.stderr
+            );
+        }
     }
 }
 
@@ -222,39 +230,45 @@ fn usage_text_and_dispatcher_cannot_drift() {
 }
 
 #[test]
-fn unbuilt_verb_never_answers_success_and_states_a_reason() {
+fn every_verb_reports_a_real_result_and_never_an_empty_success() {
+    // The old stub contract ("every verb is unbuilt, so every verb answers 4") is gone. What
+    // survives is the rule the distribution contract keeps: a verb answers a canonical code, and a
+    // success is never an empty envelope. `details.engine_owner` proves a report was rendered from
+    // the real result path rather than from a placeholder.
     for verb in DOCUMENTED_VERBS {
         let mut argv = vec!["--json"];
         argv.extend(minimal_argv(verb));
         let outcome = run(&argv);
-        assert_ne!(
-            outcome.code, SUCCESS,
-            "`{verb}` must never answer 0 while unbuilt"
-        );
-        assert_eq!(
-            outcome.code, NOT_READY,
-            "`{verb}` must answer exit 4; stdout={}",
+        assert_single_json_object(&outcome.stdout);
+        assert!(
+            CANONICAL_EXIT_CODES.contains(&outcome.code),
+            "`{verb}` must answer a canonical exit code, got {}; stdout={}",
+            outcome.code,
             outcome.stdout
         );
-        assert_single_json_object(&outcome.stdout);
-        assert_eq!(json_number_field(&outcome.stdout, "code"), Some(4));
         assert_eq!(
-            json_string_field(&outcome.stdout, "status").as_deref(),
-            Some("not_ready")
+            json_number_field(&outcome.stdout, "code"),
+            Some(i64::from(outcome.code)),
+            "the envelope code must equal the process exit code for `{verb}`"
         );
-        let reason = json_string_field(&outcome.stdout, "reason").unwrap_or_default();
         assert!(
-            reason.len() > 40,
-            "the NotReady envelope must carry a stated reason, got: {reason:?}"
+            !json_string_field(&outcome.stdout, "message")
+                .unwrap_or_default()
+                .is_empty(),
+            "`{verb}` must carry a message; stdout={}",
+            outcome.stdout
         );
         assert_eq!(
             json_string_field(&outcome.stdout, "engine_owner").as_deref(),
             Some("axiom-graphd"),
-            "the envelope must name the engine owner this layer wraps"
+            "`{verb}` must name the engine owner this layer wraps"
+        );
+        assert!(
+            !outcome.stdout.contains("\"details\":{}"),
+            "an empty details object is an empty success envelope; argv={argv:?}"
         );
     }
 }
-
 #[test]
 fn json_mode_writes_exactly_one_object_on_every_path() {
     let paths: Vec<Vec<&str>> = vec![
@@ -308,6 +322,12 @@ fn validation_defects_exit_two() {
             vec!["update", "apply", "--plan", "plan.json"],
         ),
         ("unexpected positional", vec!["doctor", "extra"]),
+        ("install without a mode", vec!["install"]),
+        ("uninstall without a mode", vec!["uninstall"]),
+        (
+            "install without a mode but with a flag",
+            vec!["install", "--from", "/does/not/exist"],
+        ),
         (
             "malformed digest",
             vec!["install", "--apply", "--approve-digest", "deadbeef"],
@@ -338,6 +358,12 @@ fn validation_in_json_mode_carries_the_canonical_envelope() {
         vec!["--json", "frobnicate"],
         vec!["--json", "install", "--apply"],
         vec!["--json", "install", "--approve-digest"],
+        // A bare mutating verb is the newest validation path, so it must carry the same canonical
+        // envelope as the older ones: `status:"validation_error"`, `code` equal to the exit, and a
+        // message that teaches the missing mode rather than a bare "invalid".
+        vec!["--json", "install"],
+        vec!["--json", "uninstall"],
+        vec!["--json", "install", "--from", "/does/not/exist"],
     ];
     for argv in paths {
         let outcome = run(&argv);
@@ -366,13 +392,18 @@ fn approve_digest_boundary_is_enforced() {
     let non_hex = format!("{}g", "a".repeat(63));
 
     let accepted = run(&["install", "--apply", "--approve-digest", digest.as_str()]);
-    assert_eq!(
-        accepted.code, NOT_READY,
-        "a 64-character hex digest is a valid approval, so the slice answers NotReady; stderr={}",
+    assert_ne!(
+        accepted.code, VALIDATION,
+        "a 64-character hex digest is a valid approval, so it must not be rejected as validation; stderr={}",
         accepted.stderr
     );
+    assert!(
+        CANONICAL_EXIT_CODES.contains(&accepted.code),
+        "a valid approval must answer a canonical exit code, got {}",
+        accepted.code
+    );
     let accepted_upper = run(&["install", "--apply", "--approve-digest", upper.as_str()]);
-    assert_eq!(accepted_upper.code, NOT_READY);
+    assert_ne!(accepted_upper.code, VALIDATION);
 
     let rejected: Vec<(&str, &str)> = vec![
         ("63 characters", short.as_str()),
@@ -438,7 +469,112 @@ fn help_freezes_the_canonical_exit_vocabulary() {
 fn json_flag_is_accepted_before_and_after_the_verb() {
     for argv in [vec!["--json", "doctor"], vec!["doctor", "--json"]] {
         let outcome = run(&argv);
-        assert_eq!(outcome.code, NOT_READY, "argv={argv:?}");
+        assert!(
+            CANONICAL_EXIT_CODES.contains(&outcome.code),
+            "`--json` must be accepted on either side of the verb; argv={argv:?}",
+        );
         assert_single_json_object(&outcome.stdout);
     }
+}
+
+#[test]
+fn help_option_blocks_are_indented_and_name_the_required_mode() {
+    // Regression guard for a `\`-continued literal, which silently swallowed the leading
+    // indentation of the first option line of every verb, so `OPTIONS:` was followed by a
+    // flush-left line while the rest of the block was indented. `concat!` fixed it; this keeps
+    // it fixed without anyone having to look at the rendered help by eye.
+    for verb in DOCUMENTED_VERBS {
+        let help = run(&[verb, "--help"]);
+        assert_eq!(
+            help.code, SUCCESS,
+            "`{verb} --help` must exit 0; stderr={}",
+            help.stderr
+        );
+        let mut inside = false;
+        let mut option_lines = 0usize;
+        for line in help.stdout.lines() {
+            if line.trim_end() == "OPTIONS:" {
+                inside = true;
+                continue;
+            }
+            if !inside {
+                continue;
+            }
+            if line.trim().is_empty() {
+                break;
+            }
+            assert!(
+                line.starts_with("    "),
+                "an option line must keep its four-space indent; verb={verb} line={line:?}"
+            );
+            option_lines += 1;
+        }
+        assert!(
+            option_lines > 0,
+            "`{verb} --help` must document at least one option; stdout={}",
+            help.stdout
+        );
+    }
+
+    // The two verbs that require a mode must document both, because the requirement is the
+    // single most likely thing an operator gets wrong and exit 2 alone does not teach it.
+    for verb in ["install", "uninstall"] {
+        let help = run(&[verb, "--help"]);
+        for flag in ["--dry-run", "--apply"] {
+            assert!(
+                help.stdout.contains(flag),
+                "`{verb} --help` must name {flag}; stdout={}",
+                help.stdout
+            );
+        }
+    }
+}
+
+#[test]
+fn a_bare_mutating_verb_teaches_the_mode_it_requires() {
+    // Exit 2 alone does not teach anyone what to type next. The validation envelope for a bare
+    // `install`/`uninstall` must name both modes, because the missing mode is the whole defect.
+    for verb in ["install", "uninstall"] {
+        let outcome = run(&["--json", verb]);
+        assert_eq!(outcome.code, VALIDATION, "verb={verb}");
+        assert_single_json_object(&outcome.stdout);
+        let message = json_string_field(&outcome.stdout, "message").unwrap_or_default();
+        for flag in ["--dry-run", "--apply"] {
+            assert!(
+                message.contains(flag),
+                "`{verb}` must name {flag} in its refusal; message={message}"
+            );
+        }
+        assert!(
+            !outcome.stdout.contains("\"details\":{}"),
+            "a validation envelope must not be empty; verb={verb} stdout={}",
+            outcome.stdout
+        );
+    }
+}
+
+#[test]
+fn the_machine_readable_contract_does_not_depend_on_flag_order() {
+    // The distribution contract says `--json` puts exactly one JSON object on stdout and sends
+    // diagnostics to stderr. That is a property of the invocation, not of where the flag sits.
+    // Before this was pinned, `axiom-cli <unknown-verb> --json` answered prose on stderr with an
+    // empty stdout, while `axiom-cli --json <unknown-verb>` answered the envelope: the same
+    // request answered in two different shapes. A caller that appends `--json` to its argv must
+    // not silently lose the machine-readable answer, so both orders are asserted here.
+    for argv in [vec!["--json", "frobnicate"], vec!["frobnicate", "--json"]] {
+        let outcome = run(&argv);
+        assert_eq!(outcome.code, VALIDATION, "argv={argv:?}");
+        assert_single_json_object(&outcome.stdout);
+        assert!(
+            outcome.stderr.is_empty(),
+            "a refused invocation that names --json owes stdout one JSON object and no stderr; argv={argv:?} stderr={}",
+            outcome.stderr
+        );
+    }
+
+    // An unknown global option can be refused before any verb is resolved. A trailing `--json`
+    // must still be latched, because the caller's intent to read machine output is already known.
+    let outcome = run(&["--bogus", "--json"]);
+    assert_eq!(outcome.code, VALIDATION);
+    assert_single_json_object(&outcome.stdout);
 }

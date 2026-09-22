@@ -61,17 +61,18 @@ the exit codes are the native ones by construction.
 
 | Verb | Purpose | Exit code in this slice |
 |---|---|---|
-| `install` | Install or repair this platform's pinned component set | `4` NotReady |
-| `update` | `check` / `plan` / `apply` / `rollback` through the update channel | `4` NotReady |
-| `doctor` | Report prerequisites, installed versions, digests and target state | `4` NotReady |
-| `version` | Report installed and available versions per component and per target | `4` NotReady |
-| `uninstall` | Remove binaries and service registration; preserve user data | `4` NotReady |
+| `install` | Install or repair this platform's pinned component set | `2` bare verb (an explicit `--dry-run` or `--apply` is required); `0` `--dry-run` when a release set resolves; `4` `no_release_set`; `3`/`4` engine handoff on `--apply` |
+| `update` | `check` / `plan` / `apply` / `rollback` through the update channel | see `docs/50-UPDATE-CHANNEL.md` |
+| `doctor` | Report prerequisites, installed versions, digests and target state | `0` clean; `4` an unverified required check (for example no engine); `2` a failed installed-generation integrity check |
+| `version` | Report installed and available versions per component and per target | `0` always, even with nothing installed |
+| `uninstall` | Remove binaries and service registration; preserve user data | `2` bare verb; `0` `--dry-run`; `3` `nothing_installed` / `engine_not_found` on `--apply`; `4` `engine_removal_unavailable` |
 
 Canonical exit vocabulary: `0 2 3 4 5 6 7 8 9 10 20`, owned by
-`axiom-specs/docs/16-CLI-AND-CONTROL-API.md` section 6. Every verb is declared but not yet wired to
-the `axiom-graphd` engine, so each answers `NotReady` with exit `4` and a stated reason. The
-container preserves that exactly: it never turns an unbuilt verb into a success. `--help` exits `0`;
-a missing verb and an unknown verb exit `2`.
+`axiom-specs/docs/16-CLI-AND-CONTROL-API.md` section 6. All five verbs now dispatch to real work and
+answer with their own typed exit code; `NotReady` (exit `4`) is a conditional refusal at the engine
+handoff, not the universal answer. The container forwards argv verbatim, so it preserves those codes
+exactly and never turns a refusal into a success. `--help` exits `0`; a missing verb and an unknown
+verb exit `2`. The per-verb behaviour is tabulated in `docs/40-CLI-ARGV-SURFACE.md`.
 
 ## Build and run locally
 
@@ -92,10 +93,10 @@ docker image inspect axiom-cli:local --format '{{json .RepoDigests}}'
 
 # 3. exercise the verbs and read the real exit codes
 docker run --rm axiom-cli:local --help         ; echo "exit=$?"   # 0
-docker run --rm axiom-cli:local version        ; echo "exit=$?"   # 4 NotReady
-docker run --rm axiom-cli:local doctor         ; echo "exit=$?"   # 4 NotReady
+docker run --rm axiom-cli:local version        ; echo "exit=$?"   # 0
+docker run --rm axiom-cli:local doctor         ; echo "exit=$?"   # 4 (engine unverified in a bare image)
 docker run --rm axiom-cli:local --json doctor  ; echo "exit=$?"   # 4, one JSON object on stdout
-docker run --rm axiom-cli:local install --apply --approve-digest "$(printf 'a%.0s' 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64)"
+docker run --rm axiom-cli:local install --apply --approve-digest "$(printf 'a%.0s' 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64)" ; echo "exit=$?"   # 4 no_release_set in a bare image
 docker run --rm axiom-cli:local frobnicate     ; echo "exit=$?"   # 2 validation
 
 # 4. the no-verb path must reach the binary, not a shell default
@@ -188,7 +189,7 @@ revision `7ac376b5e5e0f52f4fe3af7fb97971d220277d38`:
 | local image build | exit `0`; labels, user, revision and platform verified with `docker image inspect` |
 | image built and exercised | `axiom-cli:j006-local`, id `sha256:843e184865ccb2f161036a149330526a4952750708caa14a4528a8fa49c54d56`, `linux/amd64`, 75218565 bytes |
 | runtime identity | `uid=10001(axiom) gid=10001(axiom)`, `HOME=/home/axiom`, `PWD=/home/axiom` |
-| verb parity against the native binary | 18 of 18 argv cases matched, 0 mismatches, including `--json doctor` exiting `4` with exactly one JSON object on stdout |
+| verb parity against the native binary | 18 of 18 argv cases matched, 0 mismatches, including `--json doctor` exiting `4` with exactly one JSON object on stdout. **Superseded for verb behaviour:** the matrix was captured at `J-006` against the pre-lifecycle argv surface; the exit codes changed when the five verbs were wired to real work. The argv forwarding below is unchanged. |
 | no-verb path | explicit empty argv (CMD bypassed) exits `2` with the native `no verb supplied` message |
 | image config `created` with `SOURCE_DATE_EPOCH` | `2026-09-20T07:43:20Z` in both clean builds |
 

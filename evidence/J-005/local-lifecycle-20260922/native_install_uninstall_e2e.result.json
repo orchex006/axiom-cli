@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "scope": "temporary AXIOM_CLI_INSTALL_ROOT",
+  "host": "macos-x64",
+  "engine_sha256": "1dc1cbebf904bcff6756b250b4cffbe221bd174edd188093f837b9d358061808",
+  "commands": [
+    {
+      "argv": [
+        "install",
+        "--dry-run",
+        "--from",
+        "<generated-release>"
+      ],
+      "exit": 0,
+      "code": 0
+    },
+    {
+      "argv": [
+        "install",
+        "--apply",
+        "--from",
+        "<generated-release>",
+        "--approve-digest",
+        "c588bfe15c6e53722fe44d4c9d4ae9d939c2b89e46daae98902cc9f13cccc386"
+      ],
+      "exit": 0,
+      "code": 0
+    },
+    {
+      "argv": [
+        "uninstall",
+        "--dry-run"
+      ],
+      "exit": 0,
+      "code": 0
+    },
+    {
+      "argv": [
+        "uninstall",
+        "--apply",
+        "--approve-digest",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "exit": 6,
+      "code": 6
+    },
+    {
+      "argv": [
+        "uninstall",
+        "--apply",
+        "--approve-digest",
+        "147007862b7b3a567244b76780f2d0b3a55df4f3720425f93b0632cd393462fb"
+      ],
+      "exit": 0,
+      "code": 0
+    }
+  ],
+  "assertions": [
+    "installed-executable-mode",
+    "installed-hash",
+    "installed-version",
+    "wrong-approval-refused",
+    "owned-payload-removed",
+    "source-unowned-edited-skill-preserved"
+  ]
+}

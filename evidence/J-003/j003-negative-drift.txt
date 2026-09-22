@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 # J-003 negative / drift regression - mutate one side, observe the suite fail, byte-restore, observe green
 # refreshed at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (lane w10-j003r)
 # rule under test: removing a verb from the dispatcher while leaving it in the usage text,

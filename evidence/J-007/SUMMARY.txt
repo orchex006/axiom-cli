@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 # J-007 SUMMARY - implement the update channel with verification, atomic swap and rollback
 # generated: 2569-09-20T18:11:58.2015331+07:00
 

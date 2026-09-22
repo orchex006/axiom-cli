@@ -533,8 +533,8 @@ AC_HELP_OUT="$("$B20/axiom-cli" --help 2>&1)"; AC_HELP_EXIT=$?
 check_eq "$AC_HELP_EXIT" 0 "the installed entrypoint answers --help with exit 0"
 check_is "$(case "$AC_HELP_OUT" in *axiom-cli*) printf 1 ;; *) printf 0 ;; esac)" "the installed entrypoint identifies itself"
 AC_VER_OUT="$("$B20/axiom-cli" version 2>&1)"; AC_VER_EXIT=$?
-check_eq "$AC_VER_EXIT" 4 "an unbuilt verb answers NotReady with exit 4 (never a faked success)"
-check_is "$(case "$AC_VER_OUT" in *NotReady*) printf 1 ;; *) printf 0 ;; esac)" "the NotReady reason is stated"
+check_eq "$AC_VER_EXIT" 0 "version exits 0 and reports real state, even with nothing installed"
+check_is "$(case "$AC_VER_OUT" in *installed*) printf 1 ;; *) printf 0 ;; esac)" "the version report states the installed state"
 end_leg 0
 
 # ---------------------------------------------------------------------------

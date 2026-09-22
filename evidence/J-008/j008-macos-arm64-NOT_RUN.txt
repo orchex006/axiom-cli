@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows-hosted WSL2 lane and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so any recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 J-008 macOS arm64 leg — NOT RUN (no macOS host available)
 ========================================================
 

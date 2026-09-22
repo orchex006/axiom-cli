@@ -174,9 +174,14 @@ evidence and the leg is recorded `not_run`. See
   transactional recovery / uninstall / purge) on Debian 12 and Ubuntu 26.04 under
   WSL2, including the systemd-user registration leg. Recorded under
   `evidence/J-008/`.
-- Not run: macOS arm64 (no macOS host), `linux/arm64`, signing and attestation,
-  image publication and the update channel. `channels/stable.json` is owned by
-  `J-007`; no version is invented here.
+- Not run: macOS arm64 (the current `macos-x64` host can run the shared recipe, but
+  no macOS run is recorded), `linux/arm64`, signing and attestation, and image
+  publication. The update channel is implemented (`J-007`) with publication closed;
+  `channels/stable.json` is owned by `J-007`, and no version is invented here.
 
-Verbs that are not built yet answer `NotReady` (exit `4`) with a stated reason;
-this tier never reports a faked success.
+The Linux installer scripts never report a faked success, and the `axiom-cli` binary dispatches all
+five verbs: `install --apply` and `uninstall --apply` refuse at the `axiom-graphd` engine handoff
+rather than placing or removing bytes themselves (see
+[docs/40-CLI-ARGV-SURFACE.md](40-CLI-ARGV-SURFACE.md)). The `--service launchd-user` refusal (macOS,
+exit `4`) and the `--service systemd-user` refusal on an unreachable user manager (Linux, exit `4`)
+stay as stated above.

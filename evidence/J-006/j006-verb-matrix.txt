@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 # J-006 verb matrix: native binary vs container image (same revision)
 # native = D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j006\target\release\axiom-cli.exe
 # image  = axiom-cli:j006-local

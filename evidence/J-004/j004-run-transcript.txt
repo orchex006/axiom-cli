@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 J-004 Windows x64 distribution acceptance run
 generated_at: 2026-09-20T09:59:19Z
 host: Microsoft Windows 11 Pro 10.0.26200

@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 # J-006 reproducibility experiments
 # host builder: Docker Desktop 29.6.2, engine linux/amd64
 # SOURCE_DATE_EPOCH=1789890200 (commit time of 7ac376b5e5e0f52f4fe3af7fb97971d220277d38)

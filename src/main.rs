@@ -7,8 +7,14 @@
 //! Invocation is program plus argv. Nothing here builds a shell string, reads a shell
 //! profile or mutates `PATH`.
 
+mod bundle;
 mod cli;
+mod doctor;
+mod engine;
+mod lifecycle;
+mod target;
 mod update;
+mod version;
 
 fn main() {
     let code = cli::run(std::env::args_os());

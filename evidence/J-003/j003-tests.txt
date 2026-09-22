@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 # J-003 tests - cargo test --locked --all-targets on this Windows host
 # generated: 2026-09-20T18:49:49.004983+07:00
 # REFRESHED at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (lane w10-j003r)

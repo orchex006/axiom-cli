@@ -960,7 +960,10 @@ fn apply(state: &State, request: &Request) -> Result<Report, Refusal> {
     })?;
     let approvals = plan::approval_reasons(&document, &approved);
     if !approvals.is_empty() {
-        return Err(Refusal::validation(
+        // A digest that does not cover the plan body is a *conflict* with current state, not a
+        // malformed argument: the same condition is classified the same way by `install --apply`
+        // and `uninstall --apply`, so one canonical exit code (6) covers approval for every verb.
+        return Err(Refusal::conflict(
             approvals[0].clone(),
             format!(
                 "the plan {plan_path} does not match the approval digest {approved}: {}; nothing \

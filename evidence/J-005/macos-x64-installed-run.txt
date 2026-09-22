@@ -1,0 +1,61 @@
+axiom-graphd - Axiom graph engine daemon
+
+Usage: axiom-graphd <command> [options]
+
+Commands:
+  serve [--registry <path>] [--json]   run the foreground daemon
+  version [--json]                     print component, build and runtime versions
+  doctor [--solution <id>] [--json]    print diagnostics (never repairs automatically)
+  status --solution <id> [--json]      print queue, freshness and coverage state
+  solution register|list|remove ...    administer the solution registry
+  changed ...                          accept explicit changed-file hints
+  reconcile ...                        request a bounded reconcile
+  queue list|retry|cancel ...          inspect and steer the operational queue
+  query context|impact ...             bounded context and impact over a pinned snapshot
+  render --solution <id> --out <dir>   render a published generation as a diagram
+  update check|apply ...               delegate to the trusted axiom CLI
+  help, --help                         print this help
+
+Options:
+  --json    write exactly one JSON object to stdout; diagnostics go to stderr
+
+Operator slices (task H-001):
+  changed
+      changed --solution <id> --project <project> --path <repo-relative> --reason <manual|git|tool|reconcile> [--json]
+      changed --solution <id> --from-json <changes.json> [--json]
+  queue
+      queue list --solution <id> [--limit <n>] [--json]
+      queue retry --job <id> [--json]
+      queue cancel --job <id> [--json]
+  solution
+      solution register --config <solution.yaml> [--bindings <bindings.json>] (--dry-run|--apply) [--json]
+      solution list [--solution <id>] [--json]
+      solution remove --solution <id> (--dry-run|--apply) [--json]
+  doctor
+      doctor [--solution <id>] [--json]
+  reconcile
+      reconcile --solution <id> --scope dirty [--wait] [--timeout <ms|Ns>] [--json]
+      reconcile --solution <id> --scope project --project <project> [--json]
+      reconcile --solution <id> --scope full [--json]
+  query
+      query context --solution <id> (--symbol <name>|--node-id <id>) [--max-bytes <n>] [--max-nodes <n>] [--depth <n>] [--json]
+      query impact --solution <id> (--symbol <name>|--node-id <id>) [--max-bytes <n>] [--max-nodes <n>] [--depth <n>] [--json]
+  render
+      render --solution <id> [--project <project>]... --out <dir> [--json]
+  update
+      update check [--json]
+      update apply --plan <plan.json> [--approve-digest <sha256>] [--json]
+
+Exit codes:
+  0  success
+  2  validation
+  3  not found
+  4  not ready/stale
+  5  authorization
+  6  conflict
+  7  timeout/busy
+  8  I/O internal
+  9  incompatible
+  10  lock unavailable
+  20  partial multi-repo operation
+

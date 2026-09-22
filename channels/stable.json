@@ -41,9 +41,9 @@
     {
       "component": "axiom-cli",
       "status": "declared",
-      "version": "0.0.0-dev",
+      "version": "0.1.0",
       "revision": "7ac376b5e5e0f52f4fe3af7fb97971d220277d38",
-      "declared_source": "axiom-cli/Cargo.toml (package version) and axiom-cli/VERSION, at the seed revision",
+      "declared_source": "axiom-cli/Cargo.toml (package version) and axiom-cli/VERSION in the working tree; the named revision is the J-003 seed, which still declares 0.0.0-dev, and this channel is not published",
       "needs_restart": true,
       "artifacts": []
     },

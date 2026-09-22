@@ -1,0 +1,414 @@
+diff --git a/spec.lock.json b/spec.lock.json
+new file mode 100644
+index 0000000..9703b99
+--- /dev/null
++++ b/spec.lock.json
+@@ -0,0 +1,18 @@
++{
++  "spec_version": "2.0.0-draft.1",
++  "spec_repository": "axiom-specs",
++  "spec_revision": "3e03896e4a80543b7e6be94bf0071b42fd613fa2",
++  "spec_content_sha256": "7208d00a908cc2f2e6e15dc65d82433a1d0a47211cfbcf11eb2926db9323b8e8",
++  "owner_repository": "axiom-cli",
++  "workspace_layout": 2,
++  "graph_payload_schema": 1,
++  "verification": "validated offline against axiom-specs commit 3e03896e4a80543b7e6be94bf0071b42fd613fa2 with tools/spec-lock-check.py --release on 2026-09-22",
++  "contract_digests": {
++    "Development.md": "949a32e117dba2101ef487b29d44c46fdaf1e6ae8bc64c0781c1f86fdc2cb537",
++    "compatibility/platform-matrix.json": "33419a53f0e824ba6eb9a0f85fa2654f1b25f8836d23d1b603e4cebebf56a6a4",
++    "conformance/fixture-index.json": "e889087c9468ab9ec4a5816d964bee516dc29445139c7fed955415781e393263",
++    "contracts/axiom-cli-distribution-contract.md": "cd0759410e89ec1e1a9e6059108f344d0655a07a80a7c9d7e41df1562b48d3b1",
++    "contracts/version-dimensions.json": "7717d17d48a8a6dc697c5e78c9f699744bef2c32edf03d7a4b5afeea40b12345",
++    "tasks/J/J-005.md": "599092de89c6f5c93630abe32a7769880c992cb1f3cd8bfc568c1218301572fd"
++  }
++}
+diff --git a/docs/31-MACOS-X64-DISTRIBUTION.md b/docs/31-MACOS-X64-DISTRIBUTION.md
+new file mode 100644
+index 0000000..cae4f47
+--- /dev/null
++++ b/docs/31-MACOS-X64-DISTRIBUTION.md
+@@ -0,0 +1,33 @@
++# macOS x64 distribution boundary
++
++J-005 packages a native x86_64 Mach-O and routes lifecycle requests through
++`axiom-cli` to the `axiom` installation engine. The adapters do not contain a
++second payload copier, uninstaller, service manager, or update implementation.
++
++The available install interface is complete enough for a local verified bundle:
++
++```text
++axiom install plan --bundle <verified-local-bundle> --out <engine-plan.json>
++axiom install apply --plan <engine-plan.json> --approve-digest <engine-plan-digest>
++```
++
++The reviewed engine plan declares executable core rows with `permissions`
++containing `read` and `execute`. The installer enforces the permissions that
++the reviewed plan declares, including executable mode after activation. The CLI
++provides verified bytes and invokes those argv forms without a shell string.
++
++Two engine library surfaces already exist but lack CLI composition. They are
++the minimal work needed for a complete macOS lifecycle:
++
++| Need | Reusable engine API | Missing binding |
++| --- | --- | --- |
++| Per-user launchd registration | `service::macos::plan_agent`, `install_agent`, `start_operation`, `stop_operation`, `status_operation` | Implement `axiom service install/start/stop/status --component … --user` instead of its current NotReady dispatcher entry. It must accept only a per-user home and an engine-owned executable path. |
++| Owned launchd removal | `service::macos::plan_removal` | Implement `axiom service uninstall --component … --user`; execute only the owned plist/label plan. |
++| Component removal | no ecosystem removal transaction exists | Add an engine `uninstall plan/apply` pair that binds the approved digest to owned generation and service paths, preserves data by default, and makes purge a separate approval. |
++
++Until those bindings exist, the macOS wrappers report NotReady for service or
++removal work. They never create a plist, call `launchctl`, or delete user data
++to simulate completion. A locally trusted development bundle can exercise the
++engine in an isolated test root; a production update or rollback needs the
++owner's real signed/published channel and component artifacts. The current
++development channel is not such a release.
+diff --git a/installers/macos/Install-AxiomCli.sh b/installers/macos/Install-AxiomCli.sh
+new file mode 100755
+index 0000000..c87298d
+--- /dev/null
++++ b/installers/macos/Install-AxiomCli.sh
+@@ -0,0 +1,60 @@
++#!/bin/sh
++# macOS x64 distribution wrapper (J-005).
++#
++# This is intentionally only an argv adapter. `axiom-cli` verifies the release
++# set and calls the axiom-graphd-owned installation engine; this script neither
++# copies payloads nor implements a second installer transaction.
++
++set -eu
++
++[ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ] || {
++    printf '%s\n' 'Install-AxiomCli.sh supports native macOS x64 only' >&2
++    exit 9
++}
++
++usage() {
++    cat <<'USAGE'
++Usage: Install-AxiomCli.sh --cli FILE --from RELEASE_SET (--dry-run | --apply) [--approve-digest SHA256]
++
++This wrapper invokes FILE install with program-and-argv.  It writes no system
++directory and does not invoke sudo. The target per-user root is selected by
++AXIOM_CLI_INSTALL_ROOT. launchd registration is engine-owned: until the engine
++publishes a runnable service transaction, request it separately and treat its
++not-ready result as no registration.
++USAGE
++}
++
++CLI=""
++FROM=""
++MODE=""
++APPROVAL=""
++while [ "$#" -gt 0 ]; do
++    case "$1" in
++        --cli|--from|--approve-digest)
++            [ "$#" -ge 2 ] || { printf '%s\n' "missing value for $1" >&2; exit 2; }
++            case "$1" in
++                --cli) CLI=$2 ;;
++                --from) FROM=$2 ;;
++                --approve-digest) APPROVAL=$2 ;;
++            esac
++            shift 2 ;;
++        --dry-run|--apply)
++            [ -z "$MODE" ] || { printf '%s\n' 'choose exactly one mode' >&2; exit 2; }
++            MODE=$1; shift ;;
++        --help|-h) usage; exit 0 ;;
++        *) printf '%s\n' "unknown option: $1" >&2; exit 2 ;;
++    esac
++done
++[ -n "$CLI" ] && [ -x "$CLI" ] || { printf '%s\n' '--cli must name an executable axiom-cli' >&2; exit 3; }
++case "$CLI" in
++    /*) ;;
++    */*) CLI="$(CDPATH= cd -- "$(dirname -- "$CLI")" && pwd)/$(basename -- "$CLI")" ;;
++    *) CLI="$(pwd)/$CLI" ;;
++esac
++[ -n "$FROM" ] || { printf '%s\n' '--from is required' >&2; exit 2; }
++[ -n "$MODE" ] || { printf '%s\n' 'choose --dry-run or --apply' >&2; exit 2; }
++if [ "$MODE" = '--apply' ]; then
++    [ -n "$APPROVAL" ] || { printf '%s\n' '--apply requires --approve-digest' >&2; exit 2; }
++    exec "$CLI" install --from "$FROM" --apply --approve-digest "$APPROVAL" --json
++fi
++exec "$CLI" install --from "$FROM" --dry-run --json
+diff --git a/installers/macos/Uninstall-AxiomCli.sh b/installers/macos/Uninstall-AxiomCli.sh
+new file mode 100755
+index 0000000..2684654
+--- /dev/null
++++ b/installers/macos/Uninstall-AxiomCli.sh
+@@ -0,0 +1,40 @@
++#!/bin/sh
++# macOS x64 distribution removal wrapper (J-005). Engine-owned removal is not
++# currently composed by axiom-graphd; this adapter faithfully returns that
++# result and never deletes user data itself.
++
++set -eu
++
++[ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ] || {
++    printf '%s\n' 'Uninstall-AxiomCli.sh supports native macOS x64 only' >&2
++    exit 9
++}
++
++CLI=""
++MODE=""
++APPROVAL=""
++while [ "$#" -gt 0 ]; do
++    case "$1" in
++        --cli|--approve-digest)
++            [ "$#" -ge 2 ] || { printf '%s\n' "missing value for $1" >&2; exit 2; }
++            [ "$1" = --cli ] && CLI=$2 || APPROVAL=$2
++            shift 2 ;;
++        --dry-run|--apply)
++            [ -z "$MODE" ] || { printf '%s\n' 'choose exactly one mode' >&2; exit 2; }
++            MODE=$1; shift ;;
++        --help|-h) printf '%s\n' 'Usage: Uninstall-AxiomCli.sh --cli FILE (--dry-run|--apply) [--approve-digest SHA256]'; exit 0 ;;
++        *) printf '%s\n' "unknown option: $1" >&2; exit 2 ;;
++    esac
++done
++[ -n "$CLI" ] && [ -x "$CLI" ] || { printf '%s\n' '--cli must name an executable axiom-cli' >&2; exit 3; }
++case "$CLI" in
++    /*) ;;
++    */*) CLI="$(CDPATH= cd -- "$(dirname -- "$CLI")" && pwd)/$(basename -- "$CLI")" ;;
++    *) CLI="$(pwd)/$CLI" ;;
++esac
++[ -n "$MODE" ] || { printf '%s\n' 'choose --dry-run or --apply' >&2; exit 2; }
++if [ "$MODE" = '--apply' ]; then
++    [ -n "$APPROVAL" ] || { printf '%s\n' '--apply requires --approve-digest' >&2; exit 2; }
++    exec "$CLI" uninstall --apply --approve-digest "$APPROVAL" --json
++fi
++exec "$CLI" uninstall --dry-run --json
+diff --git a/installers/macos/README.md b/installers/macos/README.md
+new file mode 100644
+index 0000000..e3fafa4
+--- /dev/null
++++ b/installers/macos/README.md
+@@ -0,0 +1,11 @@
++# macOS x64 installer wrappers
++
++These scripts are thin adapters to `axiom-cli`. The CLI verifies the release
++set and invokes the `axiom` installation engine with explicit argv; the scripts
++do not copy, delete, hash, or register services themselves.
++
++They operate in an isolated per-user root when `AXIOM_CLI_INSTALL_ROOT` is set.
++They never call `sudo`, edit shell startup files, alter global PATH, bypass
++Gatekeeper, or run `launchctl`. The engine does not yet publish a composed
++launchd install/removal transaction, so service registration remains explicitly
++not-ready rather than being claimed as complete.
+diff --git a/packaging/macos/Build-ReleaseSet.sh b/packaging/macos/Build-ReleaseSet.sh
+new file mode 100755
+index 0000000..b97e31b
+--- /dev/null
++++ b/packaging/macos/Build-ReleaseSet.sh
+@@ -0,0 +1,18 @@
++#!/bin/sh
++# macOS x64 packaging entrypoint (J-005).
++#
++# The architecture-aware implementation is shared with the arm64 recipe.  This
++# file deliberately supplies only the J-005 target identity; it does not fork
++# artifact inspection, hashing, signing policy, or release-set generation.
++
++set -eu
++
++for argument in "$@"; do
++    if [ "$argument" = "--arch" ]; then
++        printf '%s\n' 'Build-ReleaseSet.sh: J-005 always packages macos-x64; --arch is not accepted here' >&2
++        exit 2
++    fi
++done
++
++SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
++exec sh "$SCRIPT_DIR/../macos-arm64/Build-ReleaseSet.sh" --arch x64 "$@"
+diff --git a/packaging/macos/README.md b/packaging/macos/README.md
+new file mode 100644
+index 0000000..aeb4336
+--- /dev/null
++++ b/packaging/macos/README.md
+@@ -0,0 +1,13 @@
++# macOS x64 packaging
++
++`Build-ReleaseSet.sh` is the J-005 entrypoint for a native Intel macOS build.
++It delegates to the shared, architecture-validating macOS recipe with
++`--arch x64`; it never cross-builds or labels another architecture as x64.
++
++```sh
++sh packaging/macos/Build-ReleaseSet.sh --out-dir out/macos-x64 --build --json
++```
++
++The recipe records no signing or notarization assertion. An unsigned artifact
++is reported as unsigned; any Gatekeeper or quarantine action remains an
++explicit operator action and is not performed by the packager.
+diff --git a/tests/macos/Invoke-AxiomCliMacosDistributionTests.sh b/tests/macos/Invoke-AxiomCliMacosDistributionTests.sh
+new file mode 100755
+index 0000000..6608d73
+--- /dev/null
++++ b/tests/macos/Invoke-AxiomCliMacosDistributionTests.sh
+@@ -0,0 +1,58 @@
++#!/bin/sh
++# Native macOS x64 wrapper and packager regression harness (J-005).
++set -eu
++
++case "$(uname -s):$(uname -m)" in Darwin:x86_64) ;; *) printf '%s\n' 'NOT_RUN: native macOS x64 host required' >&2; exit 4 ;; esac
++CLI=""
++while [ "$#" -gt 0 ]; do
++    case "$1" in --cli-binary) [ "$#" -ge 2 ] || exit 2; CLI=$2; shift 2 ;; *) printf '%s\n' "unknown option: $1" >&2; exit 2 ;; esac
++done
++[ -x "$CLI" ] || { printf '%s\n' '--cli-binary must name an executable' >&2; exit 3; }
++ROOT=$(mktemp -d /tmp/axiom-j005-test.XXXXXX)
++trap 'rm -rf "$ROOT"' EXIT HUP INT TERM
++REPO=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
++fail() { printf 'FAIL: %s\n' "$1" >&2; exit 1; }
++expect() {
++    expected=$1; shift
++    set +e; "$@" >"$ROOT/stdout" 2>"$ROOT/stderr"; actual=$?; set -e
++    [ "$actual" = "$expected" ] || { cat "$ROOT/stderr" >&2; fail "expected exit $expected, got $actual: $*"; }
++}
++
++# Positive: package a real native binary and verify its recorded digest and CPU type.
++expect 0 sh "$REPO/packaging/macos/Build-ReleaseSet.sh" --out-dir "$ROOT/release" --cli-binary "$CLI" --json
++test -x "$ROOT/release/axiom-cli" || fail 'packager did not preserve executable mode'
++file "$ROOT/release/axiom-cli" | grep -q 'Mach-O 64-bit executable x86_64' || fail 'packager output is not x86_64 Mach-O'
++PACKAGED_SHA=$(shasum -a 256 "$ROOT/release/axiom-cli" | awk '{print $1}')
++grep -q "$PACKAGED_SHA" "$ROOT/stdout" || fail 'packager envelope omitted artifact digest'
++
++# Negative: the x64 wrapper cannot be redirected to another architecture.
++expect 2 sh "$REPO/packaging/macos/Build-ReleaseSet.sh" --arch arm64 --out-dir "$ROOT/wrong-arch" --cli-binary "$CLI"
++test ! -e "$ROOT/wrong-arch/axiom-cli" || fail 'arch override wrote an artifact'
++cp "$CLI" "$ROOT/arm-header"
++printf '\014\000\000\001' | dd of="$ROOT/arm-header" bs=1 seek=4 conv=notrunc status=none
++expect 9 sh "$REPO/packaging/macos/Build-ReleaseSet.sh" --out-dir "$ROOT/wrong-header" --cli-binary "$ROOT/arm-header"
++test ! -e "$ROOT/wrong-header/axiom-cli" || fail 'wrong Mach-O header wrote an artifact'
++
++# Negative: an unapproved mutation reaches no CLI transaction and preserves user data.
++printf 'must-survive\n' > "$ROOT/user-data"
++expect 2 env AXIOM_CLI_INSTALL_ROOT="$ROOT/install" sh "$REPO/installers/macos/Install-AxiomCli.sh" --cli "$CLI" --from "$ROOT/release" --apply
++test "$(cat "$ROOT/user-data")" = 'must-survive' || fail 'missing approval changed user data'
++test ! -e "$ROOT/install" || fail 'missing approval created install state'
++expect 2 env AXIOM_CLI_INSTALL_ROOT="$ROOT/install" sh "$REPO/installers/macos/Uninstall-AxiomCli.sh" --cli "$CLI" --apply
++test "$(cat "$ROOT/user-data")" = 'must-survive' || fail 'uninstall without approval changed user data'
++
++# A checked relative basename is made absolute before exec, so PATH cannot
++# substitute a different entrypoint after validation.
++mkdir "$ROOT/local" "$ROOT/hostile"
++printf '%s\n' '#!/bin/sh' 'printf "%s\n" "$0" > "$MARKER"' > "$ROOT/local/axiom-cli"
++printf '%s\n' '#!/bin/sh' 'exit 99' > "$ROOT/hostile/axiom-cli"
++chmod 0755 "$ROOT/local/axiom-cli" "$ROOT/hostile/axiom-cli"
++(cd "$ROOT/local" && MARKER="$ROOT/called" PATH="$ROOT/hostile:$PATH" sh "$REPO/installers/macos/Install-AxiomCli.sh" --cli axiom-cli --from "$ROOT/release" --dry-run)
++test "$(cat "$ROOT/called")" = "$ROOT/local/axiom-cli" || fail 'relative checked CLI was replaced through PATH'
++
++# A PATH-local uname shim changes only this child process and cannot change host state.
++mkdir "$ROOT/bin"
++printf '%s\n' '#!/bin/sh' 'case "$1" in -s) echo Linux;; -m) echo x86_64;; esac' > "$ROOT/bin/uname"
++chmod 0755 "$ROOT/bin/uname"
++expect 9 env PATH="$ROOT/bin:$PATH" sh "$REPO/installers/macos/Uninstall-AxiomCli.sh" --cli "$CLI" --dry-run
++printf 'PASS: native macOS x64 packaging and wrapper boundaries\n'
+diff --git a/evidence/J-005/macos-x64-dry-run.json b/evidence/J-005/macos-x64-dry-run.json
+new file mode 100644
+index 0000000..f184d59
+--- /dev/null
++++ b/evidence/J-005/macos-x64-dry-run.json
+@@ -0,0 +1 @@
++{"code":0,"details":{"channel":"stable","engine_owner":"axiom-graphd","generated_at":"2026-09-22T07:51:12Z","install_root":"<TEMP_ROOT>/root","manifest_sha256":"da536b94456ec66f3879be284f06b2e19c2b78021a0c3f0aaf40b42e2aeab1ee","manifest_source":"<DEV_RELEASE_SET>/channel.json","mode":"dry-run","plan":{"approval":{"approve_digest":null,"state":"unapproved"},"channel":"stable","components":[{"artifact":{"class":"per-user-installer","platform":"macos-x64","sha256":"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb","size_bytes":3875088,"url":"https://fixtures.invalid/engine/axiom-graphd-0.0.0-dev.bin"},"component":"axiom-graphd","declared":true,"needs_restart":true,"revision":"5e436500a02ffb7b176099612c5fce71591469ac","version":"0.0.0-dev"},{"artifact":{"class":"per-user-installer","platform":"macos-x64","sha256":"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202","size_bytes":212324,"url":"https://fixtures.invalid/engine/axiom_mcp-0.1.0-py3-none-any.whl"},"component":"axiom-mcp","declared":true,"needs_restart":true,"revision":"692dbdb1c0ffc2e0ff3b9293108f02dedede8788","version":"0.1.0"},{"artifact":null,"component":"skills","declared":true,"needs_restart":false,"revision":"9579ceb6bbf34bf2ea7081ef117640a2fa3b3ffc","version":"0.1.0"}],"host":"macos-x64","install_root":"<TEMP_ROOT>/root","manifest":"<DEV_RELEASE_SET>/channel.json","manifest_sha256":"da536b94456ec66f3879be284f06b2e19c2b78021a0c3f0aaf40b42e2aeab1ee","plan_digest":"b6d69934fe4f2fad5098e7869114b7f02b1d984646d0e39fae99098c4e6f872c","plan_version":1,"published":false,"verb":"install"},"plan_digest":"b6d69934fe4f2fad5098e7869114b7f02b1d984646d0e39fae99098c4e6f872c","published":false,"target":"macos-x64","verified_artifacts":[{"component":"axiom-graphd","resolved":"<DEV_RELEASE_SET>/axiom-graphd-0.0.0-dev.bin","sha256":"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb","size_bytes":3875088,"url":"https://fixtures.invalid/engine/axiom-graphd-0.0.0-dev.bin","verified":true},{"component":"axiom-mcp","resolved":"<DEV_RELEASE_SET>/axiom_mcp-0.1.0-py3-none-any.whl","sha256":"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202","size_bytes":212324,"url":"https://fixtures.invalid/engine/axiom_mcp-0.1.0-py3-none-any.whl","verified":true}]},"message":"install plan reported; nothing was changed","request_id":"axiom-cli-update-59f-18d7953e6a502de0","retryable":false,"status":"ok"}
+diff --git a/evidence/J-005/macos-x64-apply.json b/evidence/J-005/macos-x64-apply.json
+new file mode 100644
+index 0000000..1cb72d4
+--- /dev/null
++++ b/evidence/J-005/macos-x64-apply.json
+@@ -0,0 +1 @@
++{"code":0,"details":{"channel":"stable","components":[{"component":"axiom-graphd","destination":"<TEMP_ROOT>/root/installs/ecosystem/versions/0.0.0-dev/bin/axiom-graphd","position":1,"sha256":"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb","status":"installed","version":"0.0.0-dev"},{"component":"axiom-mcp","destination":"<TEMP_ROOT>/root/installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl","position":2,"sha256":"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202","status":"installed","version":"0.1.0"},{"component":"axiom-skills","destination":"skills/0.1.0","position":3,"sha256":"a1e3b9c6185e29cf3fefeaa5cec1c137d4370d545b967f2705c4891ec1f1d76e","status":"installed","version":"0.1.0"}],"engine":{"bundle_components":[{"artifact":"bin/axiom-graphd","component":"axiom-graphd","host":"macos-x64","kind":"binary","network_access":[],"permissions":["read","execute"],"service":null,"sha256":"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb","size_bytes":3875088,"version":"0.0.0-dev"},{"artifact":"python/axiom_mcp-0.1.0-py3-none-any.whl","component":"axiom-mcp","host":"macos-x64","kind":"python","network_access":[],"permissions":["read"],"service":null,"sha256":"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202","size_bytes":212324,"version":"0.1.0"}],"bundle_manifest_bytes":683,"bundle_manifest_sha256":"87c22a4b9f8c58abf2005b39eb245a04e15d1b4e80219b73ba30fe2adf68e4a0","bundle_root":"<TEMP_ROOT>/root/staging/engine-bundle","host":"macos-x64","install_root":"<TEMP_ROOT>/root","not_carried":[],"skills":{"component":"axiom-skills","entries":41,"files":42,"manifest_sha256":"0d0ff33d71cb1379805e9dc036b02a8c189eec2a4ddc7539bb45a242b8ebcb1d","revision":"9579ceb6bbf34bf2ea7081ef117640a2fa3b3ffc","source":"release_set","version":"0.1.0"},"steps":[{"code":null,"exit_code":0,"status":"planned","stderr":"","stdout":"{\"plan_digest\":\"27e3ce6151d1c463e7165a8c27ffcadf6b63e3fcf7c6ecf11e587502d51a112c\",\"plan_file\":\"<TEMP_ROOT>/root/staging/engine-bundle/engine-plan.json\",\"plan_id\":\"install-1790063472-95caba328589a84c\",\"status\":\"planned\"}","step":"plan"},{"code":null,"exit_code":0,"status":"installed","stderr":"","stdout":"{\"schema_version\":1,\"plan_id\":\"install-1790063472-95caba328589a84c\",\"plan_digest\":\"27e3ce6151d1c463e7165a8c27ffcadf6b63e3fcf7c6ecf11e587502d51a112c\",\"transaction_id\":\"ecosystem-1790063472-5da9d7df840b85b5\",\"applied_at\":\"2026-09-22T07:51:12Z\",\"status\":\"installed\",\"components\":[{\"position\":1,\"component\":\"axiom-graphd\",\"version\":\"0.0.0-dev\",\"status\":\"installed\",\"sha256\":\"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb\",\"destination\":\"<TEMP_ROOT>/root/installs/ecosystem/versions/0.0.0-dev/bin/axiom-graphd\"},{\"position\":2,\"component\":\"axiom-mcp\",\"version\":\"0.1.0\",\"status\":\"installed\",\"sha256\":\"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202\",\"destination\":\"<TEMP_ROOT>/root/installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl\"},{\"position\":3,\"component\":\"axiom-skills\",\"version\":\"0.1.0\",\"status\":\"installed\",\"sha256\":\"a1e3b9c6185e29cf3fefeaa5cec1c137d4370d545b967f2705c4891ec1f1d76e\",\"destination\":\"skills/0.1.0\"}],\"core_pointer\":\"<TEMP_ROOT>/root/installs/ecosystem/current\",\"skills_pointer\":\"skills/current\",\"keeps_previous_versions\":1}","step":"apply"}]},"engine_owner":"axiom-graphd","engine_plan_digest":"27e3ce6151d1c463e7165a8c27ffcadf6b63e3fcf7c6ecf11e587502d51a112c","engine_plan_id":"install-1790063472-95caba328589a84c","engine_program":"<ENGINE_BIN>","engine_source":"env","engine_status":"installed","engine_status_reported":true,"generated_at":"2026-09-22T07:51:12Z","install_root":"<TEMP_ROOT>/root","manifest_sha256":"da536b94456ec66f3879be284f06b2e19c2b78021a0c3f0aaf40b42e2aeab1ee","manifest_source":"<DEV_RELEASE_SET>/channel.json","mode":"apply","plan":{"approval":{"approve_digest":null,"state":"unapproved"},"channel":"stable","components":[{"artifact":{"class":"per-user-installer","platform":"macos-x64","sha256":"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb","size_bytes":3875088,"url":"https://fixtures.invalid/engine/axiom-graphd-0.0.0-dev.bin"},"component":"axiom-graphd","declared":true,"needs_restart":true,"revision":"5e436500a02ffb7b176099612c5fce71591469ac","version":"0.0.0-dev"},{"artifact":{"class":"per-user-installer","platform":"macos-x64","sha256":"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202","size_bytes":212324,"url":"https://fixtures.invalid/engine/axiom_mcp-0.1.0-py3-none-any.whl"},"component":"axiom-mcp","declared":true,"needs_restart":true,"revision":"692dbdb1c0ffc2e0ff3b9293108f02dedede8788","version":"0.1.0"},{"artifact":null,"component":"skills","declared":true,"needs_restart":false,"revision":"9579ceb6bbf34bf2ea7081ef117640a2fa3b3ffc","version":"0.1.0"}],"host":"macos-x64","install_root":"<TEMP_ROOT>/root","manifest":"<DEV_RELEASE_SET>/channel.json","manifest_sha256":"da536b94456ec66f3879be284f06b2e19c2b78021a0c3f0aaf40b42e2aeab1ee","plan_digest":"b6d69934fe4f2fad5098e7869114b7f02b1d984646d0e39fae99098c4e6f872c","plan_version":1,"published":false,"verb":"install"},"plan_digest":"b6d69934fe4f2fad5098e7869114b7f02b1d984646d0e39fae99098c4e6f872c","published":false,"staging_root":"<TEMP_ROOT>/root/staging/engine-bundle","target":"macos-x64","verified_artifacts":[{"component":"axiom-graphd","resolved":"<DEV_RELEASE_SET>/axiom-graphd-0.0.0-dev.bin","sha256":"21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb","size_bytes":3875088,"url":"https://fixtures.invalid/engine/axiom-graphd-0.0.0-dev.bin","verified":true},{"component":"axiom-mcp","resolved":"<DEV_RELEASE_SET>/axiom_mcp-0.1.0-py3-none-any.whl","sha256":"f3f3f64afaa1b4496b4c328adbb2c11158df1ce62910079b3c2a12af42017202","size_bytes":212324,"url":"https://fixtures.invalid/engine/axiom_mcp-0.1.0-py3-none-any.whl","verified":true}]},"message":"the engine (`<ENGINE_BIN>` env) placed the approved bundle: status `installed`","request_id":"axiom-cli-update-5a5-18d7953e983708a0","retryable":false,"status":"ok"}
+diff --git a/evidence/J-005/macos-x64-installed-mode.txt b/evidence/J-005/macos-x64-installed-mode.txt
+new file mode 100644
+index 0000000..30a4bdb
+--- /dev/null
++++ b/evidence/J-005/macos-x64-installed-mode.txt
+@@ -0,0 +1 @@
++-rwxr-xr-x 3875088 <TEMP_ROOT>/root/staging/engine-bundle/bin/axiom-graphd
+diff --git a/evidence/J-005/macos-x64-byte-hashes.txt b/evidence/J-005/macos-x64-byte-hashes.txt
+new file mode 100644
+index 0000000..19aa725
+--- /dev/null
++++ b/evidence/J-005/macos-x64-byte-hashes.txt
+@@ -0,0 +1,2 @@
++21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb  <DEV_RELEASE_SET>/axiom-graphd-0.0.0-dev.bin
++21cf16b8c80f855fc2ad78406f2448f4c45e026e26636ae35e95f7e780e8d8cb  <TEMP_ROOT>/root/staging/engine-bundle/bin/axiom-graphd
+diff --git a/evidence/J-005/macos-x64-installed-run.txt b/evidence/J-005/macos-x64-installed-run.txt
+new file mode 100644
+index 0000000..e0944b0
+--- /dev/null
++++ b/evidence/J-005/macos-x64-installed-run.txt
+@@ -0,0 +1,61 @@
++axiom-graphd - Axiom graph engine daemon
++
++Usage: axiom-graphd <command> [options]
++
++Commands:
++  serve [--registry <path>] [--json]   run the foreground daemon
++  version [--json]                     print component, build and runtime versions
++  doctor [--solution <id>] [--json]    print diagnostics (never repairs automatically)
++  status --solution <id> [--json]      print queue, freshness and coverage state
++  solution register|list|remove ...    administer the solution registry
++  changed ...                          accept explicit changed-file hints
++  reconcile ...                        request a bounded reconcile
++  queue list|retry|cancel ...          inspect and steer the operational queue
++  query context|impact ...             bounded context and impact over a pinned snapshot
++  render --solution <id> --out <dir>   render a published generation as a diagram
++  update check|apply ...               delegate to the trusted axiom CLI
++  help, --help                         print this help
++
++Options:
++  --json    write exactly one JSON object to stdout; diagnostics go to stderr
++
++Operator slices (task H-001):
++  changed
++      changed --solution <id> --project <project> --path <repo-relative> --reason <manual|git|tool|reconcile> [--json]
++      changed --solution <id> --from-json <changes.json> [--json]
++  queue
++      queue list --solution <id> [--limit <n>] [--json]
++      queue retry --job <id> [--json]
++      queue cancel --job <id> [--json]
++  solution
++      solution register --config <solution.yaml> [--bindings <bindings.json>] (--dry-run|--apply) [--json]
++      solution list [--solution <id>] [--json]
++      solution remove --solution <id> (--dry-run|--apply) [--json]
++  doctor
++      doctor [--solution <id>] [--json]
++  reconcile
++      reconcile --solution <id> --scope dirty [--wait] [--timeout <ms|Ns>] [--json]
++      reconcile --solution <id> --scope project --project <project> [--json]
++      reconcile --solution <id> --scope full [--json]
++  query
++      query context --solution <id> (--symbol <name>|--node-id <id>) [--max-bytes <n>] [--max-nodes <n>] [--depth <n>] [--json]
++      query impact --solution <id> (--symbol <name>|--node-id <id>) [--max-bytes <n>] [--max-nodes <n>] [--depth <n>] [--json]
++  render
++      render --solution <id> [--project <project>]... --out <dir> [--json]
++  update
++      update check [--json]
++      update apply --plan <plan.json> [--approve-digest <sha256>] [--json]
++
++Exit codes:
++  0  success
++  2  validation
++  3  not found
++  4  not ready/stale
++  5  authorization
++  6  conflict
++  7  timeout/busy
++  8  I/O internal
++  9  incompatible
++  10  lock unavailable
++  20  partial multi-repo operation
++
+diff --git a/packaging/macos-arm64/Build-ReleaseSet.sh b/packaging/macos-arm64/Build-ReleaseSet.sh
+index 15f4908..cf77793 100644
+--- a/packaging/macos-arm64/Build-ReleaseSet.sh
++++ b/packaging/macos-arm64/Build-ReleaseSet.sh
+@@ -144,11 +144,11 @@ ac_magic="$(od -An -tx1 -N4 -- "$AC_CLI_BINARY" | tr -d ' \n')"
+ ac_cputype="$(od -An -tx1 -j4 -N4 -- "$AC_CLI_BINARY" | tr -d ' \n')"
+ [ "$ac_cputype" = "$AC_CPUTYPE" ] || ac_fail "$AC_EXIT_INCOMPATIBLE" "cli binary cputype $ac_cputype does not match --arch $AC_ARCH"
+ 
+-mkdir -p -- "$AC_OUT_DIR" || ac_fail "$AC_EXIT_NOT_READY" "cannot create --out-dir: $AC_OUT_DIR"
++mkdir -p "$AC_OUT_DIR" || ac_fail "$AC_EXIT_NOT_READY" "cannot create --out-dir: $AC_OUT_DIR"
+ AC_OUT_DIR="$(CDPATH= cd -- "$AC_OUT_DIR" && pwd)"
+ AC_ART_NAME="axiom-cli"
+-cp -- "$AC_CLI_BINARY" "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot copy the artifact into the release set"
+-chmod 0755 -- "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot mark the artifact executable"
++cp "$AC_CLI_BINARY" "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot copy the artifact into the release set"
++chmod 0755 "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot mark the artifact executable"
+ 
+ AC_ART_SHA="$(shasum -a 256 -- "$AC_OUT_DIR/$AC_ART_NAME" | cut -d' ' -f1)"
+ AC_ART_SIZE="$(wc -c < "$AC_OUT_DIR/$AC_ART_NAME" | tr -d ' ')"

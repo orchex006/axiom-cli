@@ -16,16 +16,27 @@ Code, installers, local tests, version/release manifests, [Changelog.md](Changel
 
 ## Platform support status
 
-Windows x64, macOS x64 and the GitHub Container Registry image are the finish-first delivery tier; Linux x64 including the WSL2 lane and macOS arm64 are design-complete and stay unverified until a native run is recorded. There are no runtime artifacts or native certification results in this seed. A release must carry target-specific evidence from the current platform matrix, not infer support from a cross-compile or from a published container image.
+Windows x64, macOS x64 and the GitHub Container Registry image are the finish-first delivery tier; Linux x64 including the WSL2 lane and macOS arm64 are design-complete and stay unverified until a native run is recorded. No target is `certified` (all `false`), and the only native execution record for the lifecycle verbs in the current round is `macos-x64`. A release must carry target-specific evidence from the current platform matrix, not infer support from a cross-compile or from a published container image.
 
 ## Implemented surface
 
 Card `J-003` added the argv surface: a Rust binary named `axiom-cli` builds from `Cargo.toml` with no
 third-party dependencies, and exposes the five contract verbs `install`, `update`, `doctor`,
-`version` and `uninstall` with the canonical exit vocabulary. Every verb is declared but not yet
-wired to the engine, so each one answers `NotReady` (exit `4`) with a stated reason instead of an
-empty success. See [docs/40-CLI-ARGV-SURFACE.md](docs/40-CLI-ARGV-SURFACE.md). The installation
-engine stays in `axiom-graphd`; nothing here installs, updates or removes anything yet.
+`version` and `uninstall` with the canonical exit vocabulary. All five now dispatch to real work;
+there is no "unbuilt verb" fallback. `install` and `uninstall` require an explicit mode: `--dry-run`
+reports the plan and changes nothing, `--apply` runs the transaction and requires an approved plan
+digest, and a bare verb is a validation error (`2`) because a mutating verb must not answer the
+success code for work it did not do (`axiom-specs/docs/16-CLI-AND-CONTROL-API.md` section 6 rule 4).
+`doctor` runs real checks and exits with the worst finding, and `version` always exits `0`, even with
+nothing installed. The two mutating verbs still stop at the engine
+handoff: `install --apply` refuses `4` `engine_bundle_not_assembled`, because this layer assembles no
+bundle for the engine's own `install plan --bundle <dir>` verb (a `bundle.json` manifest plus
+verified component payloads and a `skills/` bundle); `uninstall --apply` refuses `4`
+`engine_removal_unavailable` because the engine publishes no ecosystem removal verb; and either
+refuses `3` `engine_not_found` when no engine binary is present. See
+[docs/40-CLI-ARGV-SURFACE.md](docs/40-CLI-ARGV-SURFACE.md). The installation engine stays in
+`axiom-graphd`; this layer verifies the release set and reports the refusal rather than placing
+bytes itself.
 
 Card `J-006` added the container delivery channel (`container-linux-x64`): `containers/Dockerfile`
 with both base images pinned by digest, a non-root runtime user and a complete OCI label set;
@@ -45,9 +56,10 @@ the release set whose sha256 is the single approval digest, and `packaging/insta
 is the install-result envelope schema. `tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1`
 executes 32 legs and writes `evidence/J-004/`. See
 [docs/30-DISTRIBUTION-AND-INSTALLERS.md](docs/30-DISTRIBUTION-AND-INSTALLERS.md). The released
-`axiom-cli.exe` itself is still an argv surface whose verbs answer `NotReady`; the installer verifies
-and installs artifacts but `axiom-graphd` core artifacts are not built yet, so they stay recorded as
-unverified rather than installed. `windows-x64` is not certified.
+`axiom-cli.exe` now dispatches all five verbs, but `install --apply` stops at the engine handoff
+rather than placing bytes; the installer scripts are what verify and install artifacts.
+`axiom-graphd` core artifacts are not built yet, so they stay recorded as unverified rather than
+installed. `windows-x64` is not certified.
 
 `spec.lock.json` is still unset: this seed ships only `spec.lock.example.json`, and a verified
 immutable `axiom-specs` pin has not been recorded.
@@ -64,4 +76,5 @@ macOS recipe shared by `arm64` and `x64`, parameterised by `--arch`; the macOS a
 
 Both tiers remain `certified: false` and are never presented as finish-first. The executed evidence
 is a WSL2 run against a container-built Linux x64 artifact; a native distro-package run, signing,
-`linux/arm64`, the container image and the update channel (`J-007`) are not done.
+`linux/arm64` and the container image are not done, while the update channel (`J-007`) is implemented
+with publication still closed.

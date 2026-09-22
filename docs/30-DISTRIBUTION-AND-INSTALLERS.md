@@ -8,7 +8,7 @@ Owner: axiom-cli. **Intended distribution contract; no downloadable runtime rele
 
 ## Entrypoint and verbs
 
-One executable, `axiom-cli` (`axiom-cli.exe` on Windows), is the single distribution entrypoint on every platform. It exposes `install`, `update`, `doctor`, `version` and `uninstall`, and delegates engine work to the installed `axiom-graphd` programs. The engine CLI `axiom` shipped in the core release stays owned by `axiom-graphd`; `axiom-cli` installs, verifies and updates it rather than duplicating any of its behaviour. Every verb exits non-zero with a typed `NotReady` reason instead of starting a partial operation when a required prerequisite, digest, pin or platform declaration is missing. Invocation is program plus argv; no verb requires a shell string, Bash or elevation.
+One executable, `axiom-cli` (`axiom-cli.exe` on Windows), is the single distribution entrypoint on every platform. It exposes `install`, `update`, `doctor`, `version` and `uninstall`, and delegates engine work to the installed `axiom-graphd` programs. The engine CLI `axiom` shipped in the core release stays owned by `axiom-graphd`; `axiom-cli` installs, verifies and updates it rather than duplicating any of its behaviour. All five verbs dispatch to real work, and a verb refuses with a typed exit code and reason instead of starting a partial operation when a required prerequisite, digest, pin or platform declaration is missing; `NotReady` (`4`) is one such refusal, not the universal answer. Invocation is program plus argv; no verb requires a shell string, Bash or elevation.
 
 ## Delivery platforms
 
@@ -32,6 +32,8 @@ Design-complete, verification later: Linux x64 including the WSL2 lane, and macO
 
 Installing is transactional and reversible. Verify release provenance and the per-artifact SHA256 before unpacking; unpack into a user-writable install directory; never require root, never bypass Gatekeeper, never mutate a global PATH and never use `curl | sh`. Then delegate to the engine to register the solution, bind logical repositories to native absolute paths and apply managed bootstrap with an approved plan digest. Re-running install must be idempotent.
 
+The `axiom-cli` binary itself stops at that delegation point today: `install --dry-run` resolves and verifies the release set (a bare `install` is `2` validation, because an explicit mode is required), then `install --apply` refuses `4` `engine_bundle_not_assembled` because this layer does not assemble the bundle the engine's `install plan --bundle <dir>` verb needs (a `bundle.json` manifest plus verified component payloads and a `skills/` bundle), or `3` `engine_not_found` when no engine is present, instead of placing bytes. The installed PowerShell and POSIX-sh installer scripts are what actually verify and write files; the CLI never fabricates a placement the engine did not perform.
+
 ## ## Update
 
 J-007 implements the update path in `src/update/` with the channel manifest in `channels/stable.json`; `docs/50-UPDATE-CHANNEL.md` records what runs today and what does not. Implemented now:
@@ -41,11 +43,13 @@ J-007 implements the update path in `src/update/` with the channel manifest in `
 - The swap keeps the previous generation until the new one passes its health probe; a failed verification or health check restores the previous generation, and an interrupted apply is recovered from the journal. Every changed component is reported under `needs_restart`.
 - An update is never applied without an explicit approved request.
 
-Still design-complete, not yet running here: stopping affected writers and preserving the durable queue, plus the engine's activation and restart, are owned by `axiom-graphd` (I-003/I-004). A real signed channel with published artifacts stays closed for this wave.
+The engine now implements local ecosystem activation, owned-service coordination and rollback (ADR-0014). This distribution channel still uses a separate delivery generation store; its bridge to that engine transaction remains unfinished. A signed channel with published artifacts remains release-gated.
 
 Uninstall
 
 Uninstall removes only owned executables and startup entries by default. Workspace data, checkpoints and private state require a separate, explicit deletion approval. Never recursively delete `.axiom`.
+
+`axiom-cli uninstall --dry-run` embeds the canonical engine removal plan in its outer approval document. `--apply --approve-digest <digest>` invokes that exact engine plan, then clears only an unchanged distribution marker. The engine verifies ownership, stops its owned service, preserves edited/unowned files and writes retryable removal evidence. The wrapper refuses `--purge-data`; native Mac x64 evidence is recorded under `evidence/J-005/local-lifecycle-20260922/`.
 
 ## Dependencies
 
@@ -121,11 +125,15 @@ versioned `cli\generations\<version>\`, `cli\staging\` and `cli\rollback\` artif
 `install-manifest.json`. Only `HKCU\Environment\Path` (user scope) is changed; the machine-wide PATH is
 snapshotted before and after every transaction and a change throws.
 
-### Exit codes
+### Exit codes (PowerShell installer)
 
-`0` success, `2` validation or missing approval, `3` not found, `5` approval mismatch,
-`6` conflict, `8` I/O failure with rollback, `9` digest mismatch or refused downgrade,
-`10` transaction lock unavailable. A mutating run that fails rolls back and reports `rolled_back`.
+This table is the Windows PowerShell installer's exit mapping, not the `axiom-cli` binary's. `0`
+success, `2` validation or missing approval, `3` not found, `5` approval mismatch, `6` conflict,
+`8` I/O failure with rollback, `9` digest mismatch or refused downgrade, `10` transaction lock
+unavailable. A mutating run that fails rolls back and reports `rolled_back`.
+
+The CLI's own per-verb exit behaviour (including the engine handoff) is tabulated in
+[docs/40-CLI-ARGV-SURFACE.md](40-CLI-ARGV-SURFACE.md).
 
 ### Reproduce the evidence
 

@@ -20,6 +20,10 @@ pub struct Report {
     retryable: bool,
     details: Json,
     lines: Vec<String>,
+    /// The verb this result belongs to, used only for the plain-mode prefix. It defaults to
+    /// `update`, which is the verb this module was first written for, so an existing caller keeps
+    /// its current output while `version`, `doctor`, `install` and `uninstall` name themselves.
+    subject: &'static str,
 }
 
 impl Report {
@@ -32,7 +36,14 @@ impl Report {
             retryable: false,
             details: Json::Object(Default::default()),
             lines: Vec::new(),
+            subject: "update",
         }
+    }
+
+    /// Name the verb this result belongs to, so plain-mode diagnostics point at the right one.
+    pub fn subject(mut self, subject: &'static str) -> Report {
+        self.subject = subject;
+        self
     }
 
     /// A successful result.
@@ -114,7 +125,13 @@ impl Report {
                 println!("{PROGRAM}: {}", self.message);
             }
             exit::NOT_READY => {
-                eprintln!("{PROGRAM}: update: NotReady: {}", self.message);
+                eprintln!("{PROGRAM}: {}: NotReady: {}", self.subject, self.message);
+                // A refusal is the most consequential answer a verb gives; dropping its enumerated
+                // detail in plain mode forces an operator to re-run with `--json` to learn what is
+                // missing. Print the same lines the success path prints.
+                for text in &self.lines {
+                    eprintln!("{PROGRAM}: {text}");
+                }
                 if verbose {
                     eprintln!("{PROGRAM}: diagnostic: parsed invocation: {}", self.status);
                 }

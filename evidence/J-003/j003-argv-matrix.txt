@@ -1,3 +1,6 @@
+# SUPERSEDED - supersession header added by the 0.1.0 documentation audit.
+# SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.
+#
 # J-003 argv matrix - one real axiom-cli.exe invocation per row, this Windows host (shell: PowerShell 7)
 # refreshed at axiom-cli main c73c53c6c1d707ebe31574541eb5d4bcaee1813d (task J-003 evidence re-refresh, lane w10-j003r)
 # binary: D:\SP-Billy\axiom-worktrees\axiom-cli-w10-j003r\target\debug\axiom-cli.exe

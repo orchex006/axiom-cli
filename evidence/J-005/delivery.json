@@ -1,0 +1,21 @@
+{
+  "task_id": "J-005",
+  "local_slice": "macOS x64 wrappers, packaging and engine-backed native install proof",
+  "branch": "feature/j-005-local-macos-delivery",
+  "base_revision": "e20aeca6313bb078b4e3b7ae11015e807dc45ceb",
+  "delivery_state": "blocked",
+  "working_tree_delivery": true,
+  "main_integrated": false,
+  "reason": "Parent J-005 requires service/uninstall/update integration still missing. Primary contains inherited uncommitted user installation implementation; this lane did not commit it as its own work. Reviewed delta is present in primary task branch.",
+  "artifact": "target/local-macos/axiom-cli",
+  "artifact_sha256": "4075bcbe9d2661256c37796657c8409b8a3c75c05d24cdc6132300cde8be1c86",
+  "checks": {
+    "fmt": 0,
+    "clippy": 0,
+    "rust_tests": 198,
+    "native_wrapper_harness": 0,
+    "native_install_apply": 0,
+    "installed_binary_run": 0
+  },
+  "certified": false
+}

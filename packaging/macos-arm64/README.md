@@ -11,7 +11,7 @@ parameterised by `--arch arm64|x64`.
 |---|---|
 | Recipe | **present** (`Build-ReleaseSet.sh`, shared by both macOS arches) |
 | Build host required | macOS (`uname -s` = `Darwin`) |
-| macOS arm64 artifact | **NOT BUILT** — no macOS host supplies the run |
+| macOS arm64 artifact | **NOT BUILT** — the current `macos-x64` host can run the recipe, but no run has been recorded |
 | macOS x64 artifact | **NOT BUILT here** — owned by `J-005` |
 | Target certification | `certified: false`, `evidence: []` |
 | Evidence status | `not_run` |
@@ -24,14 +24,16 @@ forbids presenting it as finish-first.
 
 ## Why the artifact is not built here
 
-The `J-008` execution host is Windows 11 x64 with WSL2 and Docker. Neither can
+The `J-008` execution host was Windows 11 x64 with WSL2 and Docker, which cannot
 produce *evidence* for a macOS target: a cross-compiled Mach-O is not a native
 execution record and a container image is never native evidence either. The
-contract (`axiom-specs/contracts/axiom-cli-distribution-contract.md` §8) and the
-platform matrix (`compatibility/platform-matrix.json`,
+current development host is `macos-x64`, so the shared macOS recipe is now
+runnable natively — but no run has been recorded yet, so the honest record is
+still `not_run` with `certified: false` and empty evidence. The contract
+(`axiom-specs/contracts/axiom-cli-distribution-contract.md` §8) and the platform
+matrix (`compatibility/platform-matrix.json`,
 `distribution.rules.tier2_may_be_presented_as_finish_first = false`) both require
-a native run before a target may be called `verified`. The honest record is
-therefore `not_run`, not a fabricated artifact.
+a native run before a target may be called `verified`.
 
 ## The recipe
 

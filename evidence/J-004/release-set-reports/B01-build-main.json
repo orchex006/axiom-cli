@@ -1,5 +1,6 @@
 {
-  "outcome": "assembled",
+  "_superseded": "SUPERSEDED historical capture pinned to an earlier revision. This bundle records its slice on the then-current Windows x64 execution host and does not describe current axiom-cli verb behaviour: the five verbs now dispatch to real work, so every recorded NotReady/exit-4 verb row here is historical. Added during the 0.1.0 documentation audit; the recorded data below is unchanged.",
+"outcome": "assembled",
   "release_set_path": "D:\\SP-Billy\\axiom-worktrees\\axiom-cli-w10-j004\\_j004-run\\release-set-main\\release-set.json",
   "release_version": "0.0.0-dev",
   "plan_digest": "5608ec2b6ce48b545641babc6ed8f4e9740f298922e6eed7b606ace744cd8e1d",

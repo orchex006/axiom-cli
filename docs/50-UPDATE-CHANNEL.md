@@ -53,8 +53,10 @@ is `details.reason`.
 
 ## Where versions come from
 
-Versions are resolved **only** from the channel manifest that the installed release recorded. The
-CLI never resolves a branch tip, a tag alias, a network `latest`, or an unsigned channel:
+On the update path, versions are resolved **only** from the channel manifest that the installed
+release recorded. (Installation and `version` can additionally read a manifest named by `--from` or
+`AXIOM_CLI_CHANNEL_MANIFEST`; see `docs/40-CLI-ARGV-SURFACE.md`.) The update path never resolves a
+branch tip, a tag alias, a network `latest`, or an unsigned channel:
 
 - a version equal to `main`, `master`, `develop`, `latest`, `HEAD` or `*` is refused with
   `forbidden_pin:<value>`;
@@ -138,7 +140,10 @@ task.
 ## Versions, digests and the local-only artifact cache
 
 Three environment overrides exist so a fixture can be driven end to end without touching a real
-install root. They are the documented way to run the update path by hand:
+install root. They are not update-only: `AXIOM_CLI_INSTALL_ROOT` and `AXIOM_CLI_CHANNEL_MANIFEST`
+also govern `install`, `uninstall`, `doctor` and `version`, and `AXIOM_CLI_ARTIFACT_CACHE` is the
+cache `install` verifies against. They are the documented way to run the distribution path by hand
+(the full override table is in `docs/40-CLI-ARGV-SURFACE.md`):
 
 ```text
 AXIOM_CLI_INSTALL_ROOT       the install root; otherwise the per-user data location
@@ -179,6 +184,9 @@ Verified on this host: the whole `update check|plan|apply|rollback` machinery, a
 on-disk fixtures, on **windows-x64**, using the real release binary. Positive, negative and
 boundary legs are recorded with their exit codes under `evidence/J-007/`.
 
+This is the `J-007` recorded capture (`windows-x64`). The current development host is `macos-x64`;
+no native run of the lifecycle verbs added later is recorded there, and no target is `certified`.
+
 Explicitly **unverified**:
 
 - `linux-x64`, `macos-arm64` and `macos-x64`: no native run exists. A WSL2 run is Linux evidence
@@ -190,7 +198,7 @@ Explicitly **unverified**:
 
 ```text
 cargo build --release --locked
-cargo test --locked --all-targets            # 61 unit + 11 argv_surface + 23 update_channel
+cargo test --locked --all-targets            # 89 unit + 14 argv_surface + 56 cli_verbs + 9 container_distribution + 6 linux_distribution + 24 update_channel
 ```
 
 The acceptance transcript was produced by a scratch harness under `_w10ev/`, which is never

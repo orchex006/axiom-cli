@@ -1,0 +1,18 @@
+{
+  "spec_version": "2.0.0-draft.1",
+  "spec_repository": "axiom-specs",
+  "spec_revision": "3e03896e4a80543b7e6be94bf0071b42fd613fa2",
+  "spec_content_sha256": "7208d00a908cc2f2e6e15dc65d82433a1d0a47211cfbcf11eb2926db9323b8e8",
+  "owner_repository": "axiom-cli",
+  "workspace_layout": 2,
+  "graph_payload_schema": 1,
+  "verification": "validated offline against axiom-specs commit 3e03896e4a80543b7e6be94bf0071b42fd613fa2 with tools/spec-lock-check.py --release on 2026-09-22",
+  "contract_digests": {
+    "Development.md": "949a32e117dba2101ef487b29d44c46fdaf1e6ae8bc64c0781c1f86fdc2cb537",
+    "compatibility/platform-matrix.json": "33419a53f0e824ba6eb9a0f85fa2654f1b25f8836d23d1b603e4cebebf56a6a4",
+    "conformance/fixture-index.json": "e889087c9468ab9ec4a5816d964bee516dc29445139c7fed955415781e393263",
+    "contracts/axiom-cli-distribution-contract.md": "cd0759410e89ec1e1a9e6059108f344d0655a07a80a7c9d7e41df1562b48d3b1",
+    "contracts/version-dimensions.json": "7717d17d48a8a6dc697c5e78c9f699744bef2c32edf03d7a4b5afeea40b12345",
+    "tasks/J/J-005.md": "599092de89c6f5c93630abe32a7769880c992cb1f3cd8bfc568c1218301572fd"
+  }
+}
