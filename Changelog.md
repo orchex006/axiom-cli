@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### K-002 offline MCP payload (in progress)
+
+- Add a hash-pinned Intel Mac CPython 3.13.15 and MCP wheel packaging recipe,
+  a transitive wheel lock, and a no-network smoke test run by the copied runtime.
+  The candidate bundle records hashes and sizes for all 36 inputs. A clean-user
+  adapter now provisions hash-named environments, records owned files, retains
+  older generations for rollback and removes only owned files on uninstall.
+  A native source edit and catalog query now run through the installed wheel.
+  Engine handoff and a real two-version update remain open.
+
 ### K-001 macOS clean-host entrypoint work (in progress)
 
 - Pin the current four-lane K specification revision. When a release set carries

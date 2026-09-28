@@ -32,10 +32,11 @@ gates are under `evidence/J-005/local-lifecycle-20260922/`.
 
 The scoped fixture supplies the distribution CLI and installation-engine CLI
 from their build directories and uses an already prepared CPython dependency
-environment. It does not prove a clean-machine installation of those entrypoints
-or provision a dedicated versioned MCP virtual environment. The current macOS
-wrappers do not place `axiom-cli` itself or manage the user's shell PATH. These
-are local engineering items, not reasons to wait for a server or another OS.
+environment. K-001 now proves isolated-home entrypoint placement and shell PATH
+ownership with native candidate binaries. K-002 packages a pinned standalone
+Python, MCP wheel and locked dependency wheelhouse and smoke-tests the copied
+bytes without network access. A clean-host versioned MCP environment and its
+handoff to the engine still need lifecycle evidence.
 
 `axiom-cli update` still addresses its separate delivery generation store. The
 new local `axiom update plan --to <version> --bundle <dir> --out <file>` path
