@@ -18,6 +18,9 @@
   repeatable build and lifecycle harness verifies installed artifact hashes,
   stale-approval refusal, live query/restart and data-preserving removal. The
   image is not the published container channel or a completed K-003 handoff.
+- Verify the same image's foreground graphd under Docker supervision: two
+  SIGTERM drains exit cleanly, and a source edit after restart publishes a new
+  catalog generation on the retained volume.
 
 ### K-002 offline MCP payload (in progress)
 

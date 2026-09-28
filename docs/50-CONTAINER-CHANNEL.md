@@ -52,6 +52,16 @@ transaction that would provision and launch an owner-managed MCP environment.
 The final OCI update/rollback and supervisor behavior remain unverified, and
 this candidate is not used by `publish-container.yml`.
 
+For the candidate's foreground path, run the baked graphd binary directly
+with `--entrypoint /opt/axiom/release/axiom-graphd ... serve --json`, mount an
+owned home containing the solution registry and bindings, and set `AXIOM_HOME`
+to that mounted graph home. Docker supervises this foreground process and sends
+SIGTERM on `docker stop --timeout 10`. The K-011 foreground harness checks a
+graceful `Drained` shutdown, exit 0, restart on the same volume and a new
+catalog generation after a source edit. This is a process-level candidate
+check; no integrated container service definition or K-003 activation is
+claimed.
+
 ## Base image pins
 
 Both stages are pinned by digest in `containers/Dockerfile`; no stage uses a floating tag.
