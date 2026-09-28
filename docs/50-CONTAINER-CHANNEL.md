@@ -37,6 +37,21 @@ CLI. This proves candidate placement, query and refusal boundaries; it does
 not prove an owner-provisioned MCP environment, integrated update/rollback or
 a final publishable OCI image.
 
+`containers/K011-Candidate.Dockerfile` advances that spike to one unpublished
+Linux/amd64 OCI image. `tests/container/build_k011_combined_image.py` assembles
+an explicit context from the K-006 core, pinned MCP wheel, minimal skills
+fixture, Linux dependency wheelhouse and lock, then builds with pinned Rust and
+Python base digests and network-disabled build steps. The image contains the
+CLI, core, wheelhouse and a Python venv; its entrypoint runs the CLI as uid
+10001. `tests/container/test_k011_combined_image.py` checks the image identity,
+artifact hashes, approved install, stale-approval refusal, a query/edit/restart
+from the installed MCP wheel, and data-preserving removal with network disabled.
+The built venv is image-owned; the test copies it to the user volume before
+installing the engine-placed wheel. The current CLI/engine still lack the K-003
+transaction that would provision and launch an owner-managed MCP environment.
+The final OCI update/rollback and supervisor behavior remain unverified, and
+this candidate is not used by `publish-container.yml`.
+
 ## Base image pins
 
 Both stages are pinned by digest in `containers/Dockerfile`; no stage uses a floating tag.

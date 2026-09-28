@@ -13,6 +13,11 @@
   offline into a test-prepared venv. The engine-installed MCP wheel queries a
   live catalog before/after a C# edit and after graphd restart; a missing
   dependency refuses. The CLI still does not own that Linux MCP environment.
+- Add an unpublished single-image K-011 candidate with pinned build/runtime
+  bases, non-root execution, bundled core and offline MCP dependencies. Its
+  repeatable build and lifecycle harness verifies installed artifact hashes,
+  stale-approval refusal, live query/restart and data-preserving removal. The
+  image is not the published container channel or a completed K-003 handoff.
 
 ### K-002 offline MCP payload (in progress)
 
