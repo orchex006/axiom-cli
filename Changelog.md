@@ -11,6 +11,11 @@
   older generations for rollback and removes only owned files on uninstall.
   A native source edit and catalog query now run through the installed wheel.
   Engine handoff and a real two-version update remain open.
+- Make the provisioned environment consumable by the installed MCP owner's
+  locked stdio entrypoint planner: copy the interpreter into its versioned venv,
+  record and verify `lockfile.json`, and keep the active pointer compatible with
+  that launcher. Native tests resolve the owner plan without a source path and
+  refuse a changed launch lock. Distribution-to-engine handoff remains open.
 
 ### K-001 macOS clean-host entrypoint work (in progress)
 
