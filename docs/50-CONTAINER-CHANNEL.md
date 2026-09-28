@@ -24,6 +24,16 @@ native runtime evidence** for any mandatory native target (`windows-x64`, `linux
 container run must not be recorded against the `install`, `queue`, `guard`, `watcher`, `path`,
 `migration` or `update` evidence of a native target.
 
+An isolated K-011 dependency spike is available in
+`tests/container/test_k011_candidate.py`. Given an immutable K-006 Linux core
+archive/manifest, the pinned MCP wheel and an engine-format skills bundle, it
+builds an unpublished local release set and runs the real `axiom-cli`/engine
+install and uninstall path as uid 10001 with network disabled. The test uses a
+digest-pinned Python 3.13.15 image as its runtime because the current
+`containers/Dockerfile` still carries only the CLI. This proves candidate
+placement and refusal boundaries; it does not prove an owner-provisioned MCP
+environment, query, watcher, update/rollback or a final publishable OCI image.
+
 ## Base image pins
 
 Both stages are pinned by digest in `containers/Dockerfile`; no stage uses a floating tag.

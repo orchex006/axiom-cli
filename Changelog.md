@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### K-011 Linux container candidate (dependency spike)
+
+- Add a repeatable non-root, network-disabled Linux/amd64 candidate harness
+  that verifies a K-006 core archive, composes a local release set, exercises
+  the real CLI-to-engine install, refuses a changed wheel and stale approval,
+  and confirms approved uninstall preserves user data. It uses a minimal
+  skills fixture and does not claim the final OCI lifecycle.
+
 ### K-002 offline MCP payload (in progress)
 
 - Add a hash-pinned Intel Mac CPython 3.13.15 and MCP wheel packaging recipe,
