@@ -21,6 +21,10 @@
 - Verify the same image's foreground graphd under Docker supervision: two
   SIGTERM drains exit cleanly, and a source edit after restart publishes a new
   catalog generation on the retained volume.
+- Exercise the real 41-file axiom-skills manifest as an isolated container
+  candidate. Installation refuses its missing pinned spec revision and, after
+  that field is added only in a test copy, missing executable capability
+  review; the owner release manifest remains untouched.
 
 ### K-002 offline MCP payload (in progress)
 

@@ -62,6 +62,16 @@ catalog generation after a source edit. This is a process-level candidate
 check; no integrated container service definition or K-003 activation is
 claimed.
 
+The owner `axiom-skills` manifest at revision
+`9579ceb6bbf34bf2ea7081ef117640a2fa3b3ffc` verifies all 41 declared
+files, but cannot yet replace the candidate's minimal skills fixture. The
+K-011 owner-skills boundary test passes those real bytes through the CLI and
+records `skills_spec_revision_not_pinned`. Adding that field only to a local
+test copy reveals a second refusal: the executable Codex hook has no declared
+capability review. The owner manifest requires explicit human approval, so a
+release converter must receive reviewed values from the owner rather than
+invent them in this container recipe.
+
 ## Base image pins
 
 Both stages are pinned by digest in `containers/Dockerfile`; no stage uses a floating tag.
