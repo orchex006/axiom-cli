@@ -28,11 +28,14 @@ An isolated K-011 dependency spike is available in
 `tests/container/test_k011_candidate.py`. Given an immutable K-006 Linux core
 archive/manifest, the pinned MCP wheel and an engine-format skills bundle, it
 builds an unpublished local release set and runs the real `axiom-cli`/engine
-install and uninstall path as uid 10001 with network disabled. The test uses a
-digest-pinned Python 3.13.15 image as its runtime because the current
-`containers/Dockerfile` still carries only the CLI. This proves candidate
-placement and refusal boundaries; it does not prove an owner-provisioned MCP
-environment, query, watcher, update/rollback or a final publishable OCI image.
+install and uninstall path as uid 10001 with network disabled. With the
+hash-pinned Linux wheelhouse, it also installs the engine-placed MCP wheel into
+a test-prepared venv and queries a live catalog before and after a source edit
+and graphd restart. The digest-pinned Python 3.13.15 image is a separate test
+runtime because the current `containers/Dockerfile` still carries only the
+CLI. This proves candidate placement, query and refusal boundaries; it does
+not prove an owner-provisioned MCP environment, integrated update/rollback or
+a final publishable OCI image.
 
 ## Base image pins
 

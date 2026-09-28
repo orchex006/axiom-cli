@@ -9,6 +9,10 @@
   the real CLI-to-engine install, refuses a changed wheel and stale approval,
   and confirms approved uninstall preserves user data. It uses a minimal
   skills fixture and does not claim the final OCI lifecycle.
+- Extend that harness with 31 hash-pinned Linux dependency wheels installed
+  offline into a test-prepared venv. The engine-installed MCP wheel queries a
+  live catalog before/after a C# edit and after graphd restart; a missing
+  dependency refuses. The CLI still does not own that Linux MCP environment.
 
 ### K-002 offline MCP payload (in progress)
 

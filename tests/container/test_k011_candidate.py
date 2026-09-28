@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Exercise an unpublished Linux core candidate through the CLI in a container.
 
-This is a K-011 dependency spike. It proves engine placement and refusal
-boundaries, not MCP provisioning, a watcher or a released OCI lifecycle.
+This is a K-011 dependency spike. It proves engine placement, an installed
+wheel catalog query and refusal boundaries, not the final OCI lifecycle.
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -30,26 +31,36 @@ def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def run(*args: str, expected: int = 0) -> str:
+def run(*args: str, expected: int = 0, contains: str | None = None) -> str:
     completed = subprocess.run(args, text=True, capture_output=True, check=False)
     if completed.returncode != expected:
         raise AssertionError(
             f"{args[0]} returned {completed.returncode}, expected {expected}: "
             f"{completed.stdout[-500:]} {completed.stderr[-500:]}"
         )
+    if contains is not None and contains not in completed.stdout + completed.stderr:
+        raise AssertionError(f"{args[0]} did not report {contains!r}: {completed.stderr[-500:]}")
     return completed.stdout.strip()
 
 
-def docker(release: Path, home: Path, program: str, *args: str,
-           expected: int = 0) -> dict:
-    stdout = run(
+def docker_text(release: Path, home: Path, program: str, *args: str,
+                mounts: tuple[str, ...] = (), expected: int = 0,
+                contains: str | None = None) -> str:
+    return run(
         "docker", "run", "--rm", "--platform", "linux/amd64", "--network", "none",
         "--user", "10001:10001", "--env", "HOME=/home/axiom",
         "--mount", f"type=bind,src={release},dst=/release,readonly",
         "--mount", f"type=bind,src={home},dst=/home/axiom",
-        "--entrypoint", program, PYTHON_IMAGE, *args, expected=expected,
+        *(item for mount in mounts for item in ("--mount", mount)),
+        "--entrypoint", program, PYTHON_IMAGE, *args,
+        expected=expected, contains=contains,
     )
-    return json.loads(stdout)
+
+
+def docker(release: Path, home: Path, program: str, *args: str,
+           mounts: tuple[str, ...] = (), expected: int = 0) -> dict:
+    return json.loads(docker_text(release, home, program, *args,
+                                  mounts=mounts, expected=expected))
 
 
 def compose(release: Path, archive: Path, manifest: dict, wheel: Path,
@@ -128,6 +139,9 @@ def main() -> None:
     parser.add_argument("--core-manifest", required=True, type=Path)
     parser.add_argument("--mcp-wheel", required=True, type=Path)
     parser.add_argument("--skills-bundle", required=True, type=Path)
+    parser.add_argument("--linux-wheelhouse", required=True, type=Path)
+    parser.add_argument("--dependency-lock", required=True, type=Path)
+    parser.add_argument("--catalog-source", required=True, type=Path)
     args = parser.parse_args()
     if shutil.which("docker") is None:
         raise SystemExit("NOT_RUN: Docker unavailable")
@@ -139,6 +153,12 @@ def main() -> None:
     manifest = json.loads(args.core_manifest.read_text())
     if manifest["source_revision"] != CORE_REVISION:
         raise ValueError("core candidate revision mismatch")
+    wheelhouse = sorted(args.linux_wheelhouse.glob("*.whl"))
+    if len(wheelhouse) != 31 or any(path.is_symlink() for path in wheelhouse):
+        raise ValueError("expected exactly 31 regular Linux dependency wheels")
+    wheel_hashes = {path.name: sha(path) for path in wheelhouse}
+    lock_sha = sha(args.dependency_lock)
+    catalog_source_sha = sha(args.catalog_source)
     runtime_uid = run("docker", "run", "--rm", "--platform", "linux/amd64",
                       "--network", "none", "--user", "10001:10001",
                       "--entrypoint", "/usr/bin/id", PYTHON_IMAGE, "-u")
@@ -196,6 +216,60 @@ def main() -> None:
         assert daemon["build_revision"] == CORE_REVISION
         events.append({"step": "engine_install_and_installed_bytes", "exit_code": 0})
 
+        # This is deliberately test-prepared: K-002's owner-managed Linux
+        # environment and K-003's engine launch handoff do not yet exist.
+        venv_python = "/home/axiom/test-mcp-venv/bin/python"
+        docker_text(release, home, "python", "-m", "venv", "--copies",
+                    "/home/axiom/test-mcp-venv")
+        incomplete = root / "incomplete-wheels"
+        incomplete.mkdir(mode=0o755)
+        for path in wheelhouse:
+            if path.name != "mcp-1.28.1-py3-none-any.whl":
+                os.link(path, incomplete / path.name)
+        if len(list(incomplete.glob("*.whl"))) != 30:
+            raise ValueError("missing-dependency test did not omit one wheel")
+        docker_text(
+            release, home, venv_python, "-m", "pip", "install",
+            "--disable-pip-version-check", "--no-index", "--find-links",
+            "/wheels", "--require-hashes", "-r", "/lock",
+            mounts=(
+                f"type=bind,src={incomplete},dst=/wheels,readonly",
+                f"type=bind,src={args.dependency_lock.resolve()},dst=/lock,readonly",
+            ), expected=1, contains="No matching distribution found for mcp==1.28.1",
+        )
+        events.append({"step": "missing_dependency_refused_offline", "exit_code": 1})
+        offline = (
+            f"type=bind,src={args.linux_wheelhouse.resolve()},dst=/wheels,readonly",
+            f"type=bind,src={args.dependency_lock.resolve()},dst=/lock,readonly",
+        )
+        docker_text(release, home, venv_python, "-m", "pip", "install",
+                    "--disable-pip-version-check", "--no-index", "--find-links",
+                    "/wheels", "--require-hashes", "-r", "/lock", mounts=offline)
+        docker_text(release, home, venv_python, "-m", "pip", "install",
+                    "--disable-pip-version-check", "--no-index", "--no-deps",
+                    installed["axiom-mcp"]["destination"])
+        checked = docker_text(release, home, venv_python, "-m", "pip", "check")
+        assert checked == "No broken requirements found."
+        mcp_version = docker(release, home, venv_python, "-m", "axiom_mcp.cli",
+                             "version", "--json")
+        assert mcp_version["version"] == "0.1.0"
+        fixture = REPO / "tests/macos/mcp_catalog_fixture.py"
+        catalog = docker(
+            release, home, venv_python, "/fixture.py", "--graphd",
+            installed["axiom-graphd"]["destination"], "--source", "/source.cs",
+            "--registry-platform", "linux", "--restart-check",
+            mounts=(
+                f"type=bind,src={fixture.resolve()},dst=/fixture.py,readonly",
+                f"type=bind,src={args.catalog_source.resolve()},dst=/source.cs,readonly",
+            ),
+        )
+        assert catalog["ok"] and catalog["wheel_import_under_venv"]
+        assert catalog["catalog_before"] != catalog["catalog_after"]
+        assert catalog["nodes_after"] > 0
+        assert catalog["restart_nodes"] > 0
+        assert catalog["restart_catalog_generation_id"] != catalog["catalog_after"]
+        events.append({"step": "installed_wheel_catalog_edit_and_restart", "exit_code": 0})
+
         note = home / "user-note.txt"
         note.write_text("preserve K011 user data\n")
         removal = docker(release, home, "/release/axiom-cli", "uninstall",
@@ -218,6 +292,10 @@ def main() -> None:
             "network": "none", "platform": "linux/amd64",
             "python_version": runtime_version, "runtime_uid": runtime_uid,
             "input_sha256": inputs,
+            "dependency_lock_sha256": lock_sha,
+            "dependency_wheel_sha256": wheel_hashes,
+            "catalog_source_sha256": catalog_source_sha,
+            "catalog": catalog,
             "install_plan_digest": plan["details"]["plan_digest"],
             "engine_plan_digest": applied["details"]["engine_plan_digest"],
             "uninstall_plan_digest": removal["details"]["plan_digest"],
