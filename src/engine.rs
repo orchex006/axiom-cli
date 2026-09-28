@@ -80,6 +80,32 @@ impl Engine {
     }
 }
 
+/// Use the engine CLI from a release set after the distribution has verified its digest.
+/// A declared but unusable artifact must not silently fall back to a checkout on PATH.
+pub fn from_verified_artifact(path: &Path) -> Result<Engine, Refusal> {
+    let metadata = std::fs::symlink_metadata(path).map_err(|error| {
+        Refusal::io(
+            "engine_artifact_missing",
+            &path.display().to_string(),
+            &error,
+        )
+    })?;
+    if !metadata.is_file() || !is_executable_file(path) {
+        return Err(Refusal::new(
+            Class::Incompatible,
+            "engine_artifact_not_executable",
+            format!(
+                "verified engine artifact {} is not a regular executable file",
+                path.display()
+            ),
+        ));
+    }
+    Ok(Engine {
+        program: path.to_path_buf(),
+        source: "release_set",
+    })
+}
+
 /// The captured result of one engine invocation.
 #[derive(Clone, Debug)]
 pub struct Outcome {

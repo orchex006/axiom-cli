@@ -213,10 +213,7 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         // future caller must not be able to reach the engine with nothing to place.
         return Err(nothing_to_install(set));
     }
-    let engine = match engine::locate() {
-        Located::Found(found) => found,
-        Located::Missing(searched) => return Err(engine::missing_refusal(&searched)),
-    };
+    let engine = install_engine(verified)?;
     let root = state::default_root().ok_or_else(|| {
         Refusal::not_ready(
             "no_install_root",
@@ -268,6 +265,30 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
     );
     report.detail("engine_source", Json::text(engine.source()));
     Ok(report)
+}
+
+/// Prefer the digest-verified engine CLI that belongs to this release set.
+/// Older local bundles without an `axiom` artifact still use explicit/PATH discovery.
+fn install_engine(verified: &[Json]) -> Result<engine::Engine, Refusal> {
+    if let Some(artifact) = verified
+        .iter()
+        .find(|entry| entry.get("component").and_then(Json::as_text) == Some("axiom"))
+    {
+        let path = artifact
+            .get("resolved")
+            .and_then(Json::as_text)
+            .ok_or_else(|| {
+                Refusal::validation(
+                    "engine_artifact_path_missing",
+                    "verified axiom artifact has no resolved path",
+                )
+            })?;
+        return engine::from_verified_artifact(Path::new(path));
+    }
+    match engine::locate() {
+        Located::Found(found) => Ok(found),
+        Located::Missing(searched) => Err(engine::missing_refusal(&searched)),
+    }
 }
 
 /// Run `uninstall`.
@@ -930,5 +951,32 @@ mod tests {
         std::fs::remove_file(&path).unwrap();
         clear_installed_marker(&temp, None).unwrap();
         std::fs::remove_dir_all(temp).unwrap();
+    }
+
+    #[test]
+    fn install_prefers_the_release_engine_over_host_discovery() {
+        let executable = std::env::current_exe().unwrap();
+        let verified = vec![Json::from_pairs(vec![
+            ("component", Json::text("axiom")),
+            ("resolved", Json::text(&executable.display().to_string())),
+            ("verified", Json::bool(true)),
+        ])];
+        let selected = install_engine(&verified).unwrap();
+        assert_eq!(selected.program(), executable);
+        assert_eq!(selected.source(), "release_set");
+    }
+
+    #[test]
+    fn declared_unusable_engine_does_not_fall_back_to_path() {
+        let verified = vec![Json::from_pairs(vec![
+            ("component", Json::text("axiom")),
+            (
+                "resolved",
+                Json::text(&std::env::temp_dir().display().to_string()),
+            ),
+            ("verified", Json::bool(true)),
+        ])];
+        let refusal = install_engine(&verified).unwrap_err();
+        assert_eq!(refusal.reason, "engine_artifact_not_executable");
     }
 }

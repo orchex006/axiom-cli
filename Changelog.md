@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### K-001 macOS clean-host entrypoint work (in progress)
+
+- Pin the current four-lane K specification revision. When a release set carries
+  a digest-verified `axiom` executable, install now invokes that exact artifact
+  for engine planning and apply. An unusable declared engine artifact is refused
+  instead of silently using a development checkout or PATH binary. Clean-host
+  placement, user PATH ownership and native lifecycle evidence remain open.
+
 ### macOS x64 distribution boundary (J-005)
 
 - Add Intel macOS packaging and installer/removal adapters. They delegate to

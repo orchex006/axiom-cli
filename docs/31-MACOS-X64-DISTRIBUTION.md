@@ -28,6 +28,13 @@ engine owns per-user launchd registration/removal and ownership-scoped uninstall
 the distribution wrapper supplies verified bytes and invokes its documented argv
 forms.
 
+K-001 preparation: if the local channel manifest declares an `axiom` artifact
+for macOS x64, the distribution verifies its size and SHA-256 with the rest of
+the release set and invokes that executable for engine planning and apply. A
+declared artifact that is missing, a directory, or not executable is refused;
+the install cannot fall back to an unrelated engine on the developer PATH. This
+does not yet place the engine CLI or `axiom-cli` into the user's bin directory.
+
 This is development lifecycle evidence, not a release claim. The fixture uses
 prepared CPython 3.13 dependencies and the same runnable development graphd bytes
 in two version directories to exercise transaction semantics. It does not prove a
