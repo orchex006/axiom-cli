@@ -29,3 +29,25 @@ the build being supplied. `python3` is used only on the packaging host; it is
 not a clean-user installation prerequisite. This candidate manifest is not a
 signed or published channel manifest: it explicitly declares `unsigned` and
 `not_notarized`, and the candidate installer accepts only those declarations.
+
+For a local engine-install candidate, add a pinned MCP wheel and an
+engine-format skills bundle after building the entrypoint set:
+
+```sh
+python3 packaging/macos/Build-EngineCandidate.py \
+  --release-set out/macos-x64 \
+  --mcp-wheel /path/to/axiom_mcp-0.1.0-py3-none-any.whl \
+  --mcp-sha256 <verified-64-hex-digest> \
+  --mcp-revision <40-hex-owner-commit> \
+  --skills-bundle /path/to/engine-format-skills
+```
+
+The composer checks every declared core, wheel and skills payload byte, then
+writes a local `channel.json` with `published: false` and the repository's
+development trust root. It does not replace a channel or artifact that already
+exists. `axiom-cli install --from out/macos-x64` can then resolve that candidate
+locally. A clean user still needs the K-002 versioned Python runtime before
+engine apply; the composer does not install Python or pass an MCP executable to
+the engine. Full owner skills, final update/rollback and signing remain separate
+release requirements. `test_engine_candidate.py` prepares Python only in its
+temporary test HOME and can exercise an isolated LaunchAgent with `--service`.

@@ -32,6 +32,12 @@
   ownership records and a managed shell PATH block. The native isolated-home
   test exercises discovery, rerun, conflicts, corruption, rollback and
   data-preserving removal. Engine service and MCP provisioning remain open.
+- Add an unpublished Mac candidate channel composer that verifies the pinned
+  core set, MCP wheel and engine-format skills bundle before writing
+  `channel.json`. An isolated-user candidate test now reaches the real engine
+  install, LaunchAgent control and data-preserving uninstall path. The test
+  supplies Python and a minimal skills fixture; K-001/K-002 release acceptance
+  remains open.
 
 ### macOS x64 distribution boundary (J-005)
 
