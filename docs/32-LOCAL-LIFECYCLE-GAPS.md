@@ -41,7 +41,9 @@ handoff to the engine still need lifecycle evidence.
 `axiom-cli update` still addresses its separate delivery generation store. The
 new local `axiom update plan --to <version> --bundle <dir> --out <file>` path
 updates the actual engine ecosystem. An adapter is still required before the
-distribution update channel can claim the same end-to-end behavior.
+distribution update channel can claim the same end-to-end behavior. K-003 now
+refuses distribution-only plan/apply/rollback when an engine ecosystem pointer
+exists, preserving both stores until the bridge can coordinate them.
 
 ## Deferred release evidence
 

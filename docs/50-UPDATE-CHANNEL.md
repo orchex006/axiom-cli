@@ -8,6 +8,18 @@ host from what has not. The canonical rules stay in `axiom-specs`:
 `contracts/schemas/update-plan.schema.json` with `tools/update_plan_contract.py`. Do not fork them
 here.
 
+## K-003 engine boundary (in progress)
+
+The J-007 generation store and the engine ecosystem store are separate. When
+`<install-root>/installs/ecosystem/current` exists, `update plan`, `apply` and
+`rollback` currently refuse `engine_update_bridge_missing` (exit `4`) before
+recovery, staging or any pointer write. This includes a dangling symlink at
+that path. A distribution-only swap would otherwise leave the CLI channel
+generation and the installed engine/service generation inconsistent. `update
+check` remains available for read-only diagnostics. The native boundary test
+keeps both existing pointers byte-identical on refusal. This guard is an
+interim safety result; it is not the K-003 update bridge or release evidence.
+
 ## Path decision (recorded)
 
 The task card proposed `src/update/` and `channels/stable.json`; both were created exactly there.
@@ -42,7 +54,7 @@ axiom-cli update apply   --plan <file> --approve-digest <sha256> [--json]
 axiom-cli update rollback --transaction previous|<id> [--json]
 ```
 
-`check` and `plan` are read-only. `apply` is the only mutating verb. `rollback` moves the active
+`check` and `plan` are read-only. `apply` and `rollback` mutate the active pointer. `rollback` moves the active
 pointer and never downloads.
 
 Exit codes follow the frozen vocabulary of `docs/40-CLI-ARGV-SURFACE.md`: `0` success, `2`

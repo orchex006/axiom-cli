@@ -189,6 +189,31 @@ fn execute(state: &State, request: &Request) -> Result<Report, Refusal> {
     }
 }
 
+/// A distribution-only pointer swap would split an already installed ecosystem
+/// from its CLI/channel generation. Until the engine transaction is included in
+/// this plan, refuse before recovery, staging or a pointer write. A symlink at
+/// the engine pointer counts as present, including a dangling one.
+fn refuse_unbridged_engine(state: &State) -> Result<(), Refusal> {
+    let pointer = state.root().join("installs/ecosystem/current");
+    match std::fs::symlink_metadata(&pointer) {
+        Ok(_) => Err(Refusal::not_ready(
+            "engine_update_bridge_missing",
+            format!(
+                "an installed engine ecosystem has a pointer at {}; this distribution-only \
+                 update cannot keep the engine, service and CLI generations atomic, so no \
+                 update pointer was changed",
+                pointer.display()
+            ),
+        )),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(Refusal::io(
+            "engine_pointer_unreadable",
+            &pointer.display().to_string(),
+            &error,
+        )),
+    }
+}
+
 /// The canonical host id of this process, or a refusal when the host is not a declared target.
 fn host_id() -> Result<String, Refusal> {
     let host = if cfg!(all(target_os = "windows", target_arch = "x86_64")) {
@@ -616,6 +641,7 @@ fn check(state: &State, request: &Request) -> Result<Report, Refusal> {
 
 /// `update plan`: build the plan document and its digest; change nothing.
 fn plan_verb(state: &State, request: &Request) -> Result<Report, Refusal> {
+    refuse_unbridged_engine(state)?;
     let host = host_id()?;
     let context = load_context(state)?;
     check_trust_window(&context.manifest)?;
@@ -999,6 +1025,7 @@ fn apply(state: &State, request: &Request) -> Result<Report, Refusal> {
         }
     }
 
+    refuse_unbridged_engine(state)?;
     let recovery = journal::recover(state)?;
     let transaction = make_id("t");
     let _lock = Lock::acquire(state, &transaction)?;
@@ -1360,6 +1387,7 @@ fn rollback(state: &State, request: &Request) -> Result<Report, Refusal> {
              the generation the installed record retained",
         )
     })?;
+    refuse_unbridged_engine(state)?;
     let recovery = journal::recover(state)?;
     let _lock = Lock::acquire(state, &make_id("rb"))?;
     let installed = state.read_installed()?;

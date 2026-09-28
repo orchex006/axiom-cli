@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### K-003 engine update boundary (in progress)
+
+- Refuse distribution-only update plan/apply/rollback while an installed
+  engine ecosystem pointer exists, including a dangling symlink. A native
+  regression test confirms both stores remain unchanged. The composite update
+  transaction and its final lifecycle evidence remain open.
+
 ### K-002 offline MCP payload (in progress)
 
 - Add a hash-pinned Intel Mac CPython 3.13.15 and MCP wheel packaging recipe,

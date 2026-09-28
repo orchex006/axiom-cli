@@ -781,6 +781,72 @@ fn apply_swaps_atomically_and_keeps_the_previous_generation() {
 }
 
 #[test]
+fn an_installed_engine_pointer_refuses_distribution_only_update_without_changing_either_store() {
+    let fixture = Fixture::new("engine-bridge-required", Mode::Published);
+    let digest = plan_once(&fixture);
+    let pointer = fixture.root.join("installs/ecosystem/current");
+    std::fs::create_dir_all(pointer.parent().expect("engine pointer has a parent"))
+        .expect("engine install directory must be creatable");
+    let engine_bytes = b"engine generation remains active\n";
+    std::fs::write(&pointer, engine_bytes).expect("engine pointer must be writable");
+    let installed_path = fixture.root.join("installed.json");
+    let installed_before = std::fs::read(&installed_path).expect("installed marker exists");
+    let generations_before = generations_on_disk(&fixture);
+
+    let (code, out, err) = run(&fixture, &["update", "check", "--json"]);
+    assert_eq!(
+        code, SUCCESS,
+        "read-only check remains available: {out} {err}"
+    );
+
+    let (code, out, err) = run(
+        &fixture,
+        &["update", "plan", "--to", TARGET_VERSION, "--json"],
+    );
+    assert_eq!(
+        code, NOT_READY,
+        "plan must refuse split activation: {out} {err}"
+    );
+    assert_eq!(field(&out, "reason_code"), "engine_update_bridge_missing");
+
+    let (code, out, err) = apply_with(&fixture, &digest);
+    assert_eq!(
+        code, NOT_READY,
+        "apply must refuse split activation: {out} {err}"
+    );
+    assert_eq!(field(&out, "reason_code"), "engine_update_bridge_missing");
+
+    let (code, out, err) = run(
+        &fixture,
+        &["update", "rollback", "--transaction", "previous", "--json"],
+    );
+    assert_eq!(
+        code, NOT_READY,
+        "rollback must refuse split activation: {out} {err}"
+    );
+    assert_eq!(field(&out, "reason_code"), "engine_update_bridge_missing");
+    assert_eq!(std::fs::read(&pointer).unwrap(), engine_bytes);
+    assert_eq!(std::fs::read(&installed_path).unwrap(), installed_before);
+    assert_eq!(generations_on_disk(&fixture), generations_before);
+    assert!(!fixture.root.join("update.lock").exists());
+
+    #[cfg(unix)]
+    {
+        std::fs::remove_file(&pointer).expect("replace engine pointer with a dangling symlink");
+        std::os::unix::fs::symlink("missing-generation", &pointer)
+            .expect("dangling pointer must be creatable");
+        let (code, out, err) = run(
+            &fixture,
+            &["update", "plan", "--to", TARGET_VERSION, "--json"],
+        );
+        assert_eq!(code, NOT_READY, "dangling pointer must refuse: {out} {err}");
+        assert_eq!(field(&out, "reason_code"), "engine_update_bridge_missing");
+        assert_eq!(std::fs::read(&installed_path).unwrap(), installed_before);
+        assert!(pointer.is_symlink());
+    }
+}
+
+#[test]
 fn apply_refuses_a_tampered_artifact_digest() {
     let fixture = Fixture::new("tampered", Mode::Published);
     let digest = plan_once(&fixture);
