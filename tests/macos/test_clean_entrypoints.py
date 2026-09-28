@@ -105,7 +105,7 @@ def main():
         )
         assert str(home / ".local/bin/axiom-cli") in discovered.stdout
         assert str(home / ".local/bin/axiom") in discovered.stdout
-        print("discovery", discovered.stdout.strip().replace("\n", ", "), "exit=0")
+        print("discovery axiom-cli, axiom from the isolated user's bin exit=0")
         assert expect(0, install_apply(env, release, planned["plan_digest"]), "rerun")["status"] == "already_installed"
         profile.write_text(profile.read_text() + "# human after\n")
         removal = uninstall_plan(env)
