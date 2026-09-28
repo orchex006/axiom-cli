@@ -92,6 +92,8 @@ from pathlib import Path
 root = Path(sys.argv[1]).resolve()
 manifest_path = root / 'release-set.json'
 manifest = json.loads(manifest_path.read_text())
+manifest['signing'] = 'unsigned'
+manifest['notarization'] = 'not_notarized'
 version, revision = sys.argv[5:7]
 for component, source in [('axiom', Path(sys.argv[2])), ('axiom-graphd', Path(sys.argv[3]))]:
     destination = root / component

@@ -1,9 +1,8 @@
 #!/bin/sh
 # macOS x64 distribution wrapper (J-005).
 #
-# This is intentionally only an argv adapter. `axiom-cli` verifies the release
-# set and calls the axiom-graphd-owned installation engine; this script neither
-# copies payloads nor implements a second installer transaction.
+# The entrypoint bootstrap consumes an Intel Mac release-set.json without a
+# preinstalled CLI. The historical --cli/--from path delegates ecosystem install.
 
 set -eu
 
@@ -15,14 +14,20 @@ set -eu
 usage() {
     cat <<'USAGE'
 Usage: Install-AxiomCli.sh --cli FILE --from RELEASE_SET (--dry-run | --apply) [--approve-digest SHA256]
+       Install-AxiomCli.sh --release-set DIR (--dry-run | --apply) [--approve-digest SHA256]
 
-This wrapper invokes FILE install with program-and-argv.  It writes no system
-directory and does not invoke sudo. The target per-user root is selected by
-AXIOM_CLI_INSTALL_ROOT. launchd registration is engine-owned and is available
-through axiom service install --component axiom-graphd --user. This wrapper
-does not install its own entrypoint or edit the per-user shell PATH.
+The --release-set path installs the two owned per-user entrypoints and manages
+the user shell PATH. The --cli/--from path invokes the ecosystem installation
+engine after the runtime bundle is available. Neither path writes system files.
 USAGE
 }
+
+for argument in "$@"; do
+    if [ "$argument" = --release-set ]; then
+        SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+        exec sh "$SCRIPT_DIR/Manage-Entrypoints.sh" install "$@"
+    fi
+done
 
 CLI=""
 FROM=""

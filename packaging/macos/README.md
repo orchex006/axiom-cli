@@ -27,4 +27,5 @@ the release set and records its byte count, SHA-256 and declared version. The
 core revision argument is the operator's immutable source pin and must match
 the build being supplied. `python3` is used only on the packaging host; it is
 not a clean-user installation prerequisite. This candidate manifest is not a
-signed or published channel manifest.
+signed or published channel manifest: it explicitly declares `unsigned` and
+`not_notarized`, and the candidate installer accepts only those declarations.

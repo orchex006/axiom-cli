@@ -13,6 +13,10 @@
   pair of core executables, rejects incomplete or wrong-architecture inputs,
   and records the core file digests in the candidate release set. Native
   packaging tests exercise both positive and failure cases.
+- Add approval-bound clean-user Mac entrypoint install/removal with versioned
+  ownership records and a managed shell PATH block. The native isolated-home
+  test exercises discovery, rerun, conflicts, corruption, rollback and
+  data-preserving removal. Engine service and MCP provisioning remain open.
 
 ### macOS x64 distribution boundary (J-005)
 

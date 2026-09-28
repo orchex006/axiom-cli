@@ -32,15 +32,20 @@ K-001 preparation: if the local channel manifest declares an `axiom` artifact
 for macOS x64, the distribution verifies its size and SHA-256 with the rest of
 the release set and invokes that executable for engine planning and apply. A
 declared artifact that is missing, a directory, or not executable is refused;
-the install cannot fall back to an unrelated engine on the developer PATH. This
-does not yet place the engine CLI or `axiom-cli` into the user's bin directory.
+the install cannot fall back to an unrelated engine on the developer PATH.
 
-This is development lifecycle evidence, not a release claim. The fixture uses
-prepared CPython 3.13 dependencies and the same runnable development graphd bytes
-in two version directories to exercise transaction semantics. It does not prove a
-clean-machine entrypoint install, a dedicated versioned MCP environment, placement
-of `axiom-cli` itself on the user's shell PATH, a signed/notarized artifact, or a
-published immutable channel. Those remain the distribution gaps before J-005 can
-be completed or certified. Gatekeeper/quarantine actions, if needed for a future
-unsigned artifact, remain explicit operator actions and are never performed
-silently.
+The separate clean-user bootstrap now places `axiom-cli` and `axiom` in
+`~/.local/bin` from the digest-verified Intel Mac candidate, records both
+versions and digests, and owns a narrow shell PATH block. The native test uses
+an isolated home, confirms discovery in a login shell, checks idempotent rerun,
+unowned-file refusal, injected install/uninstall rollback, human-edited block
+refusal and data-preserving removal. This is entrypoint placement only; it does
+not provision MCP or register the graph daemon service.
+
+The earlier combined development fixture uses prepared CPython 3.13 dependencies
+and the same runnable development graphd bytes in two version directories to
+exercise transaction semantics. The new entrypoint test supplies native
+candidate binaries from an isolated temporary release set. Neither proves a
+dedicated versioned MCP environment, a single final distribution update flow,
+signing/notarization, or a published immutable channel. Gatekeeper/quarantine
+actions remain explicit operator actions and are never performed silently.
