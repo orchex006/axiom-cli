@@ -49,5 +49,12 @@ exists. `axiom-cli install --from out/macos-x64` can then resolve that candidate
 locally. A clean user still needs the K-002 versioned Python runtime before
 engine apply; the composer does not install Python or pass an MCP executable to
 the engine. Full owner skills, final update/rollback and signing remain separate
-release requirements. `test_engine_candidate.py` prepares Python only in its
-temporary test HOME and can exercise an isolated LaunchAgent with `--service`.
+release requirements. `test_engine_candidate.py` can use `--python` to prepare
+Python in its temporary HOME, or `--mcp-bundle` to provision the pinned offline
+K-002 bundle there with a system-only PATH. In the latter mode it verifies the
+installed owner's absolute stdio launch plan, runs the CLI and engine candidate
+install, checks the MCP environment remains active, and removes it with the
+other owned files while retaining user data. `--service` also exercises the
+isolated LaunchAgent. These are separately approved operations in the test;
+the CLI still does not include MCP provisioning or executable/argv handoff in
+its engine transaction.

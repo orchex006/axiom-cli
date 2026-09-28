@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""K-001 Intel Mac candidate bridge, including the real engine install path.
+"""K-001/K-002 Intel Mac candidate bridge through the real engine install path.
 
-The supplied Python is test preparation, not K-002 clean-host provisioning.
+The optional MCP bundle provisions a pinned interpreter in an isolated HOME.
 The supplied skills bundle may be a fixture; results never certify a release.
 """
 
@@ -59,8 +59,11 @@ def compose(release, args, wheel=None, wheel_sha=None, revision=None, skills=Non
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("cli", "engine", "daemon", "mcp-wheel", "skills-bundle", "python"):
+    for name in ("cli", "engine", "daemon", "mcp-wheel", "skills-bundle"):
         parser.add_argument("--" + name, required=True, type=Path)
+    runtime = parser.add_mutually_exclusive_group(required=True)
+    runtime.add_argument("--python", type=Path)
+    runtime.add_argument("--mcp-bundle", type=Path)
     parser.add_argument("--mcp-sha256", required=True)
     parser.add_argument("--mcp-revision", required=True)
     parser.add_argument("--core-version", required=True)
@@ -69,8 +72,12 @@ def main():
     args = parser.parse_args()
     if platform.system() != "Darwin" or platform.machine() != "x86_64":
         raise SystemExit("NOT_RUN: native Intel Mac required")
-    for path in (args.cli, args.engine, args.daemon, args.mcp_wheel, args.python):
+    for path in (args.cli, args.engine, args.daemon, args.mcp_wheel):
         assert path.is_file(), path
+    if args.python:
+        assert args.python.is_file(), args.python
+    if args.mcp_bundle:
+        assert sha(args.mcp_bundle / "wheels" / args.mcp_wheel.name) == args.mcp_sha256
     label_target = f"gui/{os.getuid()}/{LABEL}"
     if args.service:
         absent = subprocess.run(["/bin/launchctl", "print", label_target], capture_output=True)
@@ -94,9 +101,28 @@ def main():
         env = {**os.environ, "HOME": str(home), "SHELL": "/bin/zsh",
                "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
                "AXIOM_CLI_INSTALL_ROOT": str(home / ".local/share/axiom")}
-        runtime = home / "test-prepared-python"
-        run([args.python, "-m", "venv", runtime])
-        events.append({"step": "test-prepared-python", "exit_code": 0})
+        if args.python:
+            prepared = home / "test-prepared-python"
+            run([args.python, "-m", "venv", prepared])
+            events.append({"step": "test-prepared-python", "exit_code": 0})
+            runtime_bin = prepared / "bin"
+        else:
+            bootstrap = args.mcp_bundle / "Manage-McpEnvironment.sh"
+            plan = run(["/bin/sh", bootstrap, "install", "--bundle", args.mcp_bundle,
+                        "--dry-run"], env)
+            provisioned = run(["/bin/sh", bootstrap, "install", "--bundle", args.mcp_bundle,
+                               "--apply", "--approve-digest", plan["plan_digest"]], env)
+            assert provisioned["active"] == sha(args.mcp_bundle / "mcp-bundle.json")
+            runtime_bin = Path(provisioned["python"]).parent
+            assert runtime_bin.resolve().is_relative_to((home / ".local/share/axiom/mcp/versions").resolve())
+            events.append({"step": "pinned-mcp-provision", "exit_code": 0})
+            owner_plan = run([provisioned["python"], "-c",
+                              "import json,sys; from axiom_mcp.entrypoints import MODE_STDIO,launch_plan; "
+                              "print(json.dumps(launch_plan(MODE_STDIO,install_root=sys.argv[1]).as_dict()))",
+                              home / ".local/share/axiom/mcp"], env)
+            assert owner_plan["executable"] == provisioned["python"]
+            assert owner_plan["arguments"][:2] == ["-m", "axiom_mcp.stdio"]
+            events.append({"step": "mcp-owner-launch-plan", "exit_code": 0})
         installed_cli = home / ".local/bin/axiom-cli"
         installed_engine = home / ".local/bin/axiom"
         plist = home / "Library/LaunchAgents" / (LABEL + ".plist")
@@ -108,7 +134,7 @@ def main():
             assert sha(installed_engine) == sha(args.engine)
             events.append({"step": "entrypoints-install", "exit_code": 0})
 
-            env["PATH"] = f"{runtime / 'bin'}:{home / '.local/bin'}:/usr/bin:/bin:/usr/sbin:/sbin"
+            env["PATH"] = f"{runtime_bin}:{home / '.local/bin'}:/usr/bin:/bin:/usr/sbin:/sbin"
             ecosystem_plan = run([installed_cli, "install", "--from", release,
                                   "--dry-run", "--json"], env)
             applied = run([installed_cli, "install", "--from", release, "--apply",
@@ -121,6 +147,11 @@ def main():
             for row in pointer["activated"]:
                 assert sha(Path(row["destination"])) == row["sha256"]
             events.append({"step": "engine-install", "exit_code": 0})
+            if args.mcp_bundle:
+                current = run(["/bin/sh", args.mcp_bundle / "Manage-McpEnvironment.sh",
+                               "status", "--bundle", args.mcp_bundle], env)
+                assert current["active"] == provisioned["active"]
+                events.append({"step": "mcp-environment-still-active", "exit_code": 0})
 
             if args.service:
                 engine_env = dict(env, AXIOM_HOME=str(home / ".local/share/axiom"))
@@ -140,6 +171,15 @@ def main():
             assert not any((ecosystem / "versions").rglob("axiom-graphd"))
             assert preserved.read_text() == "preserve me\n"
             events.append({"step": "engine-uninstall-preserve-data", "exit_code": 0})
+
+            if args.mcp_bundle:
+                bootstrap = args.mcp_bundle / "Manage-McpEnvironment.sh"
+                removal = run(["/bin/sh", bootstrap, "uninstall", "--bundle", args.mcp_bundle,
+                               "--dry-run"], env)
+                run(["/bin/sh", bootstrap, "uninstall", "--bundle", args.mcp_bundle,
+                     "--apply", "--approve-digest", removal["plan_digest"]], env)
+                assert preserved.read_text() == "preserve me\n"
+                events.append({"step": "mcp-uninstall-preserve-data", "exit_code": 0})
 
             entry_remove = run(["/bin/sh", UNINSTALL, "--entrypoints", "--dry-run"], env)
             run(["/bin/sh", UNINSTALL, "--entrypoints", "--apply",
@@ -188,7 +228,8 @@ def main():
         compose(release, args, expected=2, contains="candidate output already exists")
         events.append({"step": "existing-output-refused", "exit_code": 2})
 
-        print(json.dumps({"task": "K-001", "scope": "candidate bridge, test-prepared interpreter and supplied skills bundle",
+        print(json.dumps({"task": "K-002" if args.mcp_bundle else "K-001",
+                          "scope": "candidate bridge with pinned MCP runtime and supplied skills bundle" if args.mcp_bundle else "candidate bridge, test-prepared interpreter and supplied skills bundle",
                           "host": {"system": platform.system(), "machine": platform.machine(),
                                    "macos": platform.mac_ver()[0]},
                           "source_sha256": {"axiom-cli": sha(args.cli), "axiom": sha(args.engine),
@@ -196,6 +237,7 @@ def main():
                           "core_revision": args.core_revision, "mcp_revision": args.mcp_revision,
                           "skills_revision": json.loads((release / "skills/bundle.json").read_text())["revision"],
                           "release_set_sha256": sha(release / "release-set.json"),
+                          "mcp_bundle_sha256": sha(args.mcp_bundle / "mcp-bundle.json") if args.mcp_bundle else None,
                           "candidate_channel_sha256": candidate["channel_sha256"],
                           "events": events, "certified": False}, sort_keys=True))
 

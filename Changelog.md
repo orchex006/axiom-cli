@@ -16,6 +16,10 @@
   record and verify `lockfile.json`, and keep the active pointer compatible with
   that launcher. Native tests resolve the owner plan without a source path and
   refuse a changed launch lock. Distribution-to-engine handoff remains open.
+- Extend the Intel Mac candidate lifecycle test to use the pinned offline MCP
+  bundle in a clean temporary HOME. It checks the installed owner's launch plan
+  alongside entrypoint, engine and service install/removal, while keeping the
+  missing CLI-to-engine transaction handoff explicit.
 
 ### K-001 macOS clean-host entrypoint work (in progress)
 
