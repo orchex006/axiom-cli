@@ -9,6 +9,10 @@
   for engine planning and apply. An unusable declared engine artifact is refused
   instead of silently using a development checkout or PATH binary. Clean-host
   placement, user PATH ownership and native lifecycle evidence remain open.
+- The Intel Mac packager now accepts an explicitly versioned and revision-pinned
+  pair of core executables, rejects incomplete or wrong-architecture inputs,
+  and records the core file digests in the candidate release set. Native
+  packaging tests exercise both positive and failure cases.
 
 ### macOS x64 distribution boundary (J-005)
 
