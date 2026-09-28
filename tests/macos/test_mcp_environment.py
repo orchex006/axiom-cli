@@ -23,6 +23,7 @@ def main() -> int:
     parser.add_argument("--next-bundle", type=Path)
     args = parser.parse_args()
     cases = []
+    launches = []
     with tempfile.TemporaryDirectory(prefix="axiom-k002-clean-") as name:
         home = Path(name) / "home"
         home.mkdir()
@@ -52,6 +53,29 @@ def main() -> int:
         result = subprocess.run([installed["mcp_executable"], "version", "--json"], env=environment, text=True, capture_output=True, check=False)
         assert result.returncode == 0 and json.loads(result.stdout)["version"] == "0.1.0"
         cases.append({"action": "installed_wheel_version", "exit_code": result.returncode, "status": "ok"})
+
+        def owner_launch(active: dict) -> dict:
+            # Import and resolve the owner's locked launch contract from the
+            # provisioned wheel. No checkout path or activated shell is present.
+            result = subprocess.run(
+                [active["python"], "-c",
+                 "import json,sys; from axiom_mcp.entrypoints import MODE_STDIO,launch_plan; "
+                 "print(json.dumps(launch_plan(MODE_STDIO,install_root=sys.argv[1]).as_dict()))",
+                 str(root)], env=environment, text=True, capture_output=True, check=False,
+            )
+            assert result.returncode == 0, result.stderr[-500:]
+            plan = json.loads(result.stdout)
+            assert plan["runtime"]["isolated"] and plan["runtime"]["sdk_inside_environment"]
+            assert plan["executable"] == str((root / "versions" / active["active"] / "venv/bin/python").resolve())
+            assert plan["arguments"][:2] == ["-m", "axiom_mcp.stdio"]
+            launches.append({"generation": active["active"], "plan_digest": plan["digest"],
+                             "executable_sha256": sha(Path(plan["executable"])),
+                             "lockfile_sha256": plan["runtime"]["lockfile_sha256"],
+                             "sdk_version": plan["runtime"]["sdk_version"]})
+            cases.append({"action": "owner_locked_stdio_launch", "exit_code": 0, "status": "ok"})
+            return plan
+
+        initial_launch = owner_launch(installed)
         invoke(args.bundle, "status")
         rerun = invoke(args.bundle, "install", "--apply", "--approve-digest", plan["plan_digest"])
         assert rerun["active"] == installed["active"]
@@ -65,14 +89,34 @@ def main() -> int:
         installed_artifact.write_bytes(original)
         invoke(args.bundle, "status")
 
+        launch_lock = root / "versions" / installed["active"] / "lockfile.json"
+        lock_original = launch_lock.read_bytes()
+        launch_lock.write_bytes(lock_original + b" ")
+        assert invoke(args.bundle, "status", expected=9)["reason"] == "entrypoint_lock_changed"
+        launch_lock.write_bytes(lock_original)
+        owner_launch(installed)
+
+        venv = root / "versions" / installed["active"] / "venv"
+        scripts = venv / "bin"
+        moved_scripts = venv / "bin-temporary"
+        scripts.rename(moved_scripts)
+        scripts.symlink_to(moved_scripts, target_is_directory=True)
+        assert invoke(args.bundle, "status", expected=9)["reason"] == "environment_path_changed"
+        scripts.unlink()
+        moved_scripts.rename(scripts)
+
         active_bundle = args.bundle
         if args.next_bundle is not None:
             second = invoke(args.next_bundle, "install", "--dry-run")
             upgraded = invoke(args.next_bundle, "install", "--apply", "--approve-digest", second["plan_digest"])
             assert upgraded["previous"] == installed["active"] and upgraded["active"] != upgraded["previous"]
+            upgraded_launch = owner_launch(upgraded)
+            assert upgraded_launch["digest"] != initial_launch["digest"]
             back = invoke(args.next_bundle, "rollback", "--to", installed["active"], "--dry-run")
             restored = invoke(args.next_bundle, "rollback", "--to", installed["active"], "--apply", "--approve-digest", back["plan_digest"])
             assert restored["active"] == installed["active"]
+            restored_launch = owner_launch(restored)
+            assert restored_launch["digest"] == initial_launch["digest"]
             active_bundle = args.next_bundle
 
         user_data = root / "data/user.txt"
@@ -85,7 +129,8 @@ def main() -> int:
         assert removed["preserved_generations_with_unowned_files"] >= 1
         assert user_data.read_text() == "preserve data\n" and user_note.read_text() == "preserve note\n"
         assert invoke(active_bundle, "status")["active"] is None
-    print(json.dumps({"ok": True, "bundle_manifest_sha256": sha(args.bundle / "mcp-bundle.json"), "cases": cases}, sort_keys=True))
+    print(json.dumps({"ok": True, "bundle_manifest_sha256": sha(args.bundle / "mcp-bundle.json"),
+                      "cases": cases, "owner_launches": launches}, sort_keys=True))
     return 0
 
 

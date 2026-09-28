@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 
 RUNTIME_SHA256 = "327814efd865a0b6a99c149b12a261e9d0ad409183515c745d41bda2d07282e9"
 RUNTIME_NAME = "cpython-3.13.15-macos-x64.tar.gz"
@@ -198,13 +199,42 @@ def owned(root: Path, digest: str) -> dict:
     lock = target / "artifact/mcp-requirements.lock"
     if not lock.is_file() or lock.is_symlink() or sha(lock) != value.get("dependency_lock_sha256"):
         raise Refusal("dependency_lock_changed")
-    python = target / "venv/bin/python"
-    if not python.is_file() or not os.access(python, os.X_OK):
+    venv = target / "venv"
+    scripts = venv / "bin"
+    if venv.is_symlink() or scripts.is_symlink() or venv.resolve().parent != target.resolve() or scripts.resolve().parent != venv.resolve():
+        raise Refusal("environment_path_changed")
+    python = scripts / "python"
+    if python.is_symlink() or not python.is_file() or not os.access(python, os.X_OK):
         raise Refusal("interpreter_missing")
-    if python.resolve() != (target / "runtime/python/bin/python3.13").resolve():
-        raise Refusal("interpreter_outside_owned_runtime")
-    if sha(python.resolve()) != value.get("runtime_executable_sha256"):
+    if venv.resolve() not in python.resolve().parents:
+        raise Refusal("interpreter_outside_owned_environment")
+    if sha(python) != value.get("runtime_executable_sha256"):
         raise Refusal("interpreter_changed")
+    runtime_python = target / "runtime/python/bin/python3.13"
+    if runtime_python.is_symlink() or not runtime_python.is_file() or sha(runtime_python) != value.get("runtime_executable_sha256"):
+        raise Refusal("runtime_interpreter_changed")
+    lockfile = target / "lockfile.json"
+    if lockfile.is_symlink() or not lockfile.is_file() or sha(lockfile) != value.get("entrypoint_lock_sha256"):
+        raise Refusal("entrypoint_lock_changed")
+    try:
+        launch_lock = json.loads(lockfile.read_text())
+    except (ValueError, UnicodeError) as error:
+        raise Refusal("entrypoint_lock_invalid") from error
+    if launch_lock.get("layout") != 1 or launch_lock.get("version") != digest or launch_lock.get("venv") != "venv":
+        raise Refusal("entrypoint_lock_invalid")
+    python_record = launch_lock.get("python")
+    artifact_record = launch_lock.get("artifact")
+    if not isinstance(python_record, dict) or not isinstance(artifact_record, dict):
+        raise Refusal("entrypoint_lock_invalid")
+    if (python_record.get("executable") != str(python)
+            or python_record.get("version") != "3.13.15"
+            or python_record.get("marker") != value.get("mcp_version")
+            or launch_lock.get("frozen") != value.get("frozen")):
+        raise Refusal("entrypoint_lock_invalid")
+    if (artifact_record.get("name") != MCP_NAME
+            or artifact_record.get("sha256") != MCP_SHA256
+            or artifact_record.get("size") != artifact.stat().st_size):
+        raise Refusal("entrypoint_lock_invalid")
     if command(str(python), "-c", "import sys; print(sys.version.split()[0])") != "3.13.15":
         raise Refusal("interpreter_unsupported")
     command(str(python), "-m", "pip", "check")
@@ -246,20 +276,30 @@ def install(root: Path, bundle: Path, manifest: dict, digest: str) -> dict:
             if command(str(python), "--version") != "Python 3.13.15":
                 raise Refusal("interpreter_unsupported")
             venv = target / "venv"
-            command(str(python), "-m", "venv", str(venv))
+            # The MCP owner's locked launcher resolves the interpreter and requires
+            # its executable bytes to stay inside this version's venv.
+            command(str(python), "-m", "venv", "--copies", str(venv))
             installed = venv / "bin/python"
             command(str(installed), "-m", "pip", "install", "--no-index", "--find-links", str(bundle / "wheels"), "--require-hashes", "-r", str(bundle / "mcp-requirements.lock"))
             command(str(installed), "-m", "pip", "install", "--no-index", "--no-deps", str(bundle / "wheels" / MCP_NAME))
             command(str(installed), "-m", "pip", "check")
             command(str(installed), "-m", "axiom_mcp.cli", "version", "--json")
             freeze = command(str(installed), "-m", "pip", "freeze")
+            atomic_json(target / "lockfile.json", {
+                "layout": 1, "version": digest,
+                "artifact": {"name": MCP_NAME, "sha256": MCP_SHA256,
+                             "size": (artifact_dir / MCP_NAME).stat().st_size},
+                "python": {"executable": str(installed), "version": "3.13.15",
+                           "marker": manifest["mcp_version"]},
+                "venv": "venv", "frozen": freeze.splitlines(), "created_at": time.time(),
+            })
             atomic_json(target / "inventory.json", inventory(target))
-            record = {"schema_version": 1, "manifest_sha256": digest, "mcp_version": manifest["mcp_version"], "mcp_wheel_sha256": MCP_SHA256, "runtime_sha256": RUNTIME_SHA256, "runtime_executable_sha256": sha(python), "dependency_lock_sha256": sha(artifact_dir / "mcp-requirements.lock"), "inventory_sha256": sha(target / "inventory.json"), "frozen": freeze.splitlines(), "python": str(installed)}
+            record = {"schema_version": 1, "manifest_sha256": digest, "mcp_version": manifest["mcp_version"], "mcp_wheel_sha256": MCP_SHA256, "runtime_sha256": RUNTIME_SHA256, "runtime_executable_sha256": sha(installed), "dependency_lock_sha256": sha(artifact_dir / "mcp-requirements.lock"), "entrypoint_lock_sha256": sha(target / "lockfile.json"), "inventory_sha256": sha(target / "inventory.json"), "frozen": freeze.splitlines(), "python": str(installed)}
             atomic_json(target / "record.json", record)
         except Exception:
             shutil.rmtree(target)
             raise
-    atomic_json(root / "current.json", {"schema_version": 1, "active": digest})
+    atomic_json(root / "current.json", {"schema_version": 1, "layout": 1, "active": digest})
     return {"status": "installed", "active": digest, "previous": previous, "python": str(target / "venv/bin/python"), "mcp_executable": str(target / "venv/bin/axiom-mcp")}
 
 
@@ -270,7 +310,7 @@ def rollback(root: Path, digest: str) -> dict:
         raise Refusal("active_pointer_missing")
     owned(root, current)
     record = owned(root, digest)
-    atomic_json(root / "current.json", {"schema_version": 1, "active": digest})
+    atomic_json(root / "current.json", {"schema_version": 1, "layout": 1, "active": digest})
     return {"status": "rolled_back", "active": digest, "previous": current, "python": record["python"]}
 
 
