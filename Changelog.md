@@ -17,7 +17,8 @@
 Refuse distribution-only check, plan, apply and rollback when an installed
 engine ecosystem pointer exists. The four-verb boundary test confirms the
 engine and distribution pointers remain unchanged. K-106 coordinates the
-candidate composite update separately through the engine's public argv surface.
+candidate composite update separately through the engine's public argv surface. The
+probe fixture now uses a host-native absolute path during Mac tests.
 
 ### K-001 macOS clean-host entrypoint work (in progress)
 

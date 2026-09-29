@@ -104,11 +104,13 @@ mod tests {
 
     #[test]
     fn an_absolute_probe_program_is_used_as_written() {
-        let resolved = resolve_program(
-            Path::new("D:/fixture/generations/g-1"),
-            "D:/tools/probe.exe",
-        );
-        assert_eq!(resolved, PathBuf::from("D:/tools/probe.exe"));
+        let program = if cfg!(windows) {
+            "D:/tools/probe.exe"
+        } else {
+            "/tools/probe"
+        };
+        let resolved = resolve_program(Path::new("/fixture/generations/g-1"), program);
+        assert_eq!(resolved, PathBuf::from(program));
     }
 
     #[test]

@@ -17,10 +17,10 @@ Commands on macOS x64, 2026-09-29:
 cargo test --test update_channel  -> exit 0, 24 passed
 cargo fmt --check                 -> exit 0
 git diff --check                  -> exit 0
-cargo test                        -> exit 101, 60 passed, 1 failed
+cargo test                        -> exit 0, 111 passed (61 + 11 + 9 + 6 + 24)
 ```
 
-The full-suite failure is the pre-existing cross-platform unit test
-`update::health::tests::an_absolute_probe_program_is_used_as_written`, which
-expects a Windows `D:/` path to be absolute on macOS. The new update-channel
-suite passes. This is a fail-closed interim boundary, not K-003 AC1/AC2.
+The initial full-suite run found a cross-platform test fixture that treated a
+Windows `D:/` path as absolute on macOS. The fixture now chooses a native
+absolute path for each host; the full suite passes. This is a fail-closed
+interim boundary, not K-003 AC1/AC2.
