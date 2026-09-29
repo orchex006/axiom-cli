@@ -29,3 +29,15 @@ and passes its absolute `venv/bin` to the engine for a `linux-x64` plan/apply.
 The candidate inputs, transaction test and SHA-256 evidence are under
 `evidence/K-404/`. This local container proof does not establish native WSL2
 behavior or release provenance.
+
+## K-405 container distribution candidate
+
+The unsigned Linux x64 candidate is in `evidence/K-405/`. Its archive carries
+the CLI and core binaries, MCP wheel, source skills and channel metadata; the
+runtime-input receipt binds the separate K-404 Python archive, wheelhouse and
+lock. `tests/linux/verify_k405_candidate.py` checks every archive member and
+runtime receipt byte. The OCI image keeps uid/gid 10001 and uses an owned
+volume. With no systemd user manager, the installed graphd daemon runs in the
+foreground and drains on SIGINT. The local test uses the approved per-user
+install and uninstall flows and preserves source, bindings and user data.
+This is candidate verification; K-406 and K-407 retain update and query gates.

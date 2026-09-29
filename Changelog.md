@@ -1,5 +1,15 @@
 # Changelog
 
+## K-405 Linux x64 container distribution candidate
+
+- Compose the pinned skills, core, MCP wheel and runtime handoffs with the
+  Linux x64 CLI image into an unsigned local candidate. Verify a non-root OCI
+  user, owned-volume retention, per-user CLI and engine install, idempotency,
+  foreground daemon, corrupt payload and unowned conflict refusals, and
+  uninstall preservation. Fix the Linux installer so a failed entrypoint
+  write removes the new generation and keeps prior generations. The Linux
+  harness runs 24 passing legs; the systemd unit leg is unavailable here.
+
 ## K-404 Linux x64 MCP runtime candidate
 
 - Provision a hash-verified uv managed CPython 3.13.15 and the K-403 wheel

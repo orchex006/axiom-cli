@@ -121,7 +121,7 @@ end_leg() { # $1 expected exit code
 
 invoke() { # $1 script, rest args -> AC_RUN_OUT, AC_RUN_ERR, AC_RUN_EXIT
     AC_SCRIPT="$1"; shift
-    AC_RUN_OUT="$("$AC_SCRIPT" "$@" 2>"$AC_ERR_FILE")"
+    AC_RUN_OUT="$(sh "$AC_SCRIPT" "$@" 2>"$AC_ERR_FILE")"
     AC_RUN_EXIT=$?
     AC_RUN_ERR="$(cat "$AC_ERR_FILE")"
     AC_RUN_OUTCOME="$(jfield "$AC_RUN_OUT" outcome)"
@@ -426,8 +426,8 @@ invoke "$AC_INSTALL_SCRIPT" --release-set "$AC_SERVICE/release-set.json" --insta
     else
     check_eq "$(jservice "$AC_RUN_OUT" kind)" none "no user manager means no registration"
     check_eq "$(jservice_bool "$AC_RUN_OUT" registered)" false "registered stays false when there is no user manager"
-    check_is "$(case "$(jservice "$AC_RUN_OUT" reason)" in *systemd*) printf 1 ;; *) printf 0 ;; esac)" "the degradation reason names systemd"
-    check_is "$(case "$(jservice "$AC_RUN_OUT" reason)" in *'not the running init'*|*'does not answer'*) printf 1 ;; *) printf 0 ;; esac)" "the reason states the exact failing precondition"
+    check_is "$(case "$(jservice "$AC_RUN_OUT" reason)" in *systemd*|*systemctl*) printf 1 ;; *) printf 0 ;; esac)" "the degradation reason names the user service tool"
+    check_is "$(case "$(jservice "$AC_RUN_OUT" reason)" in *'not installed'*|*'not the running init'*|*'does not answer'*) printf 1 ;; *) printf 0 ;; esac)" "the reason states the exact failing precondition"
     fi
 end_leg 0
 
@@ -536,6 +536,30 @@ AC_VER_OUT="$("$B20/axiom-cli" version 2>&1)"; AC_VER_EXIT=$?
 check_eq "$AC_VER_EXIT" 0 "version exits 0 and reports real state, even with nothing installed"
 check_is "$(case "$AC_VER_OUT" in *installed*) printf 1 ;; *) printf 0 ;; esac)" "the version report states the installed state"
 end_leg 0
+
+# ---------------------------------------------------------------------------
+# L21 - a failed entrypoint write keeps the prior generation and human files
+# ---------------------------------------------------------------------------
+
+R21="$AC_SCRATCH/root-entrypoint-failure"; B21="$AC_SCRATCH/bin-entrypoint-failure"; S21="$AC_SCRATCH/state-entrypoint-failure"
+begin_leg L21-entrypoint-failure-rolls-back boundary
+invoke "$AC_INSTALL_SCRIPT" --release-set "$AC_MAIN_SET" --install-root "$R21" --bin-dir "$B21" --state-dir "$S21" --service none --plan
+PD21A="$(jfield "$AC_RUN_OUT" plan_digest)"
+invoke "$AC_INSTALL_SCRIPT" --release-set "$AC_MAIN_SET" --install-root "$R21" --bin-dir "$B21" --state-dir "$S21" --service none --apply --approve-digest "$PD21A"
+check_eq "$(jfield "$AC_RUN_OUT" outcome)" installed "the prior generation installed"
+printf 'human profile\n' > "$AC_SCRATCH/human.profile"
+ENTRY21_BEFORE="$(sha256sum "$B21/axiom-cli" | cut -d' ' -f1)"
+invoke "$AC_INSTALL_SCRIPT" --release-set "$AC_HIGH/release-set.json" --install-root "$R21" --bin-dir "$B21" --state-dir "$S21" --service none --plan
+PD21B="$(jfield "$AC_RUN_OUT" plan_digest)"
+chmod 0555 "$B21"
+invoke "$AC_INSTALL_SCRIPT" --release-set "$AC_HIGH/release-set.json" --install-root "$R21" --bin-dir "$B21" --state-dir "$S21" --service none --apply --approve-digest "$PD21B"
+chmod 0755 "$B21"
+check_eq "$(jfield "$AC_RUN_OUT" outcome)" refused "the unwritable entrypoint refused the update"
+check_eq "$(jbool "$AC_RUN_OUT" mutated)" false "the failed update reports no committed mutation"
+check_eq "$(sha256sum "$B21/axiom-cli" | cut -d' ' -f1)" "$ENTRY21_BEFORE" "the prior entrypoint bytes survived"
+check_eq "$(find "$R21/generations" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')" 1 "no failed generation was retained"
+check_eq "$(cat "$AC_SCRATCH/human.profile")" "human profile" "the human profile was preserved"
+end_leg 8
 
 # ---------------------------------------------------------------------------
 # Summary

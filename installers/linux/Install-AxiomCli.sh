@@ -744,17 +744,6 @@ if ! mv -- "$AC_STAGING" "$AC_GEN_DIR"; then
     ac_refuse "$AC_EXIT_IO" "cannot move the staged release into generation $AC_GEN_DIR" "generation-swap"
 fi
 
-# Keep the previous generation so a failed health check can roll back.
-ac_gen_keep=2
-ac_gen_seen=0
-for ac_gen_path in $(ls -1dt "$AC_INSTALL_ROOT"/generations/* 2>/dev/null); do
-    ac_gen_seen=$((ac_gen_seen + 1))
-    if [ "$ac_gen_seen" -gt "$ac_gen_keep" ]; then
-        rm -rf -- "$ac_gen_path"
-        ac_removed "$ac_gen_path" "generation"
-    fi
-done
-
 # Entrypoint: a real copy, never a symlink (native behavior must not depend on
 # symlinks), written to a temporary name and renamed into place.
 mkdir -p -- "$AC_BIN_DIR"
@@ -768,16 +757,19 @@ if [ ! -f "$AC_ENTRYPOINT_SOURCE" ]; then
     done
 fi
 if [ ! -f "$AC_ENTRYPOINT_SOURCE" ]; then
+    rm -rf -- "$AC_GEN_DIR"
     ac_release_lock
     ac_refuse "$AC_EXIT_IO" "the release set carries no file to install as the axiom-cli entrypoint" "entrypoint-source"
 fi
 if ! cp -- "$AC_ENTRYPOINT_SOURCE" "$AC_BIN_DIR/.axiom-cli.$AC_EV_TXN"; then
+    rm -rf -- "$AC_GEN_DIR"
     ac_release_lock
     ac_refuse "$AC_EXIT_IO" "cannot write the entrypoint into $AC_BIN_DIR" "entrypoint-writable"
 fi
 chmod 0755 "$AC_BIN_DIR/.axiom-cli.$AC_EV_TXN" 2>/dev/null || true
 if ! mv -f -- "$AC_BIN_DIR/.axiom-cli.$AC_EV_TXN" "$AC_BIN_DIR/axiom-cli"; then
     rm -f -- "$AC_BIN_DIR/.axiom-cli.$AC_EV_TXN"
+    rm -rf -- "$AC_GEN_DIR"
     ac_release_lock
     ac_refuse "$AC_EXIT_IO" "cannot atomically place the entrypoint at $AC_BIN_DIR/axiom-cli" "entrypoint-swap"
 fi
@@ -886,6 +878,18 @@ ac_render_components
 
 mkdir -p -- "$AC_STATE_DIR"
 ac_preserved "$AC_STATE_DIR" "per-user state is never modified by install and is preserved for uninstall"
+
+# Prune only after the entrypoint and ownership record are committed. A failed
+# entrypoint write must keep every prior generation available for retry.
+ac_gen_keep=2
+ac_gen_seen=0
+for ac_gen_path in $(ls -1dt "$AC_INSTALL_ROOT"/generations/* 2>/dev/null); do
+    ac_gen_seen=$((ac_gen_seen + 1))
+    if [ "$ac_gen_seen" -gt "$ac_gen_keep" ]; then
+        rm -rf -- "$ac_gen_path"
+        ac_removed "$ac_gen_path" "generation"
+    fi
+done
 
 ac_release_lock
 

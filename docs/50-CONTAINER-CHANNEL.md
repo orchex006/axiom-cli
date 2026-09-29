@@ -1,5 +1,18 @@
 # Container channel — axiom-cli
 
+## K-405 local candidate
+
+`evidence/K-405/` records an unsigned Linux x64 candidate built from the
+exact K-401 skills, K-402 core, K-403 wheel and K-404 runtime inputs. The
+candidate archive contains the distribution files and input receipt; the
+large CPython runtime and wheelhouse remain pinned by SHA in the K-404
+handoff. The local OCI image was exercised as uid/gid 10001 with an owned
+volume. Per-user CLI install, engine install, idempotent rerun, installed
+foreground daemon, corrupt and unowned conflict refusals, injected
+entrypoint-write failure, and owned removal were checked in Debian 12 x86_64
+containers. `systemd --user` was unavailable, so the foreground policy was
+used. No release image was published.
+
 Owner: axiom-cli. Normative rules live in `axiom-specs`
 `contracts/axiom-cli-distribution-contract.md` section 5 ("Container channel") and
 `compatibility/platform-matrix.json` (`distribution.container`). This guide is the owner-side
