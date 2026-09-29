@@ -1,0 +1,97 @@
+{
+  "goal_id": "K-MacIntel-05",
+  "task_id": "K-105",
+  "owner": "axiom-cli",
+  "lane": "macos-x64",
+  "status": "local_verified",
+  "certified": false,
+  "fixture_provenance": "candidate",
+  "source_revisions": {
+    "axiom-cli": "f58f435e9592ea6c2480006de4b2c0119223ec92",
+    "axiom-skills": "eade281614677f96fd86260dc28e1fe0cbdeac0a",
+    "axiom-graphd": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83",
+    "axiom-mcp": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "axiom-specs": "39759ac2311206059b00c44179a998f502e4e777"
+  },
+  "artifacts": [
+    {
+      "path": "axiom-cli/evidence/K-105/distribution-macos-x64-candidate.tar.gz",
+      "sha256": "caeee2470868b67367c27bbfc368171ba744bcf92c18afafe85d61a9fca2c86f"
+    },
+    {
+      "path": "axiom-cli/evidence/K-105/release-set.json",
+      "sha256": "902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723"
+    },
+    {
+      "path": "axiom-cli/evidence/K-105/channel.json",
+      "sha256": "2fe31a81ae2bbe5714971f56279b053b6335520054c454f6e94b5f794d4a7f7a"
+    },
+    {
+      "path": "axiom-cli/evidence/K-105/runtime-manifest.json",
+      "sha256": "068e2eee75f3d224f0815b5dab662e88e97451519a1f4640d3e29fef94bcfa72"
+    },
+    {
+      "path": "axiom-cli/evidence/K-105/native-transcript.json",
+      "sha256": "b29e157f1556ce711513e1ca8d62697875cd2eca5cfef1f4a05183987ab13fc8"
+    },
+    {
+      "path": "axiom-cli/evidence/K-105/owner-handoff.json",
+      "sha256": "20abbf0eacd29c6d300f01dd47e25281edf44a4031cf8f2cd231b2a30f1a62e7"
+    }
+  ],
+  "scope_report": {
+    "path": "axiom-specs/evidence/artifacts/K-105/scope-result.json",
+    "sha256": "574d542ed9047d05f1002cb16eb941196043209b900c01ac05a4c07a5f21ecf9"
+  },
+  "owner_evidence": {
+    "path": "axiom-cli/evidence/K-105/owner-handoff.json",
+    "sha256": "20abbf0eacd29c6d300f01dd47e25281edf44a4031cf8f2cd231b2a30f1a62e7"
+  },
+  "results": {
+    "native_cases": [
+      "corrupt-payload",
+      "clean-install",
+      "service-lifecycle",
+      "discovery",
+      "idempotency",
+      "human-edits",
+      "uninstall-preserve-data",
+      "reinstall-after-removal",
+      "bash-discovery",
+      "unowned-conflict",
+      "install-rollback"
+    ],
+    "subprocess_count": 27,
+    "archive_file_count": 57,
+    "signing": "unsigned",
+    "notarization": "not_notarized",
+    "user_data_preserved": true
+  },
+  "delivery": {
+    "source_branch": "feature/k-105-macos-distribution",
+    "source_commit": "df0102320fd7af6238efc187f5fa89236196a7b5",
+    "source_remote_verified": true,
+    "specs_branch": "feature/k-105-macos-distribution",
+    "specs_commit": "de5b4404df7ff49587799ab0943311ff429f6f0c",
+    "specs_remote_verified": true,
+    "main_integrated": false,
+    "release_state": "candidate"
+  },
+  "limitations": [
+    "No signing, notarization, publication or main integration claimed.",
+    "K-106 owns update and K-107 full MCP query/process proof."
+  ],
+  "next_consumer": "K-106 Mac x64 update and K-001 parent after-work evidence",
+  "parent_closure": {
+    "task_id": "K-001",
+    "status": "done",
+    "checklist": "D1-D8 complete",
+    "specs_branch": "feature/k-001-after-work",
+    "specs_commit": "d724f9395859196c6f3333ae994367cd192aff76",
+    "specs_remote_verified": true,
+    "completion_path": "axiom-specs/evidence/completion/K-001.json",
+    "completion_sha256": "f9e68cd383d575754bd90ef72ec0e61efd1f611d428f2d5d549eccdfa586c66a",
+    "main_integrated": false,
+    "release_state": "candidate"
+  }
+}
