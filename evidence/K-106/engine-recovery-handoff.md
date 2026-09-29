@@ -29,6 +29,11 @@ journal through the current public command. An unreported `activated` or
 binds to the approved A pointer and B candidate, rather than guessing from a
 file name.
 
+The same pending record now covers explicit rollback: it is written after
+verifying the retained A CLI and MCP runtime but before invoking engine
+rollback. A failure after that point leaves the receipt and pending record for
+recovery. This detects interruption; it does not yet resume a partial rollback.
+
 ## Owner change needed before K-106 AC2
 
 The `axiom-graphd` owner needs a reviewed recovery behavior for a valid

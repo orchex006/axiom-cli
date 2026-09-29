@@ -31,6 +31,51 @@ INSTALL_SPEC.loader.exec_module(distribution)
 
 
 class RollbackPreflightTests(unittest.TestCase):
+    def test_engine_rollback_error_retains_durable_pending_record(self) -> None:
+        with tempfile.TemporaryDirectory() as name:
+            base = Path(name).resolve()
+            home = base / "home"
+            root = home / "owned"
+            release = base / "release"
+            release.mkdir()
+            retained = root / "entrypoints/versions" / ("a" * 64)
+            retained.mkdir(parents=True)
+            cli = retained / "axiom-cli"
+            engine = retained / "axiom"
+            cli.write_text("old cli")
+            engine.write_text("old engine")
+            receipt_path = root / "distribution-update.json"
+            receipt_path.write_text('{"engine_transaction":"tx"}\n')
+            before = {
+                "release_set_sha256": "a" * 64,
+                "cli_sha256": distribution.digest(cli),
+                "engine_cli_sha256": distribution.digest(engine),
+                "runtime_pointer_sha256": "b" * 64,
+            }
+            installed = {"runtime_pointer_sha256": "b" * 64}
+            receipt = {
+                "before": before,
+                "engine_transaction": "tx",
+                "release_set_sha256": "c" * 64,
+            }
+            with (
+                patch.object(distribution, "rollback_receipt", return_value=receipt),
+                patch.object(
+                    distribution,
+                    "command",
+                    side_effect=ValueError("engine interrupted"),
+                ),
+            ):
+                with self.assertRaisesRegex(ValueError, "engine interrupted"):
+                    distribution.run_rollback(
+                        release, home, root, {}, {"entry": {}}, installed
+                    )
+            pending = distribution.pending_update_path(root)
+            self.assertEqual(json.loads(pending.read_text())["action"], "rollback")
+            self.assertTrue(receipt_path.is_file())
+            with self.assertRaisesRegex(ValueError, "recovery required"):
+                distribution.refuse_pending_update(root)
+
     def test_distribution_refuses_changed_retained_runtime_before_engine(self) -> None:
         with tempfile.TemporaryDirectory() as name:
             base = Path(name).resolve()
@@ -66,6 +111,7 @@ class RollbackPreflightTests(unittest.TestCase):
                         release, home, root, {}, {"entry": {}}, installed
                     )
                 command.assert_not_called()
+            self.assertFalse(distribution.pending_update_path(root).exists())
 
     def test_dry_run_verifies_retained_executables_without_moving_pointers(
         self,

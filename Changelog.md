@@ -24,7 +24,9 @@ precedes mutation, the update lock releases on process exit, and compensation
 checks the actual runtime pointer after provision errors. Interrupted engine
 `prepared` journals still need a public recovery path. Explicit rollback now
 checks retained A runtime bytes and a read-only runtime rollback plan before
-asking the engine to move its pointer. No release is claimed.
+asking the engine to move its pointer. It records a durable pending intent
+before engine rollback and retains it on failure, so a later invocation detects
+interrupted rollback. No release is claimed.
 
 ### K-003 composite update safety boundary
 

@@ -77,3 +77,9 @@ The existing native K-104 runtime harness also passed all nine reported
 provision/refusal/rollback/removal cases against the pinned interpreter,
 wheelhouse, wheel and lock (`runtime-regression.txt`). It does not exercise
 the composite A→B distribution update.
+
+Explicit rollback now writes a durable pending intent after A runtime
+preflight and before engine rollback. An engine error leaves that record and
+the original receipt, causing later invocations to refuse for recovery. The
+focused regression confirms this boundary. No automatic resume or native
+A→B rollback is claimed.

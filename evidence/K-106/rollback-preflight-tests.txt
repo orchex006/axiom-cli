@@ -1,5 +1,6 @@
 test_distribution_refuses_changed_retained_runtime_before_engine (tests.macos.test_runtime_rollback_preflight.RollbackPreflightTests) ... ok
 test_dry_run_verifies_retained_executables_without_moving_pointers (tests.macos.test_runtime_rollback_preflight.RollbackPreflightTests) ... ok
+test_engine_rollback_error_retains_durable_pending_record (tests.macos.test_runtime_rollback_preflight.RollbackPreflightTests) ... ok
 test_early_failure_cleans_pending_after_verified_compensation (tests.macos.test_distribution_pending.PendingUpdateTests) ... ok
 test_lock_rejects_a_second_coordinator_and_releases_on_close (tests.macos.test_distribution_pending.PendingUpdateTests) ... ok
 test_pending_record_refuses_following_operations (tests.macos.test_distribution_pending.PendingUpdateTests) ... ok
@@ -7,6 +8,6 @@ test_provision_error_after_pointer_change_still_rolls_back_runtime (tests.macos.
 test_unreported_engine_journal_keeps_pending_for_recovery (tests.macos.test_distribution_pending.PendingUpdateTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.129s
+Ran 8 tests in 0.155s
 
 OK

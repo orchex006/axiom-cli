@@ -456,6 +456,7 @@ def run_update(
             json.dumps(
                 {
                     "schema_version": 1,
+                    "action": "update",
                     "release_set_sha256": digest(release / "release-set.json"),
                     "before": before,
                     "engine_journals_before": journal_names,
@@ -664,6 +665,7 @@ def run_update(
 def run_rollback(
     release: Path, home: Path, root: Path, env: dict, checked: dict, installed: dict
 ) -> dict:
+    refuse_pending_update(root)
     receipt = rollback_receipt(release, root, installed)
     before = receipt["before"]
     provision = release / "runtime/provision.py"
@@ -687,6 +689,23 @@ def run_rollback(
         )
         if planned_runtime["body"].get("status") != "rollback_planned":
             raise ValueError("runtime rollback preflight did not verify A")
+    pending = pending_update_path(root)
+    atomic_text(
+        pending,
+        json.dumps(
+            {
+                "schema_version": 1,
+                "action": "rollback",
+                "release_set_sha256": receipt["release_set_sha256"],
+                "receipt_sha256": digest(root / "distribution-update.json"),
+                "engine_transaction": receipt["engine_transaction"],
+                "installed": installed,
+                "target": before,
+            },
+            sort_keys=True,
+        )
+        + "\n",
+    )
     result = command(
         [
             str(release / "axiom"),
@@ -716,6 +735,7 @@ def run_rollback(
     ):
         raise ValueError("rollback did not restore the approved A generation")
     (root / "distribution-update.json").unlink()
+    pending.unlink()
     return {
         "status": "rolled_back",
         "engine": result["body"],
