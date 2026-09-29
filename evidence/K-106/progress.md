@@ -32,6 +32,11 @@ without changing the four observed A hashes.
 owned LaunchAgent: it registered the real C# solution, answered a catalog
 query, observed a source edit through the persistent watcher and answered the
 new-symbol query. That proves only the A side; B and rollback queries remain.
+`early-uninstall.json` records successful A removal after the refusal smoke;
+the bindings hash, source file and generated catalog pointer were observed
+unchanged. That smoke did not create a separate user-data marker, so its
+preservation claim is limited to those three observed objects. The LaunchAgent
+was removed and no test daemon remained.
 
 Remaining: obtain/build a source-pinned B core candidate with a distinct
 version and digest, rerun public A→B update plus catalog query and watcher,

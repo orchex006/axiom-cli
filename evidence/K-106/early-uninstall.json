@@ -1,0 +1,41 @@
+{
+  "status": "A-uninstalled-after-negative-smoke",
+  "bindings_sha256": "c26677db4875cab77fefdba76ff2bdcb8acfa9eb68c87c5eaadb9cb13587723f",
+  "user_data_preserved": "observed_bindings_source_and_graph_only",
+  "events": [
+    {
+      "argv": [
+        "/bin/sh",
+        "<isolated-test-root>/A/runtime/bootstrap.sh",
+        "uninstall",
+        "--release-set",
+        "<isolated-test-root>/A",
+        "--dry-run"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"action\": \"uninstall\", \"notarization\": \"not_notarized\", \"plan_digest\": \"fa73bb61afb57814181edf1453bd3934aa041e1277a2f1a503f37398348f5b74\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/bin/sh",
+        "<isolated-test-root>/A/runtime/bootstrap.sh",
+        "uninstall",
+        "--release-set",
+        "<isolated-test-root>/A",
+        "--apply",
+        "--approve-digest",
+        "fa73bb61afb57814181edf1453bd3934aa041e1277a2f1a503f37398348f5b74"
+      ],
+      "exit_code": 0,
+      "stdout": "kills/0.1.0/skills/graph-update/SKILL.md\", \"sha256\": \"51bfccb938717ecc73e029979f25fa4c88223be187dce10e081e24b54bb94696\"}, {\"path\": \"versions/0.1.0/bin/axiom-graphd\", \"sha256\": \"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\"}, {\"path\": \"versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl\", \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\"}], \"schema_version\": 1, \"service_sha256\": null, \"skills_pointer_sha256\": \"bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488\"}, \"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"installed\": true, \"plan_digest\": \"3d1900fc5e277421d1b60c8a67c40a9974004a03d8d79bbdc6876256862cb9e9\", \"plan_version\": 1, \"purge_data\": false, \"verb\": \"uninstall\"}, \"plan_digest\": \"3d1900fc5e277421d1b60c8a67c40a9974004a03d8d79bbdc6876256862cb9e9\", \"purge_data\": false}, \"message\": \"engine-owned uninstall completed; distribution approval 3d1900fc5e277421d1b60c8a67c40a9974004a03d8d79bbdc6876256862cb9e9 bound the request\", \"request_id\": \"axiom-cli-update-125aa-18d9bf664bdec980\", \"retryable\": false, \"status\": \"ok\"}, \"exit_code\": 0, \"phase\": \"engine-remove\"}, {\"body\": {\"already_installed\": 0, \"artifacts\": [{\"component\": \"axiom-cli\", \"sha256\": \"90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c\", \"version\": \"0.1.0\"}, {\"component\": \"axiom\", \"revision\": \"e5a30e2ee6807ab36cecbc881be3ffb4259cba83\", \"sha256\": \"d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528\", \"version\": \"0.1.0\"}], \"manifest_sha256\": \"902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723\", \"plan_digest\": \"7ee224764c39074c34a553704f9f3e2a7ac04bf64a8a0661c7fdcbd727aa2290\", \"status\": \"uninstalled\", \"verb\": \"uninstall\"}, \"exit_code\": 0, \"phase\": \"entrypoints-remove\"}, {\"body\": {\"owned_generations\": [\"e4843f14e1544208fe22ce34\"], \"status\": \"removed\", \"user_data_preserved\": true}, \"exit_code\": 0, \"phase\": \"runtime-remove\"}], \"status\": \"removed\", \"user_data_preserved\": true}\n",
+      "stderr": ""
+    }
+  ],
+  "observed_preserved": {
+    "bindings_hash_unchanged": true,
+    "source_exists": true,
+    "catalog_pointer_exists": true,
+    "user_data_marker_tested": false
+  }
+}
