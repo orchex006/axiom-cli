@@ -394,5 +394,38 @@
     "specs_remote_verified": true
   },
   "limitations": "Unsigned, unnotarized, unpublished local candidate only. Native process death was injected after engine returned before coordinator captured transaction; prepared-journal intervals have owner filesystem regressions but not native SIGKILL at every inner substep. No released compatibility, other-lane certification or independent main-integration review claimed.",
-  "next_consumer": "K-107"
+  "next_consumer": "K-107",
+  "reference_bases": {
+    "artifacts": "workspace_root",
+    "commands": "workspace_root",
+    "scope_report": "workspace_root",
+    "input_reports": "workspace_root"
+  },
+  "spec_pins": [
+    {
+      "component": "axiom-skills-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-101/spec.lock.json",
+      "sha256": "288b2491d39762d8225315c976096ac51c1ea76ff50fd813e3b4ca7655269661"
+    },
+    {
+      "component": "axiom-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-102/spec.lock.json",
+      "sha256": "810cb38caeeabc453b785bd63c13cd475dc9ed8212827740b5fc9fd5fccdaf44"
+    },
+    {
+      "component": "axiom-mcp-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-103/spec.lock.json",
+      "sha256": "e54bdb7a0ae45a0d6d61ce518788cd53a9c47a61843f9ee94d83576072ff978b"
+    },
+    {
+      "component": "axiom-cli-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-104/spec.lock.json",
+      "sha256": "4f7a81d79bb5b0523f81b8a20d920a5f2f291001dd76fdd35cc598fe24f15561"
+    },
+    {
+      "component": "axiom-cli-k105-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-105/spec.lock.json",
+      "sha256": "4f7a81d79bb5b0523f81b8a20d920a5f2f291001dd76fdd35cc598fe24f15561"
+    }
+  ]
 }
