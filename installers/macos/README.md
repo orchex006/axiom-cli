@@ -30,3 +30,14 @@ changes quarantine attributes, or runs `launchctl`. Candidate artifacts remain
 unsigned/unnotarized unless a separate release process proves otherwise. The
 entrypoint check is a local candidate run; it does not prove the MCP environment,
 distribution update bridge or final four-lane lifecycle.
+
+For the K-105 complete candidate, run `runtime/bootstrap.sh` inside the
+composed release set. It accepts `install` or `uninstall`, `--release-set`,
+`--dry-run` or `--apply`, and an approval digest for apply. The packaged uv
+managed CPython 3.13.15 is hash checked and bootstrapped from the release set;
+the user machine needs no developer Python or venv. The coordinator provisions
+MCP, installs both owned CLI entrypoints and the engine payloads, and registers,
+starts and checks the LaunchAgent. It writes an empty local bindings document
+only if none exists, and never replaces a user-authored one. Uninstall stops and
+removes the service, removes active installed files and owned entrypoints, then
+removes the MCP runtime. It retains user data and local bindings.

@@ -71,10 +71,34 @@ version checks pass. The previous generation remains available for `rollback`.
 `remove` deletes owned generations and pointers while preserving sibling user
 data. `axiom-cli` verifies the active Python and launcher hashes before adding
 that runtime's `venv/bin` to the installation engine's PATH for plan/apply.
-This candidate tool does not select or publish a production download URL. K-105
-will compose its inputs into the distribution install flow.
+This candidate tool does not select or publish a production download URL.
 
 Run `<candidate-python3.13> packaging/macos/Provision-McpRuntime.py --help` for its argument
 surface. The native transaction proof is
 `tests/macos/test_mcp_runtime.py --help`; pass the exact archived inputs named
 by the K-104 handoff.
+
+## K-105 composed per-user candidate
+
+Build the three-binary release set, then use `Build-EngineCandidate.py` with the
+K-101 extracted `owner-source.tar`, `--skills-revision` and
+`--skills-manifest-sha256`. Verify the source tar SHA against the K-101 handoff
+before extraction. The composer checks the owner manifest's SHA and every
+declared payload byte; the CLI converts that verified source to the engine
+skills bundle. Then run `Attach-McpRuntime.py` with the K-104
+`runtime-input.json`, its `--runtime-input-sha256`, and all four local artifacts.
+It copies the runtime, wheelhouse, MCP wheel and lock, plus the per-user
+bootstrap, into `runtime/`. The complete set remains unpublished, unsigned and
+not notarized. The packaging host uses Python; the installed user flow does not.
+
+The input revisions and SHA-256 values for this candidate are recorded in
+`evidence/K-105/owner-handoff.json`. Use
+`sh <release-set>/runtime/bootstrap.sh install --release-set <release-set>
+--dry-run`, review its plan digest, then repeat with `--apply --approve-digest
+<digest>`. The script runs the pinned CPython from a temporary extraction,
+installs dependencies without network access, verifies installed executable
+hashes and starts the user LaunchAgent. Use `uninstall` with the same dry-run
+and approval flow. It removes owned executable and service entrypoints while
+preserving local bindings and user files. Empty skills version directories left
+by engine removal are pruned; any edited file remains. The native proof is
+`tests/macos/test_distribution.py`.

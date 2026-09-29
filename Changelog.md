@@ -1,5 +1,10 @@
 # Changelog
 
+## K-105 Mac Intel distribution candidate
+
+- Compose the pinned K-101 skills source, K-102 core, K-103 wheel and K-104 uv managed CPython runtime into one unpublished Mac x64 candidate. The per-user bootstrap runs from that runtime archive, provisions MCP offline, installs both entrypoints and the ecosystem, then registers and starts the LaunchAgent. It preserves local bindings and user data on removal, and removes only unchanged owned skills metadata and empty directories after engine uninstall. Signing remains unsigned and notarization remains unverified.
+ — axiom-cli
+
 ## K-104 Mac Intel MCP runtime candidate
 
 - Add a hash-verified local provisioning transaction for a per-user Python 3.13 MCP environment. It keeps previous generations until explicit rollback/removal and emits absolute executable and digest records. Runtime acquisition remains an explicit candidate input; no release publication is claimed.
