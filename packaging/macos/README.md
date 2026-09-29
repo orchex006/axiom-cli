@@ -123,8 +123,13 @@ or process death during rollback.
 
 The coordinator writes `distribution-update-pending.json` before mutation and
 uses an OS lock released on process exit. It refuses another operation while
-an interrupted update is pending. A `prepared` engine journal still needs a
-public recovery path before abrupt-process-death recovery can be certified.
+an interrupted update is pending. `runtime/bootstrap.sh recover --release-set
+<B>` gives that pending intent a dry-run approval digest. Apply discovers the
+one new outer engine journal, checks its A pointer and B core identity, then
+invokes the engine's public rollback transaction before restoring the pinned
+A runtime and entrypoints. Foreign or changed state is refused while retaining
+the intent. The native process-death harness exercises recovery and retry;
+engine tests cover `prepared` before and between pointer moves.
 Explicit rollback also writes the pending record before the engine pointer
 moves and retains it if rollback fails or is interrupted.
 
@@ -132,7 +137,7 @@ A/B must carry distinct, source-pinned CLI and core artifacts with a new core
 version. The native proof is `tests/macos/test_distribution_update.py` with
 `--candidate-a`, `--candidate-b` and `--out`. It checks installed query and
 watcher behavior, owned service status, exact activated hashes, rollback,
-failure boundaries and preserved user data. The current K-106 branch has
-validated only the A installation and refusal paths; a valid B core input is
-still required before the composite update can be claimed as verified. This
-candidate path does not sign, notarize or publish a release.
+failure boundaries and preserved user data. The K-106 branch uses the owner's
+source-pinned local B 0.1.1 core and records native A/B results in
+`evidence/K-106/`. This candidate path does not sign, notarize or publish a
+release.

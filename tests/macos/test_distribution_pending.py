@@ -20,6 +20,43 @@ SPEC.loader.exec_module(distribution)
 
 
 class PendingUpdateTests(unittest.TestCase):
+    def test_recovery_refuses_a_foreign_candidate_before_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            release = root / "candidate"
+            release.mkdir()
+            (release / "release-set.json").write_text("{}\n")
+            distribution.pending_update_path(root).write_text(
+                json.dumps({
+                    "schema_version": 1, "action": "update",
+                    "release_set_sha256": "f" * 64, "before": {},
+                    "engine_journals_before": [],
+                }) + "\n"
+            )
+            with self.assertRaisesRegex(ValueError, "does not bind this candidate"):
+                distribution.pending_recovery(release, root)
+
+    def test_recovery_refuses_a_foreign_new_engine_journal(self) -> None:
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            journal_dir = root / "installs/ecosystem/journal"
+            journal_dir.mkdir(parents=True)
+            (journal_dir / "ecosystem-update-foreign.json").write_text(
+                json.dumps({
+                    "schema_version": 1, "kind": "ecosystem-update-journal",
+                    "transaction_id": "foreign", "state": "finalized",
+                    "previous_pointer_sha256": "a" * 64,
+                    "candidate": {"core_artifacts": [{"sha256": "b" * 64}]},
+                }) + "\n"
+            )
+            pending = {
+                "action": "update", "before": {"engine_pointer_sha256": "c" * 64},
+                "engine_journals_before": [],
+            }
+            checked = {"entry": {"artifacts": [{}, {}, {"sha256": "b" * 64}]}}
+            with self.assertRaisesRegex(ValueError, "does not bind A and B"):
+                distribution.recovery_transaction(root, pending, checked)
+
     def test_lock_rejects_a_second_coordinator_and_releases_on_close(self) -> None:
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)

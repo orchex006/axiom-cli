@@ -14,15 +14,24 @@
 
 ### K-106 Mac Intel distribution update candidate (in progress)
 
+The local A/B candidate now uses the graphd owner's pinned core 0.1.1 B
+artifact. A native Intel Mac run verified installed query and watcher before
+and after update and rollback, exact A pointer restoration, five injected
+failure boundaries and preserved user data. The candidate bootstrap also
+offers an approved `recover` action for a durable pending intent after process
+death. It discovers the one new outer engine journal, delegates rollback to
+`axiom update rollback`, then restores the pinned A runtime and entrypoints.
+Foreign or changed journal and pointer state is refused. A native process-death
+recovery run and independent review remain separate gates. No release is
+claimed.
+
 The per-user candidate bootstrap now binds update approval to the verified B
 set and installed A pointers, delegates ecosystem update and rollback to the
 graphd engine, moves owned CLI entrypoints and records a rollback receipt.
-The K-003 split-update guard is integrated. Native A install, query, watcher
-and refusal/compensation probes passed; a distinct source-pinned B core is
-still needed for full A/B update and rollback acceptance. A pending record now
+The K-003 split-update guard is integrated. A pending record now
 precedes mutation, the update lock releases on process exit, and compensation
 checks the actual runtime pointer after provision errors. Interrupted engine
-`prepared` journals still need a public recovery path. Explicit rollback now
+`prepared` journals use the engine owner's public rollback. Explicit rollback
 checks retained A runtime bytes and a read-only runtime rollback plan before
 asking the engine to move its pointer. It records a durable pending intent
 before engine rollback and retains it on failure, so a later invocation detects

@@ -327,6 +327,165 @@ def refuse_pending_update(root: Path) -> None:
         raise ValueError("distribution update recovery required: " + str(pending))
 
 
+def pending_recovery(release: Path, root: Path) -> dict:
+    path = pending_update_path(root)
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("no owned distribution recovery intent")
+    value = json.loads(path.read_text())
+    if (
+        value.get("schema_version") != 1
+        or value.get("action") not in ("update", "rollback")
+        or value.get("release_set_sha256") != digest(release / "release-set.json")
+    ):
+        raise ValueError("distribution recovery intent does not bind this candidate")
+    before = value.get("before") if value["action"] == "update" else value.get("target")
+    required = {
+        "entrypoint_record_sha256", "engine_pointer_sha256", "runtime_pointer_sha256",
+        "service_record_sha256", "release_set_sha256", "cli_sha256",
+        "cli_version", "engine_cli_sha256", "core_version", "core_revision",
+        "profile",
+    }
+    if not isinstance(before, dict) or set(before) != required or not all(
+        re.fullmatch(r"[0-9a-f]{64}", str(before.get(key, "")))
+        for key in (
+            "release_set_sha256", "entrypoint_record_sha256",
+            "engine_pointer_sha256", "runtime_pointer_sha256",
+            "cli_sha256", "engine_cli_sha256",
+        )
+    ):
+        raise ValueError("distribution recovery target is incomplete")
+    if value["action"] == "update":
+        journals = value.get("engine_journals_before")
+        if (
+            not isinstance(journals, list)
+            or not all(isinstance(name, str) for name in journals)
+            or len(journals) != len(set(journals))
+        ):
+            raise ValueError("distribution recovery journal baseline is missing")
+    if value["action"] == "rollback" and not re.fullmatch(
+        r"[a-zA-Z0-9-]+", str(value.get("engine_transaction", ""))
+    ):
+        raise ValueError("distribution recovery transaction is invalid")
+    return value
+
+
+def recovery_digest(release: Path, root: Path, pending: dict) -> str:
+    value = {
+        "action": "recover",
+        "pending_sha256": digest(pending_update_path(root)),
+        "release_set_sha256": pending["release_set_sha256"],
+    }
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def recovery_transaction(root: Path, pending: dict, checked: dict) -> str | None:
+    if pending["action"] == "rollback":
+        return pending["engine_transaction"]
+    journal_dir = root / "installs/ecosystem/journal"
+    old = set(pending["engine_journals_before"])
+    new = {
+        name for name in engine_journal_names(journal_dir).difference(old)
+        if name.startswith("ecosystem-update-") and name.endswith(".json")
+    }
+    if not new:
+        return None
+    if len(new) != 1:
+        raise ValueError("distribution recovery found ambiguous engine journals")
+    name = next(iter(new))
+    if not re.fullmatch(r"ecosystem-update-[a-zA-Z0-9-]+\.json", name):
+        raise ValueError("distribution recovery found a foreign engine journal")
+    path = journal_dir / name
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("distribution recovery journal is unsafe")
+    journal = json.loads(path.read_text())
+    transaction = name[len("ecosystem-update-") : -len(".json")]
+    before = pending["before"]
+    candidate = journal.get("candidate")
+    if (
+        journal.get("kind") != "ecosystem-update-journal"
+        or journal.get("schema_version") != 1
+        or journal.get("transaction_id") != transaction
+        or journal.get("previous_pointer_sha256") != before["engine_pointer_sha256"]
+        or journal.get("state") not in ("prepared", "activated", "finalized", "rolled-back", "restored-after-service-failure")
+        or not isinstance(candidate, dict)
+        or not isinstance(candidate.get("core_artifacts"), list)
+        or not candidate["core_artifacts"]
+        or candidate["core_artifacts"][0].get("sha256")
+        != checked["entry"]["artifacts"][2]["sha256"]
+    ):
+        raise ValueError("distribution recovery journal does not bind A and B")
+    return transaction
+
+
+def run_recover(
+    release: Path, home: Path, root: Path, env: dict, checked: dict, pending: dict
+) -> dict:
+    before = pending["before"] if pending["action"] == "update" else pending["target"]
+    receipt = root / "distribution-update.json"
+    if pending["action"] == "rollback":
+        if (
+            receipt.is_symlink()
+            or not receipt.is_file()
+            or digest(receipt) != pending.get("receipt_sha256")
+        ):
+            raise ValueError("distribution recovery receipt changed")
+    elif receipt.exists() or receipt.is_symlink():
+        raise ValueError("distribution recovery found an unexpected update receipt")
+    retained = root / "entrypoints/versions" / before["release_set_sha256"]
+    verify(retained / "axiom-cli", before["cli_sha256"])
+    verify(retained / "axiom", before["engine_cli_sha256"])
+    record = root / "entrypoints/current.tsv"
+    if record.is_symlink() or not record.is_file():
+        raise ValueError("distribution recovery entrypoint record is unsafe")
+    if digest(record) != before["entrypoint_record_sha256"]:
+        rows = record.read_text().splitlines()
+        if len(rows) != 8 or rows[1] != pending["release_set_sha256"]:
+            raise ValueError("distribution recovery entrypoint record changed")
+    for name, old, new in zip(
+        ("axiom-cli", "axiom"),
+        (before["cli_sha256"], before["engine_cli_sha256"]),
+        checked["entry"]["artifacts"][:2],
+    ):
+        current = home / ".local/bin" / name
+        if current.is_symlink() or not current.is_file() or digest(current) not in (old, new["sha256"]):
+            raise ValueError("distribution recovery entrypoint changed: " + name)
+    runtime_dir = root / "mcp-runtime"
+    runtime_pointer = runtime_dir / "current.json"
+    if runtime_pointer.is_symlink() or not runtime_pointer.is_file():
+        raise ValueError("distribution recovery runtime pointer is unsafe")
+    runtime_changed = digest(runtime_pointer) != before["runtime_pointer_sha256"]
+    provision = release / "runtime/provision.py"
+    if runtime_changed:
+        verify(runtime_dir / "previous.json", before["runtime_pointer_sha256"])
+        planned = command(
+            [sys.executable, str(provision), "rollback", "--root", str(runtime_dir), "--dry-run"],
+            env,
+        )
+        if planned["body"].get("status") != "rollback_planned":
+            raise ValueError("distribution recovery retained runtime preflight failed")
+    transaction = recovery_transaction(root, pending, checked)
+    engine_pointer = root / "installs/ecosystem/current"
+    if transaction is None:
+        verify(engine_pointer, before["engine_pointer_sha256"])
+    else:
+        command(
+            [str(release / "axiom"), "update", "rollback", "--transaction", transaction, "--json"],
+            env,
+        )
+    if runtime_changed:
+        command([sys.executable, str(provision), "rollback", "--root", str(runtime_dir)], env)
+    restore_entrypoints(home, root, before, checked["entry"])
+    restored = installed_update_state(home, root)
+    if any(restored[key] != before[key] for key in before if key != "service_record_sha256"):
+        raise ValueError("distribution recovery did not restore the approved A generation")
+    if pending["action"] == "rollback":
+        receipt.unlink()
+    pending_update_path(root).unlink()
+    return {"status": "recovered", "engine_transaction": transaction, "after": restored}
+
+
 def engine_journal_names(directory: Path) -> set[str]:
     if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
         raise ValueError("engine update journal directory is unsafe")
@@ -527,6 +686,8 @@ def run_update(
             composite_env,
         )
         events.append({"phase": "engine-update", **applied})
+        if os.environ.get("AXIOM_K106_CRASH_AT") == "engine_report":
+            os._exit(97)
         transaction = applied["body"].get("details", {}).get("engine_transaction")
         if not transaction:
             raise ValueError("engine update returned no rollback transaction")
@@ -1130,7 +1291,7 @@ def run_uninstall(release: Path, home: Path, root: Path, env: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "action", choices=("install", "update", "rollback", "uninstall")
+        "action", choices=("install", "update", "rollback", "recover", "uninstall")
     )
     parser.add_argument("--release-set", type=Path, required=True)
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -1151,7 +1312,9 @@ def main() -> int:
         ).resolve()
         if not root.is_relative_to(home) or root == home or root.is_symlink():
             raise ValueError("owned install root must be below the user home")
-        refuse_pending_update(root)
+        pending = pending_recovery(release, root) if args.action == "recover" else None
+        if args.action != "recover":
+            refuse_pending_update(root)
         checked = inputs(release)
         before = (
             installed_update_state(home, root)
@@ -1165,6 +1328,8 @@ def main() -> int:
             if args.action == "update"
             else rollback_digest(release, root, before)
             if args.action == "rollback"
+            else recovery_digest(release, root, pending)
+            if args.action == "recover"
             else plan_digest(release, home, args.action, checked)
         )
         if args.dry_run:
@@ -1186,6 +1351,11 @@ def main() -> int:
         env = engine_env(home, root)
         if args.action == "install":
             result = run_install(release, home, root, env, checked)
+        elif args.action == "recover":
+            with update_lock(root):
+                if pending_recovery(release, root) != pending:
+                    raise ValueError("distribution recovery intent changed since approval")
+                result = run_recover(release, home, root, env, checked, pending)
         elif args.action in ("update", "rollback"):
             with update_lock(root):
                 if installed_update_state(home, root) != before:
