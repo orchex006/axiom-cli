@@ -1,0 +1,90 @@
+{
+  "acceptance": {
+    "AC1": "passed: pinned OCI image, non-root uid/gid 10001 and owned-volume retention; installed foreground daemon drained",
+    "AC2": "passed: per-user CLI/engine/runtime and installed daemon with clean install and idempotency",
+    "AC3": "passed: exact digest/ownership checks and conflict/corruption/injected failure rollback",
+    "AC4": "passed: owned uninstall preserved source, bindings and user data; unsigned/unpublished stated",
+    "AC5": "passed: owner checks, scoped review and canonical completion tracked separately"
+  },
+  "artifacts": [
+    {
+      "path": "evidence/K-405/axiom-0.1.1-container-linux-x64-candidate.tar.gz",
+      "sha256": "53fb240ca8136cb83e86343f9a9fce28ed4d6e505e8b04608313b33715f541da"
+    },
+    {
+      "path": "evidence/K-405/candidate-files.json",
+      "sha256": "5689efeac0b95a137245e74811ad65dbc2d43164683985eeade2f72d3997cb50"
+    },
+    {
+      "path": "evidence/K-405/candidate-inputs.json",
+      "sha256": "10cde0decc20dff17342e6fe8bcaef5e5cddb15d200a36effdd5952789d25e7b"
+    },
+    {
+      "path": "evidence/K-405/channel.json",
+      "sha256": "2401bf9d3d63e3ebcdd8a658a714e26c493721815c0e94598f363961aac70531"
+    },
+    {
+      "path": "evidence/K-405/release-set.json",
+      "sha256": "6263a93769405dec01b2c56b566b97af5b97e12e29d77ff7cc527f51302e1dd1"
+    },
+    {
+      "path": "evidence/K-405/image-inspect.json",
+      "sha256": "18d6cd82913a4f9c80c192f6c0d11cc19a9f1d168f2e7b2cea72aebd63b18f3e"
+    },
+    {
+      "path": "evidence/K-405/compose-rebuild.json",
+      "sha256": "656c9b9357092b3eb1a42380bed14fe517663b4e3a57b8591c569184302374c9"
+    },
+    {
+      "path": "evidence/K-405/candidate-verify.json",
+      "sha256": "e19ce287c8fe105f1a9f3de5e328aa4d202cf97e93208f70ee7127e8d87db57d"
+    },
+    {
+      "path": "evidence/K-405/linux-harness.txt",
+      "sha256": "afe55a8a0f2cdac3a722933eb32783dbccd0a2be34f64d499f58290caa39605b"
+    },
+    {
+      "path": "evidence/K-405/final-checks.txt",
+      "sha256": "5eb1ad08ca46ffe24ab5d6a3a8b8a36a14693d5c8537b1ae2f1b8093ee18d2b8"
+    },
+    {
+      "path": "evidence/K-405/owner-review.md",
+      "sha256": "c565e6b337281a78ad6807d3207ef857de12e1a4d99334c37c8b5f24e584e3c1"
+    }
+  ],
+  "candidate": true,
+  "certified": false,
+  "delivery": {
+    "main_integrated": false,
+    "release_state": "candidate",
+    "source_branch": "feature/k-405-container-distribution",
+    "source_commit": "d8ef3011cdbb2e699816762a1917644f26e161e6"
+  },
+  "input_scope_reports": {
+    "K-401": "e2dc9bf12107096e05f1f4b71fdfe9a750e011eaf576ca518884cdf775b99ab5",
+    "K-402": "71d5ded1bad524b3ec79efd3e651aaeb514e9570728dbad8ad39b3c5f5989faf",
+    "K-404": "a5251ef01aeeeb677043d1e9db26798ecfa43e02ee2adf4daff04762853b9dc6"
+  },
+  "lane": "container-linux-x64",
+  "limitations": [
+    "No systemd user manager in the container; optional generated-unit removal leg skipped.",
+    "Native WSL2/Windows, signing, publication and independent main review remain open."
+  ],
+  "owner": "axiom-cli",
+  "results": {
+    "candidate_archive_sha256": "53fb240ca8136cb83e86343f9a9fce28ed4d6e505e8b04608313b33715f541da",
+    "candidate_files": 49,
+    "corrupt_refused": true,
+    "failed_entrypoint_rolled_back": true,
+    "foreground_daemon": true,
+    "image_id": "sha256:482d923bba601cb1e19395b2d988c2204fe7484d07006df0b0e53ea69faa2be2",
+    "linux_harness_failed": 0,
+    "linux_harness_optional_skipped": 1,
+    "linux_harness_passed": 24,
+    "unowned_conflict_refused": true,
+    "user_data_preserved": true
+  },
+  "source_revision": "d8ef3011cdbb2e699816762a1917644f26e161e6",
+  "status": "local_verified",
+  "task_id": "K-405"
+}

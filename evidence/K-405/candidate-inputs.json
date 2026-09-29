@@ -1,0 +1,20 @@
+{
+  "certified": false,
+  "cli_binary_sha256": "02d7c19861f5ef21b5a329298ca6c6080c8922f5cdca8e4cb2d86c4e3430dd6b",
+  "container_image_id": "sha256:482d923bba601cb1e19395b2d988c2204fe7484d07006df0b0e53ea69faa2be2",
+  "core_archive_sha256": "3b94b0fbd1f6bee168c83b4ef66c6480197af1cf89945ff42fd97b900407cb35",
+  "core_source_revision": "dc6b7190260f879043354b991e0a4ced76da0ddd",
+  "dependency_lock_sha256": "ce2e686592de779dd980a20474ed8a317cb05487b8e4388cebfea9a73e000cb6",
+  "lane": "container-linux-x64",
+  "mcp_source_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+  "mcp_wheel_sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b",
+  "published": false,
+  "runtime_archive_sha256": "64f1f07d2f05ab6f7e670eb5e5d297f1429aa42c667a4360c33845471b7b55ea",
+  "runtime_input_sha256": "bbd8ea260dcd3f6486009baf299564f25a2d37a4ff6e59b5f8e69b93230d0113",
+  "signing": "unsigned",
+  "skills_archive_sha256": "e4b6a013b4971d93298886655debef5b11b912ca7a881c2ab1648477124b1a3a",
+  "skills_manifest_sha256": "ddba13d7d5608e58c6f8f4599c133b86f0ddbc62257b98bfe73d5c207bea8d1a",
+  "status": "candidate",
+  "task_id": "K-405",
+  "wheelhouse_archive_sha256": "ca1a141f19000f16cec4fa1ed485e13ca0beee7f90183a4504bc9d31532cb1e4"
+}

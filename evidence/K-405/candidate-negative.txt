@@ -1,0 +1,8 @@
+expected_exit_code=1
+actual_exit_code=1
+Traceback (most recent call last):
+  File "[owner-checkout]/tests/linux/verify_k405_candidate.py", line 101, in <module>
+    raise SystemExit(main())
+  File "[owner-checkout]/tests/linux/verify_k405_candidate.py", line 43, in main
+    raise ValueError("candidate archive membership differs from manifest")
+ValueError: candidate archive membership differs from manifest

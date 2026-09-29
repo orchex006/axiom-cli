@@ -1,0 +1,83 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.58kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#2 ...
+
+#3 [auth] library/debian:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [auth] library/rust:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/rust:1.85-slim-bookworm@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+#5 DONE 5.2s
+
+#2 [internal] load metadata for docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#2 DONE 5.2s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 63B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 DONE 0.0s
+
+#8 [runtime 1/5] FROM docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#8 resolve docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251 0.0s done
+#8 DONE 0.0s
+
+#9 [builder 1/5] FROM docker.io/library/rust:1.85-slim-bookworm@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+#9 resolve docker.io/library/rust:1.85-slim-bookworm@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36
+#9 resolve docker.io/library/rust:1.85-slim-bookworm@sha256:9f841bbe9e7d8e37ceb96ed907265a3a0df7f44e3737d0b100e7907a679acb36 0.0s done
+#9 DONE 0.0s
+
+#8 [runtime 1/5] FROM docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#8 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 165.71kB 0.0s done
+#7 DONE 0.0s
+
+#10 [builder 2/5] WORKDIR /src
+#10 CACHED
+
+#11 [builder 3/5] COPY Cargo.toml Cargo.lock ./
+#11 CACHED
+
+#12 [builder 4/5] COPY src ./src
+#12 DONE 0.1s
+
+#13 [runtime 2/5] RUN groupadd --gid 10001 axiom  && useradd --uid 10001 --gid 10001 --no-create-home --home-dir /home/axiom --shell /usr/sbin/nologin axiom  && install -d -o 10001 -g 10001 -m 0755 /home/axiom
+#13 DONE 0.6s
+
+#14 [builder 5/5] RUN cargo build --release --locked --offline --bin axiom-cli
+#14 0.547    Compiling axiom-cli v0.1.0 (/src)
+#14 24.52     Finished `release` profile [optimized] target(s) in 24.12s
+#14 DONE 24.5s
+
+#15 [runtime 3/5] COPY --from=builder --chown=0:0 --chmod=0755 /src/target/release/axiom-cli /usr/local/bin/axiom-cli
+#15 DONE 0.1s
+
+#16 [runtime 4/5] COPY --chown=0:0 --chmod=0755 containers/entrypoint.sh /usr/local/bin/axiom-cli-entrypoint
+#16 DONE 0.1s
+
+#17 [runtime 5/5] WORKDIR /home/axiom
+#17 DONE 0.0s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 0.2s done
+#18 exporting manifest sha256:74944ee051fec9f6ab887a23cc262132f6378f53124c4cd0859b92da3864d262 0.0s done
+#18 exporting config sha256:613036bd4adfb82fa7b437a73fdbf335714f4153920cac7db3b5b5f79cb62a93 0.0s done
+#18 exporting attestation manifest sha256:5cd5b68145a17899537d547b5ce1e84b57432dd222f5e6e2442b6f4691f31eb1 0.0s done
+#18 exporting manifest list sha256:482d923bba601cb1e19395b2d988c2204fe7484d07006df0b0e53ea69faa2be2 0.0s done
+#18 naming to docker.io/library/axiom-k405-cli-base:local done
+#18 unpacking to docker.io/library/axiom-k405-cli-base:local
+#18 unpacking to docker.io/library/axiom-k405-cli-base:local 0.1s done
+#18 DONE 0.4s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/oz55nzzjjqfosc5yxrastr4w2

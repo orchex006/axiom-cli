@@ -1,0 +1,8 @@
+{
+  "exit_code": 2,
+  "status": "validation_error",
+  "reason_code": "artifact_unverified:axiom-mcp",
+  "pointer_sha_before": "de8f4af70841cfff42242997e449f7a60153367c3eb5b467210bf0724059a936",
+  "pointer_sha_after": "de8f4af70841cfff42242997e449f7a60153367c3eb5b467210bf0724059a936",
+  "pointer_unchanged": true
+}

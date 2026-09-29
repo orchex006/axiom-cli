@@ -1,0 +1,19 @@
+{
+  "architecture": "amd64",
+  "image_id": "sha256:482d923bba601cb1e19395b2d988c2204fe7484d07006df0b0e53ea69faa2be2",
+  "labels": {
+    "io.orchex006.axiom.channel": "container-linux-x64",
+    "io.orchex006.axiom.native-evidence": "false",
+    "org.opencontainers.image.created": "2026-09-29T00:00:00Z",
+    "org.opencontainers.image.description": "Axiom ecosystem distribution entrypoint: install, update, doctor, version, uninstall. Additional container delivery channel; not native runtime evidence for any target.",
+    "org.opencontainers.image.documentation": "https://github.com/orchex006/axiom-cli/blob/main/docs/50-CONTAINER-CHANNEL.md",
+    "org.opencontainers.image.licenses": "UNLICENSED",
+    "org.opencontainers.image.revision": "63307ef11bbbae79ed0bb35754bad1c5858eeeb9",
+    "org.opencontainers.image.source": "https://github.com/orchex006/axiom-cli",
+    "org.opencontainers.image.title": "axiom-cli",
+    "org.opencontainers.image.url": "https://github.com/orchex006/axiom-cli",
+    "org.opencontainers.image.version": "0.1.0"
+  },
+  "os": "linux",
+  "user": "10001:10001"
+}

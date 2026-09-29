@@ -1,0 +1,5 @@
+axiom-cli: plan digest 6a0a98edf256eedcc3f6857fcd7da7282953276c70745de54f895e363ee65418
+axiom-cli: installed release 0.1.0 into /home/axiom/.local/share/axiom-cli/generations/0.1.0-6a0a98edf256; entrypoint at /home/axiom/.local/bin/axiom-cli
+axiom-cli: plan digest d860d51066b0fa7de5453d2030ba5dfd1194cf424f707574d14c2f28d4ceb5e6
+cp: cannot create regular file '/home/axiom/.local/bin/.axiom-cli.txn-1790691133-1355': Permission denied
+{"entrypoint_unchanged": true, "exit_code": 8, "generations": ["0.1.0-6a0a98edf256"], "mutated": false, "reason": [{"actual_sha256": null, "artifact": "-", "check": "entrypoint-writable", "expected_sha256": null, "reason": "cannot write the entrypoint into /home/axiom/.local/bin"}]}

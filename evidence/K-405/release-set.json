@@ -1,0 +1,52 @@
+{
+  "release_set_version": 1,
+  "release_version": "0.1.1",
+  "platform": "linux-x64",
+  "target_triple": "x86_64-unknown-linux-gnu",
+  "libc": "glibc",
+  "arch": "x86_64",
+  "generated_by": "K-405 candidate assembly",
+  "carries_components": [
+    "axiom-cli",
+    "axiom",
+    "axiom-graphd"
+  ],
+  "user_service": null,
+  "artifacts": [
+    {
+      "name": "axiom-cli",
+      "component": "axiom-cli",
+      "version": "0.1.0",
+      "revision": "63307ef11bbbae79ed0bb35754bad1c5858eeeb9",
+      "arch": "x86_64",
+      "sha256": "02d7c19861f5ef21b5a329298ca6c6080c8922f5cdca8e4cb2d86c4e3430dd6b",
+      "size_bytes": 1194392,
+      "archive": "axiom-cli",
+      "kind": "executable"
+    },
+    {
+      "name": "axiom",
+      "component": "axiom",
+      "version": "0.1.1",
+      "revision": "dc6b7190260f879043354b991e0a4ced76da0ddd",
+      "arch": "x86_64",
+      "sha256": "b3e3de28e6125db884d14345b43e5f9caa08ae75d31fab66e590b2a4ce4ae13d",
+      "size_bytes": 4072368,
+      "archive": "axiom",
+      "kind": "executable"
+    },
+    {
+      "name": "axiom-graphd",
+      "component": "axiom-graphd",
+      "version": "0.1.1",
+      "revision": "dc6b7190260f879043354b991e0a4ced76da0ddd",
+      "arch": "x86_64",
+      "sha256": "87b6146ba9133b5cbdce2d42a4842b29b1eceb3fb3375201621ecb0a105c4f07",
+      "size_bytes": 4521576,
+      "archive": "axiom-graphd",
+      "kind": "executable"
+    }
+  ],
+  "signing": "unsigned",
+  "notarization": "not_notarized"
+}

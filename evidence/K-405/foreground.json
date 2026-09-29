@@ -1,0 +1,7 @@
+{
+  "started": true,
+  "exit_code": 0,
+  "stdout_tail": "{\"instance_id\":\"default\",\"solutions\":1,\"projects\":1,\"dirty_before\":0,\"dirty_after\":0,\"published_generations\":1,\"recoveries\":[],\"outcomes\":[{\"solution_id\":\"demo-solution\",\"project_id\":\"demo-project\",\"project_root\":\"/home/axiom/demo-repo/src\",\"lane_root\":\"/home/axiom/demo-repo/.axiom/graph/demo-solution/demo-project/live\",\"inventory_generation\":1,\"inventory_added\":1,\"inventory_changed\":0,\"inventory_deleted\":0,\"analyzed_files\":1,\"nodes\":2,\"edges\":1,\"published\":true,\"generation_id\":\"611008bd5e65d92d623e32112926fce7ee01f092b620655d8989b08b910c819d\",\"manifest_hash\":\"611008bd5e65d92d623e32112926fce7ee01f092b620655d8989b08b910c819d\",\"current_generation\":\"611008bd5e65d92d623e32112926fce7ee01f092b620655d8989b08b910c819d\"}],\"shutdown\":\"Drained\"}\n",
+  "stderr_tail": "{\"level\":\"info\",\"message\":\"instance lock acquired; running persistent foreground reconcile loop\",\"target\":\"daemon\"}\n",
+  "installed_path": "/home/axiom/.local/share/axiom/installs/ecosystem/versions/0.1.1/bin/axiom-graphd"
+}

@@ -1,0 +1,58 @@
+{
+  "channel": "stable",
+  "components": [
+    {
+      "artifacts": [
+        {
+          "class": "per-user-installer",
+          "platform": "linux-x64",
+          "sha256": "87b6146ba9133b5cbdce2d42a4842b29b1eceb3fb3375201621ecb0a105c4f07",
+          "size_bytes": 4521576,
+          "url": "https://candidate.invalid/axiom-graphd"
+        }
+      ],
+      "component": "axiom-graphd",
+      "declared_source": "K-405 pinned local candidate",
+      "needs_restart": true,
+      "revision": "dc6b7190260f879043354b991e0a4ced76da0ddd",
+      "status": "declared",
+      "version": "0.1.1"
+    },
+    {
+      "artifacts": [
+        {
+          "class": "per-user-installer",
+          "platform": "linux-x64",
+          "sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b",
+          "size_bytes": 214242,
+          "url": "https://candidate.invalid/axiom_mcp-0.1.0-py3-none-any.whl"
+        }
+      ],
+      "component": "axiom-mcp",
+      "declared_source": "K-405 pinned local candidate",
+      "needs_restart": true,
+      "revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+      "status": "declared",
+      "version": "0.1.0"
+    },
+    {
+      "artifacts": [],
+      "component": "skills",
+      "declared_source": "K-405 pinned local candidate",
+      "needs_restart": false,
+      "revision": "eade281614677f96fd86260dc28e1fe0cbdeac0a",
+      "status": "declared",
+      "version": "0.1.0"
+    }
+  ],
+  "manifest_version": 1,
+  "note": "Unsigned local Linux x64 container candidate. No release authority.",
+  "published": false,
+  "trust": {
+    "metadata_expiry": "2027-09-20T00:00:00Z",
+    "metadata_version": 1,
+    "signature_artifact": null,
+    "trust_root": "23e4845c8e76c7cf8642b2c47f759d401345424309aec6b3bf4ad8413b40ee7a"
+  },
+  "updated_at": "2026-09-29T00:00:00Z"
+}
