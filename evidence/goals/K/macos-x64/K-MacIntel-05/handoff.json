@@ -93,5 +93,276 @@
     "completion_sha256": "f9e68cd383d575754bd90ef72ec0e61efd1f611d428f2d5d549eccdfa586c66a",
     "main_integrated": false,
     "release_state": "candidate"
-  }
+  },
+  "parent_ids": [
+    "K-001"
+  ],
+  "environment": {
+    "os": "Darwin",
+    "arch": "x86_64",
+    "execution": "native",
+    "os_version": "26.7",
+    "runtime": "uv managed CPython 3.13.15; CLI/core Mach-O x86_64; MCP 0.1.0",
+    "toolchain": "Rust 1.98.0; cargo 1.98.0; Python 3.13.15; macOS launchctl"
+  },
+  "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+  "input_reports": [
+    {
+      "task_id": "K-101",
+      "path": "axiom-specs/evidence/artifacts/K-101/scope-result.json",
+      "sha256": "1e5b96802d862a122ab6eb16947ca243f7893cf902b55791e886058125ae8b41"
+    },
+    {
+      "task_id": "K-102",
+      "path": "axiom-specs/evidence/artifacts/K-102/scope-result.json",
+      "sha256": "34dc69044fdca245b24b61be870121944c8cfaa036b8750b602f02e24b42d5c3"
+    },
+    {
+      "task_id": "K-104",
+      "path": "axiom-specs/evidence/artifacts/K-104/scope-result.json",
+      "sha256": "d55a6347fa511c7cccfe5810d5c8ae7d8c3665005fb3dc8d4a55904160084f9c"
+    }
+  ],
+  "commands": [
+    {
+      "id": "package",
+      "command": "Build three-binary native Mac x64 release set from pinned CLI/core artifacts (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/package.txt",
+        "sha256": "280e38d1a2676d9f991bdbed6867a836770b98e4a4f2440e22f10c62e87b7686"
+      }
+    },
+    {
+      "id": "compose",
+      "command": "Compose channel from K-101 owner skills source and K-103 MCP wheel with pinned manifest hashes (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/compose.txt",
+        "sha256": "29dd83f5c5a58b421eacac11d63eb42f9fb33c9e0c6a4e38579f443c0ffff8cf"
+      }
+    },
+    {
+      "id": "attach",
+      "command": "Attach K-104 uv managed CPython runtime, offline wheelhouse, wheel and lock (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/attach.txt",
+        "sha256": "33e9f732f06176da355b87db75dcdfe7af7241fece14d6f38bf44a3d3e65f726"
+      }
+    },
+    {
+      "id": "native",
+      "command": "Run native Mac x64 isolated-home distribution harness with full command transcript (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/native-transcript.json",
+        "sha256": "b29e157f1556ce711513e1ca8d62697875cd2eca5cfef1f4a05183987ab13fc8"
+      }
+    },
+    {
+      "id": "archive-check",
+      "command": "Verify all 57 archive files byte-identical to tested release directory (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/archive-check.txt",
+        "sha256": "f52944d20f92d1217101faf086bf2969adfe9e375f23bfd977b5c2f15a76e425"
+      }
+    },
+    {
+      "id": "legacy-bridge",
+      "command": "Run earlier K-001 engine candidate bridge regression (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/legacy-bridge.txt",
+        "sha256": "e5c3ae6e22ee21b65a037e0922d087854b3bec7808d0d8252040f4335cac9122"
+      }
+    },
+    {
+      "id": "cargo-tests",
+      "command": "cargo test --locked (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/cargo-tests.txt",
+        "sha256": "e135eb48ace13838cea3f6e51f48a3b6b5c0ae9d959b8687f9a5acaecdb62ff0"
+      }
+    },
+    {
+      "id": "fmt",
+      "command": "cargo fmt --all -- --check (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/fmt.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "clippy",
+      "command": "cargo clippy --all-targets --locked -- -D warnings (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/clippy.txt",
+        "sha256": "d45006197a58d3591511e8220a2f4a8bd039e9a092cd6a66dbadf79d6dc77af2"
+      }
+    },
+    {
+      "id": "release-build",
+      "command": "cargo build --release --locked (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/release-build.txt",
+        "sha256": "6bfa9e18ffdef821c711a542cfebd7db0982665615563e5a191285e489609c6f"
+      }
+    },
+    {
+      "id": "ruff-check",
+      "command": "ruff check Mac packaging/installer/test Python files (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/ruff-check.txt",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "id": "ruff-format",
+      "command": "ruff format --check Mac packaging/installer/test Python files (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/ruff-format.txt",
+        "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+      }
+    },
+    {
+      "id": "shell-check",
+      "command": "sh -n installers/macos/Install-Distribution.sh (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/shell-check.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "spec-pin",
+      "command": "spec-lock-check.py --lock spec.lock.json --release --json (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/spec-pin.txt",
+        "sha256": "229523f5e9bcc71d8264e927bc17d8e1a2fa898ca6120eeac22ab50832f318b7"
+      }
+    },
+    {
+      "id": "security-review",
+      "command": "Review Git diff, scan source/evidence for secrets and verify preserved data (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-105/security-review.txt",
+        "sha256": "625a86c4acf0130db420b61be383835b02d62c50d688d493a7908f6365f66273"
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1",
+      "passed": true,
+      "command_ids": [
+        "native"
+      ]
+    },
+    {
+      "id": "AC2",
+      "passed": true,
+      "command_ids": [
+        "native",
+        "package",
+        "compose",
+        "attach"
+      ]
+    },
+    {
+      "id": "AC3",
+      "passed": true,
+      "command_ids": [
+        "native",
+        "archive-check"
+      ]
+    },
+    {
+      "id": "AC4",
+      "passed": true,
+      "command_ids": [
+        "native"
+      ]
+    },
+    {
+      "id": "AC5",
+      "passed": true,
+      "command_ids": [
+        "native",
+        "archive-check",
+        "legacy-bridge",
+        "cargo-tests",
+        "fmt",
+        "clippy",
+        "release-build",
+        "ruff-check",
+        "ruff-format",
+        "shell-check",
+        "spec-pin",
+        "security-review"
+      ]
+    }
+  ],
+  "negative_and_failure": "Corrupt payload exit 9; human-edited profile exit 6; unowned executable exit 9 via coordinator with inner conflict; injected failure exit 9 and rollback removes fresh owned activation. Reinstall after uninstall passed.",
+  "spec_lock": {
+    "path": "axiom-specs/evidence/artifacts/K-101/spec.lock.json",
+    "sha256": "288b2491d39762d8225315c976096ac51c1ea76ff50fd813e3b4ca7655269661"
+  },
+  "reference_bases": {
+    "artifacts": "workspace_root",
+    "commands": "workspace_root",
+    "scope_report": "workspace_root",
+    "input_reports": "workspace_root"
+  },
+  "spec_pins": [
+    {
+      "component": "axiom-skills-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-101/spec.lock.json",
+      "sha256": "288b2491d39762d8225315c976096ac51c1ea76ff50fd813e3b4ca7655269661"
+    },
+    {
+      "component": "axiom-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-102/spec.lock.json",
+      "sha256": "810cb38caeeabc453b785bd63c13cd475dc9ed8212827740b5fc9fd5fccdaf44"
+    },
+    {
+      "component": "axiom-mcp-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-103/spec.lock.json",
+      "sha256": "e54bdb7a0ae45a0d6d61ce518788cd53a9c47a61843f9ee94d83576072ff978b"
+    },
+    {
+      "component": "axiom-cli-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-104/spec.lock.json",
+      "sha256": "4f7a81d79bb5b0523f81b8a20d920a5f2f291001dd76fdd35cc598fe24f15561"
+    },
+    {
+      "component": "axiom-cli-k105-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-105/spec.lock.json",
+      "sha256": "4f7a81d79bb5b0523f81b8a20d920a5f2f291001dd76fdd35cc598fe24f15561"
+    }
+  ]
 }
