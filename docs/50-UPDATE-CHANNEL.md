@@ -35,6 +35,15 @@ tests/update_channel.rs  the acceptance and boundary suite (23 legs)
 
 ## The four verbs
 
+For an installation with an active `installs/ecosystem/current` engine pointer,
+all four distribution update verbs currently refuse with
+`composite_activation_not_ready` (exit 4). The J-007 distribution generation
+store and the installed engine ecosystem have separate activation pointers;
+moving either one alone could expose an incompatible CLI/core/MCP set. K-003
+must introduce a shared activation authority and migration before this guard
+can be removed. The existing J-007 fixture store remains testable where no
+engine ecosystem is installed.
+
 ```text
 axiom-cli update check   [--json] [--all]
 axiom-cli update plan    --to <semver> [--out <file>] [--json]

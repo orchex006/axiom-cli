@@ -12,6 +12,13 @@
 
 ## Unreleased
 
+### K-003 composite update safety boundary
+
+Refuse distribution-only check, plan, apply and rollback when an installed
+engine ecosystem pointer exists. The four-verb boundary test confirms the
+engine and distribution pointers remain unchanged. K-106 coordinates the
+candidate composite update separately through the engine's public argv surface.
+
 ### K-001 macOS clean-host entrypoint work (in progress)
 
 - Pin the current four-lane K specification revision. When a release set carries

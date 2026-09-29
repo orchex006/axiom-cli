@@ -181,6 +181,21 @@ fn refusal_report(refusal: &Refusal) -> Report {
 }
 
 fn execute(state: &State, request: &Request) -> Result<Report, Refusal> {
+    // K-003: the J-007 generation store and the installed engine ecosystem do not yet share
+    // an activation authority. Moving only installed.json would expose a mixed release.
+    // Refuse every update verb while the engine pointer exists, including read-only plans that
+    // would otherwise offer an approval for an unsafe apply.
+    let engine_pointer = state.root().join("installs/ecosystem/current");
+    if engine_pointer.exists() {
+        return Err(Refusal::not_ready(
+            "composite_activation_not_ready",
+            format!(
+                "the installed engine ecosystem is active at {}; distribution update needs \
+                 one approved composite activation transaction for CLI, core, MCP and skills",
+                engine_pointer.display()
+            ),
+        ));
+    }
     match request.subcommand {
         Subcommand::Check => check(state, request),
         Subcommand::Plan => plan_verb(state, request),

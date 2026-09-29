@@ -641,6 +641,49 @@ fn check_reads_the_recorded_manifest_and_changes_nothing() {
 }
 
 #[test]
+fn k003_refuses_distribution_only_verbs_with_an_active_engine() {
+    let fixture = Fixture::new("composite-guard", Mode::Published);
+    let engine = fixture.root.join("installs/ecosystem/current");
+    std::fs::create_dir_all(engine.parent().unwrap()).unwrap();
+    std::fs::write(&engine, b"owner engine pointer\n").unwrap();
+    let installed_before = digest_of(&fixture.root.join("installed.json"));
+    let engine_before = digest_of(&engine);
+    let plan_path = fixture.plan_path.to_string_lossy().to_string();
+    for args in [
+        vec!["update", "check", "--json"],
+        vec![
+            "update",
+            "plan",
+            "--to",
+            TARGET_VERSION,
+            "--out",
+            &plan_path,
+            "--json",
+        ],
+        vec![
+            "update",
+            "apply",
+            "--plan",
+            &plan_path,
+            "--approve-digest",
+            ZERO_DIGEST,
+            "--json",
+        ],
+        vec!["update", "rollback", "--transaction", "previous", "--json"],
+    ] {
+        let (code, out, _) = run(&fixture, &args);
+        assert_eq!(code, NOT_READY, "{args:?}: {out}");
+        assert_eq!(field(&out, "reason_code"), "composite_activation_not_ready");
+        assert_eq!(
+            digest_of(&fixture.root.join("installed.json")),
+            installed_before
+        );
+        assert_eq!(digest_of(&engine), engine_before);
+        assert!(!fixture.plan_path.exists());
+    }
+}
+
+#[test]
 fn check_with_no_installed_release_and_no_named_manifest_is_not_ready() {
     let empty = std::env::temp_dir().join(format!("axiom-cli-j007-nr-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&empty);
