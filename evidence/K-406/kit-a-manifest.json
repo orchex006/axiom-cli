@@ -1,0 +1,16 @@
+{
+  "candidate_archive_sha256": "cad005d9171d6275febdfe119b15654aea74ba6c9a448b5322d19f14ae38c58c",
+  "certified": false,
+  "files": {
+    "AxiomCli.Linux.Common.sh": "89c3d0ec6858d950dcb7e09acc3a0d6da3114d8ca2f60f91236e84a5a7986513",
+    "Install-AxiomCli.sh": "ceb4edaa65196962c563c77b9283f3a56aad55636a1938ac11a834b9462410ac",
+    "Update-Distribution.py": "a1e6d5014a07ec5a6121e325577efd1af1705737deb09826c779d2df72e292a8",
+    "candidate-files.json": "9207d0c0ce9fc8fa062c2234f0bac008a5150e2ecfa0e7b624ea06e5681749ca",
+    "cli-release/axiom-cli": "02d7c19861f5ef21b5a329298ca6c6080c8922f5cdca8e4cb2d86c4e3430dd6b",
+    "cli-release/release-set.json": "6bc74285305281ebdcf1402c51647f380df47e6589189fdc291219a3acb26196",
+    "runtime-input.json": "bbd8ea260dcd3f6486009baf299564f25a2d37a4ff6e59b5f8e69b93230d0113"
+  },
+  "lane": "container-linux-x64",
+  "published": false,
+  "task_id": "K-406"
+}

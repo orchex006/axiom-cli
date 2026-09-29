@@ -1,0 +1,1 @@
+{"archive_sha256": "a2688dc79fd2e6a92142217c66c380f693f8ae869128c013b660951c806c553e", "candidate_manifest_sha256": "bff2727cf72f8ed64ac65467ce384e2d1a5545e8ef5b6646bc2e1dffd2077281", "sbom_sha256": "0aed3a3eacf18524d4c1a8305ff1633624d8e5d0bb58b0f01c2393b9ae3bda9f", "source_revision": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83"}

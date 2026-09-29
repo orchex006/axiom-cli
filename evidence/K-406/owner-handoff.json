@@ -1,0 +1,216 @@
+{
+  "artifacts": [
+    {
+      "path": "evidence/K-406/axiom-0.1.0-linux-x64.tar.gz",
+      "sha256": "a2688dc79fd2e6a92142217c66c380f693f8ae869128c013b660951c806c553e"
+    },
+    {
+      "path": "evidence/K-406/core-a-manifest.json",
+      "sha256": "bff2727cf72f8ed64ac65467ce384e2d1a5545e8ef5b6646bc2e1dffd2077281"
+    },
+    {
+      "path": "evidence/K-406/axiom-0.1.0-container-linux-x64-candidate.tar.gz",
+      "sha256": "cad005d9171d6275febdfe119b15654aea74ba6c9a448b5322d19f14ae38c58c"
+    },
+    {
+      "path": "evidence/K-406/candidate-a-files.json",
+      "sha256": "9207d0c0ce9fc8fa062c2234f0bac008a5150e2ecfa0e7b624ea06e5681749ca"
+    },
+    {
+      "path": "evidence/K-406/axiom-0.1.0-container-linux-x64-update-kit.tar.gz",
+      "sha256": "93deb468f2a77085cb5a60936819cdf11c6de4edf9771c881248557d99cedfa9"
+    },
+    {
+      "path": "evidence/K-406/axiom-0.1.1-container-linux-x64-candidate.tar.gz",
+      "sha256": "e51bcec8a7ae0c6c3c1fab846aa4b3de357e4163422644c344f41bc9e5ad0aff"
+    },
+    {
+      "path": "evidence/K-406/candidate-b-files.json",
+      "sha256": "cdc9b208b479fd2cb42046698c9e76f995a0c6c2f52f5787a8c8bd3d9efbe527"
+    },
+    {
+      "path": "evidence/K-406/axiom-0.1.1-container-linux-x64-update-kit.tar.gz",
+      "sha256": "ac13cfddeffbd720965b4415f65de8fb74bf9c457527eda9c4f5ac0e50452312"
+    },
+    {
+      "path": "evidence/K-406/kit-b-manifest.json",
+      "sha256": "cbd789b8ef17ce219ea1b7c058b664b1e8c6d3920a17faf4aa12a415f2ce340b"
+    },
+    {
+      "path": "evidence/K-406/oci-b-identity.json",
+      "sha256": "b2af864e1d284710bc5d57fa787146d8c71b81180d8743174eb16cad79e5c99a"
+    },
+    {
+      "path": "evidence/K-406/input-map.json",
+      "sha256": "e546789c5f4fc1256d6c2535fc8a03145f607c74774a82bd5fc7cc522bda51aa"
+    },
+    {
+      "path": "evidence/K-406/negative.json",
+      "sha256": "403d6d154d754d55921b047d685eada77fad3912d3272330162f00b8763e36b6"
+    },
+    {
+      "path": "evidence/K-406/owner-review.md",
+      "sha256": "370af3690b6ea76896ef794925b50e964cb5462d11bf450b79fe4531ec3e4e40"
+    }
+  ],
+  "candidate": true,
+  "certified": false,
+  "cli_binary_source_revision": "c9299660ddb526a57d3b4f07514e14aa65be152c",
+  "commands": [
+    {
+      "command": "Native Debian 12 x86_64 cargo build --release --locked from exact graphd e5a30e2 revision",
+      "exit_code": 0,
+      "id": "core-a-build",
+      "output": "evidence/K-406/core-a-build.txt",
+      "output_sha256": "a6f03589a22ac40cfc3354af768ce98b2c95e24a89442de143b6e9e8307b768a"
+    },
+    {
+      "command": "Native Linux owner package_core.py from clean graphd e5a30e2 revision",
+      "exit_code": 0,
+      "id": "core-a-package",
+      "output": "evidence/K-406/core-a-package.txt",
+      "output_sha256": "b0302d5665383ac5742aae35a0fd504780bdcc8d5845a7e7774a79654ef18c87"
+    },
+    {
+      "command": "Build-ContainerCandidate.py with pinned A core/CLI and K-401/K-403/K-404 inputs",
+      "exit_code": 0,
+      "id": "compose-a",
+      "output": "evidence/K-406/candidate-a-compose.json",
+      "output_sha256": "8b19969e1cf574b8441a4a885fef80f4b47af7f89be85a9ee27469a623bbbd60"
+    },
+    {
+      "command": "Build-ContainerCandidate.py with B OCI-extracted CLI, K-402 core and pinned shared inputs",
+      "exit_code": 0,
+      "id": "compose-b",
+      "output": "evidence/K-406/candidate-b-compose.json",
+      "output_sha256": "d4787f5f9b68c52fb6167bd8a1c013ef34d1572c6fde8a9e7ae0628452d076df"
+    },
+    {
+      "command": "Build-UpdateKit.py from exact B candidate and owner scripts",
+      "exit_code": 0,
+      "id": "kit-build",
+      "output": "evidence/K-406/kit-b-build.json",
+      "output_sha256": "e621751976cb7fbfb9d9f31f80ec0eadb286ba2fb5d753e0cec95af26ca85155"
+    },
+    {
+      "command": "Rebuild B kit and compare archive SHA byte for byte",
+      "exit_code": 0,
+      "id": "kit-rebuild",
+      "output": "evidence/K-406/kit-b-rebuild.json",
+      "output_sha256": "e621751976cb7fbfb9d9f31f80ec0eadb286ba2fb5d753e0cec95af26ca85155"
+    },
+    {
+      "command": "docker build --platform linux/amd64 with pinned base images and exact source revision",
+      "exit_code": 0,
+      "id": "oci-build",
+      "output": "evidence/K-406/oci-b-build.txt",
+      "output_sha256": "92ece43894e7600520ae0c9bb379b88bdaa814742f61514f3dc25fd23c5f0284"
+    },
+    {
+      "command": "K-404 provisioner in owned Debian 12 x86_64 volume",
+      "exit_code": 0,
+      "id": "runtime",
+      "output": "evidence/K-406/runtime-provision-a.json",
+      "output_sha256": "1bf4bcfa7465e8e4e3584f7dedd3dc1d5dbcaf68e0d9af8e6ddf8cc4c16d4668"
+    },
+    {
+      "command": "J-008 Linux CLI installer approved install of A into owned volume",
+      "exit_code": 0,
+      "id": "install-a",
+      "output": "evidence/K-406/cli-install-a.json",
+      "output_sha256": "fedba4aad3f6e0b7383a245d759284f0c59f3cee868dc3dd507e34cfc46e3aab"
+    },
+    {
+      "command": "Installed A graphd query and persistent watcher on real C# source",
+      "exit_code": 0,
+      "id": "query-a",
+      "output": "evidence/K-406/query-a.json",
+      "output_sha256": "694ad2e0c05bb67030cc9b34a6d3c67f83b726ec11ba285e4b340b297d2642c5"
+    },
+    {
+      "command": "Public update plan from B OCI image with exact B kit",
+      "exit_code": 0,
+      "id": "plan-b",
+      "output": "evidence/K-406/plan-b.json",
+      "output_sha256": "c322fa1e9be3571a52108d5e85790a535157d9a507da3511450375c4e0b5dc89"
+    },
+    {
+      "command": "Public approved update apply from B OCI image",
+      "exit_code": 0,
+      "id": "apply-b",
+      "output": "evidence/K-406/apply-b.json",
+      "output_sha256": "aa2ef6bbdd26368f3346c1389aa7e18b5694907b5845138f332eff00f8a6b77c"
+    },
+    {
+      "command": "Public update check from B OCI image",
+      "exit_code": 0,
+      "id": "check-b",
+      "output": "evidence/K-406/check-b.json",
+      "output_sha256": "e30320ffe05e5f345feefdaba009b89a0bdd8a772a3de6c18aeb8648469cb5f0"
+    },
+    {
+      "command": "Installed B graphd query and persistent watcher on same real source",
+      "exit_code": 0,
+      "id": "query-b",
+      "output": "evidence/K-406/query-b.json",
+      "output_sha256": "81fe19b20dd67c93e53416efc01dbc5374ea7ac21db0ebeeacf289693a117382"
+    },
+    {
+      "command": "Public update rollback from B OCI image",
+      "exit_code": 0,
+      "id": "rollback",
+      "output": "evidence/K-406/rollback.json",
+      "output_sha256": "6fb3dc4edfee3e366b0b2fd5bbac70fffaf419d26b370c0c8e061be366ebb351"
+    },
+    {
+      "command": "Installed restored A query and persistent watcher",
+      "exit_code": 0,
+      "id": "query-rollback",
+      "output": "evidence/K-406/query-rollback.json",
+      "output_sha256": "9309e8c35a8698c160b38a4e5e34613d3cc78de8b0872cd2aec2e4da52d58ce6"
+    },
+    {
+      "command": "Eight native candidate refusal and failure-injection cases",
+      "exit_code": 0,
+      "id": "negative",
+      "output": "evidence/K-406/negative.json",
+      "output_sha256": "403d6d154d754d55921b047d685eada77fad3912d3272330162f00b8763e36b6"
+    },
+    {
+      "command": "Cargo fmt/clippy/202 tests/release build, Ruff, Python and shell syntax",
+      "exit_code": 0,
+      "id": "owner-checks",
+      "output": "evidence/K-406/owner-checks.txt",
+      "output_sha256": "cb028247fc591499814c4410c7382eb837792d6821d511b64834acc64c494987"
+    }
+  ],
+  "delivery": {
+    "main_integrated": false,
+    "release_state": "candidate",
+    "source_branch": "feature/k-406-container-update",
+    "source_commit": "a9ffc2c8b5046fd36e030c1f63248acda4d003a7"
+  },
+  "input_scope_report_sha256": "a8b03f962840503cf1d67eebb425e12d671bf46d287493d8e439649ca289a73a",
+  "lane": "container-linux-x64",
+  "limitations": [
+    "Candidate-specific unsigned local plan, not published canonical release metadata.",
+    "No systemd user manager; foreground supervisor path used and service-restart failure injected after engine activation.",
+    "Native WSL2/Windows, independent review and release publication remain open."
+  ],
+  "owner": "axiom-cli",
+  "published": false,
+  "results": {
+    "cli_after_sha256": "488ddfa41ea757a1e5e645e7764320d2547d654889fe1fcfa90f7970893f7d6d",
+    "cli_before_sha256": "02d7c19861f5ef21b5a329298ca6c6080c8922f5cdca8e4cb2d86c4e3430dd6b",
+    "core_after_sha256": "87b6146ba9133b5cbdce2d42a4842b29b1eceb3fb3375201621ecb0a105c4f07",
+    "core_before_sha256": "c34f9bcee0b45a9e6d3a661669943627bee1047b365ab6282250eba3c0b39bea",
+    "negative_cases_passed": 8,
+    "query_watch_a": true,
+    "query_watch_b": true,
+    "query_watch_rollback": true,
+    "user_data_preserved": true
+  },
+  "source_revision": "a9ffc2c8b5046fd36e030c1f63248acda4d003a7",
+  "status": "local_verified",
+  "task_id": "K-406"
+}

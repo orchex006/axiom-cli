@@ -1,0 +1,2 @@
+   Compiling axiom-cli v0.1.0 (/src)
+    Finished `release` profile [optimized] target(s) in 22.58s
