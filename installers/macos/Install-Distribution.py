@@ -671,6 +671,22 @@ def run_rollback(
     retained = root / "entrypoints/versions" / before["release_set_sha256"]
     verify(retained / "axiom-cli", before["cli_sha256"])
     verify(retained / "axiom", before["engine_cli_sha256"])
+    if installed["runtime_pointer_sha256"] != before["runtime_pointer_sha256"]:
+        runtime_dir = root / "mcp-runtime"
+        verify(runtime_dir / "previous.json", before["runtime_pointer_sha256"])
+        planned_runtime = command(
+            [
+                sys.executable,
+                str(provision),
+                "rollback",
+                "--root",
+                str(runtime_dir),
+                "--dry-run",
+            ],
+            env,
+        )
+        if planned_runtime["body"].get("status") != "rollback_planned":
+            raise ValueError("runtime rollback preflight did not verify A")
     result = command(
         [
             str(release / "axiom"),

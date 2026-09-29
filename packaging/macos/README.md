@@ -114,6 +114,11 @@ sets of pointer hashes. `runtime/bootstrap.sh rollback --release-set <B>` has
 the same dry-run and approval pattern and asks the engine to restore its
 retained A generation. The legacy distribution-only `axiom-cli update` verbs
 refuse while an engine ecosystem pointer exists.
+The runtime rollback target is verified with `provision.py rollback --dry-run`
+before the engine pointer changes; the coordinator also binds the retained
+runtime pointer bytes to the approved A state. This preflight rejects known
+missing or corrupted A runtime inputs but cannot prevent a later I/O failure
+or process death during rollback.
 
 The coordinator writes `distribution-update-pending.json` before mutation and
 uses an OS lock released on process exit. It refuses another operation while

@@ -64,3 +64,16 @@ recovery is still absent:
 the engine public rollback rejects a journal left at `prepared`, and no
 distinct A/B native crash run has been performed. Do not infer atomic
 cross-component recovery from these focused tests.
+
+Explicit rollback now checks the retained A runtime pointer hash and runs
+`provision.py rollback --dry-run` before engine rollback. The provisioner
+validates retained executable/Python hashes and the active runtime pointer
+without mutation. A focused refusal test confirms that changed A runtime
+bytes stop before the engine command (`rollback-preflight-tests.txt`, seven
+focused cases total). This removes a predictable mixed-state
+failure, but a later I/O error or process death can still interrupt rollback;
+AC2 remains open.
+The existing native K-104 runtime harness also passed all nine reported
+provision/refusal/rollback/removal cases against the pinned interpreter,
+wheelhouse, wheel and lock (`runtime-regression.txt`). It does not exercise
+the composite A→B distribution update.

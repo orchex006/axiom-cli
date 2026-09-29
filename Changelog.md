@@ -22,7 +22,9 @@ and refusal/compensation probes passed; a distinct source-pinned B core is
 still needed for full A/B update and rollback acceptance. A pending record now
 precedes mutation, the update lock releases on process exit, and compensation
 checks the actual runtime pointer after provision errors. Interrupted engine
-`prepared` journals still need a public recovery path. No release is claimed.
+`prepared` journals still need a public recovery path. Explicit rollback now
+checks retained A runtime bytes and a read-only runtime rollback plan before
+asking the engine to move its pointer. No release is claimed.
 
 ### K-003 composite update safety boundary
 

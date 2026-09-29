@@ -274,13 +274,15 @@ def provision(args: argparse.Namespace) -> dict:
         raise
 
 
-def rollback(root: Path) -> dict:
+def rollback(root: Path, *, dry_run: bool = False) -> dict:
     previous = read_json(root / "previous.json")
     if previous is None:
         raise ValueError("no previous owned runtime to restore")
     owned_version(root, previous["generation"])
-    verified = report(root, previous, "rolled_back")
+    verified = report(root, previous, "rollback_planned" if dry_run else "rolled_back")
     current = pointer(root)
+    if dry_run:
+        return verified
     if current:
         atomic_json(root / "previous.json", current)
     atomic_json(root / "current.json", previous)
@@ -328,13 +330,16 @@ def main() -> int:
         install.add_argument("--" + name + "-sha256", required=True)
     install.add_argument("--interrupt-before-activate", action="store_true")
     for name in ("status", "rollback", "remove"):
-        sub.add_parser(name).add_argument("--root", type=Path, required=True)
+        action = sub.add_parser(name)
+        action.add_argument("--root", type=Path, required=True)
+        if name == "rollback":
+            action.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     try:
         if args.action == "provision":
             result = provision(args)
         elif args.action == "rollback":
-            result = rollback(args.root.resolve())
+            result = rollback(args.root.resolve(), dry_run=args.dry_run)
         elif args.action == "remove":
             result = remove(args.root.resolve())
         else:
