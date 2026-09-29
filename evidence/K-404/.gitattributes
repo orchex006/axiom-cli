@@ -1,0 +1,3 @@
+*.tar.gz -text
+*.whl -text
+owner-checks.txt -whitespace

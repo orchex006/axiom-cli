@@ -1,0 +1,33 @@
+{
+  "certified": false,
+  "lane": "container-linux-x64",
+  "mcp": {
+    "dependency_lock": "container-linux-x64-py313-requirements.txt",
+    "dependency_lock_sha256": "ce2e686592de779dd980a20474ed8a317cb05487b8e4388cebfea9a73e000cb6",
+    "input_scope_report_sha256": "cc33ee20685978653432890035e610292537e83d2b78285c846a5980b5c74349",
+    "source_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "wheel": "axiom_mcp-0.1.0-py3-none-any.whl",
+    "wheel_sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b"
+  },
+  "provisioner_source_revision": "63307ef11bbbae79ed0bb35754bad1c5858eeeb9",
+  "runtime": {
+    "archive": "cpython-3.13.15-linux-x64-candidate.tar.gz",
+    "implementation": "uv managed CPython",
+    "repacked_regular_files": true,
+    "sha256": "64f1f07d2f05ab6f7e670eb5e5d297f1429aa42c667a4360c33845471b7b55ea",
+    "source_uv_binary_sha256": "671793498fe0a545432e2524b6691ffb9eea4540d9fda43ca2f978df2dbf8426",
+    "source_uv_wheel": "uv-0.12.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "source_uv_wheel_sha256": "5badfd805fd88bf99b4b4f044f6e8f762f1892cab27477f4427bb473e93dd049",
+    "source_uv_wheel_url": "https://files.pythonhosted.org/packages/37/4b/cd04809c7ad5149faac55160925bd67aab43f803f6c01be1c32aec7d24d9/uv-0.12.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "version": "3.13.15"
+  },
+  "status": "candidate",
+  "task_id": "K-404",
+  "wheelhouse": {
+    "archive": "wheelhouse-linux-x64-py313.tar.gz",
+    "manifest": "wheelhouse-manifest.json",
+    "manifest_sha256": "e3907dba768c824c4b8943c725b6beecbb1b48c6e38f2a757584eb4d51bc9f55",
+    "packages": 31,
+    "sha256": "ca1a141f19000f16cec4fa1ed485e13ca0beee7f90183a4504bc9d31532cb1e4"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "acceptance": {
+    "AC1": "passed: Linux x64 uv managed 3.13.15 archive and K-403 hash-locked wheels provisioned from clean isolated home with sanitized PATH; installed imports and pip check pass",
+    "AC2": "passed: absolute Python/MCP executable and SHA records emitted; prior generation preserved on all injected failures and verified before engine PATH handoff",
+    "AC3": "passed: rollback to retained generation, changed retained launcher refusal, and owned-only removal preserve user sentinel",
+    "AC4": "passed: owner fmt/clippy/test/release build, scoped review and canonical completion recorded separately"
+  },
+  "artifacts": [
+    {
+      "path": "evidence/K-404/cpython-3.13.15-linux-x64-candidate.tar.gz",
+      "sha256": "64f1f07d2f05ab6f7e670eb5e5d297f1429aa42c667a4360c33845471b7b55ea"
+    },
+    {
+      "path": "evidence/K-404/wheelhouse-linux-x64-py313.tar.gz",
+      "sha256": "ca1a141f19000f16cec4fa1ed485e13ca0beee7f90183a4504bc9d31532cb1e4"
+    },
+    {
+      "path": "evidence/K-404/wheelhouse-manifest.json",
+      "sha256": "e3907dba768c824c4b8943c725b6beecbb1b48c6e38f2a757584eb4d51bc9f55"
+    },
+    {
+      "path": "evidence/K-404/axiom_mcp-0.1.0-py3-none-any.whl",
+      "sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b"
+    },
+    {
+      "path": "evidence/K-404/container-linux-x64-py313-requirements.txt",
+      "sha256": "ce2e686592de779dd980a20474ed8a317cb05487b8e4388cebfea9a73e000cb6"
+    },
+    {
+      "path": "evidence/K-404/runtime-input.json",
+      "sha256": "bbd8ea260dcd3f6486009baf299564f25a2d37a4ff6e59b5f8e69b93230d0113"
+    },
+    {
+      "path": "evidence/K-404/input-integrity.json",
+      "sha256": "40d9a606be3dbdd1b5a1cf63d76784a2d2f8a96470957835925c15123a006fe1"
+    }
+  ],
+  "candidate": true,
+  "certified": false,
+  "commands": [
+    {
+      "command": "uv 0.12.9 python install 3.13.15 --install-dir /out/uv-python --managed-python in Debian 12 x86_64 container",
+      "exit_code": 0,
+      "id": "uv-install",
+      "output": "evidence/K-404/uv-python-install.txt",
+      "output_sha256": "a0f578d858ba66fd19d74dcdfc2f4118cc91f1e2070f500d1768a6c48f18cf59"
+    },
+    {
+      "command": "CPython 3.13.15 -m pip download --require-hashes --only-binary=:all: -r requirements.txt -d wheelhouse in Debian 12 x86_64 container",
+      "exit_code": 0,
+      "id": "wheelhouse-download",
+      "output": "evidence/K-404/wheelhouse-download.txt",
+      "output_sha256": "bc758b641bfefa6cf6d1482abe82a16a28ee612012e4344459406cbee872e462"
+    },
+    {
+      "command": "python3 tests/linux/test_mcp_runtime.py with exact four K-404 candidate inputs in Debian 12 x86_64 container, sanitized PATH",
+      "exit_code": 0,
+      "id": "native-runtime",
+      "output": "evidence/K-404/native-runtime-test.txt",
+      "output_sha256": "b51e0e27ca33375a2c95e36194f3db53adf445882113138d06f9e9f2d07f5381"
+    },
+    {
+      "command": "cargo fmt --all -- --check && cargo clippy --locked --all-targets -- -D warnings && cargo test --locked && cargo build --release --locked on macOS x64; host checkout paths redacted",
+      "exit_code": 0,
+      "id": "owner-checks",
+      "output": "evidence/K-404/owner-checks.txt",
+      "output_sha256": "95ddd56ae2dd315ed0edc976832cb44a58486e370e47fb43c3f55121332e85e6"
+    }
+  ],
+  "delivery": {
+    "main_integrated": false,
+    "release_state": "candidate",
+    "source_branch": "feature/k-404-container-mcp-runtime",
+    "source_commit": "63307ef11bbbae79ed0bb35754bad1c5858eeeb9",
+    "source_remote_verified": true
+  },
+  "environment": {
+    "native_test": "Debian GNU/Linux 12 x86_64 Docker image sha256:b29b6f802639ca8f495cd8d56613b74c89f20285827225ebc4bb0e9a211611fb",
+    "owner_rust_checks": "macOS 26.7 x86_64"
+  },
+  "input_scope_report_sha256": "cc33ee20685978653432890035e610292537e83d2b78285c846a5980b5c74349",
+  "lane": "container-linux-x64",
+  "limitations": [
+    "K-405 full distribution install/service and K-407 query are separate tasks.",
+    "Native WSL2/Windows, release signing and publication unverified.",
+    "Independent review/main integration pending."
+  ],
+  "next_consumers": [
+    "K-405 container distribution composition",
+    "K-407 installed MCP integration"
+  ],
+  "owner": "axiom-cli",
+  "results": {
+    "clean_provision": true,
+    "corrupt_runtime_refused": true,
+    "corrupt_wheel_refused": true,
+    "idempotency": true,
+    "installed_import": true,
+    "interrupted_provision_refused": true,
+    "missing_dependency_refused": true,
+    "owned_removal_preserved_user_data": true,
+    "pip_check": true,
+    "runtime_rollback": true,
+    "rust_tests_passed": 202,
+    "unsupported_interpreter_refused": true
+  },
+  "source_revision": "63307ef11bbbae79ed0bb35754bad1c5858eeeb9",
+  "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+  "status": "local_verified",
+  "task_id": "K-404"
+}

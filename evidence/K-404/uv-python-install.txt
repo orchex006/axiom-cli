@@ -1,0 +1,6 @@
+uv 0.12.9 (x86_64-unknown-linux-gnu)
+Downloading cpython-3.13.15-linux-x86_64-gnu (download) (33.2MiB)
+ Downloaded cpython-3.13.15-linux-x86_64-gnu (download)
+Installed Python 3.13.15 in 8.99s
+ + cpython-3.13.15-linux-x86_64-gnu (python3.13)
+warning: `/root/.local/bin` is not on your PATH. To use installed Python executables, add the directory to your PATH.
