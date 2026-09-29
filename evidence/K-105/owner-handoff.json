@@ -1,0 +1,29 @@
+{
+  "task_id": "K-105",
+  "status": "local_verified",
+  "certified": false,
+  "lane": "macos-x64",
+  "source_revision": "f58f435e9592ea6c2480006de4b2c0119223ec92",
+  "source_branch": "feature/k-105-macos-distribution",
+  "input_reports": {
+    "K-101": "1e5b96802d862a122ab6eb16947ca243f7893cf902b55791e886058125ae8b41",
+    "K-102": "34dc69044fdca245b24b61be870121944c8cfaa036b8750b602f02e24b42d5c3",
+    "K-104": "d55a6347fa511c7cccfe5810d5c8ae7d8c3665005fb3dc8d4a55904160084f9c"
+  },
+  "candidate_archive": "evidence/K-105/distribution-macos-x64-candidate.tar.gz",
+  "candidate_archive_sha256": "caeee2470868b67367c27bbfc368171ba744bcf92c18afafe85d61a9fca2c86f",
+  "channel_sha256": "2fe31a81ae2bbe5714971f56279b053b6335520054c454f6e94b5f794d4a7f7a",
+  "release_set_sha256": "902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723",
+  "runtime_manifest_sha256": "068e2eee75f3d224f0815b5dab662e88e97451519a1f4640d3e29fef94bcfa72",
+  "native_transcript": "evidence/K-105/native-transcript.json",
+  "native_transcript_sha256": "b29e157f1556ce711513e1ca8d62697875cd2eca5cfef1f4a05183987ab13fc8",
+  "signing": "unsigned",
+  "notarization": "not_notarized",
+  "publication": false,
+  "next_consumer": "K-106 Mac x64 installed update and rollback",
+  "limitations": [
+    "The candidate is not a signed or notarized release and has no production download URL.",
+    "K-106 owns update; K-107 owns full MCP query and process behavior.",
+    "Independent main-integration review remains pending."
+  ]
+}

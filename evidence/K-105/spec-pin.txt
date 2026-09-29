@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "lock": "spec.lock.json",
+  "spec_root": null,
+  "release": true,
+  "reasons": []
+}

@@ -1,0 +1,51 @@
+{
+  "release_set_version": 1,
+  "release_version": "0.1.0",
+  "platform": "macos-x64",
+  "target_triple": "x86_64-apple-darwin",
+  "libc": "libSystem",
+  "arch": "x86_64",
+  "generated_by": "packaging/macos-arm64/Build-ReleaseSet.sh",
+  "carries_components": [
+    "axiom-cli",
+    "axiom",
+    "axiom-graphd"
+  ],
+  "user_service": null,
+  "artifacts": [
+    {
+      "name": "axiom-cli",
+      "component": "axiom-cli",
+      "version": "0.1.0",
+      "arch": "x86_64",
+      "sha256": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+      "size_bytes": 1025360,
+      "archive": "axiom-cli",
+      "kind": "executable"
+    },
+    {
+      "name": "axiom",
+      "component": "axiom",
+      "version": "0.1.0",
+      "revision": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83",
+      "arch": "x86_64",
+      "sha256": "d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528",
+      "size_bytes": 3656392,
+      "archive": "axiom",
+      "kind": "executable"
+    },
+    {
+      "name": "axiom-graphd",
+      "component": "axiom-graphd",
+      "version": "0.1.0",
+      "revision": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83",
+      "arch": "x86_64",
+      "sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+      "size_bytes": 4051152,
+      "archive": "axiom-graphd",
+      "kind": "executable"
+    }
+  ],
+  "signing": "unsigned",
+  "notarization": "not_notarized"
+}

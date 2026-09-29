@@ -1,0 +1,58 @@
+{
+  "channel": "stable",
+  "components": [
+    {
+      "artifacts": [
+        {
+          "class": "per-user-installer",
+          "platform": "macos-x64",
+          "sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+          "size_bytes": 4051152,
+          "url": "https://candidate.invalid/axiom-graphd"
+        }
+      ],
+      "component": "axiom-graphd",
+      "declared_source": "Mac release-set.json",
+      "needs_restart": true,
+      "revision": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83",
+      "status": "declared",
+      "version": "0.1.0"
+    },
+    {
+      "artifacts": [
+        {
+          "class": "per-user-installer",
+          "platform": "macos-x64",
+          "sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b",
+          "size_bytes": 214242,
+          "url": "https://candidate.invalid/axiom_mcp-0.1.0-py3-none-any.whl"
+        }
+      ],
+      "component": "axiom-mcp",
+      "declared_source": "pinned owner wheel metadata and digest",
+      "needs_restart": true,
+      "revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+      "status": "declared",
+      "version": "0.1.0"
+    },
+    {
+      "artifacts": [],
+      "component": "skills",
+      "declared_source": "owner-source skills manifest",
+      "needs_restart": false,
+      "revision": "eade281614677f96fd86260dc28e1fe0cbdeac0a",
+      "status": "declared",
+      "version": "0.1.0"
+    }
+  ],
+  "manifest_version": 1,
+  "note": "Unsigned local Intel Mac candidate; no release or trust certification.",
+  "published": false,
+  "trust": {
+    "metadata_expiry": "2027-09-20T00:00:00Z",
+    "metadata_version": 1,
+    "signature_artifact": null,
+    "trust_root": "23e4845c8e76c7cf8642b2c47f759d401345424309aec6b3bf4ad8413b40ee7a"
+  },
+  "updated_at": "2026-09-29T08:09:11Z"
+}
