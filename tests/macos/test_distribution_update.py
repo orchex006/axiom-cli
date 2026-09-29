@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import shutil
 import subprocess
 import tempfile
 import time
@@ -326,6 +327,22 @@ def main() -> int:
             )
             a_state = state(home)
             a_details = generation_details(home)
+            corrupt = test_root / "B-corrupt"
+            shutil.copytree(b, corrupt)
+            with (corrupt / "axiom").open("ab") as stream:
+                stream.write(b"corrupt K-106 candidate")
+            distribution(corrupt, env, trace, "update", "--dry-run", expected=9)
+            if state(home) != a_state:
+                raise AssertionError("corrupt B changed installed A")
+            incompatible = test_root / "B-incompatible"
+            shutil.copytree(b, incompatible)
+            channel_path = incompatible / "channel.json"
+            channel = json.loads(channel_path.read_text())
+            channel["components"][0]["revision"] = "f" * 40
+            channel_path.write_text(json.dumps(channel) + "\n")
+            distribution(incompatible, env, trace, "update", "--dry-run", expected=9)
+            if state(home) != a_state:
+                raise AssertionError("incompatible B changed installed A")
             plan = distribution(b, env, trace, "update", "--dry-run")
             updated = distribution(
                 b, env, trace, "update", "--apply", plan["plan_digest"]
@@ -435,6 +452,10 @@ def main() -> int:
                 "engine_transaction": updated["engine_transaction"],
                 "rollback_status": rolled["status"],
                 "failure_boundaries": failures,
+                "candidate_refusals": {
+                    "corrupt": "A preserved",
+                    "incompatible": "A preserved",
+                },
                 "user_data_preserved": True,
             }
         finally:

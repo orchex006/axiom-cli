@@ -1,0 +1,10 @@
+{
+  "certified": false,
+  "crash_phase": "after_engine_report_before_transaction_capture",
+  "exact_a_restored": true,
+  "lane": "macos-x64",
+  "recovery_status": "recovered",
+  "status": "local_verified",
+  "update_retry_and_rollback": true,
+  "user_data_preserved": true
+}

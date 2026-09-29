@@ -1,0 +1,51 @@
+{
+  "candidate_a": {
+    "channel_sha256": "2fe31a81ae2bbe5714971f56279b053b6335520054c454f6e94b5f794d4a7f7a",
+    "cli_sha256": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+    "core_revision": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83",
+    "core_sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+    "core_version": "0.1.0",
+    "mcp_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "mcp_version": "0.1.0",
+    "release_set_sha256": "902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723",
+    "runtime_manifest_sha256": "068e2eee75f3d224f0815b5dab662e88e97451519a1f4640d3e29fef94bcfa72",
+    "skills_version": "0.1.0"
+  },
+  "candidate_a_archive_sha256": "caeee2470868b67367c27bbfc368171ba744bcf92c18afafe85d61a9fca2c86f",
+  "candidate_b": {
+    "channel_sha256": "5815f86294d8d56946ee07fd03bf9cdc40d090254ae7777f453c9ef52a8b39aa",
+    "cli_sha256": "99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d",
+    "core_revision": "c4f643ebf7af95395d12cbba8572e7065254e8b4",
+    "core_sha256": "2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378",
+    "core_version": "0.1.1",
+    "mcp_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "mcp_version": "0.1.0",
+    "release_set_sha256": "4938f5f3566b6171b51024ba1989c4a93696316b0c82f1e58b97cb25468cdf1d",
+    "runtime_manifest_sha256": "7f0b3102f37035f0da9e17cce886bfff3fe9460243d7ac6ecf613dda6ff504c4",
+    "skills_version": "0.1.0"
+  },
+  "candidate_b_archive_sha256": "5e8c7efb2c40acf8c1b29af5061962090d12e02b391de5de5ea441cb67f1314e",
+  "certified": false,
+  "cli_source_revision": "e6b9d2086ba62b5b32c33fe2c3edc49353a22851",
+  "core_source_revision": "c4f643ebf7af95395d12cbba8572e7065254e8b4",
+  "evidence_sha256": {
+    "crash-report.json": "e49265d8524dfd1302188e4ee1f753f0119fdd9049d03900240a3b19915bdd8e",
+    "crash-transcript.json": "ab993e49dafabf8528cd628caa2fa16cac74a514c9e9b93ce1af714d0a924caa",
+    "distribution-macos-x64-b-0.1.1-candidate.tar.gz": "5e8c7efb2c40acf8c1b29af5061962090d12e02b391de5de5ea441cb67f1314e",
+    "native-report.json": "2f12fa32c972a5ede13c44e8fd288860ec73d63787fb0cc02bce9c0f7fbce731",
+    "native-transcript.json": "3ce7db0558aa2397ca39f1470a5b43470efa866e939b559f7759ae3b1e40c39a"
+  },
+  "lane": "macos-x64",
+  "limitations": [
+    "Local Mac Intel candidate only; no signed or published release.",
+    "Native process death was injected after the engine returned and before the coordinator captured its transaction; prepared-journal intervals have focused engine filesystem regressions, not native SIGKILL at every substep.",
+    "Independent shared-update governance review and main integration remain pending."
+  ],
+  "next_consumer": "K-107 installed MCP query/process/security; K-501 local lane assessment",
+  "notarization": "not_notarized",
+  "publication": false,
+  "signing": "unsigned",
+  "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+  "status": "local_verified",
+  "task_id": "K-106"
+}

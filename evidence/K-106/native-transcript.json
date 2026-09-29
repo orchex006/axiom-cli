@@ -1,0 +1,423 @@
+[
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/A/runtime/bootstrap.sh",
+      "install",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/A",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"install\", \"notarization\": \"not_notarized\", \"plan_digest\": \"4fd3c77d6521fbf015a622df08aafbcc6bb12e250b9e3c41e2dbba5d1bc9eaed\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/A/runtime/bootstrap.sh",
+      "install",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/A",
+      "--apply",
+      "--approve-digest",
+      "4fd3c77d6521fbf015a622df08aafbcc6bb12e250b9e3c41e2dbba5d1bc9eaed"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"events\": [{\"body\": {\"executable\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp\", \"executable_sha256\": \"9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770\", \"generation\": \"e4843f14e1544208fe22ce34\", \"lock_sha256\": \"4db70be8d9acb83b9309d64a21e3fd316e0b19450685d1ba1e538ae6153ea43a\", \"python\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/python\", \"python_sha256\": \"8051e4db0899e161a6f785f54b21da9704cb1b13676b9a42b79d0383e1eba65c\", \"runtime_sha256\": \"070828a8d087053cf96c4534f66c84949ba2a3ef24d7bd2dac40dec86910cd2d\", \"status\": \"provisioned\", \"version\": \"0.1.0\", \"wheel_sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"wheelhouse_sha256\": \"5181bc44181c949b2f0171fab86ab1e3b4dd83f39669177bcc968ce4e9da7ce6\"}, \"exit_code\": 0, \"phase\": \"runtime\"}, {\"body\": {\"already_installed\": 0, \"artifacts\": [{\"component\": \"axiom-cli\", \"sha256\": \"90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c\", \"version\": \"0.1.0\"}, {\"component\": \"axiom\", \"revision\": \"e5a30e2ee6807ab36cecbc881be3ffb4259cba83\", \"sha256\": \"d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528\", \"version\": \"0.1.0\"}], \"manifest_sha256\": \"902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723\", \"plan_digest\": \"550b95be3aa8407cf650c2639d13f61bd2d5c2f49ce74fbcb72fb8369cfc4fe2\", \"status\": \"installed\", \"verb\": \"install\"}, \"exit_code\": 0, \"phase\": \"entrypoints\"}, {\"body\": {\"code\": 0, \"details\": {\"channel\": \"stable\", \"components\": [{\"component\": \"axiom-graphd\", \"destination\": \"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd\", \"position\": 1, \"sha256\": \"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\", \"status\": \"installed\", \"version\": \"0.1.0\"}, {\"component\": \"axiom-mcp\", \"destination\": \"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl\", \"position\": 2, \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"status\": \"installed\", \"version\": \"0.1.0\"}, {\"component\": \"axiom-skills\", \"destination\": \"skills/0.1.0\", \"position\": 3, \"sha256\": \"0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080\", \"status\": \"installed\", \"version\": \"0.1.0\"}], \"engine\": {\"bundle_components\": [{\"artifact\": \"bin/axiom-graphd\", \"component\": \"axiom-graphd\", \"host\": \"macos-x64\", \"kind\": \"binary\", \"network_access\": [], \"permissions\": [\"read\", \"execute\"], \"service\": null, \"sha256\": \"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\", \"size_bytes\": 4051152, \"version\": \"0.1.0\"}, {\"artifact\": \"python/axiom_mcp-0.1.0-py3-none-any.whl\", \"component\": \"axiom-mcp\", \"host\": \"macos-x64\", \"kind\": \"python\", \"network_access\": [], \"permissions\": [\"read\"], \"service\": null, \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"size_bytes\": 214242, \"version\": \"0.1.0\"}], \"bundle_manifest_bytes\": 679, \"bundle_manifest_sha256\": \"605581f092f5d0da5fd73a6f2bb5903e28c4800bdcbc17c3b15c62be4794bb0e\", \"bundle_root\": \"<isolated-test-root>/home/.local/share/axiom/staging/engine-bundle\", \"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"not_carried\": [], \"skills\": {\"component\": \"axiom-skills\", \"entries\": 41, \"manifest_sha256\": \"0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080\", \"revision\": \"eade281614677f96fd86260dc28e1fe0cbdeac0a\", \"source\": \"skills_manifest_converted\", \"spec_revision\": \"39759ac2311206059b00c44179a998f502e4e777\", \"version\": \"0.1.0\"}, \"steps\": [{\"code\": null, \"exit_code\": 0, \"status\": \"planned\", \"stderr\": \"\", \"stdout\": \"{\\\"plan_digest\\\":\\\"9089c07e9b1ec9418da0df4426dc01b3ae9803456aa3fbcbfcb6c1a93634d446\\\",\\\"plan_file\\\":\\\"<isolated-test-root>/home/.local/share/axiom/staging/engine-bundle/engine-plan.json\\\",\\\"plan_id\\\":\\\"install-1790677349-17d30bf9709e8fd0\\\",\\\"status\\\":\\\"planned\\\"}\", \"step\": \"plan\"}, {\"code\": null, \"exit_code\": 0, \"status\": \"installed\", \"stderr\": \"\", \"stdout\": \"{\\\"schema_version\\\":1,\\\"plan_id\\\":\\\"install-1790677349-17d30bf9709e8fd0\\\",\\\"plan_digest\\\":\\\"9089c07e9b1ec9418da0df4426dc01b3ae9803456aa3fbcbfcb6c1a93634d446\\\",\\\"transaction_id\\\":\\\"ecosystem-1790677350-3d5b4e2f94d14cbe\\\",\\\"applied_at\\\":\\\"2026-09-29T10:22:30Z\\\",\\\"status\\\":\\\"installed\\\",\\\"components\\\":[{\\\"position\\\":1,\\\"component\\\":\\\"axiom-graphd\\\",\\\"version\\\":\\\"0.1.0\\\",\\\"status\\\":\\\"installed\\\",\\\"sha256\\\":\\\"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\\\",\\\"destination\\\":\\\"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd\\\"},{\\\"position\\\":2,\\\"component\\\":\\\"axiom-mcp\\\",\\\"version\\\":\\\"0.1.0\\\",\\\"status\\\":\\\"installed\\\",\\\"sha256\\\":\\\"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\\\",\\\"destination\\\":\\\"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl\\\"},{\\\"position\\\":3,\\\"component\\\":\\\"axiom-skills\\\",\\\"version\\\":\\\"0.1.0\\\",\\\"status\\\":\\\"installed\\\",\\\"sha256\\\":\\\"0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080\\\",\\\"destination\\\":\\\"skills/0.1.0\\\"}],\\\"core_pointer\\\":\\\"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/current\\\",\\\"skills_pointer\\\":\\\"skills/current\\\",\\\"keeps_previous_versions\\\":1}\", \"step\": \"apply\"}]}, \"engine_owner\": \"axiom-graphd\", \"engine_plan_digest\": \"9089c07e9b1ec9418da0df4426dc01b3ae9803456aa3fbcbfcb6c1a93634d446\", \"engine_plan_id\": \"install-1790677349-17d30bf9709e8fd0\", \"engine_program\": \"<isolated-test-root>/home/.local/bin/axiom\", \"engine_source\": \"sibling\", \"engine_status\": \"installed\", \"engine_status_reported\": true, \"generated_at\": \"2026-09-29T10:22:30Z\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"manifest_sha256\": \"2fe31a81ae2bbe5714971f56279b053b6335520054c454f6e94b5f794d4a7f7a\", \"manifest_source\": \"/private/tmp/axiom-k106-bwork/A/channel.json\", \"mcp_runtime_bin\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin\", \"mode\": \"apply\", \"plan\": {\"approval\": {\"approve_digest\": null, \"state\": \"unapproved\"}, \"channel\": \"stable\", \"components\": [{\"artifact\": {\"class\": \"per-user-installer\", \"platform\": \"macos-x64\", \"sha256\": \"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\", \"size_bytes\": 4051152, \"url\": \"https://candidate.invalid/axiom-graphd\"}, \"component\": \"axiom-graphd\", \"declared\": true, \"needs_restart\": true, \"revision\": \"e5a30e2ee6807ab36cecbc881be3ffb4259cba83\", \"version\": \"0.1.0\"}, {\"artifact\": {\"class\": \"per-user-installer\", \"platform\": \"macos-x64\", \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"size_bytes\": 214242, \"url\": \"https://candidate.invalid/axiom_mcp-0.1.0-py3-none-any.whl\"}, \"component\": \"axiom-mcp\", \"declared\": true, \"needs_restart\": true, \"revision\": \"d92e71b25623132966b602b15ef5112c7eef7c96\", \"version\": \"0.1.0\"}, {\"artifact\": null, \"component\": \"skills\", \"declared\": true, \"needs_restart\": false, \"revision\": \"eade281614677f96fd86260dc28e1fe0cbdeac0a\", \"version\": \"0.1.0\"}], \"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"manifest\": \"/private/tmp/axiom-k106-bwork/A/channel.json\", \"manifest_sha256\": \"2fe31a81ae2bbe5714971f56279b053b6335520054c454f6e94b5f794d4a7f7a\", \"plan_digest\": \"6726daff6d77e99aecc171cccb3d19f20ed2e03590a5fbccabfb84671b6881c4\", \"plan_version\": 1, \"published\": false, \"verb\": \"install\"}, \"plan_digest\": \"6726daff6d77e99aecc171cccb3d19f20ed2e03590a5fbccabfb84671b6881c4\", \"published\": false, \"staging_root\": \"<isolated-test-root>/home/.local/share/axiom/staging/engine-bundle\", \"target\": \"macos-x64\", \"verified_artifacts\": [{\"component\": \"axiom-graphd\", \"resolved\": \"/private/tmp/axiom-k106-bwork/A/axiom-graphd\", \"sha256\": \"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\", \"size_bytes\": 4051152, \"url\": \"https://candidate.invalid/axiom-graphd\", \"verified\": true}, {\"component\": \"axiom-mcp\", \"resolved\": \"/private/tmp/axiom-k106-bwork/A/axiom_mcp-0.1.0-py3-none-any.whl\", \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"size_bytes\": 214242, \"url\": \"https://candidate.invalid/axiom_mcp-0.1.0-py3-none-any.whl\", \"verified\": true}]}, \"message\": \"the engine (`<isolated-test-root>/home/.local/bin/axiom` sibling) placed the approved bundle: status `installed`\", \"request_id\": \"axiom-cli-update-1522-18d9c39003d4abb8\", \"retryable\": false, \"status\": \"ok\"}, \"exit_code\": 0, \"phase\": \"engine\"}, {\"body\": {\"registered\": {\"component\": \"axiom-graphd\", \"definition_path\": \"<isolated-test-root>/home/Library/LaunchAgents/com.axiom.axiom-graphd.plist\", \"log_file\": \"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/logs/axiom-graphd.log\", \"mechanism\": \"launch_agent\", \"restart\": {\"delay_seconds\": 0, \"max_attempts\": 0, \"on_failure\": false}, \"scope\": \"per_user\", \"task_name\": \"com.axiom.axiom-graphd\"}}, \"exit_code\": 0, \"phase\": \"service-register\"}, {\"body\": {\"action\": \"start\", \"code\": 0, \"component\": \"axiom-graphd\", \"stderr\": \"\", \"stdout\": \"\"}, \"exit_code\": 0, \"phase\": \"service-start\"}, {\"body\": {\"action\": \"status\", \"code\": 0, \"component\": \"axiom-graphd\", \"stderr\": \"\", \"stdout\": \"gui/501/com.axiom.axiom-graphd = {\\n\\tactive count = 1\\n\\tpath = <isolated-test-root>/home/Library/LaunchAgents/com.axiom.axiom-graphd.plist\\n\\ttype = LaunchAgent\\n\\tstate = running\\n\\n\\tprogram = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd\\n\\targuments = {\\n\\t\\t<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd\\n\\t\\tserve\\n\\t}\\n\\n\\tworking directory = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem\\n\\n\\tstdout path = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem/logs/axiom-graphd.log\\n\\tstderr path = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem/logs/axiom-graphd.log\\n\\tinherited environment = {\\n\\t\\tSSH_AUTH_SOCK => /var/run/com.apple.launchd.jiuajHnVkc/Listeners\\n\\t}\\n\\n\\tdefault environment = {\\n\\t\\tPATH => /usr/bin:/bin:/usr/sbin:/sbin\\n\\t}\\n\\n\\tenvironment = {\\n\\t\\tOSLogRateLimit => 64\\n\\t\\tAXIOM_HOME => <isolated-test-root>/home/.local/share/axiom\\n\\t\\tAXIOM_INSTALL_ROOT => <isolated-test-root>/home/.local/share/axiom/installs/ecosystem\\n\\t\\tXPC_SERVICE_NAME => com.axiom.axiom-graphd\\n\\t}\\n\\n\\tdomain = gui/501 [100001]\\n\\tasid = 100001\\n\\tminimum runtime = 10\\n\\texit timeout = 5\\n\\truns = 2\\n\\tpid = 5471\\n\\timmediate reason = non-ipc demand\\n\\tforks = 0\\n\\texecs = 1\\n\\tinitialized = 1\\n\\ttrampolined = 1\\n\\tstarted suspended = 0\\n\\tproxy started suspended = 0\\n\\tchecked allocations = 0 (queried = 1)\\n\\tchecked allocations reason = no host\\n\\tchecked allocations flags = 0x0\\n\\tlast terminating signal = Terminated: 15\\n\\n\\tresource coalition = {\\n\\t\\tID = 9513\\n\\t\\ttype = resource\\n\\t\\tstate = active\\n\\t\\tactive count = 1\\n\\t\\tname = com.axiom.axiom-graphd\\n\\t}\\n\\n\\tjetsam coalition = {\\n\\t\\tID = 9514\\n\\t\\ttype = jetsam\\n\\t\\tstate = active\\n\\t\\tactive count = 1\\n\\t\\tname = com.axiom.axiom-graphd\\n\\t}\\n\\n\\tspawn type = daemon (3)\\n\\tjetsam priority = 40\\n\\tjetsam memory limit (active) = (unlimited)\\n\\tjetsam memory limit (inactive) = (unlimited)\\n\\tjetsamproperties category = daemon\\n\\tjetsam thread limit = 32\\n\\tcpumon = default\\n\\n\\tproperties = runatload | inferred program\\n}\\n\"}, \"exit_code\": 0, \"phase\": \"service-status\"}], \"notarization\": \"not_notarized\", \"runtime\": {\"executable\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp\", \"executable_sha256\": \"9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770\", \"generation\": \"e4843f14e1544208fe22ce34\", \"lock_sha256\": \"4db70be8d9acb83b9309d64a21e3fd316e0b19450685d1ba1e538ae6153ea43a\", \"python\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/python\", \"python_sha256\": \"8051e4db0899e161a6f785f54b21da9704cb1b13676b9a42b79d0383e1eba65c\", \"runtime_sha256\": \"070828a8d087053cf96c4534f66c84949ba2a3ef24d7bd2dac40dec86910cd2d\", \"status\": \"provisioned\", \"version\": \"0.1.0\", \"wheel_sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"wheelhouse_sha256\": \"5181bc44181c949b2f0171fab86ab1e3b4dd83f39669177bcc968ce4e9da7ce6\"}, \"signing\": \"unsigned\", \"status\": \"installed\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/bin/axiom",
+      "service",
+      "stop",
+      "--component",
+      "axiom-graphd",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\":\"stop\",\"code\":0,\"component\":\"axiom-graphd\",\"stderr\":\"\",\"stdout\":\"\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+      "solution",
+      "register",
+      "--config",
+      "<isolated-test-root>/solution.json",
+      "--apply",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"id\":\"demo-solution\",\"profile\":\"default\",\"config_hash\":\"62592e0a3c5b8e4dcc824e73251b2f29af8992d240a1806fa133e5109fe0ce95\",\"projects\":1}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/bin/axiom",
+      "service",
+      "start",
+      "--component",
+      "axiom-graphd",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\":\"start\",\"code\":0,\"component\":\"axiom-graphd\",\"stderr\":\"\",\"stdout\":\"\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+      "query",
+      "context",
+      "--solution",
+      "demo-solution",
+      "--symbol",
+      "Demo.TokenSource",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"9dd5db31cb64f05e9bb698c161a346500b6d91288ba8b0ad364e88b20044dd2f\",\"kind\":\"context\",\"target\":\"Demo.TokenSource\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"TokenSource\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.TokenSource\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}},{\"key\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}],\"id\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":963}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+      "query",
+      "context",
+      "--solution",
+      "demo-solution",
+      "--symbol",
+      "Demo.K106WatcherA",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"2d240bcf75915ec6fd477fae601ef93fba08e133399254fa5c9f4635ac0bb28b\",\"kind\":\"context\",\"target\":\"Demo.K106WatcherA\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"b55d92777b8931cd46698dede69e6f6fe380893be6da4ce299d20522d82ddbe5\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"b55d92777b8931cd46698dede69e6f6fe380893be6da4ce299d20522d82ddbe5\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"K106WatcherA\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.K106WatcherA\",\"source\":{\"end_line\":3,\"file\":\"TokenSource.cs\",\"start_line\":3}}},{\"key\":\"54556b1cec302df6081fa102e99aec68a82813a03c174abf839931e7716e773f\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":3,\"file\":\"TokenSource.cs\",\"start_line\":3}}],\"id\":\"54556b1cec302df6081fa102e99aec68a82813a03c174abf839931e7716e773f\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"b55d92777b8931cd46698dede69e6f6fe380893be6da4ce299d20522d82ddbe5\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":965}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "<isolated-test-root>/B-corrupt/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "<isolated-test-root>/B-corrupt",
+      "--dry-run"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"missing or changed candidate input: <isolated-test-root>/B-corrupt/axiom\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "<isolated-test-root>/B-incompatible/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "<isolated-test-root>/B-incompatible",
+      "--dry-run"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"candidate channel, core, MCP or skills identity is incompatible\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"after\": {\"cli_sha256\": \"99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d\", \"cli_version\": \"0.1.0\", \"core_revision\": \"c4f643ebf7af95395d12cbba8572e7065254e8b4\", \"core_version\": \"0.1.1\", \"engine_cli_sha256\": \"08d72b12eaad63de2f40a626cc4ea5c8380cadba80412b58812c00cc77258089\", \"engine_pointer_sha256\": \"2b6808709bac349d7de84e17c188d629d8b9abeb6751e990605730c2122f4132\", \"entrypoint_record_sha256\": \"6b436defb7ce0c44e7805777531d62fbefb3ebf6595b692c2a66e9c11fc8bc53\", \"profile\": \"<isolated-test-root>/home/.zprofile\", \"release_set_sha256\": \"4938f5f3566b6171b51024ba1989c4a93696316b0c82f1e58b97cb25468cdf1d\", \"runtime_pointer_sha256\": \"fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6\", \"service_record_sha256\": \"eb2bb627cc8f9153c77992baec9bf260947793364950c65d218391c5563fdf4e\"}, \"before\": {\"cli_sha256\": \"90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c\", \"cli_version\": \"0.1.0\", \"core_revision\": \"e5a30e2ee6807ab36cecbc881be3ffb4259cba83\", \"core_version\": \"0.1.0\", \"engine_cli_sha256\": \"d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528\", \"engine_pointer_sha256\": \"11337c43d9ab2ba12660889c572440ed6770d97291591f070178b8d70a58b178\", \"entrypoint_record_sha256\": \"d2cb2927be5e2df5abaf757365085d4f670a93bf4245da74feee0c9912dbf6f6\", \"profile\": \"<isolated-test-root>/home/.zprofile\", \"release_set_sha256\": \"902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723\", \"runtime_pointer_sha256\": \"fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6\", \"service_record_sha256\": \"aa53c2dd518eb6a3c30b8c2d54827549d0c04d04401b9e0841d55df3a1731aea\"}, \"engine_transaction\": \"update-1790677392-0b2fef07ec8befbe\", \"events\": [{\"body\": {\"executable\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp\", \"executable_sha256\": \"9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770\", \"generation\": \"e4843f14e1544208fe22ce34\", \"lock_sha256\": \"4db70be8d9acb83b9309d64a21e3fd316e0b19450685d1ba1e538ae6153ea43a\", \"python\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/python\", \"python_sha256\": \"8051e4db0899e161a6f785f54b21da9704cb1b13676b9a42b79d0383e1eba65c\", \"runtime_sha256\": \"070828a8d087053cf96c4534f66c84949ba2a3ef24d7bd2dac40dec86910cd2d\", \"status\": \"already_current\", \"version\": \"0.1.0\", \"wheel_sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"wheelhouse_sha256\": \"5181bc44181c949b2f0171fab86ab1e3b4dd83f39669177bcc968ce4e9da7ce6\"}, \"exit_code\": 0, \"phase\": \"runtime-stage\"}, {\"body\": {\"code\": 0, \"details\": {\"channel\": \"stable\", \"components\": [], \"engine\": {\"bundle_components\": [{\"artifact\": \"bin/axiom-graphd\", \"component\": \"axiom-graphd\", \"host\": \"macos-x64\", \"kind\": \"binary\", \"network_access\": [], \"permissions\": [\"read\", \"execute\"], \"service\": null, \"sha256\": \"2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378\", \"size_bytes\": 4060360, \"version\": \"0.1.1\"}, {\"artifact\": \"python/axiom_mcp-0.1.0-py3-none-any.whl\", \"component\": \"axiom-mcp\", \"host\": \"macos-x64\", \"kind\": \"python\", \"network_access\": [], \"permissions\": [\"read\"], \"service\": null, \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"size_bytes\": 214242, \"version\": \"0.1.0\"}], \"bundle_manifest_bytes\": 679, \"bundle_manifest_sha256\": \"3122a251252f0d2b47e4fc7520f9ee7c183097a2549a15c5215dd04b8158fb22\", \"bundle_root\": \"<isolated-test-root>/home/.local/share/axiom/staging/engine-bundle\", \"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"not_carried\": [], \"skills\": {\"component\": \"axiom-skills\", \"entries\": 41, \"manifest_sha256\": \"0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080\", \"revision\": \"eade281614677f96fd86260dc28e1fe0cbdeac0a\", \"source\": \"skills_manifest_converted\", \"spec_revision\": \"39759ac2311206059b00c44179a998f502e4e777\", \"version\": \"0.1.0\"}, \"steps\": [{\"code\": null, \"exit_code\": 0, \"status\": \"planned\", \"stderr\": \"\", \"stdout\": \"{\\\"plan_digest\\\":\\\"f970f0277a8867f6a3c48aaa912549a84b3cf1afc2cb4737a51c66652eb7f264\\\",\\\"plan_file\\\":\\\"<isolated-test-root>/home/.local/share/axiom/staging/engine-bundle/engine-plan.json\\\",\\\"status\\\":\\\"planned\\\"}\", \"step\": \"plan\"}, {\"code\": null, \"exit_code\": 0, \"status\": null, \"stderr\": \"\", \"stdout\": \"{\\\"journal_path\\\":\\\"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/journal/ecosystem-update-update-1790677392-0b2fef07ec8befbe.json\\\",\\\"plan_digest\\\":\\\"f970f0277a8867f6a3c48aaa912549a84b3cf1afc2cb4737a51c66652eb7f264\\\",\\\"transaction_id\\\":\\\"update-1790677392-0b2fef07ec8befbe\\\"}\", \"step\": \"apply\"}]}, \"engine_owner\": \"axiom-graphd\", \"engine_plan_digest\": \"f970f0277a8867f6a3c48aaa912549a84b3cf1afc2cb4737a51c66652eb7f264\", \"engine_plan_id\": \"\", \"engine_program\": \"/private/tmp/axiom-k106-bwork/B5/axiom\", \"engine_source\": \"sibling\", \"engine_status\": \"unreported\", \"engine_status_reported\": false, \"engine_transaction\": \"update-1790677392-0b2fef07ec8befbe\", \"generated_at\": \"2026-09-29T10:23:12Z\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"manifest_sha256\": \"5815f86294d8d56946ee07fd03bf9cdc40d090254ae7777f453c9ef52a8b39aa\", \"manifest_source\": \"/private/tmp/axiom-k106-bwork/B5/channel.json\", \"mcp_runtime_bin\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin\", \"mode\": \"apply\", \"plan\": {\"approval\": {\"approve_digest\": null, \"state\": \"unapproved\"}, \"channel\": \"stable\", \"components\": [{\"artifact\": {\"class\": \"per-user-installer\", \"platform\": \"macos-x64\", \"sha256\": \"2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378\", \"size_bytes\": 4060360, \"url\": \"https://candidate.invalid/axiom-graphd\"}, \"component\": \"axiom-graphd\", \"declared\": true, \"needs_restart\": true, \"revision\": \"c4f643ebf7af95395d12cbba8572e7065254e8b4\", \"version\": \"0.1.1\"}, {\"artifact\": {\"class\": \"per-user-installer\", \"platform\": \"macos-x64\", \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"size_bytes\": 214242, \"url\": \"https://candidate.invalid/axiom_mcp-0.1.0-py3-none-any.whl\"}, \"component\": \"axiom-mcp\", \"declared\": true, \"needs_restart\": true, \"revision\": \"d92e71b25623132966b602b15ef5112c7eef7c96\", \"version\": \"0.1.0\"}, {\"artifact\": null, \"component\": \"skills\", \"declared\": true, \"needs_restart\": false, \"revision\": \"eade281614677f96fd86260dc28e1fe0cbdeac0a\", \"version\": \"0.1.0\"}], \"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"manifest\": \"/private/tmp/axiom-k106-bwork/B5/channel.json\", \"manifest_sha256\": \"5815f86294d8d56946ee07fd03bf9cdc40d090254ae7777f453c9ef52a8b39aa\", \"plan_digest\": \"b5b72ecd80955839ed8b72788fa607b2f32c3a81138ce17fd3db9c31afac08a0\", \"plan_version\": 1, \"published\": false, \"verb\": \"install\"}, \"plan_digest\": \"b5b72ecd80955839ed8b72788fa607b2f32c3a81138ce17fd3db9c31afac08a0\", \"published\": false, \"staging_root\": \"<isolated-test-root>/home/.local/share/axiom/staging/engine-bundle\", \"target\": \"macos-x64\", \"verified_artifacts\": [{\"component\": \"axiom-graphd\", \"resolved\": \"/private/tmp/axiom-k106-bwork/B5/axiom-graphd\", \"sha256\": \"2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378\", \"size_bytes\": 4060360, \"url\": \"https://candidate.invalid/axiom-graphd\", \"verified\": true}, {\"component\": \"axiom-mcp\", \"resolved\": \"/private/tmp/axiom-k106-bwork/B5/axiom_mcp-0.1.0-py3-none-any.whl\", \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"size_bytes\": 214242, \"url\": \"https://candidate.invalid/axiom_mcp-0.1.0-py3-none-any.whl\", \"verified\": true}]}, \"message\": \"the engine (`/private/tmp/axiom-k106-bwork/B5/axiom` sibling) placed the approved bundle: status `unreported`\", \"request_id\": \"axiom-cli-update-166e-18d9c399e626e4a0\", \"retryable\": false, \"status\": \"ok\"}, \"exit_code\": 0, \"phase\": \"engine-update\"}, {\"body\": {\"cli_sha256\": \"99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d\", \"release_set_sha256\": \"4938f5f3566b6171b51024ba1989c4a93696316b0c82f1e58b97cb25468cdf1d\"}, \"exit_code\": 0, \"phase\": \"entrypoints-update\"}], \"runtime\": {\"executable\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp\", \"executable_sha256\": \"9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770\", \"generation\": \"e4843f14e1544208fe22ce34\", \"lock_sha256\": \"4db70be8d9acb83b9309d64a21e3fd316e0b19450685d1ba1e538ae6153ea43a\", \"python\": \"<isolated-test-root>/home/.local/share/axiom/mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/python\", \"python_sha256\": \"8051e4db0899e161a6f785f54b21da9704cb1b13676b9a42b79d0383e1eba65c\", \"runtime_sha256\": \"070828a8d087053cf96c4534f66c84949ba2a3ef24d7bd2dac40dec86910cd2d\", \"status\": \"already_current\", \"version\": \"0.1.0\", \"wheel_sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\", \"wheelhouse_sha256\": \"5181bc44181c949b2f0171fab86ab1e3b4dd83f39669177bcc968ce4e9da7ce6\"}, \"status\": \"updated\", \"user_data_preserved\": true}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.1/bin/axiom-graphd",
+      "query",
+      "context",
+      "--solution",
+      "demo-solution",
+      "--symbol",
+      "Demo.TokenSource",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"2d240bcf75915ec6fd477fae601ef93fba08e133399254fa5c9f4635ac0bb28b\",\"kind\":\"context\",\"target\":\"Demo.TokenSource\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"TokenSource\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.TokenSource\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}},{\"key\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}],\"id\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":963}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.1/bin/axiom-graphd",
+      "query",
+      "context",
+      "--solution",
+      "demo-solution",
+      "--symbol",
+      "Demo.K106WatcherB",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"e6d396e3ca3ac3da9f5961109b84d7202a94af5ca1256689a20194ec61838f96\",\"kind\":\"context\",\"target\":\"Demo.K106WatcherB\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"4838a0c3c5907947d091fedf4102c92af6757476c18867544f068e6b649d63ec\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"4838a0c3c5907947d091fedf4102c92af6757476c18867544f068e6b649d63ec\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"K106WatcherB\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.K106WatcherB\",\"source\":{\"end_line\":4,\"file\":\"TokenSource.cs\",\"start_line\":4}}},{\"key\":\"7ec2de16d0eea2ca0844aab77fa01c6c69b9e3994c40e4643ca2afbaef568bb6\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":4,\"file\":\"TokenSource.cs\",\"start_line\":4}}],\"id\":\"7ec2de16d0eea2ca0844aab77fa01c6c69b9e3994c40e4643ca2afbaef568bb6\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"4838a0c3c5907947d091fedf4102c92af6757476c18867544f068e6b649d63ec\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":965}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/bin/axiom",
+      "service",
+      "status",
+      "--component",
+      "axiom-graphd",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\":\"status\",\"code\":0,\"component\":\"axiom-graphd\",\"stderr\":\"\",\"stdout\":\"gui/501/com.axiom.axiom-graphd = {\\n\\tactive count = 1\\n\\tpath = <isolated-test-root>/home/Library/LaunchAgents/com.axiom.axiom-graphd.plist\\n\\ttype = LaunchAgent\\n\\tstate = running\\n\\n\\tprogram = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.1/bin/axiom-graphd\\n\\targuments = {\\n\\t\\t<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.1/bin/axiom-graphd\\n\\t\\tserve\\n\\t}\\n\\n\\tworking directory = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem\\n\\n\\tstdout path = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem/logs/axiom-graphd.log\\n\\tstderr path = <isolated-test-root>/home/.local/share/axiom/installs/ecosystem/logs/axiom-graphd.log\\n\\tinherited environment = {\\n\\t\\tSSH_AUTH_SOCK => /var/run/com.apple.launchd.jiuajHnVkc/Listeners\\n\\t}\\n\\n\\tdefault environment = {\\n\\t\\tPATH => /usr/bin:/bin:/usr/sbin:/sbin\\n\\t}\\n\\n\\tenvironment = {\\n\\t\\tOSLogRateLimit => 64\\n\\t\\tAXIOM_HOME => <isolated-test-root>/home/.local/share/axiom\\n\\t\\tAXIOM_INSTALL_ROOT => <isolated-test-root>/home/.local/share/axiom/installs/ecosystem\\n\\t\\tXPC_SERVICE_NAME => com.axiom.axiom-graphd\\n\\t}\\n\\n\\tdomain = gui/501 [100001]\\n\\tasid = 100001\\n\\tminimum runtime = 10\\n\\texit timeout = 5\\n\\truns = 1\\n\\tpid = 5758\\n\\timmediate reason = speculative\\n\\tforks = 0\\n\\texecs = 1\\n\\tinitialized = 1\\n\\ttrampolined = 1\\n\\tstarted suspended = 0\\n\\tproxy started suspended = 0\\n\\tchecked allocations = 0 (queried = 1)\\n\\tchecked allocations reason = no host\\n\\tchecked allocations flags = 0x0\\n\\tlast exit code = (never exited)\\n\\n\\tresource coalition = {\\n\\t\\tID = 9521\\n\\t\\ttype = resource\\n\\t\\tstate = active\\n\\t\\tactive count = 1\\n\\t\\tname = com.axiom.axiom-graphd\\n\\t}\\n\\n\\tjetsam coalition = {\\n\\t\\tID = 9522\\n\\t\\ttype = jetsam\\n\\t\\tstate = active\\n\\t\\tactive count = 1\\n\\t\\tname = com.axiom.axiom-graphd\\n\\t}\\n\\n\\tspawn type = daemon (3)\\n\\tjetsam priority = 40\\n\\tjetsam memory limit (active) = (unlimited)\\n\\tjetsam memory limit (inactive) = (unlimited)\\n\\tjetsamproperties category = daemon\\n\\tjetsam thread limit = 32\\n\\tcpumon = default\\n\\n\\tproperties = runatload | inferred program\\n}\\n\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "rollback",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"rollback\", \"notarization\": \"not_notarized\", \"plan_digest\": \"45b5d6152f8d426d41c4fa16aa992ae34d9f46c5529c1eec68c6abb161885f7b\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "rollback",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "45b5d6152f8d426d41c4fa16aa992ae34d9f46c5529c1eec68c6abb161885f7b"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"after\": {\"cli_sha256\": \"90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c\", \"cli_version\": \"0.1.0\", \"core_revision\": \"e5a30e2ee6807ab36cecbc881be3ffb4259cba83\", \"core_version\": \"0.1.0\", \"engine_cli_sha256\": \"d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528\", \"engine_pointer_sha256\": \"11337c43d9ab2ba12660889c572440ed6770d97291591f070178b8d70a58b178\", \"entrypoint_record_sha256\": \"d2cb2927be5e2df5abaf757365085d4f670a93bf4245da74feee0c9912dbf6f6\", \"profile\": \"<isolated-test-root>/home/.zprofile\", \"release_set_sha256\": \"902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723\", \"runtime_pointer_sha256\": \"fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6\", \"service_record_sha256\": \"aa53c2dd518eb6a3c30b8c2d54827549d0c04d04401b9e0841d55df3a1731aea\"}, \"before\": {\"cli_sha256\": \"99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d\", \"cli_version\": \"0.1.0\", \"core_revision\": \"c4f643ebf7af95395d12cbba8572e7065254e8b4\", \"core_version\": \"0.1.1\", \"engine_cli_sha256\": \"08d72b12eaad63de2f40a626cc4ea5c8380cadba80412b58812c00cc77258089\", \"engine_pointer_sha256\": \"2b6808709bac349d7de84e17c188d629d8b9abeb6751e990605730c2122f4132\", \"entrypoint_record_sha256\": \"6b436defb7ce0c44e7805777531d62fbefb3ebf6595b692c2a66e9c11fc8bc53\", \"profile\": \"<isolated-test-root>/home/.zprofile\", \"release_set_sha256\": \"4938f5f3566b6171b51024ba1989c4a93696316b0c82f1e58b97cb25468cdf1d\", \"runtime_pointer_sha256\": \"fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6\", \"service_record_sha256\": \"eb2bb627cc8f9153c77992baec9bf260947793364950c65d218391c5563fdf4e\"}, \"engine\": {\"journal_path\": \"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/journal/ecosystem-update-update-1790677392-0b2fef07ec8befbe.json\", \"restored_pointer_sha256\": \"11337c43d9ab2ba12660889c572440ed6770d97291591f070178b8d70a58b178\", \"transaction_id\": \"update-1790677392-0b2fef07ec8befbe\"}, \"status\": \"rolled_back\", \"user_data_preserved\": true}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+      "query",
+      "context",
+      "--solution",
+      "demo-solution",
+      "--symbol",
+      "Demo.TokenSource",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"e6d396e3ca3ac3da9f5961109b84d7202a94af5ca1256689a20194ec61838f96\",\"kind\":\"context\",\"target\":\"Demo.TokenSource\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"TokenSource\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.TokenSource\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}},{\"key\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}],\"id\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":963}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+      "query",
+      "context",
+      "--solution",
+      "demo-solution",
+      "--symbol",
+      "Demo.K106WatcherRollback",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"471aaa9fb9a743aa2b8613156a109e065989fb394730d1224ff560fdcc860ff1\",\"kind\":\"context\",\"target\":\"Demo.K106WatcherRollback\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"13784f19cb0c4460cc00273ae18ddd950bd6f9a98ceedb9f9b1d054eab35c654\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"13784f19cb0c4460cc00273ae18ddd950bd6f9a98ceedb9f9b1d054eab35c654\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"K106WatcherRollback\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.K106WatcherRollback\",\"source\":{\"end_line\":5,\"file\":\"TokenSource.cs\",\"start_line\":5}}},{\"key\":\"5f81f97da606c0e7d18d7a7db4c2e22277730f180440ee0cb2511eea824825eb\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":5,\"file\":\"TokenSource.cs\",\"start_line\":5}}],\"id\":\"5f81f97da606c0e7d18d7a7db4c2e22277730f180440ee0cb2511eea824825eb\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"13784f19cb0c4460cc00273ae18ddd950bd6f9a98ceedb9f9b1d054eab35c654\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":979}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"injected local artifact acquisition failure\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"injected stage failure\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"injected failure after engine activation\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"injected failure after engine activation\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/B5/runtime/bootstrap.sh",
+      "update",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/B5",
+      "--apply",
+      "--approve-digest",
+      "54f8cf8e85ff1355a47818cc2571d0e44f7cdd629336b6c649d7ea0353ba9893"
+    ],
+    "exit_code": 9,
+    "stdout": "",
+    "stderr": "{\"reason\": \"injected post-activation failure\", \"status\": \"refused\"}\n"
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/A/runtime/bootstrap.sh",
+      "uninstall",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/A",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"action\": \"uninstall\", \"notarization\": \"not_notarized\", \"plan_digest\": \"0602232c41afc55f25380e131560abfa66fc2c03256b49ba9faf6378051e9953\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/bin/sh",
+      "/private/tmp/axiom-k106-bwork/A/runtime/bootstrap.sh",
+      "uninstall",
+      "--release-set",
+      "/private/tmp/axiom-k106-bwork/A",
+      "--apply",
+      "--approve-digest",
+      "0602232c41afc55f25380e131560abfa66fc2c03256b49ba9faf6378051e9953"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"events\": [{\"body\": {\"action\": \"stop\", \"code\": 0, \"component\": \"axiom-graphd\", \"stderr\": \"\", \"stdout\": \"\"}, \"exit_code\": 0, \"phase\": \"service-stop\"}, {\"body\": {\"removed\": {\"component\": \"axiom-graphd\", \"definition_path\": \"<isolated-test-root>/home/Library/LaunchAgents/com.axiom.axiom-graphd.plist\", \"mechanism\": \"launch_agent\"}}, \"exit_code\": 0, \"phase\": \"service-uninstall\"}, {\"body\": {\"code\": 0, \"details\": {\"engine_owner\": \"axiom-graphd\", \"generated_at\": \"2026-09-29T10:24:31Z\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"mode\": \"apply\", \"plan\": {\"approval\": {\"approve_digest\": null, \"state\": \"unapproved\"}, \"engine_plan\": {\"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom/installs/ecosystem\", \"kind\": \"ecosystem-uninstall\", \"ownership\": [{\"path\": \"journal/ecosystem-1790677350-3d5b4e2f94d14cbe-axiom-graphd.json\", \"sha256\": \"67a58c6259866b425bd3d763045c293f3691737f3605608da2783c0db45baed4\"}, {\"path\": \"journal/ecosystem-1790677350-3d5b4e2f94d14cbe-axiom-mcp.json\", \"sha256\": \"e6e1ca5bdcbdc6058dc9718ccf90a44bab2e148a45905539ebe4c94ff35af737\"}, {\"path\": \"journal/ecosystem-update-update-1790677392-0b2fef07ec8befbe.json\", \"sha256\": \"b15404be82bb463f16fde414a7e91f974716f9f89cd60c8f1f6c47238a6af2e2\"}, {\"path\": \"journal/ecosystem-update-update-1790677435-7610a99a2970ea68.json\", \"sha256\": \"cc2912c44a40e44a972fdb8b2259208921b405204d8be7cc6db869dbcee601dc\"}, {\"path\": \"journal/ecosystem-update-update-1790677447-7f8de1620b06bdda.json\", \"sha256\": \"2fa49a5576b76c73d640edcf903f412a13a50af4b5f03d0c8144ace5ca5f8c66\"}, {\"path\": \"journal/ecosystem-update-update-1790677458-79f2eb510b36e5da.json\", \"sha256\": \"5ffd8d6d5199938d15647032da25e98d22f5c2bf682decbfdb49c287fe23ec97\"}, {\"path\": \"journal/update-1790677392-0b2fef07ec8befbe-axiom-graphd.json\", \"sha256\": \"af02642dac84478e27324590ce1c2c27d99c70c90b6adfa12eb2673611048223\"}, {\"path\": \"skills/0.1.0/bundle.json\", \"sha256\": \"0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080\"}], \"plan_digest\": \"921a73493447042ab5cf1e03b7005b623aecac7b8154a3c11d1574925e00c6d4\", \"pointer_sha256\": \"11337c43d9ab2ba12660889c572440ed6770d97291591f070178b8d70a58b178\", \"preserve\": [\"source\", \"annotations\", \"checkpoints\", \"instructions\", \"credentials\", \"unowned-or-edited-files\"], \"runtime\": [{\"path\": \"skills/0.1.0/.agents/plugins/marketplace.json\", \"sha256\": \"2135ffa797f268373766af53e080b8f43af1ca352c4fb3eeadb04f7e53188515\"}, {\"path\": \"skills/0.1.0/.claude-plugin/marketplace.json\", \"sha256\": \"d8b7625b0798a1ba37138a8122fdf8d6e5dee057f619db9880d4c4dedd7fa35d\"}, {\"path\": \"skills/0.1.0/adapters/antigravity/hooks/graph_stop.py\", \"sha256\": \"e93e80ff4ea1ecfc57e84151f6d7a668b2d4568462b4852abcee71d3c482bf2b\"}, {\"path\": \"skills/0.1.0/adapters/antigravity/instructions.md\", \"sha256\": \"b9fb8fb748503acba0586bd8fd38817636dadd6b59937c650ec941c48c67d525\"}, {\"path\": \"skills/0.1.0/adapters/claude/hooks/graph_stop.py\", \"sha256\": \"bf57f0567943bfb3b3a3b332161c1b69e967cadfd7f05bab050b0a6aa2009d5d\"}, {\"path\": \"skills/0.1.0/adapters/claude/hooks/graph_task_completed.py\", \"sha256\": \"3b8def3693a54f88375416c21afa13ff97d53ef9705f54f7226d497b4d55a23c\"}, {\"path\": \"skills/0.1.0/adapters/claude/instructions.md\", \"sha256\": \"586f87fe319106903db39ff4d7459a9b5b3bee37359fb3ba9517ca958979245f\"}, {\"path\": \"skills/0.1.0/adapters/codex/hooks/graph_stop.py\", \"sha256\": \"bc5e62750c96ee14c59c4c90fe21f73fdb68930c8b017d6021a41f58912e94ed\"}, {\"path\": \"skills/0.1.0/adapters/codex/instructions.md\", \"sha256\": \"7712b7672a4b1d2fe11d02b3d39fcae04406838b5ecf43686a992368ba3bc8bb\"}, {\"path\": \"skills/0.1.0/adapters/common/cancellation.md\", \"sha256\": \"596ae4dd9acccd4eee8d65623e40f3bceeb811c0ccf624be47a6d6308ca4c613\"}, {\"path\": \"skills/0.1.0/adapters/common/degraded_policy.json\", \"sha256\": \"92125d9958f7b12ba84072e716d4b307c2124370cb3ba892773e6c0d55472a0a\"}, {\"path\": \"skills/0.1.0/adapters/common/hook_runtime.py\", \"sha256\": \"f77ce2d9479ecccf308bb5f1e794ac0239ab4480758bc0f5ab727f10a95f4fdd\"}, {\"path\": \"skills/0.1.0/adapters/compatibility.json\", \"sha256\": \"e482901be645adc116bbc1d77ecbeb3e5fda6edfe1b5187a4c498887e914db1e\"}, {\"path\": \"skills/0.1.0/adapters/gemini/hooks/graph_after_agent.py\", \"sha256\": \"24473d21399a3d4e7bd0512fc358df927527e65e68eb87bb4e35a9580162e9c1\"}, {\"path\": \"skills/0.1.0/adapters/gemini/instructions.md\", \"sha256\": \"13bddc002f9bc0baf85e8e91b5d8ecb24af1bde10ceecd42e9d8b979899f473c\"}, {\"path\": \"skills/0.1.0/marketplace-plugins/README.md\", \"sha256\": \"295970213d22803ac4accd477ca7e00d1f014a0d329164c445c552914066d2be\"}, {\"path\": \"skills/0.1.0/marketplace-plugins/catalog.json\", \"sha256\": \"2f2790857fad4ea17e69b5b302edd37f1d8aefb5c37e9d1a690414debf252eef\"}, {\"path\": \"skills/0.1.0/plugins/axiom/.claude-plugin/plugin.json\", \"sha256\": \"c1c784640f42aafc756a425eb8bd35daa70eb346780246c1c6734af2209a47b9\"}, {\"path\": \"skills/0.1.0/plugins/axiom/.codex-plugin/plugin.json\", \"sha256\": \"f7155bf2cc59854ffb9706b048c861a5fa8084db765ac89b754e8e857f0495e0\"}, {\"path\": \"skills/0.1.0/plugins/axiom/GEMINI.md\", \"sha256\": \"c387f1a23bc4dfeb25dedb3ab6d4903b01ad16a7db7a31b7da027a93fe4ca953\"}, {\"path\": \"skills/0.1.0/plugins/axiom/README.md\", \"sha256\": \"acc71fe2555958422b18bb72665b3dd385821a125571ed25304c5d206b4dda13\"}, {\"path\": \"skills/0.1.0/plugins/axiom/gemini-extension.json\", \"sha256\": \"9715d2fc67bd7e3c8e9a545b6b9c6f48ba403c88349d9ee62b2dcd980bc63056\"}, {\"path\": \"skills/0.1.0/plugins/axiom/plugin.json\", \"sha256\": \"da4aca6feb231965ff2fcfe9d0f56f6a22767c5e702287394ae5d3a0d0c7219a\"}, {\"path\": \"skills/0.1.0/plugins/axiom/policy/POLICY.md\", \"sha256\": \"96713d17e1e82dac2636dec746ed9ce5b57efd097e714ea119e59c061306133f\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/axiom-cli-install/SKILL.md\", \"sha256\": \"d2352e9027480e0696620a015b9b91fc58df0a04ab8456b5aca0af5ec4cd9631\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-checkpoint/SKILL.md\", \"sha256\": \"acc44509ade81953cc4ac92028bf0722ba85366333cf104aa1a74edd618abb0f\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-context/SKILL.md\", \"sha256\": \"7b62ed7fc0db9c407e3c87a27f5789d4da9774b7624dbf0795c7c5c9ad47b072\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-doctor/SKILL.md\", \"sha256\": \"34a2d9c0dc05671b59e3f3b25d26cbe5d7a267da0e1aaee2d979d73df79cc4c4\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-impact/SKILL.md\", \"sha256\": \"56d4cd787530cf07bf5eae473cb2e14d5e22ad76713d1e246fdfccae2392d3d2\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-install/SKILL.md\", \"sha256\": \"ec2aa790373c5e61c85f5edba437372c332caa0c6531899fce9653daf8d3d407\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-reconcile/SKILL.md\", \"sha256\": \"fe30997c49637a3bba824374b36d7f4604189e6824d372ab6387cb22efd0d38d\"}, {\"path\": \"skills/0.1.0/plugins/axiom/skills/graph-update/SKILL.md\", \"sha256\": \"51bfccb938717ecc73e029979f25fa4c88223be187dce10e081e24b54bb94696\"}, {\"path\": \"skills/0.1.0/policy/POLICY.md\", \"sha256\": \"96713d17e1e82dac2636dec746ed9ce5b57efd097e714ea119e59c061306133f\"}, {\"path\": \"skills/0.1.0/skills/axiom-cli-install/SKILL.md\", \"sha256\": \"d2352e9027480e0696620a015b9b91fc58df0a04ab8456b5aca0af5ec4cd9631\"}, {\"path\": \"skills/0.1.0/skills/graph-checkpoint/SKILL.md\", \"sha256\": \"acc44509ade81953cc4ac92028bf0722ba85366333cf104aa1a74edd618abb0f\"}, {\"path\": \"skills/0.1.0/skills/graph-context/SKILL.md\", \"sha256\": \"7b62ed7fc0db9c407e3c87a27f5789d4da9774b7624dbf0795c7c5c9ad47b072\"}, {\"path\": \"skills/0.1.0/skills/graph-doctor/SKILL.md\", \"sha256\": \"34a2d9c0dc05671b59e3f3b25d26cbe5d7a267da0e1aaee2d979d73df79cc4c4\"}, {\"path\": \"skills/0.1.0/skills/graph-impact/SKILL.md\", \"sha256\": \"56d4cd787530cf07bf5eae473cb2e14d5e22ad76713d1e246fdfccae2392d3d2\"}, {\"path\": \"skills/0.1.0/skills/graph-install/SKILL.md\", \"sha256\": \"ec2aa790373c5e61c85f5edba437372c332caa0c6531899fce9653daf8d3d407\"}, {\"path\": \"skills/0.1.0/skills/graph-reconcile/SKILL.md\", \"sha256\": \"fe30997c49637a3bba824374b36d7f4604189e6824d372ab6387cb22efd0d38d\"}, {\"path\": \"skills/0.1.0/skills/graph-update/SKILL.md\", \"sha256\": \"51bfccb938717ecc73e029979f25fa4c88223be187dce10e081e24b54bb94696\"}, {\"path\": \"versions/0.1.0/bin/axiom-graphd\", \"sha256\": \"aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572\"}, {\"path\": \"versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl\", \"sha256\": \"ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b\"}, {\"path\": \"versions/0.1.1/bin/axiom-graphd\", \"sha256\": \"2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378\"}], \"schema_version\": 1, \"service_sha256\": null, \"skills_pointer_sha256\": \"bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488\"}, \"host\": \"macos-x64\", \"install_root\": \"<isolated-test-root>/home/.local/share/axiom\", \"installed\": true, \"plan_digest\": \"2454fde616432bdaa78b64fe817a7b4db14f1f984e1cc35503ce0bc43c58f443\", \"plan_version\": 1, \"purge_data\": false, \"verb\": \"uninstall\"}, \"plan_digest\": \"2454fde616432bdaa78b64fe817a7b4db14f1f984e1cc35503ce0bc43c58f443\", \"purge_data\": false}, \"message\": \"engine-owned uninstall completed; distribution approval 2454fde616432bdaa78b64fe817a7b4db14f1f984e1cc35503ce0bc43c58f443 bound the request\", \"request_id\": \"axiom-cli-update-19f7-18d9c3ac3e2fff58\", \"retryable\": false, \"status\": \"ok\"}, \"exit_code\": 0, \"phase\": \"engine-remove\"}, {\"body\": {\"already_installed\": 0, \"artifacts\": [{\"component\": \"axiom-cli\", \"sha256\": \"90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c\", \"version\": \"0.1.0\"}, {\"component\": \"axiom\", \"revision\": \"e5a30e2ee6807ab36cecbc881be3ffb4259cba83\", \"sha256\": \"d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528\", \"version\": \"0.1.0\"}], \"manifest_sha256\": \"902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723\", \"plan_digest\": \"8deb17337e8d8028eaca3e754d0c75c653df987b92f2d2d9941195c3be619329\", \"status\": \"uninstalled\", \"verb\": \"uninstall\"}, \"exit_code\": 0, \"phase\": \"entrypoints-remove\"}, {\"body\": {\"owned_generations\": [\"e4843f14e1544208fe22ce34\"], \"status\": \"removed\", \"user_data_preserved\": true}, \"exit_code\": 0, \"phase\": \"runtime-remove\"}], \"status\": \"removed\", \"user_data_preserved\": true}\n",
+    "stderr": ""
+  }
+]

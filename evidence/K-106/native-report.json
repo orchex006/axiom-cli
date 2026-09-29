@@ -1,0 +1,172 @@
+{
+  "A_catalog_generation": "29570c34025d02f98e8a47a2a6481937955c4ab2427b031a0286db1d6de6c2e5",
+  "A_generation": {
+    "cli_path_below_home": ".local/bin/axiom-cli",
+    "cli_sha256": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+    "engine_components": [
+      {
+        "component": "axiom-graphd",
+        "path_below_install_root": "installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+        "sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+        "version": "0.1.0"
+      },
+      {
+        "component": "axiom-mcp",
+        "path_below_install_root": "installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl",
+        "sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b",
+        "version": "0.1.0"
+      }
+    ],
+    "mcp_executable_sha256": "9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770",
+    "mcp_generation": "e4843f14e1544208fe22ce34",
+    "mcp_path_below_install_root": "mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp",
+    "skills_pointer": {
+      "component": "skills",
+      "directory": "skills/0.1.0",
+      "entries": 41,
+      "installs_executable": true,
+      "manifest_sha256": "0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080",
+      "revision": "eade281614677f96fd86260dc28e1fe0cbdeac0a",
+      "schema_version": 1,
+      "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+      "version": "0.1.0"
+    }
+  },
+  "A_state": {
+    "bindings": "13898e7df5afd447e951b5700c57b066de9c28db22966ed7a7c89b4997ea796d",
+    "cli_executable": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+    "core_executable": "d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528",
+    "engine_pointer": "11337c43d9ab2ba12660889c572440ed6770d97291591f070178b8d70a58b178",
+    "entrypoint_record": "d2cb2927be5e2df5abaf757365085d4f670a93bf4245da74feee0c9912dbf6f6",
+    "runtime_pointer": "fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6",
+    "skills_pointer": "bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488",
+    "user_data": "a1ceb2ff193db1430b03053663a573f12b77cc8370f776f6df41b1a95810e0c8"
+  },
+  "B_catalog_generation": "f4b3a22259c939a72a58fcf85f6ea1fde63a12f54c4f52a33592e263f06e4188",
+  "B_generation": {
+    "cli_path_below_home": ".local/bin/axiom-cli",
+    "cli_sha256": "99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d",
+    "engine_components": [
+      {
+        "component": "axiom-graphd",
+        "path_below_install_root": "installs/ecosystem/versions/0.1.1/bin/axiom-graphd",
+        "sha256": "2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378",
+        "version": "0.1.1"
+      },
+      {
+        "component": "axiom-mcp",
+        "path_below_install_root": "installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl",
+        "sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b",
+        "version": "0.1.0"
+      }
+    ],
+    "mcp_executable_sha256": "9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770",
+    "mcp_generation": "e4843f14e1544208fe22ce34",
+    "mcp_path_below_install_root": "mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp",
+    "skills_pointer": {
+      "component": "skills",
+      "directory": "skills/0.1.0",
+      "entries": 41,
+      "installs_executable": true,
+      "manifest_sha256": "0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080",
+      "revision": "eade281614677f96fd86260dc28e1fe0cbdeac0a",
+      "schema_version": 1,
+      "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+      "version": "0.1.0"
+    }
+  },
+  "B_state": {
+    "bindings": "13898e7df5afd447e951b5700c57b066de9c28db22966ed7a7c89b4997ea796d",
+    "cli_executable": "99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d",
+    "core_executable": "08d72b12eaad63de2f40a626cc4ea5c8380cadba80412b58812c00cc77258089",
+    "engine_pointer": "2b6808709bac349d7de84e17c188d629d8b9abeb6751e990605730c2122f4132",
+    "entrypoint_record": "6b436defb7ce0c44e7805777531d62fbefb3ebf6595b692c2a66e9c11fc8bc53",
+    "runtime_pointer": "fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6",
+    "skills_pointer": "bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488",
+    "user_data": "a1ceb2ff193db1430b03053663a573f12b77cc8370f776f6df41b1a95810e0c8"
+  },
+  "candidate_a": {
+    "channel_sha256": "2fe31a81ae2bbe5714971f56279b053b6335520054c454f6e94b5f794d4a7f7a",
+    "cli_sha256": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+    "core_revision": "e5a30e2ee6807ab36cecbc881be3ffb4259cba83",
+    "core_sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+    "core_version": "0.1.0",
+    "mcp_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "mcp_version": "0.1.0",
+    "release_set_sha256": "902c2c70a033c19ac4587ba59a166b6eb01d029f6fe46a0cb2e4c7e87c4fa723",
+    "runtime_manifest_sha256": "068e2eee75f3d224f0815b5dab662e88e97451519a1f4640d3e29fef94bcfa72",
+    "skills_version": "0.1.0"
+  },
+  "candidate_b": {
+    "channel_sha256": "5815f86294d8d56946ee07fd03bf9cdc40d090254ae7777f453c9ef52a8b39aa",
+    "cli_sha256": "99c0c0f5692c7e37681e7c049b93be0c77f93e9a9a5f3d1f6734ea7581a75f2d",
+    "core_revision": "c4f643ebf7af95395d12cbba8572e7065254e8b4",
+    "core_sha256": "2c0bad2a382d0ed960d350ba32c44112c023ea65bf9703b2c3a150b241718378",
+    "core_version": "0.1.1",
+    "mcp_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "mcp_version": "0.1.0",
+    "release_set_sha256": "4938f5f3566b6171b51024ba1989c4a93696316b0c82f1e58b97cb25468cdf1d",
+    "runtime_manifest_sha256": "7f0b3102f37035f0da9e17cce886bfff3fe9460243d7ac6ecf613dda6ff504c4",
+    "skills_version": "0.1.0"
+  },
+  "candidate_refusals": {
+    "corrupt": "A preserved",
+    "incompatible": "A preserved"
+  },
+  "certified": false,
+  "engine_transaction": "update-1790677392-0b2fef07ec8befbe",
+  "failure_boundaries": {
+    "activation": "A preserved",
+    "download": "A preserved",
+    "post_activation": "A preserved",
+    "service_restart": "A preserved",
+    "stage": "A preserved"
+  },
+  "lane": "macos-x64",
+  "restored_generation": {
+    "cli_path_below_home": ".local/bin/axiom-cli",
+    "cli_sha256": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+    "engine_components": [
+      {
+        "component": "axiom-graphd",
+        "path_below_install_root": "installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+        "sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+        "version": "0.1.0"
+      },
+      {
+        "component": "axiom-mcp",
+        "path_below_install_root": "installs/ecosystem/versions/0.1.0/python/axiom_mcp-0.1.0-py3-none-any.whl",
+        "sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b",
+        "version": "0.1.0"
+      }
+    ],
+    "mcp_executable_sha256": "9e8873fe756b1a26dec17be70903c56874342641c51156454c79226935ff6770",
+    "mcp_generation": "e4843f14e1544208fe22ce34",
+    "mcp_path_below_install_root": "mcp-runtime/versions/e4843f14e1544208fe22ce34/venv/bin/axiom-mcp",
+    "skills_pointer": {
+      "component": "skills",
+      "directory": "skills/0.1.0",
+      "entries": 41,
+      "installs_executable": true,
+      "manifest_sha256": "0766ae82048e745914581e9dc93f6babe719f71791577e6aeb34852cba204080",
+      "revision": "eade281614677f96fd86260dc28e1fe0cbdeac0a",
+      "schema_version": 1,
+      "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+      "version": "0.1.0"
+    }
+  },
+  "restored_state": {
+    "bindings": "13898e7df5afd447e951b5700c57b066de9c28db22966ed7a7c89b4997ea796d",
+    "cli_executable": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c",
+    "core_executable": "d441185263902334557da9a2b42a72e0c8f26e1c47eb222bac602fa86e60a528",
+    "engine_pointer": "11337c43d9ab2ba12660889c572440ed6770d97291591f070178b8d70a58b178",
+    "entrypoint_record": "d2cb2927be5e2df5abaf757365085d4f670a93bf4245da74feee0c9912dbf6f6",
+    "runtime_pointer": "fc3e5c7ac20a053a8570f9097639e0d782d2a335250133b8e08448b401d0a7e6",
+    "skills_pointer": "bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488",
+    "user_data": "a1ceb2ff193db1430b03053663a573f12b77cc8370f776f6df41b1a95810e0c8"
+  },
+  "rollback_catalog_generation": "901fff41bd9fdf8cb4e5fc88903787c3149cb553cd982a025c8489521064499c",
+  "rollback_status": "rolled_back",
+  "status": "local_verified",
+  "user_data_preserved": true
+}
