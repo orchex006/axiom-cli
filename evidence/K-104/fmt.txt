@@ -1,0 +1,3 @@
+cwd=axiom-cli
+$ cargo fmt --all -- --check
+exit_code=0

@@ -1,0 +1,28 @@
+{
+  "certified": false,
+  "lane": "macos-x64",
+  "mcp": {
+    "dependency_lock_sha256": "4db70be8d9acb83b9309d64a21e3fd316e0b19450685d1ba1e538ae6153ea43a",
+    "source_revision": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "wheel_sha256": "ccb2166c414d36b16ca8316dc93e34d13a77f4db31ed9117895d8063161be20b"
+  },
+  "runtime": {
+    "archive": "cpython-3.13.15-macos-x64-candidate.tar.gz",
+    "build": "20260901",
+    "host": "Darwin 26.7 x86_64",
+    "implementation": "uv managed CPython",
+    "repacked_regular_files": true,
+    "sha256": "070828a8d087053cf96c4534f66c84949ba2a3ef24d7bd2dac40dec86910cd2d",
+    "source_choice": "user selected uv managed CPython 3.13.15 for candidate",
+    "version": "3.13.15"
+  },
+  "status": "candidate",
+  "task_id": "K-104",
+  "wheelhouse": {
+    "archive": "wheelhouse.tar.gz",
+    "manifest": "wheelhouse-manifest.json",
+    "manifest_sha256": "1ea251e5fc1a271eff226b1d7e0b2e118923f906cddc03908c622adf0b547fba",
+    "packages": 31,
+    "sha256": "5181bc44181c949b2f0171fab86ab1e3b4dd83f39669177bcc968ce4e9da7ce6"
+  }
+}

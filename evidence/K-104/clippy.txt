@@ -1,0 +1,4 @@
+cwd=axiom-cli
+$ cargo clippy --locked --all-targets -- -D warnings
+exit_code=0
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
