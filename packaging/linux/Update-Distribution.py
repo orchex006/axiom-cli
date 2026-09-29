@@ -128,6 +128,9 @@ def kit_manifest(path: Path, args: argparse.Namespace) -> str:
         / "AxiomCli.Linux.Common.sh",
         "candidate-files.json": args.files,
         "runtime-input.json": args.runtime_input,
+        "cli-release/release-set.json": args.cli_installer.parent
+        / "cli-release/release-set.json",
+        "cli-release/axiom-cli": args.cli_installer.parent / "cli-release/axiom-cli",
     }
     for name, local in expected.items():
         if local.resolve() != (directory / name).resolve():
@@ -183,7 +186,7 @@ def installed(home: Path, root: Path) -> dict:
             )
     active = json.loads(engine.read_text())
     rows = {row["component"]: row for row in active["activated"]}
-    if set(rows) != {"axiom-graphd", "axiom-mcp", "axiom-skills"}:
+    if set(rows) != {"axiom-graphd", "axiom-mcp"}:
         raise ValueError("installed ecosystem component set differs")
     daemon = Path(rows["axiom-graphd"]["destination"])
     if not daemon.is_relative_to(root / "installs/ecosystem"):
@@ -320,7 +323,7 @@ def cli_install(release: Path, home: Path, script: Path, env: dict[str, str]) ->
         "/bin/sh",
         str(script),
         "--release-set",
-        str(release / "release-set.json"),
+        str(script.parent / "cli-release/release-set.json"),
         "--install-root",
         str(home / ".local/share/axiom-cli"),
         "--bin-dir",

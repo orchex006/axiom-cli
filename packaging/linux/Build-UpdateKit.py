@@ -10,6 +10,7 @@ import io
 import json
 from pathlib import Path, PurePosixPath
 import shutil
+import subprocess
 import tarfile
 
 
@@ -81,6 +82,31 @@ def build(args: argparse.Namespace) -> dict:
         if path.is_symlink() or not path.is_file():
             raise ValueError("kit input missing or linked: " + name)
         shutil.copyfile(path, output / name)
+    release_version = json.loads((release / "release-set.json").read_text())[
+        "release_version"
+    ]
+    result = subprocess.run(
+        [
+            "sh",
+            str(ROOT / "packaging/linux/Build-ReleaseSet.sh"),
+            "--out-dir",
+            str(output / "cli-release"),
+            "--cli-binary",
+            str(release / "axiom-cli"),
+            "--release-version",
+            release_version,
+            "--json",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode:
+        raise ValueError(
+            "Linux CLI release-set builder refused: " + result.stderr[-500:]
+        )
+    for name in ("cli-release/release-set.json", "cli-release/axiom-cli"):
+        inputs[name] = output / name
     kit = {
         "task_id": "K-406",
         "lane": "container-linux-x64",
@@ -92,7 +118,9 @@ def build(args: argparse.Namespace) -> dict:
     (output / "kit-manifest.json").write_text(
         json.dumps(kit, indent=2, sort_keys=True) + "\n"
     )
-    archive_path = output / "axiom-0.1.1-container-linux-x64-update-kit.tar.gz"
+    archive_path = (
+        output / f"axiom-{release_version}-container-linux-x64-update-kit.tar.gz"
+    )
     paths = sorted(
         path for path in output.rglob("*") if path.is_file() and path != archive_path
     )

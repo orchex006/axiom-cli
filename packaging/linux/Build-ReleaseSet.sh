@@ -166,7 +166,7 @@ AC_OUT_DIR="$(CDPATH= cd -- "$AC_OUT_DIR" && pwd)"
 
 AC_ART_NAME="axiom-cli"
 cp -- "$AC_CLI_BINARY" "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot copy the artifact into the release set"
-chmod 0755 -- "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot mark the artifact executable"
+chmod 0755 "$AC_OUT_DIR/$AC_ART_NAME" || ac_fail "$AC_EXIT_NOT_READY" "cannot mark the artifact executable"
 
 AC_ART_SHA="$(sha256sum -- "$AC_OUT_DIR/$AC_ART_NAME" | cut -d' ' -f1)"
 AC_ART_SIZE="$(wc -c < "$AC_OUT_DIR/$AC_ART_NAME" | tr -d ' ')"
