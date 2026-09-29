@@ -29,6 +29,7 @@
 
 pub mod apply;
 pub mod channel;
+pub mod composite;
 pub mod error;
 pub mod fetch;
 pub mod generation;

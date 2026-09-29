@@ -1,5 +1,17 @@
 # Container channel — axiom-cli
 
+## K-406 local update kit
+
+The K-406 kit contains a pinned Linux candidate, its runtime receipt, the
+Linux per-user installer and the update coordinator. A container using the
+owned volume and managed Python may name the extracted kit with
+`AXIOM_CLI_COMPOSITE_KIT` and run the public `axiom-cli update` verbs. Plan
+approval binds the kit manifest, all 49 release files and installed A state.
+The graphd-owned engine transaction activates core/MCP/skills; the coordinator
+then installs the CLI entrypoint and records a rollback receipt. An injected
+failure after engine activation restores A through the engine's rollback API.
+The kit is unsigned and unpublished; it cannot certify any native lane.
+
 ## K-405 local candidate
 
 `evidence/K-405/` records an unsigned Linux x64 candidate built from the

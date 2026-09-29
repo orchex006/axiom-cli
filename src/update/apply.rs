@@ -155,6 +155,11 @@ pub fn run_update(request: Request, json: bool, verbose: bool) -> i32 {
         return report.emit(json, verbose);
     };
     let state = State::new(root);
+    if state.root().join("installs/ecosystem/current").exists() {
+        if let Some(kit) = std::env::var_os("AXIOM_CLI_COMPOSITE_KIT") {
+            return super::composite::run(state.root(), Path::new(&kit), &request, json);
+        }
+    }
     match execute(&state, &request) {
         Ok(report) => report.emit(json, verbose),
         Err(refusal) => refusal_report(&refusal).emit(json, verbose),

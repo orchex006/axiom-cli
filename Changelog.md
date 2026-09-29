@@ -1,5 +1,16 @@
 # Changelog
 
+## K-406 Linux x64 container update candidate
+
+- Add a manifest-checked local update kit and route the public `axiom-cli
+  update` verbs to its coordinator only when an installed engine exists and
+  `AXIOM_CLI_COMPOSITE_KIT` names that kit. The coordinator binds one approval
+  to exact A/B candidate bytes and installed state, invokes the graphd-owned
+  update transaction, then moves the owned CLI entrypoint. Failed second-phase
+  activation restores the retained CLI and engine generation. This remains an
+  unsigned local candidate; the released channel and K-003 split-update guard
+  remain in force without an explicit kit.
+
 ## K-405 Linux x64 container distribution candidate
 
 - Compose the pinned skills, core, MCP wheel and runtime handoffs with the

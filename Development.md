@@ -41,3 +41,15 @@ volume. With no systemd user manager, the installed graphd daemon runs in the
 foreground and drains on SIGINT. The local test uses the approved per-user
 install and uninstall flows and preserves source, bindings and user data.
 This is candidate verification; K-406 and K-407 retain update and query gates.
+
+## K-406 local container update candidate
+
+`packaging/linux/Build-UpdateKit.py` copies an exact K-405-format candidate,
+the K-404 runtime receipt, Linux installer and update coordinator into an
+unsigned local kit. `AXIOM_CLI_COMPOSITE_KIT` opts the public `axiom-cli update`
+verbs into that installed-engine path. The coordinator verifies the kit and
+every release member, binds the approval digest to the current CLI/engine
+generation, and delegates ecosystem activation and rollback to `axiom`.
+The distribution layer retains and restores its own CLI entrypoint. Without
+the explicit kit, the K-003 guard still refuses split update; a feature-branch
+candidate is not a published update channel.

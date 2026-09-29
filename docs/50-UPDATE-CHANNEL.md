@@ -35,14 +35,17 @@ tests/update_channel.rs  the acceptance and boundary suite (23 legs)
 
 ## The four verbs
 
-For an installation with an active `installs/ecosystem/current` engine pointer,
-all four distribution update verbs currently refuse with
+For an installation with an active `installs/ecosystem/current` engine pointer
+and no explicit local kit, distribution update verbs refuse with
 `composite_activation_not_ready` (exit 4). The J-007 distribution generation
 store and the installed engine ecosystem have separate activation pointers;
 moving either one alone could expose an incompatible CLI/core/MCP set. K-003
-must introduce a shared activation authority and migration before this guard
-can be removed. The existing J-007 fixture store remains testable where no
-engine ecosystem is installed.
+introduced this guard. K-406 adds an explicit unsigned container candidate
+path: when `AXIOM_CLI_COMPOSITE_KIT` names a manifest-checked local kit, the
+public verbs call the coordinator that binds both activation steps to one
+approval and delegates ecosystem update/rollback to `axiom`. The guard stays
+in force when no kit is named. The existing J-007 fixture store remains
+testable where no engine ecosystem is installed.
 
 ```text
 axiom-cli update check   [--json] [--all]
