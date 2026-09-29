@@ -279,16 +279,20 @@ def rollback(root: Path) -> dict:
     if previous is None:
         raise ValueError("no previous owned runtime to restore")
     owned_version(root, previous["generation"])
+    verified = report(root, previous, "rolled_back")
     current = pointer(root)
     if current:
         atomic_json(root / "previous.json", current)
     atomic_json(root / "current.json", previous)
-    return report(root, previous, "rolled_back")
+    return verified
 
 
 def remove(root: Path) -> dict:
     if root.is_symlink():
         raise ValueError("runtime root is a symlink")
+    for name in ("current.json", "previous.json"):
+        if (root / name).is_symlink():
+            raise ValueError("runtime pointer is a symlink")
     versions = root / "versions"
     removed = []
     if versions.exists():
@@ -304,8 +308,6 @@ def remove(root: Path) -> dict:
     for name in ("current.json", "previous.json"):
         path = root / name
         if path.exists():
-            if path.is_symlink():
-                raise ValueError("runtime pointer is a symlink")
             path.unlink()
     return {
         "status": "removed",

@@ -164,6 +164,16 @@ def main() -> int:
         assert (root / "current.json").read_bytes() == first_pointer
         second = provision(lock=changed_lock)
         assert second["generation"] != fresh["generation"]
+        second_pointer = (root / "current.json").read_bytes()
+        first_launcher = root / "versions" / fresh["generation"] / "venv/bin/axiom-mcp"
+        original_launcher = first_launcher.read_bytes()
+        first_launcher.write_bytes(b"tampered launcher")
+        refused_rollback = run(
+            [sys.executable, str(PROVISIONER), "rollback", "--root", str(root)], 9
+        )
+        assert "digest changed" in refused_rollback["reason"]
+        assert (root / "current.json").read_bytes() == second_pointer
+        first_launcher.write_bytes(original_launcher)
         restored = run(
             [sys.executable, str(PROVISIONER), "rollback", "--root", str(root)]
         )
