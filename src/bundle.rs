@@ -182,6 +182,7 @@ fn run(engine: &Engine, request: &Request<'_>, updating: bool) -> Result<Report,
             request,
             &assembly,
             steps,
+            verb,
             "plan",
             &plan,
             plan_stdout.as_ref(),
@@ -210,6 +211,7 @@ fn run(engine: &Engine, request: &Request<'_>, updating: bool) -> Result<Report,
             request,
             &assembly,
             steps,
+            verb,
             "apply",
             &apply,
             apply_stdout.as_ref(),
@@ -1238,6 +1240,7 @@ fn refused(
     request: &Request<'_>,
     assembly: &Assembly,
     steps: Vec<Json>,
+    verb: &str,
     step: &str,
     outcome: &Outcome,
     value: Option<&Json>,
@@ -1255,15 +1258,19 @@ fn refused(
         let stderr = outcome.stderr.trim();
         if stderr.is_empty() {
             format!(
-                "the engine's `install {step}` step exited {exit_code} without a readable reason"
+                "the engine's `{verb} {step}` step exited {exit_code} without a readable reason"
             )
         } else {
-            format!("the engine's `install {step}` step exited {exit_code}: {stderr}")
+            format!("the engine's `{verb} {step}` step exited {exit_code}: {stderr}")
         }
     } else {
         engine_message.to_string()
     };
-    let mut report = Report::new(exit_code, status, message.clone()).subject("install");
+    let mut report = Report::new(exit_code, status, message.clone()).subject(if verb == "update" {
+        "update"
+    } else {
+        "install"
+    });
     if matches!(
         value
             .and_then(|value| value.get("retryable"))

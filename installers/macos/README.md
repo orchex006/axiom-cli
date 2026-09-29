@@ -41,3 +41,12 @@ starts and checks the LaunchAgent. It writes an empty local bindings document
 only if none exists, and never replaces a user-authored one. Uninstall stops and
 removes the service, removes active installed files and owned entrypoints, then
 removes the MCP runtime. It retains user data and local bindings.
+
+The K-106 candidate extends that same bootstrap with `update` and `rollback`.
+Both use a dry-run plan digest followed by explicit approval. Update verifies
+the candidate and installed generation, delegates the ecosystem transition to
+`axiom update plan/apply`, then moves the two owned entrypoints. It stores an
+owned receipt for an explicit engine rollback. A failure restores the prior
+entrypoint and MCP pointers and asks the engine to restore its prior pointer.
+The native A/B test and exact artifact evidence remain required before this
+branch can claim a complete installed update.

@@ -12,6 +12,15 @@
 
 ## Unreleased
 
+### K-106 Mac Intel distribution update candidate (in progress)
+
+The per-user candidate bootstrap now binds update approval to the verified B
+set and installed A pointers, delegates ecosystem update and rollback to the
+graphd engine, moves owned CLI entrypoints and records a rollback receipt.
+The K-003 split-update guard is integrated. Native A install, query, watcher
+and refusal/compensation probes passed; a distinct source-pinned B core is
+still needed for full A/B update and rollback acceptance. No release is claimed.
+
 ### K-003 composite update safety boundary
 
 Refuse distribution-only check, plan, apply and rollback when an installed

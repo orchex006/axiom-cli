@@ -102,3 +102,24 @@ and approval flow. It removes owned executable and service entrypoints while
 preserving local bindings and user files. Empty skills version directories left
 by engine removal are pruned; any edited file remains. The native proof is
 `tests/macos/test_distribution.py`.
+
+## K-106 composite update candidate
+
+`runtime/bootstrap.sh update --release-set <B> --dry-run` reports the digest
+of the verified B candidate and the exact installed A pointers. Re-run with
+`--apply --approve-digest <digest>` to ask the installed engine for its own
+`update plan` and `update apply` transaction, then activate the distribution
+entrypoints. An owned update receipt records the engine transaction and both
+sets of pointer hashes. `runtime/bootstrap.sh rollback --release-set <B>` has
+the same dry-run and approval pattern and asks the engine to restore its
+retained A generation. The legacy distribution-only `axiom-cli update` verbs
+refuse while an engine ecosystem pointer exists.
+
+A/B must carry distinct, source-pinned CLI and core artifacts with a new core
+version. The native proof is `tests/macos/test_distribution_update.py` with
+`--candidate-a`, `--candidate-b` and `--out`. It checks installed query and
+watcher behavior, owned service status, exact activated hashes, rollback,
+failure boundaries and preserved user data. The current K-106 branch has
+validated only the A installation and refusal paths; a valid B core input is
+still required before the composite update can be claimed as verified. This
+candidate path does not sign, notarize or publish a release.

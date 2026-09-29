@@ -1,0 +1,89 @@
+{
+  "status": "preupdate-only",
+  "source_sha256": "c9e7ff0041bb685910e78422149e99ce628b6f1121d516dba5154a295155c226",
+  "catalog_before": "fe718f96722834bec2fed56458df2099423f2e2160e5940432883779f73ce7b0",
+  "catalog_after": "29570c34025d02f98e8a47a2a6481937955c4ab2427b031a0286db1d6de6c2e5",
+  "daemon_sha256": "aea46d4b63c6382f009f4fcf8822f9e90a3177442240440f4818050ae9231572",
+  "trace": [
+    {
+      "label": "service-stop",
+      "argv": [
+        "<isolated-test-root>/home/.local/bin/axiom",
+        "service",
+        "stop",
+        "--component",
+        "axiom-graphd",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"action\":\"stop\",\"code\":0,\"component\":\"axiom-graphd\",\"stderr\":\"\",\"stdout\":\"\"}\n",
+      "stderr": ""
+    },
+    {
+      "label": "solution-register",
+      "argv": [
+        "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+        "solution",
+        "register",
+        "--config",
+        "<isolated-test-root>/solution.json",
+        "--apply",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"id\":\"demo-solution\",\"profile\":\"default\",\"config_hash\":\"62592e0a3c5b8e4dcc824e73251b2f29af8992d240a1806fa133e5109fe0ce95\",\"projects\":1}\n",
+      "stderr": ""
+    },
+    {
+      "label": "service-start",
+      "argv": [
+        "<isolated-test-root>/home/.local/bin/axiom",
+        "service",
+        "start",
+        "--component",
+        "axiom-graphd",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"action\":\"start\",\"code\":0,\"component\":\"axiom-graphd\",\"stderr\":\"\",\"stdout\":\"\"}\n",
+      "stderr": ""
+    },
+    {
+      "label": "query-before",
+      "argv": [
+        "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+        "query",
+        "context",
+        "--solution",
+        "demo-solution",
+        "--symbol",
+        "Demo.TokenSource",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"9dd5db31cb64f05e9bb698c161a346500b6d91288ba8b0ad364e88b20044dd2f\",\"kind\":\"context\",\"target\":\"Demo.TokenSource\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"TokenSource\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.TokenSource\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}},{\"key\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":2,\"file\":\"TokenSource.cs\",\"start_line\":2}}],\"id\":\"11ed04485509f44cfadcaefa2ed644e6a66b596bf438b07a6519d66589f20e9e\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"5ed32a07153e5e3efd3d79f33d3c71477146508ca746e48efe6f4be1d41d91ef\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":963}\n",
+      "stderr": ""
+    },
+    {
+      "label": "query-after-edit",
+      "argv": [
+        "<isolated-test-root>/home/.local/share/axiom/installs/ecosystem/versions/0.1.0/bin/axiom-graphd",
+        "query",
+        "context",
+        "--solution",
+        "demo-solution",
+        "--symbol",
+        "Demo.K106WatcherA",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"solution_id\":\"demo-solution\",\"generation_id\":\"2d240bcf75915ec6fd477fae601ef93fba08e133399254fa5c9f4635ac0bb28b\",\"kind\":\"context\",\"target\":\"Demo.K106WatcherA\",\"limits\":{\"max_bytes\":8192,\"max_nodes\":64,\"depth\":1},\"records\":[{\"key\":\"b55d92777b8931cd46698dede69e6f6fe380893be6da4ce299d20522d82ddbe5\",\"kind\":\"node\",\"body\":{\"attributes\":{},\"id\":\"b55d92777b8931cd46698dede69e6f6fe380893be6da4ce299d20522d82ddbe5\",\"identity_quality\":\"semantic_key\",\"kind\":\"Class\",\"language\":\"csharp\",\"name\":\"K106WatcherA\",\"project_id\":\"demo-project\",\"qualified_name\":\"Demo.K106WatcherA\",\"source\":{\"end_line\":3,\"file\":\"TokenSource.cs\",\"start_line\":3}}},{\"key\":\"54556b1cec302df6081fa102e99aec68a82813a03c174abf839931e7716e773f\",\"kind\":\"edge\",\"body\":{\"analyzer_id\":\"csharp-declarations-v1\",\"evidence\":[{\"rule_id\":\"declaration-contains-v1\",\"source\":{\"end_line\":3,\"file\":\"TokenSource.cs\",\"start_line\":3}}],\"id\":\"54556b1cec302df6081fa102e99aec68a82813a03c174abf839931e7716e773f\",\"kind\":\"CONTAINS\",\"resolution\":\"exact_static\",\"source_id\":\"1542e38038fdd83ae5e7143f290521134f5f23aea2795fc6af9239ca0854d259\",\"target_id\":\"b55d92777b8931cd46698dede69e6f6fe380893be6da4ce299d20522d82ddbe5\",\"target_project_id\":\"demo-project\"}}],\"omitted\":0,\"truncated\":false,\"reasons\":[],\"bytes\":965}\n",
+      "stderr": ""
+    }
+  ],
+  "path_redaction": {
+    "marker": "<isolated-test-root>",
+    "raw_sha256": "0bee2a8e70441c2313802c913172995909d091aa341d460b0c60eceb09a37382",
+    "reason": "portable evidence; raw transcript retained in the task-owned temporary test root"
+  }
+}

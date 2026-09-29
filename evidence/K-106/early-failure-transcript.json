@@ -1,0 +1,82 @@
+{
+  "candidate": "same-ecosystem-smoke",
+  "before": {
+    "entry": "fe8434edbd988bc37c0acaacadf0cdaddeefcbbf38e6950cf412d8e84e568328",
+    "engine": "d05c3f73ad24ec02742892472129cea732ea5eb59182a4f5453a0d1c7e34bd3b",
+    "runtime": "d45b4c3effb6c2f499db13dd2ee6dd21276c2a4b087015efc2fb69ac8e00e37f",
+    "cli": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+  },
+  "results": [
+    {
+      "phase": "--dry-run",
+      "exit": 0,
+      "stdout": "{\"action\": \"update\", \"notarization\": \"not_notarized\", \"plan_digest\": \"af785792e09dce359e50d9a91e4d3067b38a36e7889a8a3fe4b8410ac4949733\", \"signing\": \"unsigned\", \"status\": \"planned\"}\n",
+      "stderr": ""
+    },
+    {
+      "phase": "download",
+      "exit": 9,
+      "stdout": "",
+      "stderr": "{\"reason\": \"injected local artifact acquisition failure\", \"status\": \"refused\"}\n",
+      "state_after": {
+        "entry": "fe8434edbd988bc37c0acaacadf0cdaddeefcbbf38e6950cf412d8e84e568328",
+        "engine": "d05c3f73ad24ec02742892472129cea732ea5eb59182a4f5453a0d1c7e34bd3b",
+        "runtime": "d45b4c3effb6c2f499db13dd2ee6dd21276c2a4b087015efc2fb69ac8e00e37f",
+        "cli": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+      },
+      "A_preserved": true
+    },
+    {
+      "phase": "stage",
+      "exit": 9,
+      "stdout": "",
+      "stderr": "{\"reason\": \"injected stage failure\", \"status\": \"refused\"}\n",
+      "state_after": {
+        "entry": "fe8434edbd988bc37c0acaacadf0cdaddeefcbbf38e6950cf412d8e84e568328",
+        "engine": "d05c3f73ad24ec02742892472129cea732ea5eb59182a4f5453a0d1c7e34bd3b",
+        "runtime": "d45b4c3effb6c2f499db13dd2ee6dd21276c2a4b087015efc2fb69ac8e00e37f",
+        "cli": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+      },
+      "A_preserved": true
+    },
+    {
+      "phase": "activation",
+      "exit": 9,
+      "stdout": "",
+      "stderr": "{\"reason\": \"injected failure after engine activation\", \"status\": \"refused\"}\n",
+      "state_after": {
+        "entry": "fe8434edbd988bc37c0acaacadf0cdaddeefcbbf38e6950cf412d8e84e568328",
+        "engine": "d05c3f73ad24ec02742892472129cea732ea5eb59182a4f5453a0d1c7e34bd3b",
+        "runtime": "d45b4c3effb6c2f499db13dd2ee6dd21276c2a4b087015efc2fb69ac8e00e37f",
+        "cli": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+      },
+      "A_preserved": true
+    },
+    {
+      "phase": "service_restart",
+      "exit": 9,
+      "stdout": "",
+      "stderr": "{\"reason\": \"injected failure after engine activation\", \"status\": \"refused\"}\n",
+      "state_after": {
+        "entry": "fe8434edbd988bc37c0acaacadf0cdaddeefcbbf38e6950cf412d8e84e568328",
+        "engine": "d05c3f73ad24ec02742892472129cea732ea5eb59182a4f5453a0d1c7e34bd3b",
+        "runtime": "d45b4c3effb6c2f499db13dd2ee6dd21276c2a4b087015efc2fb69ac8e00e37f",
+        "cli": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+      },
+      "A_preserved": true
+    },
+    {
+      "phase": "post_activation",
+      "exit": 9,
+      "stdout": "",
+      "stderr": "{\"reason\": \"engine did not activate a new generation\", \"status\": \"refused\"}\n",
+      "state_after": {
+        "entry": "fe8434edbd988bc37c0acaacadf0cdaddeefcbbf38e6950cf412d8e84e568328",
+        "engine": "d05c3f73ad24ec02742892472129cea732ea5eb59182a4f5453a0d1c7e34bd3b",
+        "runtime": "d45b4c3effb6c2f499db13dd2ee6dd21276c2a4b087015efc2fb69ac8e00e37f",
+        "cli": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+      },
+      "A_preserved": true
+    }
+  ]
+}

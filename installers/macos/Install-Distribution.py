@@ -101,10 +101,17 @@ def inputs(release: Path) -> dict:
     if not manifest["files"]:
         raise ValueError("owner skills are empty")
     declared = {row.get("component"): row for row in channel.get("components", [])}
-    if set(declared) != {"axiom-graphd", "axiom-mcp", "skills"}:
+    if len(channel.get("components", [])) != 3 or set(declared) != {
+        "axiom-graphd",
+        "axiom-mcp",
+        "skills",
+    }:
         raise ValueError("candidate channel has an incomplete ecosystem")
     if (
-        (declared["axiom-graphd"].get("version"), declared["axiom-graphd"].get("revision"))
+        (
+            declared["axiom-graphd"].get("version"),
+            declared["axiom-graphd"].get("revision"),
+        )
         != (entry["artifacts"][2]["version"], entry["artifacts"][2]["revision"])
         or entry["artifacts"][1]["version"] != entry["artifacts"][2]["version"]
         or entry["artifacts"][1]["revision"] != entry["artifacts"][2]["revision"]
@@ -113,7 +120,9 @@ def inputs(release: Path) -> dict:
         or declared["skills"].get("version") != manifest.get("component_version")
         or manifest.get("spec_revision") is None
     ):
-        raise ValueError("candidate channel, core, MCP or skills identity is incompatible")
+        raise ValueError(
+            "candidate channel, core, MCP or skills identity is incompatible"
+        )
     return {
         "entry": entry,
         "channel": channel,
@@ -169,7 +178,9 @@ def installed_update_state(home: Path, root: Path) -> dict:
         raise ValueError("owned release digest invalid")
     old = root / "entrypoints/versions" / rows[1]
     binaries = (home / ".local/bin/axiom-cli", home / ".local/bin/axiom")
-    for current, retained, expected in zip(binaries, (old / "axiom-cli", old / "axiom"), rows[5:7]):
+    for current, retained, expected in zip(
+        binaries, (old / "axiom-cli", old / "axiom"), rows[5:7]
+    ):
         verify(current, expected)
         verify(retained, expected)
     pointer = root / "installs/ecosystem/current"
@@ -177,7 +188,9 @@ def installed_update_state(home: Path, root: Path) -> dict:
     service = root / "installs/ecosystem/state/service-v1.json"
     for path in (pointer, runtime, service):
         if path.is_symlink() or not path.is_file():
-            raise ValueError("installed engine, runtime or owned service missing: " + str(path))
+            raise ValueError(
+                "installed engine, runtime or owned service missing: " + str(path)
+            )
     return {
         "entrypoint_record_sha256": digest(state),
         "engine_pointer_sha256": digest(pointer),
@@ -212,10 +225,18 @@ def rollback_receipt(release: Path, root: Path, installed: dict) -> dict:
         value.get("schema_version") != 1
         or value.get("release_set_sha256") != digest(release / "release-set.json")
         or not re.fullmatch(r"[a-zA-Z0-9-]+", str(value.get("engine_transaction", "")))
+        or not isinstance(value.get("before"), dict)
+        or not isinstance(value.get("after"), dict)
+        or set(value["before"]) != set(installed)
+        or set(value["after"]) != set(installed)
     ):
         raise ValueError("distribution update receipt is incompatible")
     after = value.get("after", {})
-    if any(installed.get(key) != expected for key, expected in after.items() if key != "service_record_sha256"):
+    if any(
+        installed.get(key) != expected
+        for key, expected in after.items()
+        if key != "service_record_sha256"
+    ):
         raise ValueError("installed generation changed since the update receipt")
     return value
 
@@ -269,7 +290,9 @@ def update_lock(root: Path):
     try:
         lock.mkdir(mode=0o700)
     except FileExistsError as error:
-        raise ValueError("another distribution update or recovery holds the lock") from error
+        raise ValueError(
+            "another distribution update or recovery holds the lock"
+        ) from error
     try:
         yield
     finally:
@@ -285,17 +308,30 @@ def activate_entrypoints(release: Path, home: Path, root: Path, before: dict) ->
     state = root / "entrypoints/current.tsv"
     if digest(state) != before["entrypoint_record_sha256"]:
         raise ValueError("installed generation changed since update approval")
-    for name, expected in (("axiom-cli", before["cli_sha256"]), ("axiom", before["engine_cli_sha256"])):
+    for name, expected in (
+        ("axiom-cli", before["cli_sha256"]),
+        ("axiom", before["engine_cli_sha256"]),
+    ):
         verify(home / ".local/bin" / name, expected)
     versions = root / "entrypoints/versions"
     target = versions / set_sha
-    if target.exists() or target.is_symlink():
-        raise ValueError("candidate entrypoint generation already exists")
-    target.mkdir()
-    for name, row in zip(("axiom-cli", "axiom"), rows[:2]):
-        atomic_copy(release / name, target / name, row["sha256"])
+    if target.is_symlink():
+        raise ValueError("candidate entrypoint generation is linked")
+    if target.exists():
+        if not target.is_dir() or {path.name for path in target.iterdir()} != {
+            "axiom-cli",
+            "axiom",
+        }:
+            raise ValueError("retained candidate entrypoint generation changed")
+        for name, row in zip(("axiom-cli", "axiom"), rows[:2]):
+            verify(target / name, row["sha256"])
+    else:
+        target.mkdir()
+        for name, row in zip(("axiom-cli", "axiom"), rows[:2]):
+            atomic_copy(release / name, target / name, row["sha256"])
     for name, row, old_sha in zip(
-        ("axiom-cli", "axiom"), rows[:2],
+        ("axiom-cli", "axiom"),
+        rows[:2],
         (before["cli_sha256"], before["engine_cli_sha256"]),
     ):
         destination = home / ".local/bin" / name
@@ -347,7 +383,9 @@ def restore_entrypoints(home: Path, root: Path, before: dict, candidate: dict) -
     atomic_text(root / "entrypoints/current.tsv", record)
 
 
-def run_update(release: Path, home: Path, root: Path, env: dict, checked: dict, before: dict) -> dict:
+def run_update(
+    release: Path, home: Path, root: Path, env: dict, checked: dict, before: dict
+) -> dict:
     """Coordinate the engine's own update with the distribution-owned entrypoint move."""
     runtime_dir = root / "mcp-runtime"
     runtime = checked["runtime"]
@@ -355,36 +393,85 @@ def run_update(release: Path, home: Path, root: Path, env: dict, checked: dict, 
     transaction = None
     runtime_changed = False
     events = []
+    candidate_dir = root / "entrypoints/versions" / digest(release / "release-set.json")
+    candidate_dir_preexisting = candidate_dir.exists() or candidate_dir.is_symlink()
     try:
         if (root / "distribution-update.json").exists():
             raise ValueError("previous distribution update needs rollback or review")
-        command(["/bin/sh", str(release / "runtime/entrypoints.sh"), "uninstall", "--dry-run"], env)
-        command([sys.executable, str(provision), "status", "--root", str(runtime_dir)], env)
+        command(
+            [
+                "/bin/sh",
+                str(release / "runtime/entrypoints.sh"),
+                "uninstall",
+                "--dry-run",
+            ],
+            env,
+        )
+        command(
+            [sys.executable, str(provision), "status", "--root", str(runtime_dir)], env
+        )
         if os.environ.get("AXIOM_K106_FAIL_AT") == "download":
             raise ValueError("injected local artifact acquisition failure")
         result = command(
             [
-                sys.executable, str(provision), "provision", "--root", str(runtime_dir),
-                "--version", runtime["mcp_version"], "--source-revision", runtime["mcp_revision"],
+                sys.executable,
+                str(provision),
+                "provision",
+                "--root",
+                str(runtime_dir),
+                "--version",
+                runtime["mcp_version"],
+                "--source-revision",
+                runtime["mcp_revision"],
                 *[
                     part
-                    for key, name in (("runtime", "python.tar.gz"), ("wheelhouse", "wheelhouse.tar.gz"),
-                                      ("wheel", "axiom_mcp-0.1.0-py3-none-any.whl"), ("lock", "requirements.txt"))
-                    for part in ("--" + key, str(release / "runtime" / name),
-                                 "--" + key + "-sha256", runtime["files"][name])
+                    for key, name in (
+                        ("runtime", "python.tar.gz"),
+                        ("wheelhouse", "wheelhouse.tar.gz"),
+                        ("wheel", "axiom_mcp-0.1.0-py3-none-any.whl"),
+                        ("lock", "requirements.txt"),
+                    )
+                    for part in (
+                        "--" + key,
+                        str(release / "runtime" / name),
+                        "--" + key + "-sha256",
+                        runtime["files"][name],
+                    )
                 ],
-            ], env,
+            ],
+            env,
         )
-        runtime_changed = digest(runtime_dir / "current.json") != before["runtime_pointer_sha256"]
+        runtime_changed = (
+            digest(runtime_dir / "current.json") != before["runtime_pointer_sha256"]
+        )
         events.append({"phase": "runtime-stage", **result})
         if os.environ.get("AXIOM_K106_FAIL_AT") == "stage":
             raise ValueError("injected stage failure")
         candidate_cli = release / "axiom-cli"
         composite_env = dict(env, AXIOM_CLI_COMPOSITE_UPDATE="1")
-        planned = command([str(candidate_cli), "install", "--from", str(release), "--dry-run", "--json"], composite_env)
+        planned = command(
+            [
+                str(candidate_cli),
+                "install",
+                "--from",
+                str(release),
+                "--dry-run",
+                "--json",
+            ],
+            composite_env,
+        )
         applied = command(
-            [str(candidate_cli), "install", "--from", str(release), "--apply",
-             "--approve-digest", approval(planned["body"]), "--json"], composite_env,
+            [
+                str(candidate_cli),
+                "install",
+                "--from",
+                str(release),
+                "--apply",
+                "--approve-digest",
+                approval(planned["body"]),
+                "--json",
+            ],
+            composite_env,
         )
         events.append({"phase": "engine-update", **applied})
         transaction = applied["body"].get("details", {}).get("engine_transaction")
@@ -406,10 +493,19 @@ def run_update(release: Path, home: Path, root: Path, env: dict, checked: dict, 
             "before": before,
             "after": after,
         }
-        atomic_text(root / "distribution-update.json", json.dumps(receipt, sort_keys=True) + "\n")
-        return {"status": "updated", "before": before, "after": after,
-                "engine_transaction": transaction, "runtime": result["body"], "events": events,
-                "user_data_preserved": True}
+        atomic_text(
+            root / "distribution-update.json",
+            json.dumps(receipt, sort_keys=True) + "\n",
+        )
+        return {
+            "status": "updated",
+            "before": before,
+            "after": after,
+            "engine_transaction": transaction,
+            "runtime": result["body"],
+            "events": events,
+            "user_data_preserved": True,
+        }
     except Exception as error:
         failures = []
         try:
@@ -420,16 +516,38 @@ def run_update(release: Path, home: Path, root: Path, env: dict, checked: dict, 
             failures.append("entrypoints: " + str(rollback_error))
         if transaction:
             try:
-                command([str(release / "axiom"), "update", "rollback", "--transaction", transaction, "--json"], env)
+                command(
+                    [
+                        str(release / "axiom"),
+                        "update",
+                        "rollback",
+                        "--transaction",
+                        transaction,
+                        "--json",
+                    ],
+                    env,
+                )
             except Exception as rollback_error:
                 failures.append("engine: " + str(rollback_error))
         if runtime_changed:
             try:
-                command([sys.executable, str(provision), "rollback", "--root", str(runtime_dir)], env)
+                command(
+                    [
+                        sys.executable,
+                        str(provision),
+                        "rollback",
+                        "--root",
+                        str(runtime_dir),
+                    ],
+                    env,
+                )
             except Exception as rollback_error:
                 failures.append("runtime: " + str(rollback_error))
-        candidate_dir = root / "entrypoints/versions" / digest(release / "release-set.json")
-        if candidate_dir.is_dir() and not candidate_dir.is_symlink():
+        if (
+            not candidate_dir_preexisting
+            and candidate_dir.is_dir()
+            and not candidate_dir.is_symlink()
+        ):
             try:
                 rows = checked["entry"]["artifacts"]
                 for name, row in zip(("axiom-cli", "axiom"), rows[:2]):
@@ -447,15 +565,21 @@ def run_update(release: Path, home: Path, root: Path, env: dict, checked: dict, 
                 for key in before
                 if key != "service_record_sha256"
             ):
-                failures.append("installed generation differs from the approved A state")
+                failures.append(
+                    "installed generation differs from the approved A state"
+                )
         except Exception as rollback_error:
             failures.append("state verification: " + str(rollback_error))
         if failures:
-            raise ValueError(str(error) + "; rollback failed: " + "; ".join(failures)) from error
+            raise ValueError(
+                str(error) + "; rollback failed: " + "; ".join(failures)
+            ) from error
         raise
 
 
-def run_rollback(release: Path, home: Path, root: Path, env: dict, checked: dict, installed: dict) -> dict:
+def run_rollback(
+    release: Path, home: Path, root: Path, env: dict, checked: dict, installed: dict
+) -> dict:
     receipt = rollback_receipt(release, root, installed)
     before = receipt["before"]
     provision = release / "runtime/provision.py"
@@ -464,18 +588,41 @@ def run_rollback(release: Path, home: Path, root: Path, env: dict, checked: dict
     verify(retained / "axiom-cli", before["cli_sha256"])
     verify(retained / "axiom", before["engine_cli_sha256"])
     result = command(
-        [str(release / "axiom"), "update", "rollback", "--transaction",
-         receipt["engine_transaction"], "--json"], env,
+        [
+            str(release / "axiom"),
+            "update",
+            "rollback",
+            "--transaction",
+            receipt["engine_transaction"],
+            "--json",
+        ],
+        env,
     )
     if installed["runtime_pointer_sha256"] != before["runtime_pointer_sha256"]:
-        command([sys.executable, str(provision), "rollback", "--root", str(root / "mcp-runtime")], env)
+        command(
+            [
+                sys.executable,
+                str(provision),
+                "rollback",
+                "--root",
+                str(root / "mcp-runtime"),
+            ],
+            env,
+        )
     restore_entrypoints(home, root, before, checked["entry"])
     restored = installed_update_state(home, root)
-    if any(restored[key] != before[key] for key in before if key != "service_record_sha256"):
+    if any(
+        restored[key] != before[key] for key in before if key != "service_record_sha256"
+    ):
         raise ValueError("rollback did not restore the approved A generation")
     (root / "distribution-update.json").unlink()
-    return {"status": "rolled_back", "engine": result["body"], "before": installed,
-            "after": restored, "user_data_preserved": True}
+    return {
+        "status": "rolled_back",
+        "engine": result["body"],
+        "before": installed,
+        "after": restored,
+        "user_data_preserved": True,
+    }
 
 
 def engine_env(home: Path, root: Path) -> dict[str, str]:
@@ -862,7 +1009,9 @@ def run_uninstall(release: Path, home: Path, root: Path, env: dict) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("install", "update", "rollback", "uninstall"))
+    parser.add_argument(
+        "action", choices=("install", "update", "rollback", "uninstall")
+    )
     parser.add_argument("--release-set", type=Path, required=True)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
@@ -883,7 +1032,11 @@ def main() -> int:
         if not root.is_relative_to(home) or root == home or root.is_symlink():
             raise ValueError("owned install root must be below the user home")
         checked = inputs(release)
-        before = installed_update_state(home, root) if args.action in ("update", "rollback") else None
+        before = (
+            installed_update_state(home, root)
+            if args.action in ("update", "rollback")
+            else None
+        )
         digest_value = (
             update_digest(release, home, checked, before)
             if args.action == "update"
