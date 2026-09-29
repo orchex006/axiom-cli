@@ -115,6 +115,11 @@ the same dry-run and approval pattern and asks the engine to restore its
 retained A generation. The legacy distribution-only `axiom-cli update` verbs
 refuse while an engine ecosystem pointer exists.
 
+The coordinator writes `distribution-update-pending.json` before mutation and
+uses an OS lock released on process exit. It refuses another operation while
+an interrupted update is pending. A `prepared` engine journal still needs a
+public recovery path before abrupt-process-death recovery can be certified.
+
 A/B must carry distinct, source-pinned CLI and core artifacts with a new core
 version. The native proof is `tests/macos/test_distribution_update.py` with
 `--candidate-a`, `--candidate-b` and `--out`. It checks installed query and

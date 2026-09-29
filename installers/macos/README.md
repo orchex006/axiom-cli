@@ -50,3 +50,13 @@ owned receipt for an explicit engine rollback. A failure restores the prior
 entrypoint and MCP pointers and asks the engine to restore its prior pointer.
 The native A/B test and exact artifact evidence remain required before this
 branch can claim a complete installed update.
+
+The compensation path checks the actual runtime pointer even if provisioning
+returned an error after moving it. The coordinator writes a durable pending
+record before mutation and uses an OS
+lock that is released on process exit. A later invocation refuses an
+interrupted transaction for explicit recovery; automatic recovery from an
+engine journal left in `prepared` state is not yet available through the
+engine's public rollback command. The candidate cannot claim crash-safe
+cross-component activation or complete K-106 acceptance until that boundary
+is resolved and exercised with distinct A/B generations.

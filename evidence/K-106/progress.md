@@ -53,7 +53,14 @@ integration is claimed.
 Crash recovery needs specific work before AC2 can close. The engine writes a
 durable update journal, but the distribution coordinator writes its own receipt
 only after engine activation and entrypoint replacement. A process death in
-that interval leaves the coordinator without a receipt; the directory lock also
-remains. The current exception handler covers observed errors, not an abrupt
-process death. Do not infer atomic cross-component recovery from the early
-failure-injection results.
+that interval leaves the coordinator without a receipt. The coordinator now
+writes `distribution-update-pending.json` before the first mutation and uses an
+OS lock that releases on process exit. A later invocation refuses the pending
+state, including mixed state, for explicit recovery. The observed-error path
+also reads the actual runtime pointer after a provision error and retains the
+pending record when an unreported engine journal appeared. Five focused
+`test_distribution_pending.py` cases pass (`pending-tests.txt`). Automatic
+recovery is still absent:
+the engine public rollback rejects a journal left at `prepared`, and no
+distinct A/B native crash run has been performed. Do not infer atomic
+cross-component recovery from these focused tests.

@@ -19,7 +19,10 @@ set and installed A pointers, delegates ecosystem update and rollback to the
 graphd engine, moves owned CLI entrypoints and records a rollback receipt.
 The K-003 split-update guard is integrated. Native A install, query, watcher
 and refusal/compensation probes passed; a distinct source-pinned B core is
-still needed for full A/B update and rollback acceptance. No release is claimed.
+still needed for full A/B update and rollback acceptance. A pending record now
+precedes mutation, the update lock releases on process exit, and compensation
+checks the actual runtime pointer after provision errors. Interrupted engine
+`prepared` journals still need a public recovery path. No release is claimed.
 
 ### K-003 composite update safety boundary
 

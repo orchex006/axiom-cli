@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import fcntl
 import hashlib
 import json
 import os
@@ -288,6 +289,11 @@ def atomic_text(target: Path, value: str) -> None:
             os.fsync(output.fileno())
         os.chmod(name, 0o600)
         os.replace(name, target)
+        directory = os.open(target.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
     finally:
         if os.path.exists(name):
             os.unlink(name)
@@ -296,16 +302,35 @@ def atomic_text(target: Path, value: str) -> None:
 @contextmanager
 def update_lock(root: Path):
     lock = root / "distribution-update.lock"
+    if lock.is_symlink() or (lock.exists() and not lock.is_file()):
+        raise ValueError("distribution update lock is not an owned file")
+    descriptor = os.open(lock, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
     try:
-        lock.mkdir(mode=0o700)
-    except FileExistsError as error:
-        raise ValueError(
-            "another distribution update or recovery holds the lock"
-        ) from error
-    try:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise ValueError(
+                "another distribution update or recovery holds the lock"
+            ) from error
         yield
     finally:
-        lock.rmdir()
+        os.close(descriptor)
+
+
+def pending_update_path(root: Path) -> Path:
+    return root / "distribution-update-pending.json"
+
+
+def refuse_pending_update(root: Path) -> None:
+    pending = pending_update_path(root)
+    if pending.exists() or pending.is_symlink():
+        raise ValueError("distribution update recovery required: " + str(pending))
+
+
+def engine_journal_names(directory: Path) -> set[str]:
+    if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
+        raise ValueError("engine update journal directory is unsafe")
+    return {path.name for path in directory.iterdir()} if directory.is_dir() else set()
 
 
 def activate_entrypoints(release: Path, home: Path, root: Path, before: dict) -> dict:
@@ -401,11 +426,16 @@ def run_update(
     runtime = checked["runtime"]
     provision = release / "runtime/provision.py"
     transaction = None
-    runtime_changed = False
     events = []
     candidate_dir = root / "entrypoints/versions" / digest(release / "release-set.json")
     candidate_dir_preexisting = candidate_dir.exists() or candidate_dir.is_symlink()
+    pending = pending_update_path(root)
+    pending_written = False
+    receipt_written = False
+    journal_names: list[str] = []
+    engine_journal = root / "installs/ecosystem/journal"
     try:
+        refuse_pending_update(root)
         if (root / "distribution-update.json").exists():
             raise ValueError("previous distribution update needs rollback or review")
         command(
@@ -420,6 +450,21 @@ def run_update(
         command(
             [sys.executable, str(provision), "status", "--root", str(runtime_dir)], env
         )
+        journal_names = sorted(engine_journal_names(engine_journal))
+        atomic_text(
+            pending,
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "release_set_sha256": digest(release / "release-set.json"),
+                    "before": before,
+                    "engine_journals_before": journal_names,
+                },
+                sort_keys=True,
+            )
+            + "\n",
+        )
+        pending_written = True
         if os.environ.get("AXIOM_K106_FAIL_AT") == "download":
             raise ValueError("injected local artifact acquisition failure")
         result = command(
@@ -450,9 +495,6 @@ def run_update(
                 ],
             ],
             env,
-        )
-        runtime_changed = (
-            digest(runtime_dir / "current.json") != before["runtime_pointer_sha256"]
         )
         events.append({"phase": "runtime-stage", **result})
         if os.environ.get("AXIOM_K106_FAIL_AT") == "stage":
@@ -507,6 +549,8 @@ def run_update(
             root / "distribution-update.json",
             json.dumps(receipt, sort_keys=True) + "\n",
         )
+        receipt_written = True
+        pending.unlink()
         return {
             "status": "updated",
             "before": before,
@@ -519,8 +563,14 @@ def run_update(
     except Exception as error:
         failures = []
         try:
-            current = home / ".local/bin/axiom-cli"
-            if current.is_file() and digest(current) != before["cli_sha256"]:
+            current = home / ".local/bin"
+            if any(
+                (current / name).is_file() and digest(current / name) != expected
+                for name, expected in (
+                    ("axiom-cli", before["cli_sha256"]),
+                    ("axiom", before["engine_cli_sha256"]),
+                )
+            ):
                 restore_entrypoints(home, root, before, checked["entry"])
         except Exception as rollback_error:
             failures.append("entrypoints: " + str(rollback_error))
@@ -539,8 +589,13 @@ def run_update(
                 )
             except Exception as rollback_error:
                 failures.append("engine: " + str(rollback_error))
-        if runtime_changed:
-            try:
+        try:
+            runtime_pointer = runtime_dir / "current.json"
+            if (
+                runtime_pointer.is_symlink()
+                or not runtime_pointer.is_file()
+                or digest(runtime_pointer) != before["runtime_pointer_sha256"]
+            ):
                 command(
                     [
                         sys.executable,
@@ -551,8 +606,23 @@ def run_update(
                     ],
                     env,
                 )
+        except Exception as rollback_error:
+            failures.append("runtime: " + str(rollback_error))
+        if pending_written and transaction is None:
+            try:
+                current_journals = engine_journal_names(engine_journal)
+                new_journals = sorted(
+                    name
+                    for name in current_journals.difference(journal_names)
+                    if name.startswith("ecosystem-update-") and name.endswith(".json")
+                )
+                if new_journals:
+                    failures.append(
+                        "engine journal needs explicit recovery: "
+                        + ", ".join(new_journals)
+                    )
             except Exception as rollback_error:
-                failures.append("runtime: " + str(rollback_error))
+                failures.append("engine journal inspection: " + str(rollback_error))
         if (
             not candidate_dir_preexisting
             and candidate_dir.is_dir()
@@ -584,6 +654,10 @@ def run_update(
             raise ValueError(
                 str(error) + "; rollback failed: " + "; ".join(failures)
             ) from error
+        if receipt_written:
+            (root / "distribution-update.json").unlink()
+        if pending_written:
+            pending.unlink()
         raise
 
 
@@ -1041,6 +1115,7 @@ def main() -> int:
         ).resolve()
         if not root.is_relative_to(home) or root == home or root.is_symlink():
             raise ValueError("owned install root must be below the user home")
+        refuse_pending_update(root)
         checked = inputs(release)
         before = (
             installed_update_state(home, root)
