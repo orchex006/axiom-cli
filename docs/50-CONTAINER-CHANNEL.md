@@ -1,5 +1,27 @@
 # Container channel — axiom-cli
 
+## K-011 final local lifecycle revalidation
+
+`evidence/K-011/` records a fresh owned-volume installation of the pinned A
+kit, real C# query and watcher runs with a foreground daemon, eight B-kit
+refusal or injected failure cases, OCI-driven B apply/check and rollback,
+fresh daemon starts after each transition, and digest-approved owned removal.
+The final rebuilt image has the same CLI binary SHA as the exercised B image.
+After removal the source, bindings and user-data SHA values match the last
+pre-removal query; owned entrypoints and runtime pointers are absent.
+
+Graphd and CLI retain verified, inactive B generation files after rollback
+to permit a retry. An unchanged generation-directory listing is therefore not
+the rollback invariant. The active pointers, entrypoint, user content and
+absence of an uncommitted distribution receipt are checked separately, and
+the retained B binaries must hash to the pinned kit. The original strict
+directory-listing failure is preserved as diagnostic evidence.
+
+The local image identity is an OCI image ID, not a published registry digest.
+Foreground SIGINT drain was exercised. This Docker host has no `systemd --user`
+manager, so no supervisor registration is claimed. The local kit is unsigned;
+native Linux and the other release lanes remain separate release obligations.
+
 ## K-406 local update kit
 
 The K-406 kit contains a pinned Linux candidate, its runtime receipt, the

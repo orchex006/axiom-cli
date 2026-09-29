@@ -1,0 +1,178 @@
+{
+  "artifacts": {
+    "apply-b-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "apply-b.json": {
+      "sha256": "b93f16f5dc56b7613e796b79261814f98f6007ae9c3a93d26eaa8c12d963e38d",
+      "size_bytes": 10418
+    },
+    "check-b-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "check-b.json": {
+      "sha256": "72a8dd4f57ffbaf7c9d8e3dafcc919537241aed488d192ceb22c879c5198f8a5",
+      "size_bytes": 841
+    },
+    "cli-install-a-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "cli-install-a.json": {
+      "sha256": "3c5f747e7023d2ecb903cf8ce7843877a5212e7c79d8d837b2fe0201f8480084",
+      "size_bytes": 3320
+    },
+    "cli-plan-a-clean.json": {
+      "sha256": "7c2d3329983a3f64cc3739cd980ea7d40ce208f3ece61c669eec89a9059b689a",
+      "size_bytes": 2946
+    },
+    "cli-plan-a-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "cli-plan-a.json": {
+      "sha256": "57231173518bcc122d8a7400ccd700edbf31ef09179ee12369f88bb8a9b6c906",
+      "size_bytes": 3035
+    },
+    "cli-uninstall-apply-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "cli-uninstall-apply.json": {
+      "sha256": "24dbe65da0a5adad14ca665cee38867a98650604842cfb02c82f584fa9cee4ae",
+      "size_bytes": 2152
+    },
+    "cli-uninstall-plan-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "cli-uninstall-plan.json": {
+      "sha256": "ec78cf1cbe7afc2f6e2b8949e455e818e466239a25e2591e8fe27321e1bb8744",
+      "size_bytes": 1561
+    },
+    "engine-install-a.json": {
+      "sha256": "6942b4002b32a4dda5df763f4875a9387196114f2494d1be3a99cfdf24a34880",
+      "size_bytes": 6521
+    },
+    "engine-plan-a.json": {
+      "sha256": "a1532a4b3b44f4848df93028a3c99666e2cb60467a2e88d991a3d9fdecd12bdf",
+      "size_bytes": 2433
+    },
+    "engine-uninstall-apply-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "engine-uninstall-apply.json": {
+      "sha256": "40d5734e9c462259888077020a420b2ac1ef30231b6f688e340a61b44d75c032",
+      "size_bytes": 2359
+    },
+    "engine-uninstall-plan-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "engine-uninstall-plan.json": {
+      "sha256": "638d5946f468ae32d223f66f9353b45249c106f0bc94a8cefd4b193a7830a0a0",
+      "size_bytes": 160
+    },
+    "kit-extract.jsonl": {
+      "sha256": "c0a9db2f3d2ff478b352dd19d6fc5108a7532c80ba3c14754960a35b4a6cbf72",
+      "size_bytes": 212
+    },
+    "negative-initial-failure.txt": {
+      "sha256": "e3c8bf28efae5c5b50d4191e4a8507e9f90f7890f19a9123b56bf5c3b2c15bbf",
+      "size_bytes": 2126
+    },
+    "negative-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "negative.json": {
+      "sha256": "a25657ba9ed76d91913c67b8c61e3882c926f6b31fc78b0fa081e06daab87973",
+      "size_bytes": 2717
+    },
+    "oci-build.txt": {
+      "sha256": "178a4f4f05268ed77171411694e422d6bb95c08fd5ce0639d690aa3184691733",
+      "size_bytes": 3721
+    },
+    "oci-cli-sha256.txt": {
+      "sha256": "8e95e6da2d8235165ffb1ea947350c00729e69401643c5e995968ea66811d26c",
+      "size_bytes": 91
+    },
+    "oci-help.txt": {
+      "sha256": "0d3a5801400bdf098b7a4c67418193d9c00303054cf4a8b7c2de7cde060913e1",
+      "size_bytes": 2191
+    },
+    "oci-image-inspect.json": {
+      "sha256": "0b1d165cfb00a539278d5a736938c1e0c94641fe02ff9275fb1b7232577f1af9",
+      "size_bytes": 2159
+    },
+    "oci-version.json": {
+      "sha256": "67aaa0743a6768de6b35ceda611a2b4547198b306321144767fb535db55818d1",
+      "size_bytes": 752
+    },
+    "owner-checks.txt": {
+      "sha256": "e2c0d4a2ab158d97466d870f8df854f9bfac9165da062cbffefc1f61f7dfd858",
+      "size_bytes": 967
+    },
+    "owner-review.md": {
+      "sha256": "83b95e3e887a3eca61bf1346d9e96f211a3a23c536abdb30ef8c05aa70541a3c",
+      "size_bytes": 4973
+    },
+    "plan-b-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "plan-b.json": {
+      "sha256": "7ac8ae8ec7cf66019b46b3c33f6fb582c5d1eb1dfc3201e6818b96600d0da4fd",
+      "size_bytes": 1627
+    },
+    "query-a.json": {
+      "sha256": "5224d9478930eb18a927e2fc0fe261832e3bbe729b9232cdc845c5a656e70163",
+      "size_bytes": 1758
+    },
+    "query-b-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "query-b.json": {
+      "sha256": "b119bc80e036e5dfe0461c8d39091465fc8b30043dc5ad0813241645606ebb30",
+      "size_bytes": 1758
+    },
+    "query-rollback-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "query-rollback.json": {
+      "sha256": "a0ec68a5eecf712c5d092bd666db1c8440506ef0433a710a2fd0d0bbde2fff7a",
+      "size_bytes": 1765
+    },
+    "retained-data.txt": {
+      "sha256": "22b2a6cf1e6f03c19734538517bddfe74f5a9dbc352465209998daf9ab7116b4",
+      "size_bytes": 338
+    },
+    "rollback-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "rollback.json": {
+      "sha256": "e1f49d02098489486f065c5a4986ed803e35f25a19fbc61a7f16d7ab35b0a743",
+      "size_bytes": 1928
+    },
+    "runtime-provision.json": {
+      "sha256": "1bf4bcfa7465e8e4e3584f7dedd3dc1d5dbcaf68e0d9af8e6ddf8cc4c16d4668",
+      "size_bytes": 823
+    },
+    "runtime-remove-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "runtime-remove.json": {
+      "sha256": "53d1bb90051c76141d88166257aa2271f5f93bf5e5dcd10e513ea0d51fd34442",
+      "size_bytes": 102
+    }
+  },
+  "certified": false,
+  "task": "K-011"
+}

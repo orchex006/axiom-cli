@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/src/tests/linux/k406_negative.py", line 189, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/src/tests/linux/k406_negative.py", line 184, in main
+    print(json.dumps(run(args), sort_keys=True))
+                     ~~~^^^^^^
+  File "/src/tests/linux/k406_negative.py", line 164, in run
+    unchanged()
+    ~~~~~~~~~^^
+  File "/src/tests/linux/k406_negative.py", line 92, in unchanged
+    raise ValueError(
+        f"negative case changed installed A: {current} != {baseline}"
+    )
+ValueError: negative case changed installed A: {'cli': '02d7c19861f5ef21b5a329298ca6c6080c8922f5cdca8e4cb2d86c4e3430dd6b', 'cli_owner': '9da2791bc9b3d13eefcef4fe3ef6723523aaadaa2c3feb530ced349afa5d3c2f', 'engine': 'f74922d9616328a8bc60fd865d20bdaa7b978100e32b5883b3f60b04e5608acf', 'skills': 'bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488', 'runtime': '6ed0dd18e15488cf5679cd253d5b09b1ccb98e719a7bd9985b90032a52ee4266', 'bindings': 'c32b2e9c302b802e17062b9b620b132f657961d794929091d3b8c9dbc50ebf5f', 'source': '0a64e1f6c1e77b9fd3e7e04f5f440d45ca1c4a40fe681dfe4565aa24fe7ab77f', 'user_data': 'a1ceb2ff193db1430b03053663a573f12b77cc8370f776f6df41b1a95810e0c8', 'cli_generations': ['0.1.0-6a0a98edf256'], 'engine_generations': ['0.1.0', '0.1.1'], 'pending_absent': True, 'receipt_absent': True} != {'cli': '02d7c19861f5ef21b5a329298ca6c6080c8922f5cdca8e4cb2d86c4e3430dd6b', 'cli_owner': '9da2791bc9b3d13eefcef4fe3ef6723523aaadaa2c3feb530ced349afa5d3c2f', 'engine': 'f74922d9616328a8bc60fd865d20bdaa7b978100e32b5883b3f60b04e5608acf', 'skills': 'bc283271207975218fe91341f0d0cd5b92a4d1e887214b6b5c2c726e86a25488', 'runtime': '6ed0dd18e15488cf5679cd253d5b09b1ccb98e719a7bd9985b90032a52ee4266', 'bindings': 'c32b2e9c302b802e17062b9b620b132f657961d794929091d3b8c9dbc50ebf5f', 'source': '0a64e1f6c1e77b9fd3e7e04f5f440d45ca1c4a40fe681dfe4565aa24fe7ab77f', 'user_data': 'a1ceb2ff193db1430b03053663a573f12b77cc8370f776f6df41b1a95810e0c8', 'cli_generations': ['0.1.0-6a0a98edf256'], 'engine_generations': ['0.1.0'], 'pending_absent': True, 'receipt_absent': True}

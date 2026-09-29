@@ -1,0 +1,51 @@
+axiom-cli 0.1.0 - Axiom ecosystem distribution entrypoint
+
+USAGE:
+    axiom-cli [GLOBAL OPTIONS] <verb> [verb options]
+
+VERBS:
+    install      Install or repair this platform's pinned component set
+    update       check | plan | apply | rollback through the update channel
+    doctor       Report prerequisites, installed versions, digests and target state
+    version      Report installed and available versions per component and per target
+    uninstall    Remove binaries and service registration; preserve user data
+
+GLOBAL OPTIONS:
+    -h, --help    Print this help and exit 0
+    --json        Machine-readable mode: exactly one JSON object on stdout
+    --verbose     Emit diagnostics on stderr
+
+VERB OPTIONS:
+    install      --dry-run | --apply, --approve-digest <sha256>, --from <path>
+    update       check [--all] | plan --to <version> [--out <file>] |
+                 apply --plan <file> --approve-digest <sha256> |
+                 rollback --transaction <id> [--approve-digest <sha256>]
+    doctor       [--all]
+    version      [--all]
+    uninstall    --dry-run | --apply, --approve-digest <sha256>, [--purge-data]
+
+EXIT CODES:
+    0   success
+    2   validation
+    3   not found
+    4   not ready / stale
+    5   authorization
+    6   conflict
+    7   timeout / busy
+    8   I/O internal
+    9   incompatible
+    10  lock unavailable
+    20  partial multi-repository operation
+
+NOTES:
+    Every documented verb is dispatched to real work. A verb that cannot complete
+    answers its canonical failure code with a stated reason on stderr and exactly one
+    JSON object on stdout; it never returns 0 and never emits an empty success
+    envelope.
+    install and uninstall require an explicit mode: --dry-run reports the plan and
+    changes nothing, --apply runs the transaction. A bare verb is a validation error,
+    because a mutating verb must never answer the success code for work it did not do.
+    Any mutating install, update or uninstall needs its approval bound to the canonical
+    plan digest through --approve-digest <sha256>; supplying --plan or --from is not
+    approval.
+    The installation engine stays owned by axiom-graphd; this layer wraps it.

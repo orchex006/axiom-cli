@@ -1,5 +1,14 @@
 # Changelog
 
+## K-011 final Linux x64 container lifecycle revalidation
+
+- Rebuilt the digest-pinned, uid/gid 10001 OCI image and reran the pinned
+  A-to-B update, query, watcher, rollback and owned-volume removal lifecycle.
+  Eight refusal and injected failure cases preserved the active A pointers and
+  user data. Graphd and CLI deliberately retain verified inactive B payloads
+  after rollback for retry; the fresh-volume regression now checks their exact
+  hashes. The image and update kits remain local and unpublished.
+
 ## K-406 Linux x64 container update candidate
 
 - Add a manifest-checked local update kit and route the public `axiom-cli
