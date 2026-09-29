@@ -1,5 +1,18 @@
 # K-106 work in progress (Mac Intel candidate)
 
+## 2026-09-29 owner update
+
+The graphd owner supplied a native, source-pinned local B core 0.1.1 candidate
+with `prepared` journal rollback and verified retained-candidate reactivation.
+The composite A→B→rollback native harness now passes with installed query and
+watcher on A, B and restored A, five injected failure boundaries and preserved
+user data. A separate process-death run after engine activation restored A
+through the public engine rollback, then retried B and rolled back. The
+historical observations below describe the earlier incomplete candidate and
+are superseded for these tested boundaries. Final artifact hashes and scoped
+completion are recorded separately; independent shared-update review remains
+pending and no release is claimed.
+
 The K-105 candidate archive (SHA-256
 `caeee2470868b67367c27bbfc368171ba744bcf92c18afafe85d61a9fca2c86f`)
 installed in an isolated native Mac user home. Its CLI and engine pointer were

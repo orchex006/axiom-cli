@@ -21,9 +21,9 @@ failure boundaries and preserved user data. The candidate bootstrap also
 offers an approved `recover` action for a durable pending intent after process
 death. It discovers the one new outer engine journal, delegates rollback to
 `axiom update rollback`, then restores the pinned A runtime and entrypoints.
-Foreign or changed journal and pointer state is refused. A native process-death
-recovery run and independent review remain separate gates. No release is
-claimed.
+Foreign or changed journal and pointer state is refused. The native
+process-death run restored A, retried B and rolled back with user data intact.
+Independent review remains a separate gate. No release is claimed.
 
 The per-user candidate bootstrap now binds update approval to the verified B
 set and installed A pointers, delegates ecosystem update and rollback to the

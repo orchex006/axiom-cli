@@ -340,17 +340,31 @@ def pending_recovery(release: Path, root: Path) -> dict:
         raise ValueError("distribution recovery intent does not bind this candidate")
     before = value.get("before") if value["action"] == "update" else value.get("target")
     required = {
-        "entrypoint_record_sha256", "engine_pointer_sha256", "runtime_pointer_sha256",
-        "service_record_sha256", "release_set_sha256", "cli_sha256",
-        "cli_version", "engine_cli_sha256", "core_version", "core_revision",
+        "entrypoint_record_sha256",
+        "engine_pointer_sha256",
+        "runtime_pointer_sha256",
+        "service_record_sha256",
+        "release_set_sha256",
+        "cli_sha256",
+        "cli_version",
+        "engine_cli_sha256",
+        "core_version",
+        "core_revision",
         "profile",
     }
-    if not isinstance(before, dict) or set(before) != required or not all(
-        re.fullmatch(r"[0-9a-f]{64}", str(before.get(key, "")))
-        for key in (
-            "release_set_sha256", "entrypoint_record_sha256",
-            "engine_pointer_sha256", "runtime_pointer_sha256",
-            "cli_sha256", "engine_cli_sha256",
+    if (
+        not isinstance(before, dict)
+        or set(before) != required
+        or not all(
+            re.fullmatch(r"[0-9a-f]{64}", str(before.get(key, "")))
+            for key in (
+                "release_set_sha256",
+                "entrypoint_record_sha256",
+                "engine_pointer_sha256",
+                "runtime_pointer_sha256",
+                "cli_sha256",
+                "engine_cli_sha256",
+            )
         )
     ):
         raise ValueError("distribution recovery target is incomplete")
@@ -386,7 +400,8 @@ def recovery_transaction(root: Path, pending: dict, checked: dict) -> str | None
     journal_dir = root / "installs/ecosystem/journal"
     old = set(pending["engine_journals_before"])
     new = {
-        name for name in engine_journal_names(journal_dir).difference(old)
+        name
+        for name in engine_journal_names(journal_dir).difference(old)
         if name.startswith("ecosystem-update-") and name.endswith(".json")
     }
     if not new:
@@ -408,7 +423,14 @@ def recovery_transaction(root: Path, pending: dict, checked: dict) -> str | None
         or journal.get("schema_version") != 1
         or journal.get("transaction_id") != transaction
         or journal.get("previous_pointer_sha256") != before["engine_pointer_sha256"]
-        or journal.get("state") not in ("prepared", "activated", "finalized", "rolled-back", "restored-after-service-failure")
+        or journal.get("state")
+        not in (
+            "prepared",
+            "activated",
+            "finalized",
+            "rolled-back",
+            "restored-after-service-failure",
+        )
         or not isinstance(candidate, dict)
         or not isinstance(candidate.get("core_artifacts"), list)
         or not candidate["core_artifacts"]
@@ -449,7 +471,11 @@ def run_recover(
         checked["entry"]["artifacts"][:2],
     ):
         current = home / ".local/bin" / name
-        if current.is_symlink() or not current.is_file() or digest(current) not in (old, new["sha256"]):
+        if (
+            current.is_symlink()
+            or not current.is_file()
+            or digest(current) not in (old, new["sha256"])
+        ):
             raise ValueError("distribution recovery entrypoint changed: " + name)
     runtime_dir = root / "mcp-runtime"
     runtime_pointer = runtime_dir / "current.json"
@@ -460,7 +486,14 @@ def run_recover(
     if runtime_changed:
         verify(runtime_dir / "previous.json", before["runtime_pointer_sha256"])
         planned = command(
-            [sys.executable, str(provision), "rollback", "--root", str(runtime_dir), "--dry-run"],
+            [
+                sys.executable,
+                str(provision),
+                "rollback",
+                "--root",
+                str(runtime_dir),
+                "--dry-run",
+            ],
             env,
         )
         if planned["body"].get("status") != "rollback_planned":
@@ -471,15 +504,29 @@ def run_recover(
         verify(engine_pointer, before["engine_pointer_sha256"])
     else:
         command(
-            [str(release / "axiom"), "update", "rollback", "--transaction", transaction, "--json"],
+            [
+                str(release / "axiom"),
+                "update",
+                "rollback",
+                "--transaction",
+                transaction,
+                "--json",
+            ],
             env,
         )
     if runtime_changed:
-        command([sys.executable, str(provision), "rollback", "--root", str(runtime_dir)], env)
+        command(
+            [sys.executable, str(provision), "rollback", "--root", str(runtime_dir)],
+            env,
+        )
     restore_entrypoints(home, root, before, checked["entry"])
     restored = installed_update_state(home, root)
-    if any(restored[key] != before[key] for key in before if key != "service_record_sha256"):
-        raise ValueError("distribution recovery did not restore the approved A generation")
+    if any(
+        restored[key] != before[key] for key in before if key != "service_record_sha256"
+    ):
+        raise ValueError(
+            "distribution recovery did not restore the approved A generation"
+        )
     if pending["action"] == "rollback":
         receipt.unlink()
     pending_update_path(root).unlink()
@@ -1354,7 +1401,9 @@ def main() -> int:
         elif args.action == "recover":
             with update_lock(root):
                 if pending_recovery(release, root) != pending:
-                    raise ValueError("distribution recovery intent changed since approval")
+                    raise ValueError(
+                        "distribution recovery intent changed since approval"
+                    )
                 result = run_recover(release, home, root, env, checked, pending)
         elif args.action in ("update", "rollback"):
             with update_lock(root):

@@ -27,11 +27,16 @@ class PendingUpdateTests(unittest.TestCase):
             release.mkdir()
             (release / "release-set.json").write_text("{}\n")
             distribution.pending_update_path(root).write_text(
-                json.dumps({
-                    "schema_version": 1, "action": "update",
-                    "release_set_sha256": "f" * 64, "before": {},
-                    "engine_journals_before": [],
-                }) + "\n"
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "action": "update",
+                        "release_set_sha256": "f" * 64,
+                        "before": {},
+                        "engine_journals_before": [],
+                    }
+                )
+                + "\n"
             )
             with self.assertRaisesRegex(ValueError, "does not bind this candidate"):
                 distribution.pending_recovery(release, root)
@@ -42,15 +47,21 @@ class PendingUpdateTests(unittest.TestCase):
             journal_dir = root / "installs/ecosystem/journal"
             journal_dir.mkdir(parents=True)
             (journal_dir / "ecosystem-update-foreign.json").write_text(
-                json.dumps({
-                    "schema_version": 1, "kind": "ecosystem-update-journal",
-                    "transaction_id": "foreign", "state": "finalized",
-                    "previous_pointer_sha256": "a" * 64,
-                    "candidate": {"core_artifacts": [{"sha256": "b" * 64}]},
-                }) + "\n"
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "kind": "ecosystem-update-journal",
+                        "transaction_id": "foreign",
+                        "state": "finalized",
+                        "previous_pointer_sha256": "a" * 64,
+                        "candidate": {"core_artifacts": [{"sha256": "b" * 64}]},
+                    }
+                )
+                + "\n"
             )
             pending = {
-                "action": "update", "before": {"engine_pointer_sha256": "c" * 64},
+                "action": "update",
+                "before": {"engine_pointer_sha256": "c" * 64},
                 "engine_journals_before": [],
             }
             checked = {"entry": {"artifacts": [{}, {}, {"sha256": "b" * 64}]}}
