@@ -128,6 +128,16 @@ struct Assembly {
 
 /// Assemble the engine bundle, invoke the engine, and report the engine's own answer.
 pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> {
+    run(engine, request, false)
+}
+
+/// Hand an already verified distribution set to the engine's pointer-bound update transaction.
+/// The distribution coordinator requests this path only after checking the installed generation.
+pub fn update(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> {
+    run(engine, request, true)
+}
+
+fn run(engine: &Engine, request: &Request<'_>, updating: bool) -> Result<Report, Refusal> {
     let assembly = assemble(request)?;
     let plan_file = request.staging_root.join("engine-plan.json");
     let mut engine_env = vec![("AXIOM_HOME", request.install_root.display().to_string())];
@@ -140,18 +150,31 @@ pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> 
 
     // Step 1 - the engine plans from the bundle. `--out` is used rather than stdout so the plan
     // file the engine writes is the exact byte form the engine will re-read, with no re-encoding.
-    let plan = engine.invoke_with_env(
-        &[
-            "install".to_string(),
-            "plan".to_string(),
-            "--bundle".to_string(),
-            assembly.root.display().to_string(),
-            "--out".to_string(),
-            plan_file.display().to_string(),
-            "--json".to_string(),
-        ],
-        &engine_env,
-    )?;
+    let verb = if updating { "update" } else { "install" };
+    let mut plan_args = vec![verb.to_string(), "plan".to_string()];
+    if updating {
+        let version = request
+            .plan_components
+            .iter()
+            .find(|row| row.get("component").and_then(Json::as_text) == Some("axiom-graphd"))
+            .and_then(|row| row.get("version"))
+            .and_then(Json::as_text)
+            .ok_or_else(|| {
+                Refusal::validation(
+                    "core_version_missing",
+                    "the update set has no declared core version",
+                )
+            })?;
+        plan_args.extend(["--to".to_string(), version.to_string()]);
+    }
+    plan_args.extend([
+        "--bundle".to_string(),
+        assembly.root.display().to_string(),
+        "--out".to_string(),
+        plan_file.display().to_string(),
+        "--json".to_string(),
+    ]);
+    let plan = engine.invoke_with_env(&plan_args, &engine_env)?;
     let plan_stdout = engine_json(&plan, "plan")?;
     let steps = vec![step_evidence("plan", &plan, plan_stdout.as_ref())];
     if plan.exit_code() != 0 {
@@ -169,7 +192,7 @@ pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> 
     // Step 2 - the engine applies that exact plan, approved at the engine's own digest.
     let apply = engine.invoke_with_env(
         &[
-            "install".to_string(),
+            verb.to_string(),
             "apply".to_string(),
             "--plan".to_string(),
             plan_file.display().to_string(),
@@ -207,11 +230,21 @@ pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> 
         engine.program().display(),
         engine.source()
     );
-    let mut report = Report::new(code, "ok", message).subject("install");
+    let mut report = Report::new(code, "ok", message).subject(verb);
     report.detail("engine", engine_block(request, &assembly, steps));
     report.detail("engine_plan_id", Json::text(&engine_plan_id));
     report.detail("engine_plan_digest", Json::text(&plan_digest));
     report.detail("engine_status", Json::text(status));
+    if updating {
+        report.detail(
+            "engine_transaction",
+            apply_stdout
+                .as_ref()
+                .and_then(|value| value.get("transaction_id"))
+                .cloned()
+                .unwrap_or(Json::Null),
+        );
+    }
     report.detail(
         "engine_status_reported",
         Json::bool(engine_status.is_some()),

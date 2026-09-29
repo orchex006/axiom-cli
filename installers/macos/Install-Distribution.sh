@@ -10,14 +10,14 @@ export PATH
 SET="" VERB="" MODE="" APPROVAL=""
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        install|uninstall) [ -z "$VERB" ] || exit 2; VERB=$1; shift ;;
+        install|update|rollback|uninstall) [ -z "$VERB" ] || exit 2; VERB=$1; shift ;;
         --release-set|--approve-digest)
             [ "$#" -ge 2 ] || exit 2
             case "$1" in --release-set) SET=$2 ;; *) APPROVAL=$2 ;; esac
             shift 2 ;;
         --dry-run|--apply) [ -z "$MODE" ] || exit 2; MODE=$1; shift ;;
         --help|-h)
-            echo 'Usage: Install-Distribution.sh install|uninstall --release-set DIR --dry-run|--apply [--approve-digest SHA256]'
+            echo 'Usage: Install-Distribution.sh install|update|rollback|uninstall --release-set DIR --dry-run|--apply [--approve-digest SHA256]'
             exit 0 ;;
         *) echo unknown_option >&2; exit 2 ;;
     esac

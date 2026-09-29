@@ -251,7 +251,25 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
     // A refusal from the assembly or the engine is *this* layer's answer, so it names the plan
     // the operator approved: the engine's refusal alone would leave `--apply --approve-digest`'s
     // subject unstated. The class and reason token are the ones the boundary chose.
-    let mut report = bundle::apply(&engine, &request).map_err(|refusal| {
+    let composite_update = std::env::var_os("AXIOM_CLI_COMPOSITE_UPDATE").as_deref()
+        == Some(std::ffi::OsStr::new("1"));
+    if composite_update
+        && !request
+            .install_root
+            .join("installs/ecosystem/current")
+            .is_file()
+    {
+        return Err(Refusal::not_ready(
+            "engine_generation_missing",
+            "a composite update requires an already installed engine generation",
+        ));
+    }
+    let result = if composite_update {
+        bundle::update(&engine, &request)
+    } else {
+        bundle::apply(&engine, &request)
+    };
+    let mut report = result.map_err(|refusal| {
         Refusal::new(
             refusal.class,
             refusal.reason,
