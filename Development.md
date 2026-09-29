@@ -19,3 +19,13 @@ Attach real test output/hashes, acceptance mapping, changed-file review, compati
 ## Branch/release policy
 
 Follow the pinned canonical governance. Do not invent a remote, push credentials or release version. `axiom-cli` is the canonical distribution repository; the daemon plus CLI share one core release, while MCP and skills version independently. Documentation follows its component version. No production action is authorized by copying this seed.
+
+## K-404 Linux x64 runtime candidate
+
+`packaging/linux/Provision-McpRuntime.py` provisions the K-403 MCP wheel and
+hash-locked dependencies from local archives into a per-user Python 3.13
+generation. `src/lifecycle.rs` verifies the active runtime executable hashes
+and passes its absolute `venv/bin` to the engine for a `linux-x64` plan/apply.
+The candidate inputs, transaction test and SHA-256 evidence are under
+`evidence/K-404/`. This local container proof does not establish native WSL2
+behavior or release provenance.

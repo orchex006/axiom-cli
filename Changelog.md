@@ -1,5 +1,14 @@
 # Changelog
 
+## K-404 Linux x64 MCP runtime candidate
+
+- Provision a hash-verified uv managed CPython 3.13.15 and the K-403 wheel
+  with 31 hash-locked Linux x64 dependency wheels into an owned per-user
+  generation. Pass its verified absolute `venv/bin` to the installation engine
+  for `linux-x64`, retain the prior generation through failed staging and
+  rollback, and remove only owned runtime generations. Native container
+  evidence remains an unsigned local candidate, not a release.
+
 ## K-105 Mac Intel distribution candidate
 
 - Compose the pinned K-101 skills source, K-102 core, K-103 wheel and K-104 uv managed CPython runtime into one unpublished Mac x64 candidate. The per-user bootstrap runs from that runtime archive, provisions MCP offline, installs both entrypoints and the ecosystem, then registers and starts the LaunchAgent. It preserves local bindings and user data on removal, and removes only unchanged owned skills metadata and empty directories after engine uninstall. Signing remains unsigned and notarization remains unverified.

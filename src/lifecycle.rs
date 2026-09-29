@@ -222,7 +222,10 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         )
     })?;
     let staging_root = root.join("staging").join("engine-bundle");
-    let mcp_runtime_bin = if set.plan.get("host").and_then(Json::as_text) == Some("macos-x64") {
+    let mcp_runtime_bin = if matches!(
+        set.plan.get("host").and_then(Json::as_text),
+        Some("macos-x64" | "linux-x64")
+    ) {
         provisioned_mcp_runtime_bin(&root)?
     } else {
         None
