@@ -6,7 +6,9 @@
 
 Refuse distribution-only check, plan, apply and rollback when an installed
 engine ecosystem pointer exists. The four-verb boundary test confirms the
-engine and distribution pointers remain unchanged. Composite activation and
+engine and distribution pointers remain unchanged. Corrected a test fixture
+that treated a Windows drive path as absolute on macOS, allowing the full
+111-test suite to pass. Composite activation and
 MCP launch handoff remain pending in the proposed K-003 contract.
 
 ### 0.1.0 experimental Windows distribution
