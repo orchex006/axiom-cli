@@ -1,4 +1,9 @@
-# Changelog — axiom-cli
+# Changelog
+
+## K-104 Mac Intel MCP runtime candidate
+
+- Add a hash-verified local provisioning transaction for a per-user Python 3.13 MCP environment. It keeps previous generations until explicit rollback/removal and emits absolute executable and digest records. Runtime acquisition remains an explicit candidate input; no release publication is claimed.
+ — axiom-cli
 
 ## Unreleased
 

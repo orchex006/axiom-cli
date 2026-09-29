@@ -51,3 +51,30 @@ engine apply; the composer does not install Python or pass an MCP executable to
 the engine. Full owner skills, final update/rollback and signing remain separate
 release requirements. `test_engine_candidate.py` prepares Python only in its
 temporary test HOME and can exercise an isolated LaunchAgent with `--service`.
+
+## K-104 candidate MCP runtime
+
+`Provision-McpRuntime.py` accepts only local, SHA-256 pinned CPython 3.13,
+wheelhouse, MCP wheel and dependency lock inputs. For this Mac Intel candidate,
+the interpreter is uv managed CPython 3.13.15 (`BUILD` 20260901), repacked as a
+regular-file tarball so the archive has no link targets. The interpreter source
+choice is candidate-only; the archive digest and exact bytes are recorded in
+`evidence/K-104/`. The wheel and lock come from the K-103 handoff. All pip
+installs use `--no-index`; the user host does not fetch packages or need a
+compiler. The bootstrap caller extracts the verified interpreter and invokes
+this script with that interpreter by absolute path; no developer venv or shell
+activation is used.
+
+The tool writes `mcp-runtime/versions/<generation>` below the chosen per-user
+install root and activates it through `current.json` only after entrypoint and
+version checks pass. The previous generation remains available for `rollback`.
+`remove` deletes owned generations and pointers while preserving sibling user
+data. `axiom-cli` verifies the active Python and launcher hashes before adding
+that runtime's `venv/bin` to the installation engine's PATH for plan/apply.
+This candidate tool does not select or publish a production download URL. K-105
+will compose its inputs into the distribution install flow.
+
+Run `<candidate-python3.13> packaging/macos/Provision-McpRuntime.py --help` for its argument
+surface. The native transaction proof is
+`tests/macos/test_mcp_runtime.py --help`; pass the exact archived inputs named
+by the K-104 handoff.

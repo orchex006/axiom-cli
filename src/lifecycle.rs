@@ -222,6 +222,11 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         )
     })?;
     let staging_root = root.join("staging").join("engine-bundle");
+    let mcp_runtime_bin = if set.plan.get("host").and_then(Json::as_text) == Some("macos-x64") {
+        provisioned_mcp_runtime_bin(&root)?
+    } else {
+        None
+    };
     let plan_components = set
         .plan
         .get("components")
@@ -241,6 +246,7 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         release_root: set.local_root.clone(),
         verified,
         plan_components,
+        mcp_runtime_bin,
     };
     // A refusal from the assembly or the engine is *this* layer's answer, so it names the plan
     // the operator approved: the engine's refusal alone would leave `--apply --approve-digest`'s
@@ -264,7 +270,99 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         Json::text(&engine.program().display().to_string()),
     );
     report.detail("engine_source", Json::text(engine.source()));
+    if let Some(bin) = &request.mcp_runtime_bin {
+        report.detail("mcp_runtime_bin", Json::text(&bin.display().to_string()));
+    }
     Ok(report)
+}
+
+/// Read a provisioned candidate runtime as a verified engine input. An absent
+/// runtime retains the pre-K-104 behavior; a present but changed record refuses.
+fn provisioned_mcp_runtime_bin(root: &Path) -> Result<Option<PathBuf>, Refusal> {
+    let runtime_root = root.join("mcp-runtime");
+    let pointer = runtime_root.join("current.json");
+    if !pointer.exists() {
+        return Ok(None);
+    }
+    if pointer.is_symlink() {
+        return Err(Refusal::validation(
+            "mcp_runtime_pointer_link",
+            "MCP runtime pointer is a symlink",
+        ));
+    }
+    let bytes = std::fs::read_to_string(&pointer).map_err(|error| {
+        Refusal::io(
+            "mcp_runtime_pointer_unreadable",
+            &pointer.display().to_string(),
+            &error,
+        )
+    })?;
+    let value = crate::update::json::parse(&bytes).map_err(|_| {
+        Refusal::validation(
+            "mcp_runtime_pointer_invalid",
+            "MCP runtime pointer is invalid JSON",
+        )
+    })?;
+    let generation = value
+        .get("generation")
+        .and_then(Json::as_text)
+        .unwrap_or("");
+    if generation.len() != 24 || !generation.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Err(Refusal::validation(
+            "mcp_runtime_generation_invalid",
+            "MCP runtime generation is invalid",
+        ));
+    }
+    let version = runtime_root.join("versions").join(generation);
+    if version.is_symlink()
+        || version.join("owner.json").is_symlink()
+        || !version.join("owner.json").is_file()
+    {
+        return Err(Refusal::validation(
+            "mcp_runtime_unowned",
+            "MCP runtime generation is not owned",
+        ));
+    }
+    let bin = version.join("venv").join("bin");
+    if version.join("venv").is_symlink() || bin.is_symlink() {
+        return Err(Refusal::validation(
+            "mcp_runtime_path_link",
+            "MCP runtime path is linked outside the owned generation",
+        ));
+    }
+    if bin.to_string_lossy().contains(':') {
+        return Err(Refusal::validation(
+            "mcp_runtime_path_invalid",
+            "MCP runtime path cannot enter PATH safely",
+        ));
+    }
+    for (name, key) in [
+        ("python", "python_sha256"),
+        ("axiom-mcp", "executable_sha256"),
+    ] {
+        let file = bin.join(name);
+        if file.is_symlink() || !file.is_file() {
+            return Err(Refusal::validation(
+                "mcp_runtime_executable_missing",
+                "MCP runtime executable is missing or linked",
+            ));
+        }
+        let expected = value.get(key).and_then(Json::as_text).unwrap_or("");
+        let actual = crate::update::sha256::file_hex(&file).map_err(|error| {
+            Refusal::io(
+                "mcp_runtime_executable_unreadable",
+                &file.display().to_string(),
+                &error,
+            )
+        })?;
+        if actual != expected {
+            return Err(Refusal::validation(
+                "mcp_runtime_executable_changed",
+                "MCP runtime executable digest changed",
+            ));
+        }
+    }
+    Ok(Some(bin))
 }
 
 /// Prefer the digest-verified engine CLI that belongs to this release set.
@@ -978,5 +1076,36 @@ mod tests {
         ])];
         let refusal = install_engine(&verified).unwrap_err();
         assert_eq!(refusal.reason, "engine_artifact_not_executable");
+    }
+
+    #[test]
+    fn provisioned_runtime_is_verified_before_its_bin_reaches_the_engine() {
+        let root = std::env::temp_dir().join(format!(
+            "axiom-cli-mcp-runtime-{}-{}",
+            std::process::id(),
+            crate::update::time::Stamp::now().format().replace(':', "")
+        ));
+        let version = root.join("mcp-runtime/versions/0123456789abcdef01234567");
+        let bin = version.join("venv/bin");
+        std::fs::create_dir_all(&bin).unwrap();
+        std::fs::write(version.join("owner.json"), b"{\"owner\":\"axiom-cli\"}\n").unwrap();
+        std::fs::write(bin.join("python"), b"owned python").unwrap();
+        std::fs::write(bin.join("axiom-mcp"), b"owned launcher").unwrap();
+        let python = crate::update::sha256::file_hex(&bin.join("python")).unwrap();
+        let executable = crate::update::sha256::file_hex(&bin.join("axiom-mcp")).unwrap();
+        let pointer = format!(
+            "{{\"generation\":\"0123456789abcdef01234567\",\"python_sha256\":\"{python}\",\"executable_sha256\":\"{executable}\"}}\n"
+        );
+        std::fs::write(root.join("mcp-runtime/current.json"), pointer).unwrap();
+        assert_eq!(
+            provisioned_mcp_runtime_bin(&root).unwrap(),
+            Some(bin.clone())
+        );
+        std::fs::write(bin.join("axiom-mcp"), b"tampered").unwrap();
+        assert_eq!(
+            provisioned_mcp_runtime_bin(&root).unwrap_err().reason,
+            "mcp_runtime_executable_changed"
+        );
+        std::fs::remove_dir_all(root).unwrap();
     }
 }

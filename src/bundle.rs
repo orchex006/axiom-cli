@@ -111,6 +111,8 @@ pub struct Request<'a> {
     pub verified: &'a [Json],
     /// Distribution plan components, which carry the declared version and revision.
     pub plan_components: &'a [Json],
+    /// Verified per-user MCP runtime bin directory, when provisioned for this host.
+    pub mcp_runtime_bin: Option<PathBuf>,
 }
 
 /// What assembly produced, for the report and for the engine steps.
@@ -128,6 +130,13 @@ struct Assembly {
 pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> {
     let assembly = assemble(request)?;
     let plan_file = request.staging_root.join("engine-plan.json");
+    let mut engine_env = vec![("AXIOM_HOME", request.install_root.display().to_string())];
+    if let Some(bin) = &request.mcp_runtime_bin {
+        engine_env.push((
+            "PATH",
+            format!("{}:/usr/bin:/bin:/usr/sbin:/sbin", bin.display()),
+        ));
+    }
 
     // Step 1 - the engine plans from the bundle. `--out` is used rather than stdout so the plan
     // file the engine writes is the exact byte form the engine will re-read, with no re-encoding.
@@ -141,7 +150,7 @@ pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> 
             plan_file.display().to_string(),
             "--json".to_string(),
         ],
-        &[("AXIOM_HOME", request.install_root.display().to_string())],
+        &engine_env,
     )?;
     let plan_stdout = engine_json(&plan, "plan")?;
     let steps = vec![step_evidence("plan", &plan, plan_stdout.as_ref())];
@@ -168,7 +177,7 @@ pub fn apply(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal> 
             plan_digest.clone(),
             "--json".to_string(),
         ],
-        &[("AXIOM_HOME", request.install_root.display().to_string())],
+        &engine_env,
     )?;
     let apply_stdout = engine_json(&apply, "apply")?;
     let mut steps = steps;
@@ -1401,6 +1410,7 @@ mod tests {
             release_root: None,
             verified: &verified,
             plan_components: &plan_components,
+            mcp_runtime_bin: None,
         };
         let refusal = core_artifacts(&request).expect_err("an undeclared version must be refused");
         assert_eq!(
