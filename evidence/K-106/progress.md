@@ -9,6 +9,11 @@ engine pointer did not change. The coordinator restored the A entrypoint,
 runtime and engine pointer hashes. This does **not** satisfy AC1 or AC3: a real
 compatible B ecosystem generation is still needed.
 
+After reviewing that trace, update planning and apply now reject a candidate
+whose core version or source revision equals installed A. This refusal occurs
+before staging or mutating the runtime. The earlier same-core smoke is evidence
+of compensation in that implementation, not a positive A→B update.
+
 The public distribution bootstrap now accepts `update` and `rollback`. The
 candidate update delegates plan, apply and rollback to the graphd engine's
 public `axiom update` argv. It binds approval to the verified release and the
@@ -44,3 +49,11 @@ exercise explicit rollback and all failure boundaries, review service/data
 ownership and crash recovery, add native harness and owner docs, then complete
 the scoped report and canonical after-work checks. No release or main
 integration is claimed.
+
+Crash recovery needs specific work before AC2 can close. The engine writes a
+durable update journal, but the distribution coordinator writes its own receipt
+only after engine activation and entrypoint replacement. A process death in
+that interval leaves the coordinator without a receipt; the directory lock also
+remains. The current exception handler covers observed errors, not an abrupt
+process death. Do not infer atomic cross-component recovery from the early
+failure-injection results.

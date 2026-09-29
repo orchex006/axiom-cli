@@ -216,6 +216,15 @@ def update_digest(release: Path, home: Path, checked: dict, before: dict) -> str
     ).hexdigest()
 
 
+def require_new_core(checked: dict, before: dict) -> None:
+    candidate_core = checked["entry"]["artifacts"][2]
+    if (
+        candidate_core["version"] == before["core_version"]
+        or candidate_core["revision"] == before["core_revision"]
+    ):
+        raise ValueError("candidate core version and revision must advance together")
+
+
 def rollback_receipt(release: Path, root: Path, installed: dict) -> dict:
     path = root / "distribution-update.json"
     if path.is_symlink() or not path.is_file():
@@ -387,6 +396,7 @@ def run_update(
     release: Path, home: Path, root: Path, env: dict, checked: dict, before: dict
 ) -> dict:
     """Coordinate the engine's own update with the distribution-owned entrypoint move."""
+    require_new_core(checked, before)
     runtime_dir = root / "mcp-runtime"
     runtime = checked["runtime"]
     provision = release / "runtime/provision.py"
@@ -1037,6 +1047,8 @@ def main() -> int:
             if args.action in ("update", "rollback")
             else None
         )
+        if args.action == "update":
+            require_new_core(checked, before)
         digest_value = (
             update_digest(release, home, checked, before)
             if args.action == "update"
