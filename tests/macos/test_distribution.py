@@ -146,7 +146,10 @@ def main() -> None:
         root = Path(name)
         corrupt = root / "corrupt"
         shutil.copytree(release, corrupt)
-        wheel = corrupt / "runtime/axiom_mcp-0.1.0-py3-none-any.whl"
+        version = json.loads((corrupt / "runtime/manifest.json").read_text())[
+            "mcp_version"
+        ]
+        wheel = corrupt / "runtime" / f"axiom_mcp-{version}-py3-none-any.whl"
         wheel.write_bytes(wheel.read_bytes() + b"corrupt")
         bad = subprocess.run(
             [

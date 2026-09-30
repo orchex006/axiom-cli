@@ -141,3 +141,12 @@ failure boundaries and preserved user data. The K-106 branch uses the owner's
 source-pinned local B 0.1.1 core and records native A/B results in
 `evidence/K-106/`. This candidate path does not sign, notarize or publish a
 release.
+
+## 0.1.1 MacIntel GitHub test release
+
+`release/build_macintel.py` composes checksum-verified owner release assets,
+checks each source revision against its immutable `v0.1.1` tag, and includes
+the recorded CPython runtime and offline wheelhouse. The runtime attachment
+and installer now select the wheel from the validated MCP version, supporting
+both retained 0.1.0 candidates and new 0.1.1 inputs. See
+`release/v0.1.1-notes.md` for download and install instructions.

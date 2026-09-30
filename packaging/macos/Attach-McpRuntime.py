@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FILES = {
     "python_archive": "python.tar.gz",
     "wheelhouse_archive": "wheelhouse.tar.gz",
-    "wheel": "axiom_mcp-0.1.0-py3-none-any.whl",
+    "wheel": "",
     "lock": "requirements.txt",
 }
 
@@ -30,6 +30,13 @@ def digest(path: Path) -> str:
 
 
 def attach(args: argparse.Namespace) -> dict:
+    match = re.fullmatch(
+        r"axiom_mcp-([0-9]+\.[0-9]+\.[0-9]+)-py3-none-any\.whl", args.wheel.name
+    )
+    if match is None:
+        raise ValueError("MCP wheel filename must contain a release version")
+    version = match.group(1)
+    files = dict(FILES, wheel=args.wheel.name)
     release = args.release_set.resolve()
     if not release.is_dir() or not (release / "channel.json").is_file():
         raise ValueError("composed candidate channel is missing")
@@ -57,7 +64,7 @@ def attach(args: argparse.Namespace) -> dict:
             raise ValueError(f"{key} digest is invalid")
         if path.is_symlink() or not path.is_file() or digest(path) != expected[key]:
             raise ValueError(f"{key} differs from its K-104 pin")
-    if digest(release / FILES["wheel"]) != expected["wheel"]:
+    if digest(release / files["wheel"]) != expected["wheel"]:
         raise ValueError("channel MCP wheel differs from runtime input")
     target = release / "runtime"
     if target.exists() or target.is_symlink():
@@ -71,7 +78,7 @@ def attach(args: argparse.Namespace) -> dict:
     with tempfile.TemporaryDirectory(prefix=".runtime-candidate-", dir=release) as name:
         stage = Path(name) / "runtime"
         stage.mkdir()
-        for key, filename in FILES.items():
+        for key, filename in files.items():
             shutil.copyfile(sources[key], stage / filename)
             if digest(stage / filename) != expected[key]:
                 raise ValueError("staged runtime input changed")
@@ -86,11 +93,11 @@ def attach(args: argparse.Namespace) -> dict:
             "python_sha256": expected["python_archive"],
             "installer_sha256": digest(stage / "install.py"),
             "python_version": data["runtime"]["version"],
-            "mcp_version": "0.1.0",
+            "mcp_version": version,
             "mcp_revision": data["mcp"]["source_revision"],
             "files": {
                 filename: digest(stage / filename)
-                for filename in [*FILES.values(), *scripts]
+                for filename in [*files.values(), *scripts]
             },
         }
         (stage / "manifest.json").write_text(

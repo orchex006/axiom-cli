@@ -28,7 +28,7 @@ const TIMEOUT: i32 = 7;
 const PARTIAL: i32 = 20;
 
 const COMPONENT: &str = "axiom-cli";
-const VERSION: &str = "0.1.0";
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 const REVISION: &str = "3333333333333333333333333333333333333333";
 const TRUST_ROOT: &str = "23e4845c8e76c7cf8642b2c47f759d401345424309aec6b3bf4ad8413b40ee7a";
 const SIGNATURE_ARTIFACT: &str = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";

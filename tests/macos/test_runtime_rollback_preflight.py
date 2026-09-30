@@ -31,6 +31,18 @@ INSTALL_SPEC.loader.exec_module(distribution)
 
 
 class RollbackPreflightTests(unittest.TestCase):
+    def test_release_wheel_name_tracks_validated_runtime_version(self) -> None:
+        for version in ("0.1.0", "0.1.1"):
+            self.assertEqual(
+                distribution.mcp_wheel_name({"mcp_version": version}),
+                f"axiom_mcp-{version}-py3-none-any.whl",
+            )
+
+    def test_release_wheel_name_refuses_unsafe_or_missing_version(self) -> None:
+        for version in ("../0.1.1", "0.1.1/extra", "", None):
+            with self.assertRaises(ValueError):
+                distribution.mcp_wheel_name({"mcp_version": version})
+
     def test_engine_rollback_error_retains_durable_pending_record(self) -> None:
         with tempfile.TemporaryDirectory() as name:
             base = Path(name).resolve()

@@ -36,6 +36,15 @@ def verify(path: Path, expected: str) -> None:
         raise ValueError("missing or changed candidate input: " + str(path))
 
 
+def mcp_wheel_name(runtime: dict) -> str:
+    version = runtime.get("mcp_version", "")
+    if not isinstance(version, str) or not re.fullmatch(
+        r"[0-9]+\.[0-9]+\.[0-9]+", version
+    ):
+        raise ValueError("invalid MCP runtime version")
+    return f"axiom_mcp-{version}-py3-none-any.whl"
+
+
 def inputs(release: Path) -> dict:
     for name in ("release-set.json", "channel.json", "runtime/manifest.json"):
         path = release / name
@@ -70,7 +79,7 @@ def inputs(release: Path) -> dict:
         if name not in (
             "python.tar.gz",
             "wheelhouse.tar.gz",
-            "axiom_mcp-0.1.0-py3-none-any.whl",
+            mcp_wheel_name(runtime),
             "requirements.txt",
             "provision.py",
             "install.py",
@@ -81,7 +90,7 @@ def inputs(release: Path) -> dict:
         verify(release / "runtime" / name, expected)
     if len(runtime["files"]) != 8:
         raise ValueError("runtime artifact set incomplete")
-    wheel = release / "axiom_mcp-0.1.0-py3-none-any.whl"
+    wheel = release / mcp_wheel_name(runtime)
     verify(wheel, runtime["files"][wheel.name])
     skills = release / "skills-manifest.json"
     if skills.is_symlink() or not skills.is_file():
@@ -690,7 +699,7 @@ def run_update(
                     for key, name in (
                         ("runtime", "python.tar.gz"),
                         ("wheelhouse", "wheelhouse.tar.gz"),
-                        ("wheel", "axiom_mcp-0.1.0-py3-none-any.whl"),
+                        ("wheel", mcp_wheel_name(runtime)),
                         ("lock", "requirements.txt"),
                     )
                     for part in (
@@ -1087,7 +1096,7 @@ def run_install(
                     for key, name in (
                         ("runtime", "python.tar.gz"),
                         ("wheelhouse", "wheelhouse.tar.gz"),
-                        ("wheel", "axiom_mcp-0.1.0-py3-none-any.whl"),
+                        ("wheel", mcp_wheel_name(runtime)),
                         ("lock", "requirements.txt"),
                     )
                     for part in (
