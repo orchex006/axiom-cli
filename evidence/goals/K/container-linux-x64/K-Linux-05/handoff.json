@@ -1,0 +1,370 @@
+{
+  "goal_id": "K-Linux-05",
+  "task_id": "K-405",
+  "parent_ids": [
+    "K-011"
+  ],
+  "owner": "axiom-cli",
+  "lane": "container-linux-x64",
+  "status": "local_verified",
+  "certified": false,
+  "fixture_provenance": "candidate",
+  "environment": {
+    "os": "Linux",
+    "arch": "x86_64",
+    "execution": "container",
+    "os_version": "Debian GNU/Linux 12 (bookworm)",
+    "runtime": "uv managed CPython 3.13.15; glibc 2.36; uid/gid 10001",
+    "toolchain": "Docker linux/amd64 image sha256:482d923bba601cb1e19395b2d988c2204fe7484d07006df0b0e53ea69faa2be2; pinned base digest; Rust CLI built in image"
+  },
+  "source_revisions": {
+    "axiom-cli": "d8ef3011cdbb2e699816762a1917644f26e161e6"
+  },
+  "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+  "spec_lock": {
+    "path": "axiom-cli/spec.lock.json",
+    "sha256": "4f7a81d79bb5b0523f81b8a20d920a5f2f291001dd76fdd35cc598fe24f15561"
+  },
+  "owner_handoff": {
+    "path": "axiom-cli/evidence/K-405/owner-handoff.json",
+    "sha256": "1d85ffc1a5b57c2a45bad114f35717c7dcd0ca24f39867f70186d591e8e8a379"
+  },
+  "scope_report": {
+    "path": "axiom-specs/evidence/artifacts/K-405/scope-result.json",
+    "sha256": "a8b03f962840503cf1d67eebb425e12d671bf46d287493d8e439649ca289a73a"
+  },
+  "artifacts": [
+    {
+      "path": "axiom-cli/evidence/K-405/axiom-0.1.1-container-linux-x64-candidate.tar.gz",
+      "sha256": "53fb240ca8136cb83e86343f9a9fce28ed4d6e505e8b04608313b33715f541da"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/candidate-files.json",
+      "sha256": "5689efeac0b95a137245e74811ad65dbc2d43164683985eeade2f72d3997cb50"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/candidate-inputs.json",
+      "sha256": "10cde0decc20dff17342e6fe8bcaef5e5cddb15d200a36effdd5952789d25e7b"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/channel.json",
+      "sha256": "2401bf9d3d63e3ebcdd8a658a714e26c493721815c0e94598f363961aac70531"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/release-set.json",
+      "sha256": "6263a93769405dec01b2c56b566b97af5b97e12e29d77ff7cc527f51302e1dd1"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/image-inspect.json",
+      "sha256": "18d6cd82913a4f9c80c192f6c0d11cc19a9f1d168f2e7b2cea72aebd63b18f3e"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/compose-rebuild.json",
+      "sha256": "656c9b9357092b3eb1a42380bed14fe517663b4e3a57b8591c569184302374c9"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/candidate-verify.json",
+      "sha256": "e19ce287c8fe105f1a9f3de5e328aa4d202cf97e93208f70ee7127e8d87db57d"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/linux-harness.txt",
+      "sha256": "afe55a8a0f2cdac3a722933eb32783dbccd0a2be34f64d499f58290caa39605b"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/final-checks.txt",
+      "sha256": "5eb1ad08ca46ffe24ab5d6a3a8b8a36a14693d5c8537b1ae2f1b8093ee18d2b8"
+    },
+    {
+      "path": "axiom-cli/evidence/K-405/owner-review.md",
+      "sha256": "c565e6b337281a78ad6807d3207ef857de12e1a4d99334c37c8b5f24e584e3c1"
+    }
+  ],
+  "commands": [
+    {
+      "id": "oci-build",
+      "command": "docker buildx build --platform linux/amd64 pinned Dockerfile into local image",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/oci-build.txt",
+        "sha256": "b5e4fa30fbac285c741d7c513589cb96eeade923f2ce705f723ef819f4cf830f"
+      }
+    },
+    {
+      "id": "image-inspect",
+      "command": "docker image inspect axiom-k405-cli-base:local; verify platform, labels and uid/gid 10001",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/image-inspect.json",
+        "sha256": "18d6cd82913a4f9c80c192f6c0d11cc19a9f1d168f2e7b2cea72aebd63b18f3e"
+      }
+    },
+    {
+      "id": "volume-retention",
+      "command": "write/read owned Docker volume across two containers as uid/gid 10001",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/volume-read.txt",
+        "sha256": "4c977a2799ded87b9f12d7423ed03a992fdd3787480a6f43244aa7c65f0c9ad9"
+      }
+    },
+    {
+      "id": "compose",
+      "command": "python3 packaging/linux/Build-ContainerCandidate.py with exact pinned K-401/K-402/K-403/K-404 inputs; rebuild SHA identical",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/compose-rebuild.json",
+        "sha256": "656c9b9357092b3eb1a42380bed14fe517663b4e3a57b8591c569184302374c9"
+      }
+    },
+    {
+      "id": "candidate-verify",
+      "command": "python3 tests/linux/verify_k405_candidate.py --archive candidate --manifest candidate-files --runtime-input K-404/runtime-input.json",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/candidate-verify.json",
+        "sha256": "e19ce287c8fe105f1a9f3de5e328aa4d202cf97e93208f70ee7127e8d87db57d"
+      }
+    },
+    {
+      "id": "dry-run",
+      "command": "installed CLI engine install dry-run with pinned local channel and distribution",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/install-dry-run.json",
+        "sha256": "77d2b716703a882e0e87b5b3ba6a623d2c39dab2f6835f0f3bbffe3f91c7645f"
+      }
+    },
+    {
+      "id": "runtime",
+      "command": "K-404 Linux runtime provisioning under isolated per-user owned volume",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/runtime-provision.json",
+        "sha256": "1bf4bcfa7465e8e4e3584f7dedd3dc1d5dbcaf68e0d9af8e6ddf8cc4c16d4668"
+      }
+    },
+    {
+      "id": "engine-install",
+      "command": "installed CLI approved engine install from pinned candidate",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/engine-install.json",
+        "sha256": "d78f1ecaba3e41715930673191b224d893f2bad4389f442fe57517f7639a29e4"
+      }
+    },
+    {
+      "id": "idempotency",
+      "command": "installed CLI approved engine install rerun",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/engine-idempotent.json",
+        "sha256": "cb3cd1d22ad6e7b633adde24916b092dea4fd7e455c84f0a7042ab2fa2f791b8"
+      }
+    },
+    {
+      "id": "cli-install",
+      "command": "J-008 per-user CLI approved install with service none",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/cli-install.json",
+        "sha256": "6575a58344f93934a26b03c26a581c5f558aee493de7f81e947f7903dc939c70"
+      }
+    },
+    {
+      "id": "foreground",
+      "command": "installed axiom-graphd foreground run on registered C# source; SIGINT drain",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/foreground.json",
+        "sha256": "cf388b531c18a5cb676a01632b598845b3486957c8851f6df4cfcf796f79c6d8"
+      }
+    },
+    {
+      "id": "corrupt",
+      "command": "corrupted candidate MCP wheel refusal; existing engine pointer unchanged",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/corrupt-refusal.json",
+        "sha256": "b45c16eef64e13c7e7dc01a9b2abdafcf874220288a6da7ca2b78d63c68823cf"
+      }
+    },
+    {
+      "id": "unowned",
+      "command": "unowned CLI entrypoint conflict refusal with bytes preserved",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/unowned-conflict.txt",
+        "sha256": "c066d6d692fcfa434d187d1e3953c42fe7d961ab49dd20ae933f6e8a9310f8d3"
+      }
+    },
+    {
+      "id": "rollback",
+      "command": "injected unwritable entrypoint install failure and prior generation preservation",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/install-rollback.txt",
+        "sha256": "cc2e7f5c8091113b24205eeacae9e814e1f72c1c4553489ec7aeba6878c3cd64"
+      }
+    },
+    {
+      "id": "linux-harness",
+      "command": "J-008 Linux distribution harness in Debian 12 linux/amd64 as uid/gid 10001",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/linux-harness.txt",
+        "sha256": "afe55a8a0f2cdac3a722933eb32783dbccd0a2be34f64d499f58290caa39605b"
+      }
+    },
+    {
+      "id": "engine-uninstall",
+      "command": "approved engine uninstall from installed CLI",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/engine-uninstall-apply.json",
+        "sha256": "08e7a54e637125c10b6ae434ed073d657fc11c6ef7faca5e4f0e7060ba27bbb4"
+      }
+    },
+    {
+      "id": "runtime-remove",
+      "command": "owned K-404 runtime removal",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/runtime-remove.json",
+        "sha256": "53d1bb90051c76141d88166257aa2271f5f93bf5e5dcd10e513ea0d51fd34442"
+      }
+    },
+    {
+      "id": "cli-uninstall",
+      "command": "approved J-008 per-user CLI uninstall",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/cli-uninstall.json",
+        "sha256": "afe1c19130bfa941ead1f086739c67f1ce96146e70ea7a436419c0c38433c0bc"
+      }
+    },
+    {
+      "id": "preservation",
+      "command": "verify source, bindings and user data survive; owned pointers/executable absent",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/preservation.txt",
+        "sha256": "fad28516b90df22bc7d83641d3d3a9d32afa843114bc0b2ee1df66e4fbde30b5"
+      }
+    },
+    {
+      "id": "negative-candidate",
+      "command": "corrupted archive member refused by candidate verifier",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/candidate-negative.txt",
+        "sha256": "33ce94ee6c152678f178a7cad5b54158565fbd2a7b7b70a6f82a1bdb5ce77e7f"
+      }
+    },
+    {
+      "id": "owner-checks",
+      "command": "cargo fmt/clippy/test/release build, Python compile, shell syntax and diff check",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/final-checks.txt",
+        "sha256": "5eb1ad08ca46ffe24ab5d6a3a8b8a36a14693d5c8537b1ae2f1b8093ee18d2b8"
+      }
+    },
+    {
+      "id": "owner-review",
+      "command": "scoped source, compatibility, rollback, secrets and residual-gate review",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/owner-review.md",
+        "sha256": "c565e6b337281a78ad6807d3207ef857de12e1a4d99334c37c8b5f24e584e3c1"
+      }
+    },
+    {
+      "id": "before",
+      "command": "python3 tools/specctl.py validate --task K-405 --stage before",
+      "cwd": "axiom-specs",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-405/before.txt",
+        "sha256": "be7ca11f05c4ac50d7e51c86589ed3691df97368ab0bbae43c141e3419ead262"
+      }
+    }
+  ],
+  "acceptance": {
+    "AC1": "passed: pinned OCI image, non-root uid/gid 10001 and owned-volume retention; installed foreground daemon drained",
+    "AC2": "passed: per-user CLI/engine/runtime and installed daemon with clean install and idempotency",
+    "AC3": "passed: exact digest/ownership checks and conflict/corruption/injected failure rollback",
+    "AC4": "passed: owned uninstall preserved source, bindings and user data; unsigned/unpublished stated",
+    "AC5": "passed: owner checks, scoped review and canonical completion tracked separately"
+  },
+  "positive_negative_failure_results": {
+    "candidate_archive_sha256": "53fb240ca8136cb83e86343f9a9fce28ed4d6e505e8b04608313b33715f541da",
+    "candidate_files": 49,
+    "corrupt_refused": true,
+    "failed_entrypoint_rolled_back": true,
+    "foreground_daemon": true,
+    "image_id": "sha256:482d923bba601cb1e19395b2d988c2204fe7484d07006df0b0e53ea69faa2be2",
+    "linux_harness_failed": 0,
+    "linux_harness_optional_skipped": 1,
+    "linux_harness_passed": 24,
+    "unowned_conflict_refused": true,
+    "user_data_preserved": true
+  },
+  "limitations": [
+    "No systemd user manager in the container; optional generated-unit removal leg skipped.",
+    "Native WSL2/Windows, signing, publication and independent main review remain open."
+  ],
+  "delivery": {
+    "main_integrated": false,
+    "release_state": "candidate",
+    "source_branch": "feature/k-405-container-distribution",
+    "source_commit": "d8ef3011cdbb2e699816762a1917644f26e161e6"
+  },
+  "next_consumer": "K-406",
+  "reference_bases": {
+    "artifacts": "workspace_root",
+    "commands": "workspace_root"
+  },
+  "review": {
+    "path": "axiom-cli/evidence/K-405/owner-review.md",
+    "sha256": "c565e6b337281a78ad6807d3207ef857de12e1a4d99334c37c8b5f24e584e3c1"
+  },
+  "input_revisions_and_hashes": [
+    {
+      "task_id": "K-401",
+      "path": "evidence/artifacts/K-401/scope-result.json",
+      "sha256": "e2dc9bf12107096e05f1f4b71fdfe9a750e011eaf576ca518884cdf775b99ab5"
+    },
+    {
+      "task_id": "K-402",
+      "path": "evidence/artifacts/K-402/scope-result.json",
+      "sha256": "71d5ded1bad524b3ec79efd3e651aaeb514e9570728dbad8ad39b3c5f5989faf"
+    },
+    {
+      "task_id": "K-404",
+      "path": "evidence/artifacts/K-404/scope-result.json",
+      "sha256": "a5251ef01aeeeb677043d1e9db26798ecfa43e02ee2adf4daff04762853b9dc6"
+    }
+  ]
+}
