@@ -120,7 +120,13 @@ mod sha256 {
             state[6] = state[6].wrapping_add(g);
             state[7] = state[7].wrapping_add(h);
         }
-        state.iter().map(|value| format!("{value:08x}")).collect()
+        {
+            use std::fmt::Write;
+            state.iter().fold(String::new(), |mut output, value| {
+                write!(output, "{value:08x}").expect("writing to String cannot fail");
+                output
+            })
+        }
     }
 }
 

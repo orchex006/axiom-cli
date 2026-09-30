@@ -165,7 +165,7 @@ pub fn read_plan_file(path: &Path) -> Result<Json, Refusal> {
 /// This is the AC1 boundary: an approval names one digest, and the digest covers every planner
 /// input, so re-using an old approval for a changed plan is refused as stale.
 pub fn approval_reasons(plan: &Json, approved_digest: &str) -> Vec<String> {
-    if !plan.as_object().is_some() {
+    if plan.as_object().is_none() {
         return vec!["plan_not_object".to_string()];
     }
     if !rules::is_digest64(approved_digest) {
