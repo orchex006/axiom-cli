@@ -140,13 +140,7 @@ pub fn update(engine: &Engine, request: &Request<'_>) -> Result<Report, Refusal>
 fn run(engine: &Engine, request: &Request<'_>, updating: bool) -> Result<Report, Refusal> {
     let assembly = assemble(request)?;
     let plan_file = request.staging_root.join("engine-plan.json");
-    let mut engine_env = vec![("AXIOM_HOME", request.install_root.display().to_string())];
-    if let Some(bin) = &request.mcp_runtime_bin {
-        engine_env.push((
-            "PATH",
-            format!("{}:/usr/bin:/bin:/usr/sbin:/sbin", bin.display()),
-        ));
-    }
+    let engine_env = engine_environment(&request.install_root, request.mcp_runtime_bin.as_deref());
 
     // Step 1 - the engine plans from the bundle. `--out` is used rather than stdout so the plan
     // file the engine writes is the exact byte form the engine will re-read, with no re-encoding.
@@ -260,6 +254,24 @@ fn run(engine: &Engine, request: &Request<'_>, updating: bool) -> Result<Report,
             .unwrap_or_else(|| Json::array(Vec::new())),
     );
     Ok(report)
+}
+
+/// Give the engine the verified runtime first on this host's native PATH.
+pub(crate) fn engine_environment(
+    install_root: &Path,
+    mcp_runtime_bin: Option<&Path>,
+) -> Vec<(&'static str, String)> {
+    let mut env = vec![("AXIOM_HOME", install_root.display().to_string())];
+    if let Some(bin) = mcp_runtime_bin {
+        let system_root = std::env::var("SystemRoot").unwrap_or_else(|_| "C:\\Windows".to_string());
+        let path = if cfg!(windows) {
+            format!("{};{}\\System32", bin.display(), system_root)
+        } else {
+            format!("{}:/usr/bin:/bin:/usr/sbin:/sbin", bin.display())
+        };
+        env.push(("PATH", path));
+    }
+    env
 }
 
 /// Assemble the bundle directory from verified bytes only.
