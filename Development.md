@@ -57,6 +57,18 @@ rollback only when the observed A/B bytes match it exactly. Candidate and
 native Scheduled Task evidence are under `evidence/K-306/`; signing,
 publication, and the graphd public Windows service verb remain separate gates.
 
+## K-010 Windows final distribution lifecycle candidate
+
+The K-010 kit keeps K-305 0.1.1 A immutable and packages the exact K-309
+service-capable 0.1.2 core as B. Its candidate manifest, release set, channel
+and update receipt carry K-010 identity and K-309 source/archive hashes.
+`axiom-cli` still delegates the engine and Windows service lifecycle to the
+graphd-owned `axiom` executable. If a user registers the new service after
+updating from A, rollback to the older service-incompatible core refuses before
+changing either pointer until `axiom service uninstall` removes the owned B
+task. The final installed native lifecycle evidence belongs under
+`evidence/K-010/`; it is unsigned local evidence, not release certification.
+
 ## K-304 Windows x64 runtime candidate
 
 `packaging/windows/Provision-McpRuntime.ps1` uses the SHA-256-pinned CPython

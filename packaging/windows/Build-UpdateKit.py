@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build an unsigned K-306 Windows B kit from exact K-305 and K-308 bytes."""
+"""Build an unsigned Windows B kit from exact A and native core bytes."""
 
 from __future__ import annotations
 
@@ -70,6 +70,7 @@ def archive(path: Path, files: dict[str, bytes]) -> None:
 
 
 def build(args: argparse.Namespace) -> dict:
+    task_id = args.task_id
     if args.out.exists():
         raise ValueError("kit output already exists")
     if (
@@ -114,7 +115,7 @@ def build(args: argparse.Namespace) -> dict:
         or core.get("publication") != "not_published"
         or not HEX40.fullmatch(core.get("source_revision", ""))
     ):
-        raise ValueError("K-308 B core identity differs")
+        raise ValueError("B core identity differs")
     core_archive = read(args.b_core_dir / NEW_CORE, core["archive"]["sha256"])
     binaries = {row["name"]: row for row in core["binaries"]}
     if set(binaries) != {"axiom.exe", "axiom-graphd.exe"}:
@@ -148,8 +149,10 @@ def build(args: argparse.Namespace) -> dict:
 
     release_set = old_set
     release_set["release_version"] = "0.1.2"
-    release_set["assembled_by"] = "packaging/windows/Build-UpdateKit.py [K-306]"
-    release_set["assembled_at"] = "2026-10-01T00:00:00Z"
+    release_set["assembled_by"] = f"packaging/windows/Build-UpdateKit.py [{task_id}]"
+    release_set["assembled_at"] = (
+        "2026-10-01T00:00:00Z" if task_id == "K-306" else "2026-10-02T00:00:00Z"
+    )
     for row in release_set["artifacts"]:
         if row["name"] == OLD_CORE:
             row["name"] = row["file_name"] = NEW_CORE
@@ -169,14 +172,21 @@ def build(args: argparse.Namespace) -> dict:
         if row.get("component") in ("axiom-graphd", "axiom"):
             row["installed_version"] = "0.1.2"
             row["version_source"] = (
-                "axiom-graphd/evidence/K-308/candidate-manifest.json"
+                f"axiom-graphd/evidence/{'K-308' if task_id == 'K-306' else 'K-309/final-4f'}/candidate-manifest.json"
             )
-    release_set["service_reason"] = (
-        "The graph daemon service lifecycle is owned by axiom-graphd; this unsigned "
-        f"Windows x64 core 0.1.2 candidate at revision {core['source_revision']} "
-        "declares no managed service registration. K-306 tests a Limited per-user "
-        "Scheduled Task separately."
-    )
+    if task_id == "K-306":
+        release_set["service_reason"] = (
+            "The graph daemon service lifecycle is owned by axiom-graphd; this unsigned "
+            f"Windows x64 core 0.1.2 candidate at revision {core['source_revision']} "
+            "declares no managed service registration. K-306 tests a Limited per-user "
+            "Scheduled Task separately."
+        )
+    else:
+        release_set["service_reason"] = (
+            "The graph daemon service lifecycle is owned by axiom-graphd. "
+            f"K-309 core revision {core['source_revision']} provides the public per-user "
+            "Windows service verbs; K-010 verifies them after distribution install."
+        )
     files["release-set.json"] = json_bytes(release_set)
     channel = old_channel
     channel["updated_at"] = "2026-10-01T00:00:00Z"
@@ -190,7 +200,7 @@ def build(args: argparse.Namespace) -> dict:
     files["channel.json"] = json_bytes(channel)
     lock = json.loads(files["candidate-lock.json"])
     lock.update(
-        task_id="K-306",
+        task_id=task_id,
         release_set_sha256=sha(files["release-set.json"]),
         core_archive_sha256=sha(core_archive),
         core_revision=core["source_revision"],
@@ -208,7 +218,7 @@ def build(args: argparse.Namespace) -> dict:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(body)
     file_manifest = {
-        "task_id": "K-306",
+        "task_id": task_id,
         "lane": "windows-x64",
         "candidate": True,
         "a_archive_sha256": sha(source),
@@ -230,7 +240,7 @@ def build(args: argparse.Namespace) -> dict:
     }.items():
         shutil.copyfile(path, output / name)
     kit = {
-        "task_id": "K-306",
+        "task_id": task_id,
         "lane": "windows-x64",
         "published": False,
         "certified": False,
@@ -249,7 +259,7 @@ def build(args: argparse.Namespace) -> dict:
     (output / "kit-manifest.json").write_bytes(json_bytes(kit))
     archive(output / "axiom-0.1.2-windows-x64-update-kit.zip", files)
     return {
-        "task_id": "K-306",
+        "task_id": task_id,
         "source_revision": args.cli_revision,
         "core_revision": core["source_revision"],
         "a_sha256": sha(source),
@@ -271,6 +281,7 @@ def main() -> int:
     parser.add_argument("--b-core-manifest-sha", required=True)
     parser.add_argument("--b-cli", type=Path, required=True)
     parser.add_argument("--cli-revision", required=True)
+    parser.add_argument("--task-id", choices=("K-306", "K-010"), default="K-306")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     try:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Coordinate the unsigned K-306 Windows CLI and engine update as one operation."""
+"""Coordinate an unsigned Windows CLI and engine update as one operation."""
 
 from __future__ import annotations
 
@@ -17,6 +17,9 @@ import uuid
 
 
 HEX = re.compile(r"[0-9a-f]{64}\Z")
+K309_CORE_MANIFEST_SHA = (
+    "b33999d07c1a71d3ce00c93620870d08948eec6f0e010f7891d6c630717af7df"
+)
 
 
 def digest(path: Path) -> str:
@@ -51,7 +54,8 @@ def candidate(release: Path, files_path: Path, runtime_input: Path) -> dict:
     if release.is_symlink() or not release.is_dir():
         raise ValueError("candidate release directory is missing or linked")
     files = json.loads(files_path.read_text(encoding="utf-8"))
-    if files.get("task_id") != "K-306" or files.get("lane") != "windows-x64":
+    task_id = files.get("task_id")
+    if task_id not in ("K-306", "K-010") or files.get("lane") != "windows-x64":
         raise ValueError("candidate file manifest identity differs")
     rows = files.get("files", [])
     names: set[str] = set()
@@ -92,9 +96,14 @@ def candidate(release: Path, files_path: Path, runtime_input: Path) -> dict:
         "unsigned",
         "not_published",
         False,
-        "K-306",
+        task_id,
     ):
         raise ValueError("candidate platform, version or authority differs")
+    if (
+        task_id == "K-010"
+        and digest(release / "candidate-manifest.json") != K309_CORE_MANIFEST_SHA
+    ):
+        raise ValueError("K-010 candidate does not carry the reviewed K-309 core")
     if (
         lock["release_set_sha256"] != digest(release / "release-set.json")
         or lock["core_archive_sha256"]
@@ -113,7 +122,7 @@ def candidate(release: Path, files_path: Path, runtime_input: Path) -> dict:
     binaries = {row["name"]: row for row in core["binaries"]}
     for name in ("axiom.exe", "axiom-graphd.exe"):
         if artifacts[name]["sha256"] != binaries[name]["sha256"]:
-            raise ValueError("core binary differs from K-308: " + name)
+            raise ValueError("core binary differs from owner manifest: " + name)
         report = binaries[name]["version_report"]
         if (
             report.get("version") != "0.1.2"
@@ -174,7 +183,12 @@ def kit_manifest(path: Path, args: argparse.Namespace) -> str:
     if path.is_symlink() or not path.is_file():
         raise ValueError("candidate kit manifest missing or linked")
     body = json.loads(path.read_text(encoding="utf-8"))
-    if body.get("task_id") != "K-306" or body.get("published") is not False:
+    files = json.loads(args.files.read_text(encoding="utf-8"))
+    if (
+        body.get("task_id") not in ("K-306", "K-010")
+        or body.get("task_id") != files.get("task_id")
+        or body.get("published") is not False
+    ):
         raise ValueError("candidate kit identity or authority differs")
     expected = {
         "Update-Distribution.py": Path(__file__),
@@ -548,6 +562,20 @@ def rollback(args: argparse.Namespace) -> dict:
     before, after = record["before"], record["after"]
     env = environment(root)
     with update_lock(root):
+        # K-010 upgrades a 0.1.1 core that cannot run the new public Windows
+        # task action. A service installed after activation is absent from the
+        # graphd update journal; letting that journal roll back would leave the
+        # B task running while the active pointer names A. Require its owner
+        # API to remove the task before the distribution rollback begins.
+        task_id = json.loads(args.files.read_text(encoding="utf-8")).get("task_id")
+        service_state = root / "installs/ecosystem/state/service-v1.json"
+        if task_id == "K-010" and (
+            service_state.exists() or service_state.is_symlink()
+        ):
+            raise ValueError(
+                "post-update Windows service must be removed with installed "
+                "axiom service uninstall before rollback to the 0.1.1 core"
+            )
         current = installed(root)
         if current == after:
             (root / "cli/rollback").mkdir(parents=True, exist_ok=True)

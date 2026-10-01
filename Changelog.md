@@ -4,6 +4,15 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
 
 # Changelog
 
+## Unreleased — K-010 Windows final distribution lifecycle
+
+- Build an unsigned Windows 0.1.2 kit with exact K-309 public-service core
+  bytes and K-010 owner metadata while preserving the historical K-306 kit.
+- Refuse distribution rollback to the older 0.1.1 core if a Windows service was
+  registered after B activation. Its owner must remove that service through
+  `axiom service uninstall` before rollback, preventing a B daemon from running
+  while the active pointer names A.
+
 ## Unreleased — K-306 Windows composite update candidate
 
 - Add an unsigned Windows 0.1.2 update kit built from the exact K-305 0.1.1

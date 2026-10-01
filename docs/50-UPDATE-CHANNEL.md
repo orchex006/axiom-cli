@@ -199,6 +199,14 @@ records the previous CLI state and uses the graphd-owned engine transaction
 for ecosystem rollback. This candidate path is selected only when
 `AXIOM_CLI_COMPOSITE_KIT` names an exact manifest-checked kit; it does not
 publish or trust a remote release.
+
+For the K-010 Windows 0.1.2 candidate, the kit verifies the exact K-309 core
+manifest before it can update K-305 A. The new core can register a per-user
+Windows service. When that service is installed after the update, rollback to
+0.1.1 first requires `axiom service uninstall` from the installed B engine.
+The coordinator refuses an automatic rollback while the service remains,
+because A cannot run its newer Task Scheduler action. This refusal leaves the
+installed B pointers, task and user data unchanged.
 ## What is verified, and what is not
 
 Verified on this host: the whole `update check|plan|apply|rollback` machinery, against local
