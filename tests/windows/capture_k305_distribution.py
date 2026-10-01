@@ -78,9 +78,13 @@ def main() -> int:
         if isinstance(value, list):
             return [scrub(item) for item in value]
         if isinstance(value, str):
-            return value.replace(str(scratch), "<isolated-root>").replace(
-                str(release), "<candidate-set>"
-            )
+            for source, replacement in (
+                (str(scratch), "<isolated-root>"),
+                (str(release), "<candidate-set>"),
+            ):
+                value = value.replace(source, replacement)
+                value = value.replace(source.replace("\\", "\\\\"), replacement)
+            return value
         return value
 
     def ps(case: str, script: Path, options: list[str], expected: int = 0) -> dict:
