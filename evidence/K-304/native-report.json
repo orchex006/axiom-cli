@@ -1,0 +1,208 @@
+{
+  "ok": true,
+  "lane": "windows-x64",
+  "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+  "cases": [
+    {
+      "case": "clean-provision",
+      "action": "provision",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+        "certified": false,
+        "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+        "generation": "d0f0fc8644e8e88e91cadb78",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "provisioned",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "idempotency",
+      "action": "provision",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+        "certified": false,
+        "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+        "generation": "d0f0fc8644e8e88e91cadb78",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "already_current",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "status",
+      "action": "status",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+        "certified": false,
+        "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+        "generation": "d0f0fc8644e8e88e91cadb78",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "current",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "corrupt-runtime",
+      "action": "provision",
+      "exit_code": 9,
+      "expected_exit_code": 9,
+      "reason": "runtime input digest mismatch"
+    },
+    {
+      "case": "unsupported-interpreter",
+      "action": "provision",
+      "exit_code": 9,
+      "expected_exit_code": 9,
+      "runtime_sha256": "4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "reason": "runtime or pip input differs from the pinned Windows policy",
+        "status": "refused"
+      }
+    },
+    {
+      "case": "missing-dependency",
+      "action": "provision",
+      "exit_code": 9,
+      "expected_exit_code": 9,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "f2dc1c912c25339a06c0e5d5bd68fdd50118f02eefa44105733a08bf24e9f1de",
+      "result": {
+        "reason": "MCP bundle contains unsafe or missing members",
+        "status": "refused"
+      }
+    },
+    {
+      "case": "after-refusals",
+      "action": "status",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+        "certified": false,
+        "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+        "generation": "d0f0fc8644e8e88e91cadb78",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "current",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "interrupted-provision",
+      "action": "provision",
+      "exit_code": 9,
+      "expected_exit_code": 9,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "b9eb3fbe5c82bb9ec12999a0adb2f55ca52e22d6b8328478cde1b4394ea75196",
+      "result": {
+        "reason": "injected interruption before runtime activation",
+        "status": "refused"
+      }
+    },
+    {
+      "case": "after-interruption",
+      "action": "status",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+        "certified": false,
+        "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+        "generation": "d0f0fc8644e8e88e91cadb78",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "current",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "candidate-b",
+      "action": "provision",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "b9eb3fbe5c82bb9ec12999a0adb2f55ca52e22d6b8328478cde1b4394ea75196",
+      "result": {
+        "bundle_sha256": "b9eb3fbe5c82bb9ec12999a0adb2f55ca52e22d6b8328478cde1b4394ea75196",
+        "certified": false,
+        "executable_sha256": "1b6cf0389c4d8b6c1d0ff79ca752cbcf69289a7415276e44ef1f558aadd6e099",
+        "generation": "5532190b365cccc5cd520546",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\5532190b365cccc5cd520546\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "provisioned",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "runtime-rollback",
+      "action": "rollback",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+        "certified": false,
+        "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+        "generation": "d0f0fc8644e8e88e91cadb78",
+        "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+        "runtime_bin": "<isolated-root>\\user-home\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+        "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+        "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+        "status": "rolled_back",
+        "version": "0.1.1"
+      }
+    },
+    {
+      "case": "owned-removal",
+      "action": "remove",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "inputs_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "result": {
+        "owned_generations": [
+          "5532190b365cccc5cd520546",
+          "d0f0fc8644e8e88e91cadb78"
+        ],
+        "status": "removed",
+        "user_data_preserved": true
+      }
+    }
+  ],
+  "user_data_preserved": true,
+  "certified": false
+}

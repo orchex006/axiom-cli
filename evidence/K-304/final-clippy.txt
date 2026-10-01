@@ -1,0 +1,4 @@
+cwd=axiom-cli
+command=cargo +1.85.0 clippy --locked --all-targets -- -D warnings
+exit=0
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s

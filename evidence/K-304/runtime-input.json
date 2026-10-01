@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "task_id": "K-304",
+  "lane": "windows-x64",
+  "certified": false,
+  "python": {
+    "version": "3.13.15",
+    "url": "https://www.python.org/ftp/python/3.13.15/python-3.13.15-embed-amd64.zip",
+    "sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf"
+  },
+  "pip": {
+    "version": "26.1.2",
+    "source": "PyPI pip==26.1.2 wheel",
+    "sha256": "382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab"
+  },
+  "mcp_inputs": {
+    "owner_repo": "axiom-mcp",
+    "source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+    "owner_delivery_revision": "33f75fcc47b440581c3a4ec5f630ef2f57741e7b",
+    "artifact": "evidence/K-303/windows-x64-py313-inputs.tar",
+    "sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+    "wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56"
+  },
+  "provisioner": "packaging/windows/Provision-McpRuntime.ps1",
+  "installation": "per-user versioned mcp-runtime/versions/<generation>/venv/Scripts",
+  "provenance": "candidate"
+}

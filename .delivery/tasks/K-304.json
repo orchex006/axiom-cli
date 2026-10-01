@@ -1,0 +1,10 @@
+{
+  "task_id": "K-304",
+  "owner": "axiom-cli",
+  "branch": "feature/k-304-windows-mcp-runtime",
+  "source_revision": "c425e3ecbbff145dd310f00cd890698ed48b403f",
+  "runtime_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+  "mcp_bundle_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+  "handoff": "evidence/K-304/handoff.json",
+  "certified": false
+}

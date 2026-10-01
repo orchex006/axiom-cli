@@ -1,0 +1,4 @@
+cwd=axiom-cli
+command=python tests/windows/capture_k304_runtime.py --scratch <isolated-root> --runtime <pinned-python-3.13.15> --pip-wheel <pinned-pip> --inputs <K-303-bundle> --alternate-inputs <synthetic-B> --missing-inputs <synthetic-missing> --unsupported-runtime <official-python-3.12.10> --source-revision 78f991622b52db86499c3031ed98c07a4d9d408e
+exit=0
+{"ok": true, "cases": 12, "user_data_preserved": true}
