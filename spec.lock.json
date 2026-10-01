@@ -1,12 +1,12 @@
 {
   "spec_version": "2.0.0-draft.1",
   "spec_repository": "axiom-specs",
-  "spec_revision": "20c12377397de7d480c0ef1a80e48e333a756cf9",
-  "spec_content_sha256": "a03480fafd84cbd8dadef0249a9d47dbf432b37e7ec899f55040165f79a188ea",
+  "spec_revision": "132cb5b8fd332d6a198036f935377f6593edf1b4",
+  "spec_content_sha256": "3ba37df6af15db3a9aca09391e3a47250bca9715e5200caaba6665524a502987",
   "owner_repository": "axiom-cli",
   "workspace_layout": 2,
   "graph_payload_schema": 1,
-  "verification": "K-304: immutable delivered child spec revision 20c12377397de7d480c0ef1a80e48e333a756cf9, including Windows all-target test scope; verified from exact Git blobs. Draft candidate, not released certification.",
+  "verification": "K-305: immutable delivered Windows child handoffs K-301/K-302/K-303/K-304 at specs feature revision 132cb5b8fd332d6a198036f935377f6593edf1b4; exact contract bytes checked from Git. Candidate only, not release certification.",
   "contract_digests": {
     "Development.md": "731fef8f80f99b0656877a3742a117163e8b6b1d446e5e9ff1a8a99bc4ff14de",
     "adrs/ADR-0015.md": "22699c8518263fb5f21c7a9cda48b27da2229b19bf6c336d7dec72a980139716",
@@ -20,7 +20,7 @@
     "contracts/version-dimensions.json": "7717d17d48a8a6dc697c5e78c9f699744bef2c32edf03d7a4b5afeea40b12345",
     "specs/v2/K-release-readiness.md": "a83da7e2f0a000d9165aa0d664ab690fa2756f2b61e7255dbf72c52acb2288e9",
     "tasks/K/scope-map.json": "60a8b5f4e6813083c51e2d6992327af7fbf10865bc3c1aee5dc2f7dfed35edc1",
-    "tasks/tasks.json": "a12e93159c2ae265581b67074771863c2c262cb19edd2cef5308e381c99713ac",
+    "tasks/tasks.json": "930f3fac258033781e9a11ed47744b3c16f57f26b4d3f066e02e17c31b40382c",
     "tools/specctl.py": "2353a4ca139b5d52f0904fb98a2cacfb14ffb08acee9a828d4d299e812db099f"
   }
 }

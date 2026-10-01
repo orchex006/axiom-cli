@@ -20,6 +20,25 @@ Attach real test output/hashes, acceptance mapping, changed-file review, compati
 
 Follow the pinned canonical governance. Do not invent a remote, push credentials or release version. `axiom-cli` is the canonical distribution repository; the daemon plus CLI share one core release, while MCP and skills version independently. Documentation follows its component version. No production action is authorized by copying this seed.
 
+## K-305 Windows x64 distribution candidate
+
+The Windows release set carries the CLI, both native core executables, the
+K-303 MCP wheel, the K-301 skills owner archive and the K-304 pinned runtime
+inputs and provisioner scripts. `Build-ReleaseSet.ps1 -CoreCandidateManifest`
+checks the exact K-302 binary and archive bytes before it describes the core
+as a verified unsigned candidate. `Build-EngineCandidate.py` checks every
+owner handoff, expands the skills payload and writes a local `channel.json`
+for the installed `axiom-cli` entrypoint. This candidate remains unpublished.
+The installed engine owns its service lifecycle; the native Windows Scheduled
+Task acceptance uses a Limited per-user task running the installed daemon.
+The current graphd `axiom service install` runtime still routes through a
+Unix-only identity path on Windows. The local Task Scheduler harness proves
+the installed daemon can run as a Limited per-user task, but the public service
+verb remains a K-010/release blocker until its owner corrects it. The separate
+Rust update state also makes `axiom-cli version --all` report no recorded
+channel installation after this local candidate; inspect the PowerShell
+distribution state and engine activation record for the exact installed bytes.
+
 ## K-304 Windows x64 runtime candidate
 
 `packaging/windows/Provision-McpRuntime.ps1` uses the SHA-256-pinned CPython

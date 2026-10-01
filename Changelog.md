@@ -4,6 +4,13 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
 
 # Changelog
 
+## Unreleased — K-305 Windows distribution candidate
+
+- Compose the exact Windows CLI/core/MCP/skills/runtime artifacts into an
+  unsigned local release set and candidate channel. Refuse existing output,
+  incompatible owner revisions and changed digests; keep source/user data
+  through per-user install, native Scheduled Task lifecycle and uninstall.
+
 ## Unreleased — K-304 Windows MCP runtime candidate
 
 - Provision an owned Python 3.13.15 runtime from exact offline Windows inputs,
