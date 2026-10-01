@@ -1,0 +1,5 @@
+exit=2
+stdout:
+{"certified": false, "reason": "injected service-restart failure after engine activation", "status": "refused"}
+
+stderr:

@@ -1,0 +1,5 @@
+exit=2
+stdout:
+{"certified": false, "reason": "injected post-entrypoint health failure", "status": "refused"}
+
+stderr:

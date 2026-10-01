@@ -1,0 +1,5 @@
+exit=0
+stdout:
+{"status":"passed","task_name":"AxiomK306FinalRollback","registered":true,"started":true,"stopped":true,"removed":true,"run_level":"Limited","first_generation":"92a033b1d2893d61bcac528d7f3b0bf7f5cde07e29e7896ed37d5348e7fc9c18","updated_generation":"14e71338855bb58eb73780b672ee754a4d68a8be88c13e4867b92d5aca81a7b9","installed_daemon_sha256":"d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72","symbol":"WatcherRestored","query_generation":"d970f89d34a0f8080fed7d7aedc0d82025bd6c989090110c6f80e1d3a31bb6d6","version":"0.1.1","user_data_preserved":true}
+
+stderr:
