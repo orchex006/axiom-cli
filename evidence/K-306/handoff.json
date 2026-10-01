@@ -33,6 +33,7 @@
   "known_limitations": [
     "unsigned unpublished local candidate; no released provenance",
     "graphd public Windows service install still routes through Unix runtime identity; K-010 open",
-    "service-restart failure injection is tested; final graphd-managed Windows service API remains open"
+    "service-restart failure injection is tested; final graphd-managed Windows service API remains open",
+    "K-305 A CLI predates the Windows coordinator; the public update verb was launched from the pinned B kit against installed A state, then installed B entrypoint performed rollback"
   ]
 }

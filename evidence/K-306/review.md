@@ -6,3 +6,9 @@
 - The native run installed A in an isolated per-user root, provisioned MCP without developer Python, installed the graphd ecosystem via the public CLI, and ran real C# catalog query/watcher under a Limited per-user Scheduled Task. It refused corrupt and incompatible kits without changing A. Download, staging, activation, service-restart and post-entrypoint failures all restored A pointers and CLI bytes. The public update activated B CLI/core; installed B queried a watcher edit through another Limited task; public rollback from the installed B executable restored A. Owner uninstall removed only installed runtime while retaining source and user sentinels. HKCU Path value and type were restored exactly; no K-306 task or daemon process remains.
 - Required checks passed: cargo fmt, all-target clippy, 201 all-target Rust tests, release build, Python lint/format and exact spec pin. Native logs and their hashes are in `logs/` and `native-report.json`.
 - K-306 is an unsigned, unpublished local candidate. The graphd public Windows service install verb remains a K-010/final-release blocker; the K-306 service-restart leg injects failure at the composite boundary and the native watcher legs use explicitly managed Scheduled Tasks. Independent update/security review, main integration, signing and release provenance are separate.
+- The update command for this candidate was launched from the B kit's public
+  `axiom-cli.exe` against the installed A state. The immutable K-305 A binary
+  predates the Windows coordinator, so an operator must obtain the pinned B
+  updater kit to start this transition; the installed A entrypoint was not the
+  initiator. The transaction still replaced that installed entrypoint and the
+  engine generation together, and rollback ran from the installed B entrypoint.
