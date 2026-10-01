@@ -4,6 +4,16 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
 
 # Changelog
 
+## Unreleased — K-306 Windows composite update candidate
+
+- Add an unsigned Windows 0.1.2 update kit built from the exact K-305 0.1.1
+  distribution and K-308 0.1.2 core candidate. The kit keeps MCP, skills and
+  the owned Python runtime at their independently pinned versions.
+- Route the public `update` verbs through the installed Windows Python runtime
+  and graphd's update transaction. Bind approval to A/B bytes and installed
+  pointers, update the distribution entrypoint, and retain rollback evidence.
+  Rename the owned running Windows CLI image before replacing its path.
+
 ## Unreleased — K-305 Windows distribution candidate
 
 - Compose the exact Windows CLI/core/MCP/skills/runtime artifacts into an

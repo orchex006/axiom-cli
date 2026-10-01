@@ -42,6 +42,21 @@ Rust update state also makes `axiom-cli version --all` report no recorded
 channel installation after this local candidate; inspect the PowerShell
 distribution state and engine activation record for the exact installed bytes.
 
+## K-306 Windows x64 composite update candidate
+
+`packaging/windows/Build-UpdateKit.py` binds K-305 candidate A, the K-308
+native core 0.1.2 B archive, and one CLI 0.1.2 build to an unsigned local kit.
+`AXIOM_CLI_COMPOSITE_KIT` opts the public `axiom-cli update` verbs into the
+manifest-checked Windows coordinator. It runs with the pinned installed MCP
+Python under `venv/Scripts`, delegates ecosystem update/rollback to the graphd
+engine, and applies the CLI release set with the Windows installer. Approval
+binds exact kit and installed A bytes. The installer renames its owned active
+entrypoint before placing B because a running Windows executable cannot be
+overwritten. The coordinator retains a receipt and handles an interrupted
+rollback only when the observed A/B bytes match it exactly. Candidate and
+native Scheduled Task evidence are under `evidence/K-306/`; signing,
+publication, and the graphd public Windows service verb remain separate gates.
+
 ## K-304 Windows x64 runtime candidate
 
 `packaging/windows/Provision-McpRuntime.ps1` uses the SHA-256-pinned CPython
