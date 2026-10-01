@@ -1,0 +1,225 @@
+{
+  "goal_id": "K-MacIntel-04",
+  "task_id": "K-104",
+  "owner": "axiom-cli",
+  "lane": "macos-x64",
+  "status": "local_verified",
+  "certified": false,
+  "fixture_provenance": "candidate",
+  "source_revisions": {
+    "axiom-cli": "9ba9aa125c405e30c2216692ecece5a13bf2c692",
+    "axiom-mcp": "d92e71b25623132966b602b15ef5112c7eef7c96",
+    "axiom-specs": "39759ac2311206059b00c44179a998f502e4e777"
+  },
+  "artifacts": [
+    {
+      "path": "axiom-cli/evidence/K-104/cpython-3.13.15-macos-x64-candidate.tar.gz",
+      "sha256": "070828a8d087053cf96c4534f66c84949ba2a3ef24d7bd2dac40dec86910cd2d"
+    },
+    {
+      "path": "axiom-cli/evidence/K-104/wheelhouse.tar.gz",
+      "sha256": "5181bc44181c949b2f0171fab86ab1e3b4dd83f39669177bcc968ce4e9da7ce6"
+    },
+    {
+      "path": "axiom-cli/evidence/K-104/wheelhouse-manifest.json",
+      "sha256": "1ea251e5fc1a271eff226b1d7e0b2e118923f906cddc03908c622adf0b547fba"
+    },
+    {
+      "path": "axiom-cli/evidence/K-104/runtime-input.json",
+      "sha256": "e1f5f61bc9c254333c6c3bf6fe9097a828795dadbe949954aa3c1cbef12d0e2f"
+    },
+    {
+      "path": "axiom-cli/evidence/K-104/axiom-cli-candidate",
+      "sha256": "90300b0c1f3e03e314222cf0e41dc5bb731f6398c6493340a8a94d147d60d17c"
+    },
+    {
+      "path": "axiom-cli/evidence/K-104/owner-handoff.json",
+      "sha256": "207950f7752e5fbb57ca689c05063401579b661f57da54040372ccaa1c79c4f4"
+    }
+  ],
+  "scope_report": {
+    "path": "axiom-specs/evidence/artifacts/K-104/scope-result.json",
+    "sha256": "d55a6347fa511c7cccfe5810d5c8ae7d8c3665005fb3dc8d4a55904160084f9c"
+  },
+  "owner_evidence": {
+    "path": "axiom-cli/evidence/K-104/owner-handoff.json",
+    "sha256": "207950f7752e5fbb57ca689c05063401579b661f57da54040372ccaa1c79c4f4"
+  },
+  "results": {
+    "native_cases": [
+      "clean-provision",
+      "idempotency",
+      "corrupt-runtime",
+      "corrupt-wheel",
+      "unsupported-interpreter",
+      "missing-dependency",
+      "interrupted-provision",
+      "runtime-rollback",
+      "owned-removal"
+    ],
+    "runtime_version": "uv managed CPython 3.13.15",
+    "dependency_count": 31,
+    "absolute_executable_and_hash_handoff": true,
+    "old_generation_preserved_on_failure": true,
+    "owned_only_removal": true
+  },
+  "delivery": {
+    "source_branch": "feature/k-104-macos-mcp-runtime",
+    "source_commit": "a68d4a8e39cff201c161ed6f32012ed4bda854df",
+    "source_remote_verified": true,
+    "specs_branch": "feature/k-104-macos-mcp-runtime",
+    "specs_commit": "8b1dd6f6353a2a666c70e701f9f2fa122d759227",
+    "specs_remote_verified": true,
+    "main_integrated": false,
+    "release_state": "candidate"
+  },
+  "limitations": [
+    "K-105 composes the provisioner into the installed user flow.",
+    "K-107 performs full MCP query/process verification.",
+    "No release signing, publication, or main integration claimed."
+  ],
+  "next_consumer": "K-105 Mac x64 installed distribution composition",
+  "parent_ids": [
+    "K-002"
+  ],
+  "environment": {
+    "os": "Darwin",
+    "arch": "x86_64",
+    "execution": "native",
+    "os_version": "26.7",
+    "runtime": "uv managed CPython 3.13.15",
+    "toolchain": "Rust 1.98.0; cargo 1.98.0; Python 3.13.15; pip hash lock"
+  },
+  "spec_revision": "39759ac2311206059b00c44179a998f502e4e777",
+  "input_reports": [
+    {
+      "task_id": "K-103",
+      "path": "axiom-specs/evidence/artifacts/K-103/scope-result.json",
+      "sha256": "10a0522af651d127ed9aa55dcaf1269b81e5988377da0ea7582748b1fb00ffa6"
+    }
+  ],
+  "commands": [
+    {
+      "id": "native-runtime",
+      "command": "Run isolated-home native Mac x64 provision/refusal/rollback/removal harness (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-104/native-runtime.txt",
+        "sha256": "aca0bb2f3635ba9e879db6e7fa2233312c936b025c43a9c51632b335d94e7326"
+      }
+    },
+    {
+      "id": "provision",
+      "command": "Provision actual uv managed CPython 3.13.15 and K-103 MCP wheel (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-104/provision.txt",
+        "sha256": "4db6d6d7cd6e4f9fac88878fcf927e014ef8055a36d88b6c5110f17b787a050c"
+      }
+    },
+    {
+      "id": "cargo-tests",
+      "command": "cargo test --locked (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-104/cargo-tests.txt",
+        "sha256": "c47306915e36bb2906f37aef27404d868f0a3a1804da233e8ddba59d46499f4f"
+      }
+    },
+    {
+      "id": "fmt",
+      "command": "cargo fmt --all -- --check (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-104/fmt.txt",
+        "sha256": "a030a20fb0146f2181a9c127c206397a076d79360753a590e3df323be0538a86"
+      }
+    },
+    {
+      "id": "clippy",
+      "command": "cargo clippy --all-targets --locked -- -D warnings (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-104/clippy.txt",
+        "sha256": "fe2c567688fb35e365b52ccc63ca79dcff2c8b4da94c121813adcc6fc0eff7a8"
+      }
+    },
+    {
+      "id": "release-build",
+      "command": "cargo build --release --locked (cwd axiom-cli)",
+      "cwd": "axiom-cli",
+      "exit_code": 0,
+      "output": {
+        "path": "axiom-specs/evidence/artifacts/K-104/release-build.txt",
+        "sha256": "376a48f02bf305a0c383aa68e8f2d8c5df3ec64cbee6a09491a649aa453baba9"
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1",
+      "passed": true,
+      "command_ids": [
+        "native-runtime",
+        "provision"
+      ]
+    },
+    {
+      "id": "AC2",
+      "passed": true,
+      "command_ids": [
+        "native-runtime",
+        "provision",
+        "cargo-tests",
+        "fmt",
+        "clippy"
+      ]
+    },
+    {
+      "id": "AC3",
+      "passed": true,
+      "command_ids": [
+        "native-runtime"
+      ]
+    },
+    {
+      "id": "AC4",
+      "passed": true,
+      "command_ids": [
+        "native-runtime",
+        "cargo-tests",
+        "fmt",
+        "clippy",
+        "release-build"
+      ]
+    }
+  ],
+  "negative_and_failure": "Native harness passed corrupt runtime, corrupt wheel, unsupported interpreter, missing dependency, interruption and tampered rollback while preserving active generation and user data.",
+  "spec_lock": {
+    "path": "axiom-specs/evidence/artifacts/K-103/spec.lock.json",
+    "sha256": "e54bdb7a0ae45a0d6d61ce518788cd53a9c47a61843f9ee94d83576072ff978b"
+  },
+  "reference_bases": {
+    "artifacts": "workspace_root",
+    "commands": "workspace_root",
+    "scope_report": "workspace_root",
+    "input_reports": "workspace_root"
+  },
+  "spec_pins": [
+    {
+      "component": "axiom-mcp-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-103/spec.lock.json",
+      "sha256": "e54bdb7a0ae45a0d6d61ce518788cd53a9c47a61843f9ee94d83576072ff978b"
+    },
+    {
+      "component": "axiom-cli-spec-pin",
+      "path": "axiom-specs/evidence/artifacts/K-104/spec.lock.json",
+      "sha256": "4f7a81d79bb5b0523f81b8a20d920a5f2f291001dd76fdd35cc598fe24f15561"
+    }
+  ]
+}
