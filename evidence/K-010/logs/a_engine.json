@@ -1,0 +1,190 @@
+{
+  "code": 0,
+  "details": {
+    "channel": "stable",
+    "components": [
+      {
+        "component": "axiom-graphd",
+        "destination": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\installs\\ecosystem\\versions\\0.1.1\\bin\\axiom-graphd",
+        "position": 1,
+        "sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+        "status": "installed",
+        "version": "0.1.1"
+      },
+      {
+        "component": "axiom-mcp",
+        "destination": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\installs\\ecosystem\\versions\\0.1.1\\python\\axiom_mcp-0.1.1-py3-none-any.whl",
+        "position": 2,
+        "sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+        "status": "installed",
+        "version": "0.1.1"
+      },
+      {
+        "component": "axiom-skills",
+        "destination": "skills/0.1.1",
+        "position": 3,
+        "sha256": "054880074e5d0c548ade85188b16317f53ac056d699e9830cebd9124059eeb4a",
+        "status": "installed",
+        "version": "0.1.1"
+      }
+    ],
+    "engine": {
+      "bundle_components": [
+        {
+          "artifact": "bin/axiom-graphd",
+          "component": "axiom-graphd",
+          "host": "windows-x64",
+          "kind": "binary",
+          "network_access": [],
+          "permissions": [
+            "read",
+            "execute"
+          ],
+          "service": null,
+          "sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+          "size_bytes": 3901952,
+          "version": "0.1.1"
+        },
+        {
+          "artifact": "python/axiom_mcp-0.1.1-py3-none-any.whl",
+          "component": "axiom-mcp",
+          "host": "windows-x64",
+          "kind": "python",
+          "network_access": [],
+          "permissions": [
+            "read"
+          ],
+          "service": null,
+          "sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+          "size_bytes": 214284,
+          "version": "0.1.1"
+        }
+      ],
+      "bundle_manifest_bytes": 683,
+      "bundle_manifest_sha256": "73cbbafdf3280a20a7e8e6c3416142c93b5ea1b4d2f9f9885ae310e026125095",
+      "bundle_root": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\staging\\engine-bundle",
+      "host": "windows-x64",
+      "install_root": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install",
+      "not_carried": [],
+      "skills": {
+        "component": "axiom-skills",
+        "entries": 41,
+        "manifest_sha256": "054880074e5d0c548ade85188b16317f53ac056d699e9830cebd9124059eeb4a",
+        "revision": "26f862039a31800bda9809a0bda5e58f5d96ab98",
+        "source": "skills_manifest_converted",
+        "spec_revision": "6584470ffede0926029147efa40732f3d3a8bf16",
+        "version": "0.1.1"
+      },
+      "steps": [
+        {
+          "code": null,
+          "exit_code": 0,
+          "status": "planned",
+          "stderr": "",
+          "stdout": "{\"plan_digest\":\"ce2537219c02d1f4a12774e52e4b540280b624988f92385319adeec2a66451c8\",\"plan_file\":\"D:\\\\SP-Billy\\\\axiom\\\\goals\\\\run-logs\\\\K-010\\\\native-79\\\\user-install\\\\staging\\\\engine-bundle\\\\engine-plan.json\",\"plan_id\":\"install-1790878031-92fe28a58cefb88e\",\"status\":\"planned\"}",
+          "step": "plan"
+        },
+        {
+          "code": null,
+          "exit_code": 0,
+          "status": "installed",
+          "stderr": "",
+          "stdout": "{\"schema_version\":1,\"plan_id\":\"install-1790878031-92fe28a58cefb88e\",\"plan_digest\":\"ce2537219c02d1f4a12774e52e4b540280b624988f92385319adeec2a66451c8\",\"transaction_id\":\"ecosystem-1790878031-87cceb0453b68702\",\"applied_at\":\"2026-10-01T18:07:11Z\",\"status\":\"installed\",\"components\":[{\"position\":1,\"component\":\"axiom-graphd\",\"version\":\"0.1.1\",\"status\":\"installed\",\"sha256\":\"d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72\",\"destination\":\"D:\\\\SP-Billy\\\\axiom\\\\goals\\\\run-logs\\\\K-010\\\\native-79\\\\user-install\\\\installs\\\\ecosystem\\\\versions\\\\0.1.1\\\\bin\\\\axiom-graphd\"},{\"position\":2,\"component\":\"axiom-mcp\",\"version\":\"0.1.1\",\"status\":\"installed\",\"sha256\":\"36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56\",\"destination\":\"D:\\\\SP-Billy\\\\axiom\\\\goals\\\\run-logs\\\\K-010\\\\native-79\\\\user-install\\\\installs\\\\ecosystem\\\\versions\\\\0.1.1\\\\python\\\\axiom_mcp-0.1.1-py3-none-any.whl\"},{\"position\":3,\"component\":\"axiom-skills\",\"version\":\"0.1.1\",\"status\":\"installed\",\"sha256\":\"054880074e5d0c548ade85188b16317f53ac056d699e9830cebd9124059eeb4a\",\"destination\":\"skills/0.1.1\"}],\"core_pointer\":\"D:\\\\SP-Billy\\\\axiom\\\\goals\\\\run-logs\\\\K-010\\\\native-79\\\\user-install\\\\installs\\\\ecosystem\\\\current\",\"skills_pointer\":\"skills/current\",\"keeps_previous_versions\":1}",
+          "step": "apply"
+        }
+      ]
+    },
+    "engine_owner": "axiom-graphd",
+    "engine_plan_digest": "ce2537219c02d1f4a12774e52e4b540280b624988f92385319adeec2a66451c8",
+    "engine_plan_id": "install-1790878031-92fe28a58cefb88e",
+    "engine_program": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\axiom.exe",
+    "engine_source": "env",
+    "engine_status": "installed",
+    "engine_status_reported": true,
+    "generated_at": "2026-10-01T18:07:12Z",
+    "install_root": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install",
+    "manifest_sha256": "7ad51a6e13a48dfcda8d78cc92bd29fb67dc52bfb763641166cc8e2dfc3e091b",
+    "manifest_source": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\channel.json",
+    "mcp_runtime_bin": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\mcp-runtime\\versions\\d0f0fc8644e8e88e91cadb78\\venv\\Scripts",
+    "mode": "apply",
+    "plan": {
+      "approval": {
+        "approve_digest": null,
+        "state": "unapproved"
+      },
+      "channel": "stable",
+      "components": [
+        {
+          "artifact": {
+            "class": "per-user-installer",
+            "platform": "windows-x64",
+            "sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+            "size_bytes": 3901952,
+            "url": "https://candidate.invalid/axiom-graphd.exe"
+          },
+          "component": "axiom-graphd",
+          "declared": true,
+          "needs_restart": true,
+          "revision": "3e4671ae928abe04d8437074216fed6790fb57bd",
+          "version": "0.1.1"
+        },
+        {
+          "artifact": {
+            "class": "per-user-installer",
+            "platform": "windows-x64",
+            "sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+            "size_bytes": 214284,
+            "url": "https://candidate.invalid/axiom_mcp-0.1.1-py3-none-any.whl"
+          },
+          "component": "axiom-mcp",
+          "declared": true,
+          "needs_restart": true,
+          "revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+          "version": "0.1.1"
+        },
+        {
+          "artifact": null,
+          "component": "skills",
+          "declared": true,
+          "needs_restart": false,
+          "revision": "26f862039a31800bda9809a0bda5e58f5d96ab98",
+          "version": "0.1.1"
+        }
+      ],
+      "host": "windows-x64",
+      "install_root": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install",
+      "manifest": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\channel.json",
+      "manifest_sha256": "7ad51a6e13a48dfcda8d78cc92bd29fb67dc52bfb763641166cc8e2dfc3e091b",
+      "plan_digest": "6b64179ddc9056e1d8e987b74a127d744046037c8b6a2d8479418a8e4a014b82",
+      "plan_version": 1,
+      "published": false,
+      "verb": "install"
+    },
+    "plan_digest": "6b64179ddc9056e1d8e987b74a127d744046037c8b6a2d8479418a8e4a014b82",
+    "published": false,
+    "staging_root": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\staging\\engine-bundle",
+    "target": "windows-x64",
+    "verified_artifacts": [
+      {
+        "component": "axiom-graphd",
+        "resolved": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\axiom-graphd.exe",
+        "sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+        "size_bytes": 3901952,
+        "url": "https://candidate.invalid/axiom-graphd.exe",
+        "verified": true
+      },
+      {
+        "component": "axiom-mcp",
+        "resolved": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\axiom_mcp-0.1.1-py3-none-any.whl",
+        "sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+        "size_bytes": 214284,
+        "url": "https://candidate.invalid/axiom_mcp-0.1.1-py3-none-any.whl",
+        "verified": true
+      }
+    ]
+  },
+  "message": "the engine (`<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\axiom.exe` env) placed the approved bundle: status `installed`",
+  "request_id": "axiom-cli-update-3cf0-18da7a14f232a57c",
+  "retryable": false,
+  "status": "ok"
+}

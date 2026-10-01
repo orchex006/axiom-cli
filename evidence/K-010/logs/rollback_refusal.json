@@ -1,0 +1,7 @@
+{
+  "Exit": 2,
+  "Pointer": "0.1.2",
+  "Reason": "post-update Windows service must be removed with installed axiom service uninstall before rollback to the 0.1.1 core",
+  "StateSame": true,
+  "TaskState": 4
+}

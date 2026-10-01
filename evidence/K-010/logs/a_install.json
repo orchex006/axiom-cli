@@ -1,0 +1,305 @@
+{
+  "approved_digest": "ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5",
+  "artifacts": [
+    {
+      "component": "axiom-cli",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\bin\\axiom-cli.exe",
+      "name": "axiom-cli.exe",
+      "sha256": "77e725d7383ad7e30d294a85ae1e0ef7827027c5161232467446f847696c4c9a",
+      "size_bytes": 1306624,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "axiom",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\axiom.exe",
+      "name": "axiom.exe",
+      "sha256": "1d012514fb5d403dd990d8abbc3567d560e5d453f1efd7f67b18025c00873483",
+      "size_bytes": 3679744,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "axiom-graphd",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\axiom-graphd.exe",
+      "name": "axiom-graphd.exe",
+      "sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+      "size_bytes": 3901952,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "axiom-mcp",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\axiom_mcp-0.1.1-py3-none-any.whl",
+      "name": "axiom_mcp-0.1.1-py3-none-any.whl",
+      "sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+      "size_bytes": 214284,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "skills",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\owner-source.tar",
+      "name": "owner-source.tar",
+      "sha256": "4ec6b778c17e180846d8074e7d637f8cd19dfdc01a909121cd6f1e51c3ee067c",
+      "size_bytes": 276480,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "runtime",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\python-3.13.15-embed-amd64.zip",
+      "name": "python-3.13.15-embed-amd64.zip",
+      "sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "size_bytes": 11009825,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "pip",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\pip-26.1.2-py3-none-any.whl",
+      "name": "pip-26.1.2-py3-none-any.whl",
+      "sha256": "382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab",
+      "size_bytes": 1813144,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "mcp-inputs",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\windows-x64-py313-inputs.tar",
+      "name": "windows-x64-py313-inputs.tar",
+      "sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "size_bytes": 15605760,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "core-candidate",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\axiom-0.1.1-windows-x64.zip",
+      "name": "axiom-0.1.1-windows-x64.zip",
+      "sha256": "1c834d5b3a594866183fca7356cb06a65443f8814dd29abc47c3bc6ef8c6ea29",
+      "size_bytes": 7582533,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "core-manifest",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\candidate-manifest.json",
+      "name": "candidate-manifest.json",
+      "sha256": "d81f22ec8a47d4d9aac585547371bfa89c6ee87c4b57df1f674d063ea40e583a",
+      "size_bytes": 2536,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "runtime-provisioner",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\Provision-McpRuntime.ps1",
+      "name": "Provision-McpRuntime.ps1",
+      "sha256": "03a7a42cd6a5994f3dadfc3b93b873bdc940905579d6cb1379c7dbdad6bdda26",
+      "size_bytes": 4356,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "runtime-provisioner",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\Provision-McpRuntime.py",
+      "name": "Provision-McpRuntime.py",
+      "sha256": "541e86e74fb6f9d5db40cc7123a37326a03864519117697472dec7905612fb98",
+      "size_bytes": 14997,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "installer",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\Install-AxiomCli.ps1",
+      "name": "Install-AxiomCli.ps1",
+      "sha256": "20269a4590ba92fbe45a590056ba08b55578d312e9289ee83f411779d7f7a620",
+      "size_bytes": 51832,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "installer",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\Uninstall-AxiomCli.ps1",
+      "name": "Uninstall-AxiomCli.ps1",
+      "sha256": "c7fd16b134e8000b40b8e27450c44a88acd9ccf8bf362f9d783eb3f2b5f40345",
+      "size_bytes": 23053,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    },
+    {
+      "component": "installer",
+      "installed_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1\\AxiomCli.Windows.Common.ps1",
+      "name": "AxiomCli.Windows.Common.ps1",
+      "sha256": "d1e85062c8fcff9e335dddb3a5088d6822ef078765fd830b69bc50b1d67e3888",
+      "size_bytes": 18848,
+      "source": "local-build",
+      "verified": true,
+      "version": "0.1.1"
+    }
+  ],
+  "bin_dir": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\bin",
+  "components": [
+    {
+      "artifact_sha256": "77e725d7383ad7e30d294a85ae1e0ef7827027c5161232467446f847696c4c9a",
+      "component": "axiom-cli",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "1d012514fb5d403dd990d8abbc3567d560e5d453f1efd7f67b18025c00873483",
+      "component": "axiom",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+      "component": "axiom-graphd",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+      "component": "axiom-mcp",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "4ec6b778c17e180846d8074e7d637f8cd19dfdc01a909121cd6f1e51c3ee067c",
+      "component": "skills",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+      "component": "runtime",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab",
+      "component": "pip",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+      "component": "mcp-inputs",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "1c834d5b3a594866183fca7356cb06a65443f8814dd29abc47c3bc6ef8c6ea29",
+      "component": "core-candidate",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": "d81f22ec8a47d4d9aac585547371bfa89c6ee87c4b57df1f674d063ea40e583a",
+      "component": "core-manifest",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": null,
+      "component": "runtime-provisioner",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    },
+    {
+      "artifact_sha256": null,
+      "component": "installer",
+      "installed_version": "0.1.1",
+      "version_source": "release-set.json (sha256 ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5)"
+    }
+  ],
+  "dry_run": false,
+  "elevation_required": false,
+  "envelope_kind": "install-result",
+  "exit_code": 0,
+  "generated_at": "2026-10-01T18:05:21Z",
+  "host": {
+    "arch": "x86_64",
+    "os": "windows",
+    "powershell_version": "7.6.6",
+    "session_elevated": true,
+    "windows_version": "Microsoft Windows 11 Pro 10.0.26200"
+  },
+  "install_root": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install",
+  "interrupted_install_recovered": false,
+  "limitations": [
+    "this installer is the Windows x64 lane of the axiom-cli distribution; other delivery platforms are separate installers and are not exercised here",
+    "the core archive and binaries are verified unsigned local candidates; no released or trusted core provenance is claimed",
+    "this release set is assembled from a local build; it is not a published release and carries no signature. Publication, signing and the update channel are owned by separate tasks",
+    "the installation engine, the daemon service lifecycle and the per-component update transaction stay owned by axiom-graphd; this release set wraps them and never re-implements them",
+    "the installed entrypoint answered 'axiom-cli.exe --help' with exit 0 after commit",
+    "the per-user PATH entry is written to HKCU\\Environment; a shell that was already running keeps its old environment until it is restarted"
+  ],
+  "message": "installed release 0.1.1 to <WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install: 15 digest-verified artifact(s), user PATH entry '<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\bin', elevation_required=false",
+  "mutated": true,
+  "operation": "install",
+  "outcome": "installed",
+  "path_rule": {
+    "applied": true,
+    "entry": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\bin",
+    "machine_wide_change": false,
+    "previous_present": false,
+    "registry_key": "HKCU\\Environment",
+    "scope": "user",
+    "value_name": "Path"
+  },
+  "plan_digest": "ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5",
+  "platform": "windows-x64",
+  "preserved": [
+    {
+      "path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install",
+      "reason": "the per-user install root holds user data outside the distributed binaries and is never deleted or rewritten by an install"
+    },
+    {
+      "path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1",
+      "reason": "the installed generation is retained as the rollback artifact the contract requires"
+    }
+  ],
+  "refusals": [],
+  "release_set": {
+    "path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-final-run\\a-release\\release-set.json",
+    "release_version": "0.1.1",
+    "sha256": "ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5"
+  },
+  "removed": [
+    {
+      "kind": "staging",
+      "path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\staging"
+    }
+  ],
+  "request_id": "axiom-cli-windows-25808-8df1fe68f4ce09a",
+  "retryable": false,
+  "schema_version": 1,
+  "service_registration": {
+    "kind": "none",
+    "owner": "axiom-cli",
+    "reason": "the Windows managed service named by the platform matrix is the scheduled task at logon that hosts the graph daemon; the daemon lifecycle is owned by axiom-graphd and this release (unsigned Windows x64 core candidate at immutable revision 3e4671ae928abe04d8437074216fed6790fb57bd; archive and both native binaries are digest-verified) does not carry or build it, so this release set declares no service and registers none",
+    "registered": false,
+    "removed": false,
+    "task_name": null
+  },
+  "shell": "windows-powershell",
+  "spec_version": "2.0.0-draft.1",
+  "status": "ok",
+  "transaction_id": "txn-20261001T180521-f2934a7d",
+  "unverified_artifacts": []
+}

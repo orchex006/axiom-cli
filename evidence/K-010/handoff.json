@@ -1,0 +1,27 @@
+{
+  "task_id": "K-010",
+  "status": "local_verified",
+  "certified": false,
+  "provenance": "candidate",
+  "platform": "windows-x64",
+  "version": "0.1.2",
+  "cli_source_revision": "79eb58cc57bc0d47330df491df59034fe0f22b3b",
+  "graphd_source_revision": "4f8765a74ae5f077f53d092ddb4fea40d0c44fe3",
+  "spec_revision": "377a864d6d9c53ba60e8ec8a23ed8b4429e26c6f",
+  "a_archive_sha256": "beb24f04848af03e62ebed10e9fd3587f38acba14f753a1baef86ccdbcebef8b",
+  "b_kit": {
+    "path": "evidence/K-010/axiom-0.1.2-windows-x64-update-kit.zip",
+    "sha256": "70113cd08b01b6d41dc535ba962101b4ffee8ec976d6e276118f4468bd72ca73"
+  },
+  "b_core_archive_sha256": "ba9e294cd112c7311b755ab9aad2d3713502c68925febb48359fec0fe1cc2c53",
+  "b_core_manifest_sha256": "b33999d07c1a71d3ce00c93620870d08948eec6f0e010f7891d6c630717af7df",
+  "b_release_set_sha256": "566da57883ecf1f16f5fb56e29ea7d5486c70c91aa4beff96e942eeafcb30999",
+  "mcp_wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+  "native_report": "evidence/K-010/native-report.json",
+  "native_report_sha256": "a6110b46b3270f96b3dc03016e8c2f19001d8047b3086f2214da9261b31ad371",
+  "limitations": [
+    "Unsigned, unpublished local candidate only; no released-fixture trust or certification claim.",
+    "A 0.1.1 cannot run the new Windows service action. If service was installed after the update, the public rollback refuses until the B owner service is removed.",
+    "Installed migrate plan returned NOT_READY; aggregate migration/release acceptance remains open."
+  ]
+}

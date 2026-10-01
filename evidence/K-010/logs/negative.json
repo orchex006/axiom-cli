@@ -1,0 +1,16 @@
+{
+  "a_unchanged": true,
+  "cases": [
+    {
+      "exit_code": 2,
+      "id": "corrupt",
+      "reason": "candidate input changed: axiom-graphd.exe"
+    },
+    {
+      "exit_code": 2,
+      "id": "incompatible",
+      "reason": "candidate platform, version or authority differs"
+    }
+  ],
+  "ok": true
+}

@@ -1,0 +1,31 @@
+{
+  "before": {
+    "cli_generation": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1",
+    "cli_sha256": "77e725d7383ad7e30d294a85ae1e0ef7827027c5161232467446f847696c4c9a",
+    "cli_state_sha256": "223526ab694aeaa1f122238043e6cf13775583b10ccc086d67a2d2d5287d7a07",
+    "cli_version": "0.1.1",
+    "core_revision": "3e4671ae928abe04d8437074216fed6790fb57bd",
+    "core_sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+    "core_version": "0.1.1",
+    "engine_pointer_sha256": "e103d879aff8a5e1e493ccd1b08984e4ceb08e924bdb2c0dc302972d7f20da85",
+    "mcp_wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+    "runtime_pointer_sha256": "e010db6969342ede61800d17fddff1b1bb1acc30d31f4bef42a21905aa224159",
+    "skills_pointer_sha256": "b3a3159661ed1f5b60138f59be662fc89944f6459b021663f462554d06266fce"
+  },
+  "candidate": {
+    "channel_sha256": "4d957ff7f1f41219df07289ba1a9ef1408b8f8e00dee40e4227017365c656b9c",
+    "cli_sha256": "988f0cdc35189e0d743d4b768946515d6d55a4b975a17f19c4174984dd28e088",
+    "core_revision": "4f8765a74ae5f077f53d092ddb4fea40d0c44fe3",
+    "core_sha256": "2c85a61a8f03f433b5cde82ba05e70eeabdc4e3a56fd4c003cc733a023f86164",
+    "core_version": "0.1.2",
+    "files_sha256": "f8d185bfb49f7119177d9d9f274f187cefc3d471f6c313186a2c23839e74e493",
+    "mcp_wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+    "release_set_sha256": "566da57883ecf1f16f5fb56e29ea7d5486c70c91aa4beff96e942eeafcb30999",
+    "runtime_input_sha256": "55622918b62595079889dbd135d87398b79da9cc1d25e983218e464dc9773f6d",
+    "skills_revision": "26f862039a31800bda9809a0bda5e58f5d96ab98"
+  },
+  "certified": false,
+  "kit_manifest_sha256": "7be7de1b567d9bd46ee983b4152532e32df9b9406bed437a841b2b9c56ca6eb9",
+  "plan_digest": "32f0ee9e5a62c4c4181378d38aab09af02dc6dc3a60e3e19109f70da952a3bef",
+  "status": "planned"
+}
