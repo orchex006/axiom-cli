@@ -19,6 +19,9 @@ HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 OLD_CORE = "axiom-0.1.1-windows-x64.zip"
 NEW_CORE = "axiom-0.1.2-windows-x64.zip"
+K309_CORE_MANIFEST_SHA = (
+    "b33999d07c1a71d3ce00c93620870d08948eec6f0e010f7891d6c630717af7df"
+)
 
 
 def sha(data: bytes) -> str:
@@ -107,6 +110,8 @@ def build(args: argparse.Namespace) -> dict:
     core_bytes = read(
         args.b_core_dir / "candidate-manifest.json", args.b_core_manifest_sha
     )
+    if task_id == "K-010" and sha(core_bytes) != K309_CORE_MANIFEST_SHA:
+        raise ValueError("K-010 requires the reviewed K-309 core manifest")
     core = json.loads(core_bytes)
     if (
         core.get("platform") != "windows-x64"
