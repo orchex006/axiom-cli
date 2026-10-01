@@ -78,7 +78,18 @@ try {
             (Test-Path -LiteralPath $marker -PathType Leaf) -and
             ([System.IO.File]::ReadAllText($marker) -ceq $nonce) -and
             ($fullStage.StartsWith($fullBootstrap, [StringComparison]::OrdinalIgnoreCase))) {
-            Remove-Item -LiteralPath $stage -Recurse -Force
+            for ($attempt = 0; $attempt -lt 12; $attempt++) {
+                try {
+                    Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction Stop
+                    break
+                }
+                catch {
+                    [System.Threading.Thread]::Sleep(250)
+                }
+            }
+            if (Test-Path -LiteralPath $stage) {
+                throw 'owned bootstrap stage could not be removed after process exit'
+            }
         }
     }
     exit 0
