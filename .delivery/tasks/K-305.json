@@ -1,0 +1,10 @@
+{
+  "task_id": "K-305",
+  "owner": "axiom-cli",
+  "branch": "feature/k-305-windows-distribution",
+  "source_revision": "b193b39a42ab4f49e6ee4c72483cdac8ae6105b0",
+  "candidate_archive_sha256": "beb24f04848af03e62ebed10e9fd3587f38acba14f753a1baef86ccdbcebef8b",
+  "channel_sha256": "7ad51a6e13a48dfcda8d78cc92bd29fb67dc52bfb763641166cc8e2dfc3e091b",
+  "handoff": "evidence/K-305/handoff.json",
+  "certified": false
+}

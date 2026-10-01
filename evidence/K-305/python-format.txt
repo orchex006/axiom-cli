@@ -1,0 +1,4 @@
+cwd=axiom-cli
+command=python -m ruff format --check packaging/windows/Build-EngineCandidate.py tests/windows/capture_k305_distribution.py
+exit=0
+2 files already formatted

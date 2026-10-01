@@ -1,0 +1,210 @@
+{
+  "task_id": "K-305",
+  "baseline": "J-004 Windows installer regression",
+  "source_revision": "bb029c7907b813072b48e4887b8f8f612a074173",
+  "legs": [
+    {
+      "id": "B01-build-main",
+      "exit_code": 0,
+      "outcome": "assembled",
+      "envelope_valid": true
+    },
+    {
+      "id": "B02-build-alpha",
+      "exit_code": 0,
+      "outcome": "assembled",
+      "envelope_valid": true
+    },
+    {
+      "id": "B03-build-service",
+      "exit_code": 0,
+      "outcome": "assembled",
+      "envelope_valid": true
+    },
+    {
+      "id": "L01-install-plan-only",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L02-apply-without-approval",
+      "exit_code": 2,
+      "outcome": "refused",
+      "envelope_valid": true
+    },
+    {
+      "id": "L03-apply-wrong-approval",
+      "exit_code": 5,
+      "outcome": "refused",
+      "envelope_valid": true
+    },
+    {
+      "id": "L04-apply-approved",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L05-install-idempotent-rerun",
+      "exit_code": 0,
+      "outcome": "already_installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L06-corrupted-artifact-refused",
+      "exit_code": 9,
+      "outcome": "refused",
+      "envelope_valid": true
+    },
+    {
+      "id": "L07-unowned-entrypoint-conflict",
+      "exit_code": 6,
+      "outcome": "refused",
+      "envelope_valid": true
+    },
+    {
+      "id": "L07b-unowned-entrypoint-forced",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L08-setup-install-main",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L08-downgrade-refused",
+      "exit_code": 9,
+      "outcome": "refused",
+      "envelope_valid": true
+    },
+    {
+      "id": "L08b-downgrade-allowed",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L09-interrupted-install-recovery",
+      "exit_code": 0,
+      "outcome": "recovered_and_installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L10-transaction-lock-held",
+      "exit_code": 10,
+      "outcome": "refused",
+      "envelope_valid": true
+    },
+    {
+      "id": "L11-uninstall-plan-only",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L12-uninstall-wrong-approval",
+      "exit_code": 5,
+      "outcome": "not_removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L13-uninstall-approved",
+      "exit_code": 0,
+      "outcome": "removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L14-uninstall-when-absent",
+      "exit_code": 3,
+      "outcome": "not_removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L15a-install-for-purge",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L15b-purge-plan",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L15c-purge-approved",
+      "exit_code": 0,
+      "outcome": "removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L16a-install-with-service",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L16b-uninstall-service-plan",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L16c-uninstall-removes-service",
+      "exit_code": 0,
+      "outcome": "removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L17a-cleanup-unowned-plan",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L17a-cleanup-unowned-apply",
+      "exit_code": 0,
+      "outcome": "removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L17b-cleanup-downgrade-plan",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L17b-cleanup-downgrade-apply",
+      "exit_code": 0,
+      "outcome": "removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L17c-cleanup-recover-plan",
+      "exit_code": 0,
+      "outcome": "planned",
+      "envelope_valid": true
+    },
+    {
+      "id": "L17c-cleanup-recover-apply",
+      "exit_code": 0,
+      "outcome": "removed",
+      "envelope_valid": true
+    },
+    {
+      "id": "L19-unelevated-install-uninstall",
+      "exit_code": 0,
+      "outcome": "installed",
+      "envelope_valid": true
+    }
+  ],
+  "raw_step_records_sha256": "5d81b581138204a0b3d7b2e5152c21dcf78e625c8281a6300eafda0e59511a01",
+  "raw_transcript_sha256": "c9ac6e5e4538e9b1292d5d21d44cd08b089c2fab4a96c852c84f97c27196e06e",
+  "schema_envelopes_validated": 30,
+  "result": "PASS",
+  "note": "Raw host-path transcripts remain in the local scratch. This portable summary retains actual leg/exit/outcome evidence; the native K-305 full candidate has its own 18-case report."
+}

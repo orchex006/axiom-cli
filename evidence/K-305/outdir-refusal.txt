@@ -1,0 +1,3 @@
+command=Build-ReleaseSet.ps1 -OutDir <existing-candidate> -CliExe <pinned-cli> -Version 0.1.1 -Json
+exit=2
+-OutDir already exists; choose a new release-set directory
