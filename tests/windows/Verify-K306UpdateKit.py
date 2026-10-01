@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import time
 
 
 def sha(path: Path) -> str:
@@ -119,7 +120,14 @@ def main() -> int:
     finally:
         if not temporary.is_relative_to(scratch):
             raise ValueError("refusing to remove a directory outside scratch root")
-        shutil.rmtree(temporary)
+        for attempt in range(12):
+            try:
+                shutil.rmtree(temporary)
+                break
+            except PermissionError:
+                if attempt == 11:
+                    raise
+                time.sleep(0.25)
     print(json.dumps({"ok": True, "cases": cases, "a_unchanged": True}, sort_keys=True))
     return 0
 
