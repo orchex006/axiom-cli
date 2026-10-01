@@ -29,6 +29,9 @@ checks the exact K-302 binary and archive bytes before it describes the core
 as a verified unsigned candidate. `Build-EngineCandidate.py` checks every
 owner handoff, expands the skills payload and writes a local `channel.json`
 for the installed `axiom-cli` entrypoint. This candidate remains unpublished.
+The set includes its Windows install/uninstall/common scripts and K-304
+provisioner, so the final harness runs from candidate and installed paths.
+JSON written through `-Out` is the completed envelope and matches stdout.
 The installed engine owns its service lifecycle; the native Windows Scheduled
 Task acceptance uses a Limited per-user task running the installed daemon.
 The current graphd `axiom service install` runtime still routes through a

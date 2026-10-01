@@ -156,9 +156,8 @@ function Complete-AxiomRun {
         [Parameter(Mandatory = $true)][string]$Message,
         [bool]$Retryable = $false
     )
-    if ($Out) { Write-AxiomJsonFile -Path $Out -Value $Envelope }
     [void](Complete-AxiomEnvelope -Envelope $Envelope -ExitCode $Code -Outcome $Outcome -Status $Status `
-            -Message $Message -Retryable $Retryable -EmitJson:([bool]$Json))
+            -Message $Message -Retryable $Retryable -JsonOutPath $Out -EmitJson:([bool]$Json))
     exit $Code
 }
 

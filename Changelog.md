@@ -10,6 +10,8 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
   unsigned local release set and candidate channel. Refuse existing output,
   incompatible owner revisions and changed digests; keep source/user data
   through per-user install, native Scheduled Task lifecycle and uninstall.
+- Ship the Windows installer scripts in the candidate set and write the final
+  completed install/uninstall envelope to `-Out`, matching the process result.
 
 ## Unreleased — K-304 Windows MCP runtime candidate
 

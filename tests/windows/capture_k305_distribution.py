@@ -10,12 +10,11 @@ import shutil
 import subprocess
 import sys
 import winreg
+from datetime import datetime, timezone
 from pathlib import Path
 
 
 REPO = Path(__file__).resolve().parents[2]
-INSTALL = REPO / "installers/windows/Install-AxiomCli.ps1"
-UNINSTALL = REPO / "installers/windows/Uninstall-AxiomCli.ps1"
 SERVICE = REPO / "tests/windows/Invoke-K305NativeService.ps1"
 
 
@@ -30,6 +29,24 @@ def main() -> int:
     parser.add_argument("--mcp-revision", required=True)
     args = parser.parse_args()
     release = args.release_set.resolve()
+    installer = release / "Install-AxiomCli.ps1"
+    uninstaller = release / "Uninstall-AxiomCli.ps1"
+    release_document = json.loads(
+        (release / "release-set.json").read_text(encoding="utf-8")
+    )
+    artifact_rows = {row["name"]: row for row in release_document["artifacts"]}
+    for name in (
+        "Install-AxiomCli.ps1",
+        "Uninstall-AxiomCli.ps1",
+        "AxiomCli.Windows.Common.ps1",
+    ):
+        if (
+            name not in artifact_rows
+            or digest(release / name) != artifact_rows[name]["sha256"]
+        ):
+            raise SystemExit(
+                "distributed installer script is missing or changed: " + name
+            )
     scratch = args.scratch.resolve()
     if sys.platform != "win32" or scratch.exists():
         raise SystemExit("K-305 requires native Windows and a new scratch root")
@@ -142,7 +159,7 @@ def main() -> int:
         (corrupt_root / "user-data/sentinel.txt").write_text("human data remains\n")
         refused = ps(
             "corrupt-payload-refused",
-            INSTALL,
+            installer,
             ["-ReleaseSet", str(corrupt_set), "-InstallRoot", str(corrupt_root)],
             9,
         )
@@ -156,7 +173,7 @@ def main() -> int:
         unowned_file.write_bytes(b"human-owned executable\n")
         conflict = ps(
             "unowned-conflict",
-            INSTALL,
+            installer,
             [
                 "-ReleaseSet",
                 str(release),
@@ -174,12 +191,17 @@ def main() -> int:
         )
         locked_root = scratch / "locked-home"
         (locked_root / "cli").mkdir(parents=True)
+        lock_record = {
+            "pid": os.getpid(),
+            "transaction_id": "txn-held-by-k305-harness",
+            "acquired_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
         (locked_root / "cli/transaction.lock").write_text(
-            "held by human", encoding="utf-8"
+            json.dumps(lock_record) + "\n", encoding="utf-8", newline="\n"
         )
         lock_result = ps(
             "held-lock-refused",
-            INSTALL,
+            installer,
             [
                 "-ReleaseSet",
                 str(release),
@@ -192,18 +214,21 @@ def main() -> int:
             10,
         )
         assert lock_result["outcome"] == "refused"
-        assert (locked_root / "cli/transaction.lock").read_text(
-            encoding="utf-8"
-        ) == "held by human"
+        assert (
+            json.loads(
+                (locked_root / "cli/transaction.lock").read_text(encoding="utf-8")
+            )
+            == lock_record
+        )
         plan = ps(
             "distribution-plan",
-            INSTALL,
+            installer,
             ["-ReleaseSet", str(release), "-InstallRoot", str(home)],
         )
         assert plan["outcome"] == "planned" and plan["plan_digest"] == release_digest
         installed = ps(
             "distribution-install",
-            INSTALL,
+            installer,
             [
                 "-ReleaseSet",
                 str(release),
@@ -214,10 +239,12 @@ def main() -> int:
                 release_digest,
             ],
         )
-        assert installed["outcome"] == "installed" and len(installed["artifacts"]) == 12
+        assert installed["outcome"] == "installed" and len(
+            installed["artifacts"]
+        ) == len(release_document["artifacts"])
         again = ps(
             "distribution-idempotent",
-            INSTALL,
+            installer,
             [
                 "-ReleaseSet",
                 str(release),
@@ -480,12 +507,12 @@ def main() -> int:
             }
         )
         outer_plan = ps(
-            "distribution-uninstall-plan", UNINSTALL, ["-InstallRoot", str(home)]
+            "distribution-uninstall-plan", uninstaller, ["-InstallRoot", str(home)]
         )
         outer_digest = outer_plan["plan_digest"]
         outer_removed = ps(
             "distribution-uninstall-apply",
-            UNINSTALL,
+            uninstaller,
             ["-InstallRoot", str(home), "-Apply", "-ApproveDigest", outer_digest],
         )
         assert outer_removed["outcome"] == "removed"
@@ -516,6 +543,20 @@ def main() -> int:
             encoding="utf-8",
             newline="\n",
         )
+    with winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER, "Environment", 0, winreg.KEY_READ
+    ) as check:
+        try:
+            after_path, after_kind = winreg.QueryValueEx(check, "Path")
+            after_present = True
+        except FileNotFoundError:
+            after_path, after_kind, after_present = None, None, False
+    if after_present != had_path or (
+        had_path and (after_path, after_kind) != (before_path, path_kind)
+    ):
+        raise AssertionError(
+            "HKCU Path was not restored to its exact prior value and kind"
+        )
     result = {
         "ok": True,
         "lane": "windows-x64",
@@ -523,6 +564,7 @@ def main() -> int:
         "certified": False,
         "cases": report,
         "user_data_preserved": True,
+        "user_path_preserved": True,
         "release_set_sha256": digest(release / "release-set.json"),
         "channel_sha256": digest(release / "channel.json"),
     }
