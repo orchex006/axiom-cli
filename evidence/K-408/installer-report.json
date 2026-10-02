@@ -1,0 +1,12 @@
+{
+  "harness": "tests/linux/Invoke-AxiomCliLinuxDistributionTests.sh",
+  "task": "J-008",
+  "total_legs": 24,
+  "failures": 0,
+  "skipped": 0,
+  "kernel": "Linux 6.18.40.1-microsoft-standard-WSL2 x86_64 GNU/Linux",
+  "wsl": true,
+  "systemd_user_available": true,
+  "artifact_sha256": "488ddfa41ea757a1e5e645e7764320d2547d654889fe1fcfa90f7970893f7d6d",
+  "artifact_size_bytes": 1206680
+}

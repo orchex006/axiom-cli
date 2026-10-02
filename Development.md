@@ -64,3 +64,7 @@ generation, and delegates ecosystem activation and rollback to `axiom`.
 The distribution layer retains and restores its own CLI entrypoint. Without
 the explicit kit, the K-003 guard still refuses split update; a feature-branch
 candidate is not a published update channel.
+
+## K-408 WSL2 native verification
+
+Use the real WSL2 lane and exact K-401/402/403 Linux artifact inputs. Runtime user UID must be nonzero; root may only prepare the explicitly approved isolated test distro. The native harness and retained-generation helper live in tests/linux/. Owner Rust checks are recorded separately from WSL execution. No parent-done, foreign-machine path or release/signing gate is added to this local child. K-004 aggregates the completed child; K-409 remains its own installed MCP matrix.

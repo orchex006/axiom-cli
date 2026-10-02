@@ -1,0 +1,11 @@
+{
+  "task_id": "K-408",
+  "owner": "axiom-cli",
+  "branch": "feature/k-408-wsl-lifecycle",
+  "source_base_revision": "4ccd3df6eed29a280adb6424d0e595c304cd26e6",
+  "harness_sha256": "78ea531d7611f720549ab4a4d93028caefaad00bdc1523203c7de88fd3de0280",
+  "lane": "wsl2-linux-x64",
+  "handoff": "evidence/K-408/native-report.json",
+  "status": "local_verified",
+  "certified": false
+}

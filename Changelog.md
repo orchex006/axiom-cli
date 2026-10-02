@@ -4,6 +4,15 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
 
 # Changelog
 
+## Unreleased — K-408 actual WSL2 lifecycle
+
+- Verify pinned Linux artifacts on an approved isolated Ubuntu 24.04 WSL2 host,
+  including fresh non-root provisioning/install, 24 systemd-user installer legs,
+  query/watcher/restart, A/B update/failure/rollback and owned uninstall retention.
+- Add a native WSL lifecycle harness and home-independent retained-generation
+  verification; preserve source/input hashes and separate native proof from release.
+
+
 ## Unreleased — K-304 Windows MCP runtime candidate
 
 - Provision an owned Python 3.13.15 runtime from exact offline Windows inputs,
