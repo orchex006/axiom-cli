@@ -224,7 +224,7 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
     let staging_root = root.join("staging").join("engine-bundle");
     let mcp_runtime_bin = if matches!(
         set.plan.get("host").and_then(Json::as_text),
-        Some("macos-x64" | "linux-x64")
+        Some("macos-x64" | "linux-x64" | "windows-x64")
     ) {
         provisioned_mcp_runtime_bin(&root)?
     } else {
@@ -344,23 +344,53 @@ fn provisioned_mcp_runtime_bin(root: &Path) -> Result<Option<PathBuf>, Refusal> 
             "MCP runtime generation is not owned",
         ));
     }
-    let bin = version.join("venv").join("bin");
+    let bin = version
+        .join("venv")
+        .join(if cfg!(windows) { "Scripts" } else { "bin" });
     if version.join("venv").is_symlink() || bin.is_symlink() {
         return Err(Refusal::validation(
             "mcp_runtime_path_link",
             "MCP runtime path is linked outside the owned generation",
         ));
     }
-    if bin.to_string_lossy().contains(':') {
+    if !bin.is_absolute() || bin.to_string_lossy().contains(';') {
         return Err(Refusal::validation(
             "mcp_runtime_path_invalid",
             "MCP runtime path cannot enter PATH safely",
         ));
     }
-    for (name, key) in [
-        ("python", "python_sha256"),
-        ("axiom-mcp", "executable_sha256"),
-    ] {
+    let canonical_bin = bin.canonicalize().map_err(|error| {
+        Refusal::io(
+            "mcp_runtime_path_unreadable",
+            &bin.display().to_string(),
+            &error,
+        )
+    })?;
+    let canonical_version = version.canonicalize().map_err(|error| {
+        Refusal::io(
+            "mcp_runtime_path_unreadable",
+            &version.display().to_string(),
+            &error,
+        )
+    })?;
+    if !canonical_bin.starts_with(canonical_version) {
+        return Err(Refusal::validation(
+            "mcp_runtime_path_invalid",
+            "MCP runtime path escapes its owned generation",
+        ));
+    }
+    let programs = if cfg!(windows) {
+        [
+            ("python.exe", "python_sha256"),
+            ("axiom-mcp.exe", "executable_sha256"),
+        ]
+    } else {
+        [
+            ("python", "python_sha256"),
+            ("axiom-mcp", "executable_sha256"),
+        ]
+    };
+    for (name, key) in programs {
         let file = bin.join(name);
         if file.is_symlink() || !file.is_file() {
             return Err(Refusal::validation(
@@ -1107,13 +1137,25 @@ mod tests {
             crate::update::time::Stamp::now().format().replace(':', "")
         ));
         let version = root.join("mcp-runtime/versions/0123456789abcdef01234567");
-        let bin = version.join("venv/bin");
+        let bin = version
+            .join("venv")
+            .join(if cfg!(windows) { "Scripts" } else { "bin" });
         std::fs::create_dir_all(&bin).unwrap();
         std::fs::write(version.join("owner.json"), b"{\"owner\":\"axiom-cli\"}\n").unwrap();
-        std::fs::write(bin.join("python"), b"owned python").unwrap();
-        std::fs::write(bin.join("axiom-mcp"), b"owned launcher").unwrap();
-        let python = crate::update::sha256::file_hex(&bin.join("python")).unwrap();
-        let executable = crate::update::sha256::file_hex(&bin.join("axiom-mcp")).unwrap();
+        let python_name = if cfg!(windows) {
+            "python.exe"
+        } else {
+            "python"
+        };
+        let launcher_name = if cfg!(windows) {
+            "axiom-mcp.exe"
+        } else {
+            "axiom-mcp"
+        };
+        std::fs::write(bin.join(python_name), b"owned python").unwrap();
+        std::fs::write(bin.join(launcher_name), b"owned launcher").unwrap();
+        let python = crate::update::sha256::file_hex(&bin.join(python_name)).unwrap();
+        let executable = crate::update::sha256::file_hex(&bin.join(launcher_name)).unwrap();
         let pointer = format!(
             "{{\"generation\":\"0123456789abcdef01234567\",\"python_sha256\":\"{python}\",\"executable_sha256\":\"{executable}\"}}\n"
         );
@@ -1122,7 +1164,20 @@ mod tests {
             provisioned_mcp_runtime_bin(&root).unwrap(),
             Some(bin.clone())
         );
-        std::fs::write(bin.join("axiom-mcp"), b"tampered").unwrap();
+        let env = crate::bundle::engine_environment(&root, Some(&bin));
+        assert_eq!(env[0], ("AXIOM_HOME", root.display().to_string()));
+        let runtime_path = env
+            .iter()
+            .find(|(key, _)| *key == "PATH")
+            .unwrap()
+            .1
+            .as_str();
+        assert!(runtime_path.starts_with(&bin.display().to_string()));
+        if cfg!(windows) {
+            assert!(runtime_path.contains(';'));
+            assert!(runtime_path.contains("System32"));
+        }
+        std::fs::write(bin.join(launcher_name), b"tampered").unwrap();
         assert_eq!(
             provisioned_mcp_runtime_bin(&root).unwrap_err().reason,
             "mcp_runtime_executable_changed"

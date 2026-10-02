@@ -4,6 +4,13 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
 
 # Changelog
 
+## Unreleased — K-304 Windows MCP runtime candidate
+
+- Provision an owned Python 3.13.15 runtime from exact offline Windows inputs,
+  verify the installed MCP launcher and pass its native `Scripts` path to the
+  graphd engine. Refuse corrupt, missing and unsupported inputs; retain the
+  previous generation through interruptions and support rollback/removal.
+
 ## K-011 final Linux x64 container lifecycle revalidation
 
 - Rebuilt the digest-pinned, uid/gid 10001 OCI image and reran the pinned

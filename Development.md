@@ -20,6 +20,17 @@ Attach real test output/hashes, acceptance mapping, changed-file review, compati
 
 Follow the pinned canonical governance. Do not invent a remote, push credentials or release version. `axiom-cli` is the canonical distribution repository; the daemon plus CLI share one core release, while MCP and skills version independently. Documentation follows its component version. No production action is authorized by copying this seed.
 
+## K-304 Windows x64 runtime candidate
+
+`packaging/windows/Provision-McpRuntime.ps1` uses the SHA-256-pinned CPython
+3.13.15 embeddable archive to run the owner provisioner without a prepared
+Python environment. `packaging/windows/runtime-input.json` binds that archive,
+pip 26.1.2 and the exact K-303 offline MCP bundle. The owned generation keeps
+`venv/Scripts/python.exe` and `axiom-mcp.exe`; the CLI verifies both digests
+before passing the Windows PATH to the engine. Provision, rollback and removal
+operate only under the selected per-user root. This is a candidate and does not
+establish K-305 installation or K-307 query/process acceptance.
+
 ## K-404 Linux x64 runtime candidate
 
 `packaging/linux/Provision-McpRuntime.py` provisions the K-403 MCP wheel and

@@ -1139,6 +1139,7 @@ fn apply_refuses_a_plan_whose_recorded_digest_is_not_in_the_recorded_manifest() 
 }
 /// `10` lock unavailable, from the canonical exit vocabulary.
 const LOCK_UNAVAILABLE: i32 = 10;
+#[cfg(unix)]
 const IO_ERROR: i32 = 8;
 
 #[test]
@@ -1232,6 +1233,7 @@ fn apply_refuses_while_the_coordinator_lock_is_held() {
     );
 }
 
+#[cfg(unix)]
 #[test]
 fn an_unreadable_installed_record_is_an_io_error_not_a_missing_release() {
     // Exit 8 had no test: an installed record that exists but cannot be read is an internal I/O
@@ -1281,6 +1283,7 @@ fn an_unreadable_installed_record_is_an_io_error_not_a_missing_release() {
 ///
 /// `axiom-cli` has zero third-party dependencies, so the test reaches the C library directly:
 /// `geteuid` takes no arguments and cannot fail.
+#[cfg(unix)]
 unsafe fn libc_geteuid() -> u32 {
     unsafe extern "C" {
         fn geteuid() -> u32;
