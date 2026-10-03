@@ -1,0 +1,4 @@
+cwd=axiom-cli
+command=cargo +1.85.0 build --release --locked
+exit=0
+    Finished `release` profile [optimized] target(s) in 0.06s

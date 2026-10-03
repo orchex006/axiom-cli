@@ -156,9 +156,8 @@ function Complete-AxiomRun {
         [Parameter(Mandatory = $true)][string]$Message,
         [bool]$Retryable = $false
     )
-    if ($Out) { Write-AxiomJsonFile -Path $Out -Value $Envelope }
     [void](Complete-AxiomEnvelope -Envelope $Envelope -ExitCode $Code -Outcome $Outcome -Status $Status `
-            -Message $Message -Retryable $Retryable -EmitJson:([bool]$Json))
+            -Message $Message -Retryable $Retryable -JsonOutPath $Out -EmitJson:([bool]$Json))
     exit $Code
 }
 
@@ -737,7 +736,11 @@ try {
         # Snapshot what we are about to replace, outside the mutation path.
         New-Item -ItemType Directory -Force -Path $rollbackDir | Out-Null
         if ($preImage.entrypoint_existed) {
-            Copy-Item -LiteralPath $entrypointPath -Destination $preImage.entrypoint_backup -Force
+            # Windows keeps a running image open. Rename the owned entrypoint out
+            # of the active path before moving the staged replacement into it.
+            # The running process retains its image while the rollback copy stays
+            # under this transaction's owned directory.
+            Move-Item -LiteralPath $entrypointPath -Destination $preImage.entrypoint_backup -Force
         }
         if ($preImage.state_existed) {
             Copy-Item -LiteralPath $statePath -Destination $preImage.state_backup -Force

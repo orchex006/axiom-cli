@@ -1,0 +1,61 @@
+{
+  "task_id": "K-306",
+  "source_revision": "c4cfb4ba21f6c95211fc1ceec2909e25b3f0f711",
+  "environment": {
+    "os": "Windows",
+    "version": "10.0.26200",
+    "arch": "AMD64",
+    "python": "3.13.14"
+  },
+  "commands": [
+    {
+      "id": "fmt",
+      "command": "fmt",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/fmt.txt",
+      "sha256": "634de2d4191dbacb2e495855d53cff38d6a65675ba079b2b070d8a93e0cd188e"
+    },
+    {
+      "id": "clippy",
+      "command": "clippy",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/clippy.txt",
+      "sha256": "cc339b57ea5434cc5e78c4cfbd6adca95db5c634f43ad0f2718a20caf41a43e4"
+    },
+    {
+      "id": "rust-tests",
+      "command": "rust-tests",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/rust-tests.txt",
+      "sha256": "10758698e0c6fa0f53a3101c8f5287c4ba5217996e6e4f19e0b225d31dcb52e8"
+    },
+    {
+      "id": "release-build",
+      "command": "release-build",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/release-build.txt",
+      "sha256": "59061ec66f1da6ae8382efd98bced02f84d3f0458f13dd7b14c4645fc5b4e8cf"
+    },
+    {
+      "id": "python-lint",
+      "command": "python-lint",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/python-lint.txt",
+      "sha256": "6540b838edf217b92ad837c360466b6994198c785337151189af9851423604b7"
+    },
+    {
+      "id": "python-format",
+      "command": "python-format",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/python-format.txt",
+      "sha256": "1c9b1e8cd84a20eb9b33a9f84a5049a04b6145d116f38cff75004b6079d09c5c"
+    },
+    {
+      "id": "spec-pin",
+      "command": "spec-pin",
+      "exit_code": 0,
+      "path": "evidence/K-306/checks/spec-pin.txt",
+      "sha256": "4aaf7245cbe8b6dd2a3e2f2516235f1a118e609ec0f60350a4a44d8f7af3b94e"
+    }
+  ]
+}

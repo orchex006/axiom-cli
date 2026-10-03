@@ -1,0 +1,15 @@
+{
+  "registered": {
+    "component": "axiom-graphd",
+    "definition_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\installs\\ecosystem\\service\\axiom-graphd.task.xml",
+    "log_file": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\installs\\ecosystem\\logs\\axiom-graphd.log",
+    "mechanism": "per_user_startup",
+    "restart": {
+      "delay_seconds": 0,
+      "max_attempts": 0,
+      "on_failure": false
+    },
+    "scope": "per_user",
+    "task_name": "Axiom\\axiom-graphd"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "task_id": "K-306",
+  "lane": "windows-x64",
+  "candidate": true,
+  "certified": false,
+  "signing": "unsigned",
+  "publication": "not_published",
+  "cli_source_revision": "c4cfb4ba21f6c95211fc1ceec2909e25b3f0f711",
+  "spec_revision": "3ded2aff392d8740a0f0bd29006d7d166c04707b",
+  "graphd_b_source_revision": "d548bdfcd34975abf08d6a88de335f9ae432f55c",
+  "a": {
+    "task_id": "K-305",
+    "version": "0.1.1",
+    "archive_sha256": "beb24f04848af03e62ebed10e9fd3587f38acba14f753a1baef86ccdbcebef8b"
+  },
+  "b": {
+    "version": "0.1.2",
+    "archive_path": "evidence/K-306/axiom-0.1.2-windows-x64-update-kit.zip",
+    "archive_sha256": "a4bbcb65d2f9aa9b599c1b587f8a4271e8db8fcea195ba99c75a180dbd699a79",
+    "kit_manifest_sha256": "daf1138b45ba0c6c9f7e178f6f20a0d92b781053619be2e12745dc6f9dbf93d6",
+    "release_set_sha256": "7fc6e97d86297620ed6b66b573fbe19cbe976ebd008a1076206bc0332028ada5",
+    "cli_executable_sha256": "988f0cdc35189e0d743d4b768946515d6d55a4b975a17f19c4174984dd28e088",
+    "core_executable_sha256": "433c1c030953164dc2b5dcde81cb0650cae708c31cabbb00055283a9f50beb24",
+    "mcp_version": "0.1.1",
+    "skills_version": "0.1.1"
+  },
+  "native_report_sha256": "b20ab4893a0ee586ef1ad33015d7ddca3cf74e4dc122b7a14d04119792659f18",
+  "consumer": [
+    "K-307",
+    "K-502",
+    "K-010"
+  ],
+  "known_limitations": [
+    "unsigned unpublished local candidate; no released provenance",
+    "graphd public Windows service install still routes through Unix runtime identity; K-010 open",
+    "service-restart failure injection is tested; final graphd-managed Windows service API remains open",
+    "K-305 A CLI predates the Windows coordinator; the public update verb was launched from the pinned B kit against installed A state, then installed B entrypoint performed rollback"
+  ]
+}

@@ -1,0 +1,4 @@
+cwd=axiom-cli
+command=python tests/windows/capture_k305_distribution.py --release-set <candidate-set> --scratch <isolated-root> --mcp-revision 78f991622b52db86499c3031ed98c07a4d9d408e
+exit=0
+{"ok": true, "cases": 18, "user_data_preserved": true}

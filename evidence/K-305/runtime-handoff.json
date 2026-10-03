@@ -1,0 +1,44 @@
+{
+  "task_id": "K-304",
+  "kind": "local_runtime",
+  "lane": "windows-x64",
+  "owner_repo": "axiom-cli",
+  "source_revision": "c425e3ecbbff145dd310f00cd890698ed48b403f",
+  "mcp_source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+  "spec_revision": "20c12377397de7d480c0ef1a80e48e333a756cf9",
+  "version": "0.1.1",
+  "provenance": "candidate",
+  "certified": false,
+  "runtime": {
+    "path": "evidence/K-304/python-3.13.15-embed-amd64.zip",
+    "sha256": "d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf",
+    "source_url": "https://www.python.org/ftp/python/3.13.15/python-3.13.15-embed-amd64.zip"
+  },
+  "pip": {
+    "path": "evidence/K-304/pip-26.1.2-py3-none-any.whl",
+    "sha256": "382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab"
+  },
+  "inputs": {
+    "path": "evidence/K-304/windows-x64-py313-inputs.tar",
+    "sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+    "upstream_task": "K-303"
+  },
+  "alternate_inputs": {
+    "path": "evidence/K-304/alternate-inputs.tar",
+    "sha256": "b9eb3fbe5c82bb9ec12999a0adb2f55ca52e22d6b8328478cde1b4394ea75196",
+    "synthetic_test_only": true
+  },
+  "missing_dependency_inputs": {
+    "path": "evidence/K-304/missing-dependency-inputs.tar",
+    "sha256": "f2dc1c912c25339a06c0e5d5bd68fdd50118f02eefa44105733a08bf24e9f1de",
+    "synthetic_test_only": true
+  },
+  "generation_a": "d0f0fc8644e8e88e91cadb78",
+  "generation_b": "5532190b365cccc5cd520546",
+  "python_sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd",
+  "executable_sha256": "421572ca96cc3db53c2b65908ef0643b7372aec6c89b771196d112347a27badf",
+  "runtime_bin_layout": "mcp-runtime/versions/<generation>/venv/Scripts",
+  "native_case_count": 12,
+  "user_data_preserved": true,
+  "delivery_state": "candidate_local"
+}

@@ -20,6 +20,55 @@ Attach real test output/hashes, acceptance mapping, changed-file review, compati
 
 Follow the pinned canonical governance. Do not invent a remote, push credentials or release version. `axiom-cli` is the canonical distribution repository; the daemon plus CLI share one core release, while MCP and skills version independently. Documentation follows its component version. No production action is authorized by copying this seed.
 
+## K-305 Windows x64 distribution candidate
+
+The Windows release set carries the CLI, both native core executables, the
+K-303 MCP wheel, the K-301 skills owner archive and the K-304 pinned runtime
+inputs and provisioner scripts. `Build-ReleaseSet.ps1 -CoreCandidateManifest`
+checks the exact K-302 binary and archive bytes before it describes the core
+as a verified unsigned candidate. `Build-EngineCandidate.py` checks every
+owner handoff, expands the skills payload and writes a local `channel.json`
+for the installed `axiom-cli` entrypoint. This candidate remains unpublished.
+The set includes its Windows install/uninstall/common scripts and K-304
+provisioner, so the final harness runs from candidate and installed paths.
+JSON written through `-Out` is the completed envelope and matches stdout.
+The installed engine owns its service lifecycle; the native Windows Scheduled
+Task acceptance uses a Limited per-user task running the installed daemon.
+The current graphd `axiom service install` runtime still routes through a
+Unix-only identity path on Windows. The local Task Scheduler harness proves
+the installed daemon can run as a Limited per-user task, but the public service
+verb remains a K-010/release blocker until its owner corrects it. The separate
+Rust update state also makes `axiom-cli version --all` report no recorded
+channel installation after this local candidate; inspect the PowerShell
+distribution state and engine activation record for the exact installed bytes.
+
+## K-306 Windows x64 composite update candidate
+
+`packaging/windows/Build-UpdateKit.py` binds K-305 candidate A, the K-308
+native core 0.1.2 B archive, and one CLI 0.1.2 build to an unsigned local kit.
+`AXIOM_CLI_COMPOSITE_KIT` opts the public `axiom-cli update` verbs into the
+manifest-checked Windows coordinator. It runs with the pinned installed MCP
+Python under `venv/Scripts`, delegates ecosystem update/rollback to the graphd
+engine, and applies the CLI release set with the Windows installer. Approval
+binds exact kit and installed A bytes. The installer renames its owned active
+entrypoint before placing B because a running Windows executable cannot be
+overwritten. The coordinator retains a receipt and handles an interrupted
+rollback only when the observed A/B bytes match it exactly. Candidate and
+native Scheduled Task evidence are under `evidence/K-306/`; signing,
+publication, and the graphd public Windows service verb remain separate gates.
+
+## K-010 Windows final distribution lifecycle candidate
+
+The K-010 kit keeps K-305 0.1.1 A immutable and packages the exact K-309
+service-capable 0.1.2 core as B. Its candidate manifest, release set, channel
+and update receipt carry K-010 identity and K-309 source/archive hashes.
+`axiom-cli` still delegates the engine and Windows service lifecycle to the
+graphd-owned `axiom` executable. If a user registers the new service after
+updating from A, rollback to the older service-incompatible core refuses before
+changing either pointer until `axiom service uninstall` removes the owned B
+task. The final installed native lifecycle evidence belongs under
+`evidence/K-010/`; it is unsigned local evidence, not release certification.
+
 ## K-304 Windows x64 runtime candidate
 
 `packaging/windows/Provision-McpRuntime.ps1` uses the SHA-256-pinned CPython

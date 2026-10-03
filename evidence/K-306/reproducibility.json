@@ -1,0 +1,11 @@
+{
+  "task_id": "K-306",
+  "source_revision": "c4cfb4ba21f6c95211fc1ceec2909e25b3f0f711",
+  "clean_checkout": true,
+  "byte_equal": true,
+  "outputs": {
+    "axiom-0.1.2-windows-x64-update-kit.zip": "a4bbcb65d2f9aa9b599c1b587f8a4271e8db8fcea195ba99c75a180dbd699a79",
+    "candidate-files.json": "fe48206e0567910dfad2ede352dc346823fc045cdd1d47bee2c4248d261b1c23",
+    "kit-manifest.json": "daf1138b45ba0c6c9f7e178f6f20a0d92b781053619be2e12745dc6f9dbf93d6"
+  }
+}

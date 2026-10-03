@@ -1,0 +1,5 @@
+*.zip -text
+*.tar -text
+*.whl -text
+*.json -text
+*.txt -text

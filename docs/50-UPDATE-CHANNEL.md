@@ -190,6 +190,23 @@ honest limits on Windows:
 The path needs no administrator rights, no symlink privilege, no Bash and no WSL: it is a per-user
 directory the user can write. Locking is a single file (`update.lock`), and the journal is what
 makes an interrupted apply recoverable instead of half-applied.
+
+The K-306 unsigned Windows composite candidate uses an explicit local kit and
+the installed MCP Python. For its distribution entrypoint, the Windows
+installer first renames the owned running image into its rollback area, then
+moves the verified B image into the vacant entrypoint path. The coordinator
+records the previous CLI state and uses the graphd-owned engine transaction
+for ecosystem rollback. This candidate path is selected only when
+`AXIOM_CLI_COMPOSITE_KIT` names an exact manifest-checked kit; it does not
+publish or trust a remote release.
+
+For the K-010 Windows 0.1.2 candidate, the kit verifies the exact K-309 core
+manifest before it can update K-305 A. The new core can register a per-user
+Windows service. When that service is installed after the update, rollback to
+0.1.1 first requires `axiom service uninstall` from the installed B engine.
+The coordinator refuses an automatic rollback while the service remains,
+because A cannot run its newer Task Scheduler action. This refusal leaves the
+installed B pointers, task and user data unchanged.
 ## What is verified, and what is not
 
 Verified on this host: the whole `update check|plan|apply|rollback` machinery, against local

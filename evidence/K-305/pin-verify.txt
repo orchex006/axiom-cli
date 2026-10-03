@@ -1,0 +1,4 @@
+cwd=axiom-specs
+command=python tools/spec-lock-check.py --lock <axiom-cli>/spec.lock.json --spec-root <exact-git-bytes> --release --json
+exit=0
+{"ok": true, "reasons": [], "revision": "132cb5b8fd332d6a198036f935377f6593edf1b4"}

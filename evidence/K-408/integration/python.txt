@@ -1,0 +1,8 @@
+Ruff check/format on four changed Windows files; WSL policy regression; exit_code=0
+All checks passed!
+4 files already formatted
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.065s
+
+OK

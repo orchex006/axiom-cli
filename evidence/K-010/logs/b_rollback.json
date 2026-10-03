@@ -1,0 +1,35 @@
+{
+  "after": {
+    "cli_generation": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.1",
+    "cli_sha256": "77e725d7383ad7e30d294a85ae1e0ef7827027c5161232467446f847696c4c9a",
+    "cli_state_sha256": "223526ab694aeaa1f122238043e6cf13775583b10ccc086d67a2d2d5287d7a07",
+    "cli_version": "0.1.1",
+    "core_revision": "3e4671ae928abe04d8437074216fed6790fb57bd",
+    "core_sha256": "d707598882af0b8ca18661aa77e802c039309f46c5c38fc98fc91c15bb143b72",
+    "core_version": "0.1.1",
+    "engine_pointer_sha256": "e103d879aff8a5e1e493ccd1b08984e4ceb08e924bdb2c0dc302972d7f20da85",
+    "mcp_wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+    "runtime_pointer_sha256": "e010db6969342ede61800d17fddff1b1bb1acc30d31f4bef42a21905aa224159",
+    "skills_pointer_sha256": "b3a3159661ed1f5b60138f59be662fc89944f6459b021663f462554d06266fce"
+  },
+  "before": {
+    "cli_generation": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\cli\\generations\\0.1.2",
+    "cli_sha256": "988f0cdc35189e0d743d4b768946515d6d55a4b975a17f19c4174984dd28e088",
+    "cli_state_sha256": "ddc0facc42e3b2cb6d0006b2db38145aa3b3f56dd4d988295a2d3bb621941a58",
+    "cli_version": "0.1.2",
+    "core_revision": "4f8765a74ae5f077f53d092ddb4fea40d0c44fe3",
+    "core_sha256": "2c85a61a8f03f433b5cde82ba05e70eeabdc4e3a56fd4c003cc733a023f86164",
+    "core_version": "0.1.2",
+    "engine_pointer_sha256": "d90c947b75ffe1fd723c13cd3ab439a0d991bc8af581e3bd3e118c5d831e3ab3",
+    "mcp_wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+    "runtime_pointer_sha256": "e010db6969342ede61800d17fddff1b1bb1acc30d31f4bef42a21905aa224159",
+    "skills_pointer_sha256": "b3a3159661ed1f5b60138f59be662fc89944f6459b021663f462554d06266fce"
+  },
+  "certified": false,
+  "engine": {
+    "journal_path": "<WORKSPACE>\\goals\\run-logs\\K-010\\native-79\\user-install\\installs\\ecosystem\\journal\\ecosystem-update-update-1790878074-80061c2034b0eed6.json",
+    "restored_pointer_sha256": "e103d879aff8a5e1e493ccd1b08984e4ceb08e924bdb2c0dc302972d7f20da85",
+    "transaction_id": "update-1790878074-80061c2034b0eed6"
+  },
+  "status": "rolled_back"
+}

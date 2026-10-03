@@ -1,0 +1,57 @@
+{
+  "tasks": [
+    "K-305",
+    "K-306",
+    "K-010",
+    "K-408"
+  ],
+  "commands": [
+    {
+      "id": "fmt",
+      "command": "cargo +1.85.0 fmt --all -- --check",
+      "exit_code": 0,
+      "artifact": {
+        "path": "evidence/K-408/integration/fmt.txt",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      }
+    },
+    {
+      "id": "clippy",
+      "command": "cargo +1.85.0 clippy --offline --locked --all-targets -- -D warnings",
+      "exit_code": 0,
+      "artifact": {
+        "path": "evidence/K-408/integration/clippy.txt",
+        "sha256": "62f8c901d0fcbe361d89dd9c6565c238700e6685666d175ef9151a9bb3aa4132"
+      }
+    },
+    {
+      "id": "rust-tests",
+      "command": "cargo +1.85.0 test --offline --locked",
+      "exit_code": 0,
+      "artifact": {
+        "path": "evidence/K-408/integration/rust-tests.txt",
+        "sha256": "aa9f8b34f302d66722d736196362561881db6894a64f7a76bd477608bc5d1c80"
+      }
+    },
+    {
+      "id": "build",
+      "command": "cargo +1.85.0 build --offline --locked --release",
+      "exit_code": 0,
+      "artifact": {
+        "path": "evidence/K-408/integration/build.txt",
+        "sha256": "f4d0d26bf933ee8144b915b46951bb6f2fd95142ff6af690ffd035f3c23c3c00"
+      }
+    },
+    {
+      "id": "python",
+      "command": "python -m ruff check/format --check on changed Windows files; python tests/linux/test_wsl_policy_unit.py",
+      "exit_code": 0,
+      "artifact": {
+        "path": "evidence/K-408/integration/python.txt",
+        "sha256": "4cc82aa852cdcdf5cda5d3a85c9b71221daac947cb586cbc5984d584f864fe41"
+      }
+    }
+  ],
+  "native_runtime_rerun": false,
+  "spec_revision": "98202c694990b67bdfa44080f324d01bd611ace9"
+}

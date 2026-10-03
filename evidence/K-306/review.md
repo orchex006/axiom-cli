@@ -1,0 +1,14 @@
+# K-306 Windows owner review
+
+- Owner branch: `feature/k-306-windows-composite-update`; pinned CLI source `c4cfb4ba21f6c95211fc1ceec2909e25b3f0f711`; delivered draft spec pin `3ded2aff392d8740a0f0bd29006d7d166c04707b`.
+- Candidate A is the K-305 native Windows 0.1.1 archive SHA `beb24f04848af03e62ebed10e9fd3587f38acba14f753a1baef86ccdbcebef8b`. B combines CLI 0.1.2 with K-308 graphd core 0.1.2 revision `d548bdfcd34975abf08d6a88de335f9ae432f55c`; MCP, skills and embedded Python retain their own pinned versions.
+- The B 60-member release archive, candidate-file manifest, kit manifest and installer/coordinator scripts reproduced byte for byte from a clean checkout. The final B archive SHA is `a4bbcb65d2f9aa9b599c1b587f8a4271e8db8fcea195ba99c75a180dbd699a79`. All member hashes and component versions were checked before use.
+- The native run installed A in an isolated per-user root, provisioned MCP without developer Python, installed the graphd ecosystem via the public CLI, and ran real C# catalog query/watcher under a Limited per-user Scheduled Task. It refused corrupt and incompatible kits without changing A. Download, staging, activation, service-restart and post-entrypoint failures all restored A pointers and CLI bytes. The public update activated B CLI/core; installed B queried a watcher edit through another Limited task; public rollback from the installed B executable restored A. Owner uninstall removed only installed runtime while retaining source and user sentinels. HKCU Path value and type were restored exactly; no K-306 task or daemon process remains.
+- Required checks passed: cargo fmt, all-target clippy, 201 all-target Rust tests, release build, Python lint/format and exact spec pin. Native logs and their hashes are in `logs/` and `native-report.json`.
+- K-306 is an unsigned, unpublished local candidate. The graphd public Windows service install verb remains a K-010/final-release blocker; the K-306 service-restart leg injects failure at the composite boundary and the native watcher legs use explicitly managed Scheduled Tasks. Independent update/security review, main integration, signing and release provenance are separate.
+- The update command for this candidate was launched from the B kit's public
+  `axiom-cli.exe` against the installed A state. The immutable K-305 A binary
+  predates the Windows coordinator, so an operator must obtain the pinned B
+  updater kit to start this transition; the installed A entrypoint was not the
+  initiator. The transaction still replaced that installed entrypoint and the
+  engine generation together, and rollback ran from the installed B entrypoint.

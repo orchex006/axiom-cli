@@ -1,0 +1,37 @@
+{
+  "task_id": "K-305",
+  "kind": "local_runtime",
+  "lane": "windows-x64",
+  "source_revision": "b193b39a42ab4f49e6ee4c72483cdac8ae6105b0",
+  "spec_revision": "132cb5b8fd332d6a198036f935377f6593edf1b4",
+  "version": "0.1.1",
+  "provenance": "candidate",
+  "certified": false,
+  "signing": "unsigned",
+  "publication": "not_published",
+  "candidate_archive": {
+    "path": "evidence/K-305/axiom-0.1.1-windows-x64-candidate.zip",
+    "sha256": "beb24f04848af03e62ebed10e9fd3587f38acba14f753a1baef86ccdbcebef8b",
+    "files": 60
+  },
+  "release_set_sha256": "ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5",
+  "channel_sha256": "7ad51a6e13a48dfcda8d78cc92bd29fb67dc52bfb763641166cc8e2dfc3e091b",
+  "candidate_lock_sha256": "b1867a674b5f4d9d0fec7893dc0c655d3868271844ee93b49be563dd9233900c",
+  "corrected_core": {
+    "path": "evidence/K-305/corrected-core.zip",
+    "sha256": "1c834d5b3a594866183fca7356cb06a65443f8814dd29abc47c3bc6ef8c6ea29",
+    "source_revision": "3e4671ae928abe04d8437074216fed6790fb57bd"
+  },
+  "mcp_source_revision": "78f991622b52db86499c3031ed98c07a4d9d408e",
+  "skills_source_revision": "26f862039a31800bda9809a0bda5e58f5d96ab98",
+  "runtime_input_sha256": "82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190",
+  "native_case_count": 18,
+  "j004_baseline_records": 33,
+  "j004_harness_reported_legs": 32,
+  "user_data_preserved": true,
+  "user_path_preserved": true,
+  "limitations": [
+    "graphd public service install runtime remains Unix-only on Windows; native Limited Scheduled Task tested from installed daemon, final public service API remains K-010/release blocker",
+    "axiom-cli version --all reports Rust update state absent after this local PowerShell/engine candidate; installer and engine owned records identify actual installed bytes"
+  ]
+}
