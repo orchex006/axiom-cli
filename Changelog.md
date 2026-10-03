@@ -4,6 +4,42 @@ Owner-authorized publication of current code; see release/v0.1.1-notes.md.
 
 # Changelog
 
+## Unreleased — K-408 actual WSL2 lifecycle
+
+- Verify pinned Linux artifacts on an approved isolated Ubuntu 24.04 WSL2 host,
+  including fresh non-root provisioning/install, 24 systemd-user installer legs,
+  query/watcher/restart, A/B update/failure/rollback and owned uninstall retention.
+- Add a native WSL lifecycle harness and home-independent retained-generation
+  verification; preserve source/input hashes and separate native proof from release.
+
+## Unreleased — K-010 Windows final distribution lifecycle
+
+- Build an unsigned Windows 0.1.2 kit with exact K-309 public-service core
+  bytes and K-010 owner metadata while preserving the historical K-306 kit.
+- Refuse distribution rollback to the older 0.1.1 core if a Windows service was
+  registered after B activation. Its owner must remove that service through
+  `axiom service uninstall` before rollback, preventing a B daemon from running
+  while the active pointer names A.
+
+## Unreleased — K-306 Windows composite update candidate
+
+- Add an unsigned Windows 0.1.2 update kit built from the exact K-305 0.1.1
+  distribution and K-308 0.1.2 core candidate. The kit keeps MCP, skills and
+  the owned Python runtime at their independently pinned versions.
+- Route the public `update` verbs through the installed Windows Python runtime
+  and graphd's update transaction. Bind approval to A/B bytes and installed
+  pointers, update the distribution entrypoint, and retain rollback evidence.
+  Rename the owned running Windows CLI image before replacing its path.
+
+## Unreleased — K-305 Windows distribution candidate
+
+- Compose the exact Windows CLI/core/MCP/skills/runtime artifacts into an
+  unsigned local release set and candidate channel. Refuse existing output,
+  incompatible owner revisions and changed digests; keep source/user data
+  through per-user install, native Scheduled Task lifecycle and uninstall.
+- Ship the Windows installer scripts in the candidate set and write the final
+  completed install/uninstall envelope to `-Out`, matching the process result.
+
 ## Unreleased — K-304 Windows MCP runtime candidate
 
 - Provision an owned Python 3.13.15 runtime from exact offline Windows inputs,

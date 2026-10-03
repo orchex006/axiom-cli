@@ -1,0 +1,5 @@
+exit=0
+stdout:
+{"id":"windows-demo","profile":"default","config_hash":"47ab6860dfa0f933a077c4893c3162382862e6b6f86f8efe89703cdcc00feacb","projects":1}
+
+stderr:

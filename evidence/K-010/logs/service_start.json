@@ -1,0 +1,7 @@
+{
+  "action": "start",
+  "code": 0,
+  "component": "axiom-graphd",
+  "stderr": "",
+  "stdout": "SUCCESS: Attempted to run the scheduled task \"Axiom\\axiom-graphd\".\r\n"
+}

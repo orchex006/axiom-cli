@@ -1,0 +1,5 @@
+exit=0
+stdout:
+{"owned_generations": ["d0f0fc8644e8e88e91cadb78"], "status": "removed", "user_data_preserved": true}
+
+stderr:

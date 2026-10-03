@@ -1,0 +1,7 @@
+{
+  "code": "NOT_READY",
+  "details": {},
+  "message": "the migrate plan command is recognised, but not built: `docs/16-CLI-AND-CONTROL-API.md` V2 migration commands are intended interfaces rather than shipped commands, so `migrate` is not composed in this build (task I-003 exposes the argv surface only)",
+  "request_id": null,
+  "retryable": true
+}

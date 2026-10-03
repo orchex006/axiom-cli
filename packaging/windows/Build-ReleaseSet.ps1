@@ -24,8 +24,8 @@
     cannot hash, and never writes outside -OutDir.
 
 .PARAMETER OutDir
-    Directory the release set is assembled into. Created when absent, replaced when
-    it already exists.
+    Directory the release set is assembled into. Must not already exist, so a
+    packaging run cannot replace unrelated or human-owned content.
 
 .PARAMETER CliExe
     A prebuilt `axiom-cli.exe`. Defaults to `<repo>\target\release\axiom-cli.exe`.
@@ -44,6 +44,10 @@
     Path to `axiom-graphd\release\core-manifest.json`. When supplied, the release set
     records the core release version and the honest archive state that manifest
     declares. When omitted, the declaration records that no core manifest was read.
+
+.PARAMETER CoreCandidateManifest
+    Exact K-302 unsigned native candidate manifest. Its binary/archive digests
+    must match artifacts carried in this set; the set remains unpublished.
 
 .PARAMETER ServiceTaskName
     Declare a per-user scheduled-task-at-logon registration for this release. The
@@ -79,6 +83,7 @@ param(
     [switch]$Build,
     [string[]]$ComponentArtifact = @(),
     [string]$CoreManifest,
+    [string]$CoreCandidateManifest,
     [string]$Version,
     [string]$ServiceTaskName,
     [string[]]$ServiceArgv = @(),
@@ -145,7 +150,7 @@ $cliSource = (Resolve-Path -LiteralPath $cliSource).Path
 
 # --- output directory --------------------------------------------------------
 if (Test-Path -LiteralPath $OutDir) {
-    Remove-Item -LiteralPath $OutDir -Recurse -Force
+    Exit-Axiom -Code $exitValidation -Message "-OutDir already exists; choose a new release-set directory"
 }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $outRoot = (Resolve-Path -LiteralPath $OutDir).Path
@@ -201,6 +206,10 @@ foreach ($declaration in $ComponentArtifact) {
 $coreNote = 'no axiom-graphd core manifest was read at assembly time, so this release set makes no claim about the core release state'
 $coreVersion = $null
 $coreArchiveState = 'unknown'
+$coreVersionSource = 'axiom-graphd/release/core-manifest.json'
+if ($CoreManifest -and $CoreCandidateManifest) {
+    Exit-Axiom -Code $exitValidation -Message '-CoreManifest and -CoreCandidateManifest are mutually exclusive'
+}
 if (-not [string]::IsNullOrEmpty($CoreManifest)) {
     if (-not (Test-Path -LiteralPath $CoreManifest -PathType Leaf)) {
         Exit-Axiom -Code $exitNotFound -Message "-CoreManifest not found: $CoreManifest"
@@ -217,6 +226,38 @@ if (-not [string]::IsNullOrEmpty($CoreManifest)) {
     if ($win) { $coreArchiveState = [string]$win.archive.state }
     $coreNote = ('read from {0}: release.version={1}, windows-x64 archive.state={2}, revision={3}' -f `
         $CoreManifest, $coreVersion, $coreArchiveState, [string]$core.release.revision)
+}
+if (-not [string]::IsNullOrEmpty($CoreCandidateManifest)) {
+    if (-not (Test-Path -LiteralPath $CoreCandidateManifest -PathType Leaf)) {
+        Exit-Axiom -Code $exitNotFound -Message 'core candidate manifest is missing'
+    }
+    $candidate = Read-AxiomJsonFile -Path $CoreCandidateManifest
+    if ($null -eq $candidate -or [string]$candidate.platform -cne 'windows-x64' -or
+        [string]$candidate.version -cne $resolvedVersion -or
+        [string]$candidate.signing -cne 'unsigned' -or
+        [string]$candidate.publication -cne 'not_published' -or
+        [string]$candidate.source_revision -cnotmatch '^[0-9a-f]{40}$') {
+        Exit-Axiom -Code $exitIncompatible -Message 'core candidate identity or provenance is invalid'
+    }
+    $expectedCore = @('axiom.exe', 'axiom-graphd.exe')
+    foreach ($name in $expectedCore) {
+        $record = @($candidate.binaries | Where-Object { [string]$_.name -ceq $name })
+        $carried = @($artifacts | Where-Object { [string]$_.name -ceq $name })
+        if ($record.Count -ne 1 -or $carried.Count -ne 1 -or
+            [string]$record[0].sha256 -cne [string]$carried[0].sha256 -or
+            [long]$record[0].size_bytes -ne [long]$carried[0].size_bytes) {
+            Exit-Axiom -Code $exitIncompatible -Message ("core candidate binary does not match carried artifact: {0}" -f $name)
+        }
+    }
+    $coreArchiveName = [string]$candidate.archive.name
+    $coreArchive = @($artifacts | Where-Object { [string]$_.name -ceq $coreArchiveName })
+    if ($coreArchive.Count -ne 1 -or [string]$coreArchive[0].sha256 -cne [string]$candidate.archive.sha256) {
+        Exit-Axiom -Code $exitIncompatible -Message 'core candidate archive does not match carried artifact'
+    }
+    $coreVersion = [string]$candidate.version
+    $coreArchiveState = 'candidate_verified'
+    $coreVersionSource = 'axiom-graphd/evidence/K-302/candidate-manifest.json'
+    $coreNote = ('unsigned Windows x64 core candidate at immutable revision {0}; archive and both native binaries are digest-verified' -f [string]$candidate.source_revision)
 }
 
 $declared = New-Object System.Collections.Generic.List[object]
@@ -247,7 +288,7 @@ foreach ($component in @(
         component             = $component.name
         role                  = $component.role
         installed_version     = $coreVersion
-        version_source        = 'axiom-graphd/release/core-manifest.json'
+        version_source        = $coreVersionSource
         version_source_status = $coreArchiveState
         artifacts             = $component.artifacts
         state                 = $state
@@ -296,8 +337,11 @@ if (-not [string]::IsNullOrEmpty($ServiceTaskName)) {
 
 # --- manifest ----------------------------------------------------------------
 $limitations = New-Object System.Collections.Generic.List[string]
-if ($coreArchiveState -ne 'built') {
+if ($coreArchiveState -notin @('built', 'candidate_verified')) {
     $limitations.Add('the pinned core release is not built (' + $coreNote + '), so axiom-graphd.exe and axiom.exe are not carried by this release set and are recorded as unverified rather than installed')
+}
+if ($coreArchiveState -eq 'candidate_verified') {
+    $limitations.Add('the core archive and binaries are verified unsigned local candidates; no released or trusted core provenance is claimed')
 }
 $limitations.Add('this release set is assembled from a local build; it is not a published release and carries no signature. Publication, signing and the update channel are owned by separate tasks')
 $limitations.Add('the installation engine, the daemon service lifecycle and the per-component update transaction stay owned by axiom-graphd; this release set wraps them and never re-implements them')

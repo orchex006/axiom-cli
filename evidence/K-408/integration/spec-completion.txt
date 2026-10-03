@@ -1,0 +1,23 @@
+python -X utf8 ../axiom-specs/tools/specctl.py validate --task K-010 --stage after
+exit_code=0
+{
+  "ok": true,
+  "tasks": 379,
+  "requirements": 24,
+  "json_files": 2174,
+  "local_links": 3101,
+  "snapshot_pointers": 3,
+  "completed_tasks": 370
+}
+
+python -X utf8 ../axiom-specs/tools/specctl.py validate --task K-408 --stage after
+exit_code=0
+{
+  "ok": true,
+  "tasks": 379,
+  "requirements": 24,
+  "json_files": 2174,
+  "local_links": 3101,
+  "snapshot_pointers": 3,
+  "completed_tasks": 370
+}

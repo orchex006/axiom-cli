@@ -1,0 +1,359 @@
+{
+  "cases": {
+    "composite_update": true,
+    "distribution_install": true,
+    "installed_mcp_matrix_seven_legs": true,
+    "negative_kit": true,
+    "owned_service_removal_then_rollback": true,
+    "pinned_mcp": true,
+    "post_update_service_rollback_refusal": true,
+    "public_limited_service": true,
+    "real_source_watcher": true,
+    "uninstall_preserves_data_and_path": true,
+    "unprivileged_install_and_uninstall": true
+  },
+  "certified": false,
+  "commands": [
+    {
+      "command": "pwsh -File Install-AxiomCli.ps1 -ReleaseSet <K305-A> -InstallRoot <isolated-run> -Apply -ApproveDigest ca01ab0fe241c43f4bcc25d7384f9c0095fa83965416aa13eea426454382b6b5 -NonInteractive -Json",
+      "exit_code": 0,
+      "id": "a-install",
+      "output": {
+        "path": "evidence/K-010/logs/a_install.json",
+        "raw_sha256": "153f2fab2dec00aecd1090dd3d24d78a622715f90a6df5f99dd144b611094433",
+        "sha256": "b34014c7fb3fb418089a321ff3e12de8fb91cd11f4fc25ab4aadb69d3af8fdc6"
+      }
+    },
+    {
+      "command": "pwsh -File Provision-McpRuntime.ps1 -Action provision -Root <isolated-run> -RuntimeArchive <K305-A>/python-3.13.15-embed-amd64.zip -RuntimeSha256 d1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf -PipWheel <K305-A>/pip-26.1.2-py3-none-any.whl -PipSha256 382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab -Inputs <K305-A>/windows-x64-py313-inputs.tar -InputsSha256 82e9ca2920f91f6b41d953d2b53a6d8f359c2958be7f0c7e781a5e6e76143190 -SourceRevision 78f991622b52db86499c3031ed98c07a4d9d408e -Version 0.1.1",
+      "exit_code": 0,
+      "id": "runtime",
+      "output": {
+        "path": "evidence/K-010/logs/runtime.json",
+        "raw_sha256": "0466eebe0c77060c89b3b25b892b884ff124492284e10de69567c9bc7a78e46d",
+        "sha256": "d8fa7d0a9cddee623aa7a6d2934d8134ad42f675396796f65664c4fba44b8d23"
+      }
+    },
+    {
+      "command": "axiom-cli --json install --apply --from <K305-A>/channel.json --approve-digest 6b64179ddc9056e1d8e987b74a127d744046037c8b6a2d8479418a8e4a014b82",
+      "exit_code": 0,
+      "id": "a-engine",
+      "output": {
+        "path": "evidence/K-010/logs/a_engine.json",
+        "raw_sha256": "614281d9f8d9327bf9714fe8e0ddc1baef09a482d36e99362fe1ba121808b22a",
+        "sha256": "d58c302b1e0e4a0797d6dadbfd366b5d18c8e324cd8d421001c7443303e3ae0a"
+      }
+    },
+    {
+      "command": "python tests/windows/Verify-K306UpdateKit.py --kit <K010-kit> --installed-root <isolated-A> --scratch <isolated-run>",
+      "exit_code": 0,
+      "id": "negative-kit",
+      "output": {
+        "path": "evidence/K-010/logs/negative.json",
+        "raw_sha256": "bfcc0f2b78419ac6538484df50d0178c7abb10df0585ee91c277b7d491e1adce",
+        "sha256": "b0d89747d4bd925adb2a1e594ed9d22995f250fc2679062644330bda1de571b6"
+      }
+    },
+    {
+      "command": "axiom-cli --json update check (AXIOM_CLI_COMPOSITE_KIT=<K010-kit>)",
+      "exit_code": 0,
+      "id": "b-check",
+      "output": {
+        "path": "evidence/K-010/logs/b_check.json",
+        "raw_sha256": "cd612e0f45aa8272a529960d94d276d33454dada307097c0f1003b4aad882ad5",
+        "sha256": "31047467033cef0d9647ed8f854705936b1ae23ff4be056958ed36069d2ae921"
+      }
+    },
+    {
+      "command": "axiom-cli --json update plan --to 0.1.2 --out <isolated-run>/b-plan.json",
+      "exit_code": 0,
+      "id": "b-plan",
+      "output": {
+        "path": "evidence/K-010/logs/b_plan.json",
+        "raw_sha256": "cd612e0f45aa8272a529960d94d276d33454dada307097c0f1003b4aad882ad5",
+        "sha256": "31047467033cef0d9647ed8f854705936b1ae23ff4be056958ed36069d2ae921"
+      }
+    },
+    {
+      "command": "axiom-cli --json update apply --plan <isolated-run>/b-plan.json --approve-digest 32f0ee9e5a62c4c4181378d38aab09af02dc6dc3a60e3e19109f70da952a3bef",
+      "exit_code": 0,
+      "id": "b-apply",
+      "output": {
+        "path": "evidence/K-010/logs/b_apply.json",
+        "raw_sha256": "6787886bb6a1494ac702196c0d04bff34dfe43cd76baeda87db656bcc08bab3c",
+        "sha256": "46385f831780284e0f0aa68a12817ef8efb1d81400023246d82ffcb8555e8b20"
+      }
+    },
+    {
+      "command": "axiom service install --component axiom-graphd --user --json",
+      "exit_code": 0,
+      "id": "service-install",
+      "output": {
+        "path": "evidence/K-010/logs/service_install.json",
+        "raw_sha256": "da4c1ddb5d5fb94f30cf9b65c0b996d8ddbccfb7bdff61475c30a9b42393f459",
+        "sha256": "422e8ea1467bda365594ffd8fb3cee0a75e4773f8a6cef19f3c9104634e5ab8f"
+      }
+    },
+    {
+      "command": "axiom service start --component axiom-graphd --json",
+      "exit_code": 0,
+      "id": "service-start",
+      "output": {
+        "path": "evidence/K-010/logs/service_start.json",
+        "raw_sha256": "38fca1a8ad5b55a983400d8ddfe641b8940df2620ed8b8c2c51f3aa139cc47ea",
+        "sha256": "0c9b9936003db82544ade83c0515f2fd23268eeab30df6b0fcbb27b7486060de"
+      }
+    },
+    {
+      "command": "axiom-graphd query context --solution demo-solution --symbol K010.TokenSource/K010.WatcherAdded --json (before/after source edit)",
+      "exit_code": 0,
+      "id": "service-query-watch",
+      "output": {
+        "path": "evidence/K-010/logs/service_query_watch.json",
+        "raw_sha256": "cfadf5d345b3f3773c9a77c33d3be11f92dfc2a2a154b57420263160000bfbef",
+        "sha256": "7142caf5ab55505c7d2106ad624ae9f2ec6b83600f2e5b31f11440c1ac02e520"
+      }
+    },
+    {
+      "command": "python tests/native/capture_native_matrix.py --target windows-x64 --python <installed-venv> --installed-repo <isolated-source> --installed-axiom-home <isolated-run> --installed-symbol K010.WatcherAdded --task-id K-010",
+      "exit_code": 0,
+      "id": "mcp-matrix",
+      "output": {
+        "path": "evidence/K-010/logs/mcp_matrix.json",
+        "raw_sha256": "82e31d9d85f802902f1998c37fdb472948d24eb3cb6066e2e2f37941e27b1d55",
+        "sha256": "78d7196ede5e606ca68cd9abce4fb8724bf70d442fdb8b952bf4133955dde8a6"
+      }
+    },
+    {
+      "command": "axiom-cli --json update rollback --transaction previous (post-update B service present)",
+      "exit_code": 2,
+      "id": "rollback-refusal",
+      "output": {
+        "path": "evidence/K-010/logs/rollback_refusal.json",
+        "raw_sha256": "8a2d2de9c474982728311108a7b2b8a370231aeab2440f824ececad47036a691",
+        "sha256": "d13da18f442635b8cec095cca92d274d709aa0c8d8134294ed3edd0bee1e526a"
+      }
+    },
+    {
+      "command": "axiom service uninstall --component axiom-graphd --json",
+      "exit_code": 0,
+      "id": "service-uninstall",
+      "output": {
+        "path": "evidence/K-010/logs/service_uninstall.json",
+        "raw_sha256": "686575b7096d3f0e88a452ae8078df1767bf958370f4d4b1f6fdc67e6c2d75f7",
+        "sha256": "a2b754fbe6a71de3fa40f57fa7be49e96b9e8225b8f8a5d7fff256df98dccf6e"
+      }
+    },
+    {
+      "command": "axiom-cli --json update rollback --transaction previous",
+      "exit_code": 0,
+      "id": "b-rollback",
+      "output": {
+        "path": "evidence/K-010/logs/b_rollback.json",
+        "raw_sha256": "9af937b712e87b7c6de1d1630ef156c5112a8af89c5d74ef2389d7bbca54885f",
+        "sha256": "a79f482ef7678b5f1e4b45fff7c2b8f4a0be50805db24bb7bd8f8048862f3561"
+      }
+    },
+    {
+      "command": "axiom-cli --json uninstall --apply --approve-digest ae2e9016f1729437dc07a792d50fc1b7fc4b896980cef737ee012e87a3536f71",
+      "exit_code": 0,
+      "id": "engine-uninstall",
+      "output": {
+        "path": "evidence/K-010/logs/engine_uninstall.json",
+        "raw_sha256": "d671b9434f1829e45e80cf57d0fecd8adf0ffea91042f254a716192922945cd4",
+        "sha256": "6d187d9f51a06f196368c9cf9ccf3fd81834e6d9df7320a3290e5ca3c0e2719c"
+      }
+    },
+    {
+      "command": "pwsh -File Provision-McpRuntime.ps1 -Action remove -Root <isolated-run>",
+      "exit_code": 0,
+      "id": "runtime-remove",
+      "output": {
+        "path": "evidence/K-010/logs/runtime_remove.json",
+        "raw_sha256": "800a4084284a92af2ebbc6cf7d1d986679c1be49fff04fdeadce38a86154be1f",
+        "sha256": "2186b4f51c137764f715105dc2947ff60c58917e68a7c6a401b2fa90e5aeb921"
+      }
+    },
+    {
+      "command": "pwsh -File Uninstall-AxiomCli.ps1 -InstallRoot <isolated-run> -Apply -ApproveDigest 6ecc5b85380f4d4933ba91030a08596adab89d49a6b0276cf1d45971d4d25108 -Json",
+      "exit_code": 0,
+      "id": "distribution-uninstall",
+      "output": {
+        "path": "evidence/K-010/logs/distribution_uninstall.json",
+        "raw_sha256": "7652f38d6a61437dba9908c1ec547a2444ba07b529abc9330dd580d3e0daaf2d",
+        "sha256": "0d94d1097ef43c07379020c70d117257931fea1a640261614265ba863535823f"
+      }
+    },
+    {
+      "command": "schtasks Limited powershell.exe -File Invoke-AxiomCliWindowsUnprivilegedLeg.ps1 (final B release set)",
+      "exit_code": 0,
+      "id": "unprivileged",
+      "output": {
+        "path": "evidence/K-010/logs/unprivileged.json",
+        "raw_sha256": "e185872e499cf116371ca9fd350e6a1a9c0cccd0c1956d18c2ec11ac674c5b2c",
+        "sha256": "30d4dc45c0f9fe5073e5876a26bb4a4e19b3fceb6f32c10651f8d63bd5a5aefe"
+      }
+    },
+    {
+      "command": "python packaging/windows/Build-UpdateKit.py --task-id K-010 --b-core-dir <K308-core> --b-core-manifest-sha 62d25dae01c23a566d1157890c49a6ef572ff370003f09888504df3e5d1e73ee",
+      "exit_code": 9,
+      "id": "wrong-core-refusal",
+      "output": {
+        "path": "evidence/K-010/logs/wrong_core.json",
+        "raw_sha256": "ff60d186c74a5187368f62599ddb46b217388634e30ff6bd080ad6a68a169d92",
+        "sha256": "cd2534752efa7492dc5bfb9a656bdebaff57bb02ac2e0c9fae47c2b96039192c"
+      }
+    },
+    {
+      "command": "axiom migrate plan --solution demo-solution --json",
+      "exit_code": 4,
+      "id": "migration-readiness",
+      "output": {
+        "path": "evidence/K-010/logs/migration.json",
+        "raw_sha256": "f01bbc3d70e93aab2b9394d592103c21bd38502275668eef2fe50984a4972c12",
+        "sha256": "803a3e48c96b93c8cf5257e931b17423b5d682e7270c918664d28744992263d7"
+      }
+    },
+    {
+      "command": "PowerShell verify HKCU Path value/type, no Task/process, user sentinel and absent CLI",
+      "exit_code": 0,
+      "id": "cleanup",
+      "output": {
+        "path": "evidence/K-010/logs/cleanup.json",
+        "raw_sha256": "efefbcbe1b5b08ca8fb3df1f2e33c35d82c57d24b280b96e5bc9e56756055a53",
+        "sha256": "d747ca32c4786d126f07f63277885b71dd778b1fafa60fa1b30310be8012f6d5"
+      }
+    }
+  ],
+  "core_b_sha256": "ba9e294cd112c7311b755ab9aad2d3713502c68925febb48359fec0fe1cc2c53",
+  "core_manifest_sha256": "b33999d07c1a71d3ce00c93620870d08948eec6f0e010f7891d6c630717af7df",
+  "core_source_revision": "4f8765a74ae5f077f53d092ddb4fea40d0c44fe3",
+  "environment": {
+    "arch": "x86_64",
+    "execution": "native",
+    "limited_install_elevated": false,
+    "mcp_wheel_sha256": "36848a68ad4aa66932fbfd3773c020fab6267aa2e705ef624797745664409b56",
+    "os": "Microsoft Windows 11 Pro 10.0.26200",
+    "python_runtime": "3.13.15 pinned embeddable"
+  },
+  "input_a_sha256": "beb24f04848af03e62ebed10e9fd3587f38acba14f753a1baef86ccdbcebef8b",
+  "kit_manifest_sha256": "7be7de1b567d9bd46ee983b4152532e32df9b9406bed437a841b2b9c56ca6eb9",
+  "kit_sha256": "70113cd08b01b6d41dc535ba962101b4ffee8ec976d6e276118f4468bd72ca73",
+  "limitations": [
+    "The installed migrate plan verb returned NOT_READY (exit 4); aggregate migration/release acceptance remains open.",
+    "This candidate is unsigned and unpublished, and does not satisfy released-fixture trust or other required platform lanes."
+  ],
+  "logs": {
+    "a_engine": {
+      "path": "evidence/K-010/logs/a_engine.json",
+      "raw_sha256": "614281d9f8d9327bf9714fe8e0ddc1baef09a482d36e99362fe1ba121808b22a",
+      "sha256": "d58c302b1e0e4a0797d6dadbfd366b5d18c8e324cd8d421001c7443303e3ae0a"
+    },
+    "a_install": {
+      "path": "evidence/K-010/logs/a_install.json",
+      "raw_sha256": "153f2fab2dec00aecd1090dd3d24d78a622715f90a6df5f99dd144b611094433",
+      "sha256": "b34014c7fb3fb418089a321ff3e12de8fb91cd11f4fc25ab4aadb69d3af8fdc6"
+    },
+    "b_apply": {
+      "path": "evidence/K-010/logs/b_apply.json",
+      "raw_sha256": "6787886bb6a1494ac702196c0d04bff34dfe43cd76baeda87db656bcc08bab3c",
+      "sha256": "46385f831780284e0f0aa68a12817ef8efb1d81400023246d82ffcb8555e8b20"
+    },
+    "b_check": {
+      "path": "evidence/K-010/logs/b_check.json",
+      "raw_sha256": "cd612e0f45aa8272a529960d94d276d33454dada307097c0f1003b4aad882ad5",
+      "sha256": "31047467033cef0d9647ed8f854705936b1ae23ff4be056958ed36069d2ae921"
+    },
+    "b_plan": {
+      "path": "evidence/K-010/logs/b_plan.json",
+      "raw_sha256": "cd612e0f45aa8272a529960d94d276d33454dada307097c0f1003b4aad882ad5",
+      "sha256": "31047467033cef0d9647ed8f854705936b1ae23ff4be056958ed36069d2ae921"
+    },
+    "b_rollback": {
+      "path": "evidence/K-010/logs/b_rollback.json",
+      "raw_sha256": "9af937b712e87b7c6de1d1630ef156c5112a8af89c5d74ef2389d7bbca54885f",
+      "sha256": "a79f482ef7678b5f1e4b45fff7c2b8f4a0be50805db24bb7bd8f8048862f3561"
+    },
+    "cleanup": {
+      "path": "evidence/K-010/logs/cleanup.json",
+      "raw_sha256": "efefbcbe1b5b08ca8fb3df1f2e33c35d82c57d24b280b96e5bc9e56756055a53",
+      "sha256": "d747ca32c4786d126f07f63277885b71dd778b1fafa60fa1b30310be8012f6d5"
+    },
+    "distribution_uninstall": {
+      "path": "evidence/K-010/logs/distribution_uninstall.json",
+      "raw_sha256": "7652f38d6a61437dba9908c1ec547a2444ba07b529abc9330dd580d3e0daaf2d",
+      "sha256": "0d94d1097ef43c07379020c70d117257931fea1a640261614265ba863535823f"
+    },
+    "engine_uninstall": {
+      "path": "evidence/K-010/logs/engine_uninstall.json",
+      "raw_sha256": "d671b9434f1829e45e80cf57d0fecd8adf0ffea91042f254a716192922945cd4",
+      "sha256": "6d187d9f51a06f196368c9cf9ccf3fd81834e6d9df7320a3290e5ca3c0e2719c"
+    },
+    "mcp_matrix": {
+      "path": "evidence/K-010/logs/mcp_matrix.json",
+      "raw_sha256": "82e31d9d85f802902f1998c37fdb472948d24eb3cb6066e2e2f37941e27b1d55",
+      "sha256": "78d7196ede5e606ca68cd9abce4fb8724bf70d442fdb8b952bf4133955dde8a6"
+    },
+    "migration": {
+      "path": "evidence/K-010/logs/migration.json",
+      "raw_sha256": "f01bbc3d70e93aab2b9394d592103c21bd38502275668eef2fe50984a4972c12",
+      "sha256": "803a3e48c96b93c8cf5257e931b17423b5d682e7270c918664d28744992263d7"
+    },
+    "negative": {
+      "path": "evidence/K-010/logs/negative.json",
+      "raw_sha256": "bfcc0f2b78419ac6538484df50d0178c7abb10df0585ee91c277b7d491e1adce",
+      "sha256": "b0d89747d4bd925adb2a1e594ed9d22995f250fc2679062644330bda1de571b6"
+    },
+    "rollback_refusal": {
+      "path": "evidence/K-010/logs/rollback_refusal.json",
+      "raw_sha256": "8a2d2de9c474982728311108a7b2b8a370231aeab2440f824ececad47036a691",
+      "sha256": "d13da18f442635b8cec095cca92d274d709aa0c8d8134294ed3edd0bee1e526a"
+    },
+    "runtime": {
+      "path": "evidence/K-010/logs/runtime.json",
+      "raw_sha256": "0466eebe0c77060c89b3b25b892b884ff124492284e10de69567c9bc7a78e46d",
+      "sha256": "d8fa7d0a9cddee623aa7a6d2934d8134ad42f675396796f65664c4fba44b8d23"
+    },
+    "runtime_remove": {
+      "path": "evidence/K-010/logs/runtime_remove.json",
+      "raw_sha256": "800a4084284a92af2ebbc6cf7d1d986679c1be49fff04fdeadce38a86154be1f",
+      "sha256": "2186b4f51c137764f715105dc2947ff60c58917e68a7c6a401b2fa90e5aeb921"
+    },
+    "service_install": {
+      "path": "evidence/K-010/logs/service_install.json",
+      "raw_sha256": "da4c1ddb5d5fb94f30cf9b65c0b996d8ddbccfb7bdff61475c30a9b42393f459",
+      "sha256": "422e8ea1467bda365594ffd8fb3cee0a75e4773f8a6cef19f3c9104634e5ab8f"
+    },
+    "service_query_watch": {
+      "path": "evidence/K-010/logs/service_query_watch.json",
+      "raw_sha256": "cfadf5d345b3f3773c9a77c33d3be11f92dfc2a2a154b57420263160000bfbef",
+      "sha256": "7142caf5ab55505c7d2106ad624ae9f2ec6b83600f2e5b31f11440c1ac02e520"
+    },
+    "service_start": {
+      "path": "evidence/K-010/logs/service_start.json",
+      "raw_sha256": "38fca1a8ad5b55a983400d8ddfe641b8940df2620ed8b8c2c51f3aa139cc47ea",
+      "sha256": "0c9b9936003db82544ade83c0515f2fd23268eeab30df6b0fcbb27b7486060de"
+    },
+    "service_uninstall": {
+      "path": "evidence/K-010/logs/service_uninstall.json",
+      "raw_sha256": "686575b7096d3f0e88a452ae8078df1767bf958370f4d4b1f6fdc67e6c2d75f7",
+      "sha256": "a2b754fbe6a71de3fa40f57fa7be49e96b9e8225b8f8a5d7fff256df98dccf6e"
+    },
+    "unprivileged": {
+      "path": "evidence/K-010/logs/unprivileged.json",
+      "raw_sha256": "e185872e499cf116371ca9fd350e6a1a9c0cccd0c1956d18c2ec11ac674c5b2c",
+      "sha256": "30d4dc45c0f9fe5073e5876a26bb4a4e19b3fceb6f32c10651f8d63bd5a5aefe"
+    },
+    "wrong_core": {
+      "path": "evidence/K-010/logs/wrong_core.json",
+      "raw_sha256": "ff60d186c74a5187368f62599ddb46b217388634e30ff6bd080ad6a68a169d92",
+      "sha256": "cd2534752efa7492dc5bfb9a656bdebaff57bb02ac2e0c9fae47c2b96039192c"
+    }
+  },
+  "platform": "windows-x64",
+  "provenance": "candidate",
+  "release_set_sha256": "566da57883ecf1f16f5fb56e29ea7d5486c70c91aa4beff96e942eeafcb30999",
+  "source_revision": "79eb58cc57bc0d47330df491df59034fe0f22b3b",
+  "status": "local_verified",
+  "task_id": "K-010"
+}

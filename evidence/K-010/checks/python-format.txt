@@ -1,0 +1,4 @@
+cwd=axiom-cli
+command=python -m ruff format --check packaging/windows/Build-UpdateKit.py packaging/windows/Update-Distribution.py tests/windows/Verify-K306UpdateKit.py tests/windows/capture_k010_final.py
+4 files already formatted
+exit=0

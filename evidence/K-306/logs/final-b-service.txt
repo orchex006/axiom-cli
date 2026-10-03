@@ -1,0 +1,5 @@
+exit=0
+stdout:
+{"status":"passed","task_name":"AxiomK306FinalAfter","registered":true,"started":true,"stopped":true,"removed":true,"run_level":"Limited","first_generation":"174939415759412803388fc2287b96847f7dc4ae51a199048633d0bfe971c9bf","updated_generation":"92a033b1d2893d61bcac528d7f3b0bf7f5cde07e29e7896ed37d5348e7fc9c18","installed_daemon_sha256":"433c1c030953164dc2b5dcde81cb0650cae708c31cabbb00055283a9f50beb24","symbol":"WatcherB","query_generation":"9a62de9e1ff2d2613c67173aa595232d2b4c154ad3ce6c8178b617a00712cd93","version":"0.1.2","user_data_preserved":true}
+
+stderr:

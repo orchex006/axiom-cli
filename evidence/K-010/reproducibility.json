@@ -1,0 +1,12 @@
+{
+  "task_id": "K-010",
+  "source_revision": "79eb58cc57bc0d47330df491df59034fe0f22b3b",
+  "same_source_inputs": true,
+  "two_kits_equal": true,
+  "kit_zip_sha256": "70113cd08b01b6d41dc535ba962101b4ffee8ec976d6e276118f4468bd72ca73",
+  "kit_manifest_sha256": "7be7de1b567d9bd46ee983b4152532e32df9b9406bed437a841b2b9c56ca6eb9",
+  "candidate_files_sha256": "f8d185bfb49f7119177d9d9f274f187cefc3d471f6c313186a2c23839e74e493",
+  "release_set_sha256": "566da57883ecf1f16f5fb56e29ea7d5486c70c91aa4beff96e942eeafcb30999",
+  "published": false,
+  "signed": false
+}

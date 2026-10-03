@@ -1,0 +1,12 @@
+{
+  "task_id": "K-306",
+  "owner": "axiom-cli",
+  "branch": "feature/k-306-windows-composite-update",
+  "source_revision": "c4cfb4ba21f6c95211fc1ceec2909e25b3f0f711",
+  "lane": "windows-x64",
+  "kind": "local_runtime",
+  "certified": false,
+  "archive_sha256": "a4bbcb65d2f9aa9b599c1b587f8a4271e8db8fcea195ba99c75a180dbd699a79",
+  "native_report_sha256": "b20ab4893a0ee586ef1ad33015d7ddca3cf74e4dc122b7a14d04119792659f18",
+  "handoff": "evidence/K-306/handoff.json"
+}
