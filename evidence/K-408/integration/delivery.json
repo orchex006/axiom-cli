@@ -1,0 +1,21 @@
+{
+  "tasks": [
+    "K-305",
+    "K-306",
+    "K-010",
+    "K-408"
+  ],
+  "feature_branch": "feature/k-408-wsl-lifecycle",
+  "feature_payload": "ca0afdc447bec78207a7faaade711eccf1971c8b",
+  "main_merge": "adec84bd767beb7aed4f0894d9b0c1f8a7b9637f",
+  "main_remote_sha": "adec84bd767beb7aed4f0894d9b0c1f8a7b9637f",
+  "remote_verification_output": "adec84bd767beb7aed4f0894d9b0c1f8a7b9637f\trefs/heads/main\n",
+  "main_integrated": true,
+  "checkout": "axiom-cli",
+  "checks_passed": true,
+  "native_runtime_rerun": false,
+  "certified": false,
+  "publication": "not_published",
+  "coordination_checkout_note": "axiom-specs currently has unrelated active K-009 merge/conflicts; preserved without mutation. Original canonical child P1-P6/D1-D8 and completed evidence remain unchanged.",
+  "receipt_delivery": "Subsequent receipt commit is feature-pushed and fast-forwarded into main; final remote SHA checked after push."
+}
