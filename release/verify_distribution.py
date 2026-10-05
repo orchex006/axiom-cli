@@ -43,28 +43,6 @@ def verify(root, output):
                 "stdout_sha256": hashlib.sha256(result.stdout.encode()).hexdigest(),
             }
         )
-        if suffix or manifest["platform"] == "linux-x64":
-            body = json.loads(result.stdout)
-            approval = body["plan_digest"]
-            if suffix:
-                apply = argv[:-1] + ["-Apply", "-ApproveDigest", approval]
-            else:
-                apply = argv[:-1] + ["--apply", "--approve-digest", approval]
-            applied = subprocess.run(apply, capture_output=True, text=True, timeout=240)
-            if applied.returncode:
-                raise ValueError(
-                    "native fresh install failed: "
-                    + (applied.stdout + applied.stderr)[-1500:]
-                )
-            cases.append(
-                {
-                    "id": "native fresh install",
-                    "exit_code": applied.returncode,
-                    "stdout_sha256": hashlib.sha256(
-                        applied.stdout.encode()
-                    ).hexdigest(),
-                }
-            )
     wheel = root / "axiom_mcp-0.1.2-py3-none-any.whl"
     with zipfile.ZipFile(wheel) as archive:
         metadata = [x for x in archive.namelist() if x.endswith(".dist-info/METADATA")]
@@ -131,6 +109,28 @@ def verify(root, output):
                 "stdout_sha256": hashlib.sha256(result.stdout.encode()).hexdigest(),
             }
         )
+        if suffix or manifest["platform"] == "linux-x64":
+            body = json.loads(result.stdout)
+            approval = body["plan_digest"]
+            if suffix:
+                apply = argv[:-1] + ["-Apply", "-ApproveDigest", approval]
+            else:
+                apply = argv[:-1] + ["--apply", "--approve-digest", approval]
+            applied = subprocess.run(apply, capture_output=True, text=True, timeout=240)
+            if applied.returncode:
+                raise ValueError(
+                    "native fresh install failed: "
+                    + (applied.stdout + applied.stderr)[-1500:]
+                )
+            cases.append(
+                {
+                    "id": "native fresh install",
+                    "exit_code": applied.returncode,
+                    "stdout_sha256": hashlib.sha256(
+                        applied.stdout.encode()
+                    ).hexdigest(),
+                }
+            )
     archives = [
         p
         for p in root.parent.glob("axiom-0.1.2-*")
