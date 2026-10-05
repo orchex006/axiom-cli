@@ -99,6 +99,9 @@ def owner(repo, directory):
 
 
 def compose(lane, output, cli_revision):
+    cli_revision = subprocess.check_output(["git", "rev-parse", cli_revision], cwd=ROOT, text=True).strip()
+    if len(cli_revision) != 40:
+        raise ValueError("immutable CLI revision required")
     if output.exists():
         raise ValueError("new distribution output required")
     output.mkdir(parents=True)
