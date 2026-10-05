@@ -1,0 +1,12 @@
+{
+  "task_id": "K-615",
+  "status": "done",
+  "branch": "feature/k-615-release-012",
+  "delivery_state": "integrated",
+  "published": true,
+  "tag": "v0.1.2",
+  "release_source_revision": "256692e71cba1132c8230ca7280c9ee19b76b2d8",
+  "github_release": "https://github.com/orchex006/axiom-cli/releases/tag/v0.1.2",
+  "publication_ci": "https://github.com/orchex006/axiom-cli/actions/runs/37280283724",
+  "certification_required": false
+}

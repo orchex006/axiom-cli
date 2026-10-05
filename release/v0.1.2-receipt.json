@@ -1,0 +1,76 @@
+{
+  "repository": "orchex006/axiom-cli",
+  "version": "0.1.2",
+  "tag": "v0.1.2",
+  "published": true,
+  "release_url": "https://github.com/orchex006/axiom-cli/releases/tag/v0.1.2",
+  "published_at": "2026-10-05T07:55:40Z",
+  "source_revision": "256692e71cba1132c8230ca7280c9ee19b76b2d8",
+  "github_actions": "https://github.com/orchex006/axiom-cli/actions/runs/37280283724",
+  "assets": [
+    {
+      "name": "SOURCE-REVISION.txt",
+      "sha256": "293d8f1d796d322da300ff3889d17d23758873230d264293eb9b8e57afa341cc",
+      "bytes": 41
+    },
+    {
+      "name": "axiom-0.1.2-linux-x64.tar.gz",
+      "sha256": "6202e98b4af785dc6f8a35ac2c453bbfe391313bf00b5702b2fc6671d502c6e5",
+      "bytes": 86259488
+    },
+    {
+      "name": "axiom-0.1.2-macos-x64.tar.gz",
+      "sha256": "db9645b01ee984993f483b9656cc9d4bdc5891ed99eabbbbfb4f040bb2bc1ecb",
+      "bytes": 61851288
+    },
+    {
+      "name": "axiom-0.1.2-windows-x64.zip",
+      "sha256": "0b5da15dd7a4c451e5c2fa836354fa14ef753fb8d465ed8fdfe1167ad6c0f72e",
+      "bytes": 37649587
+    },
+    {
+      "name": "linux-x64-distribution.json",
+      "sha256": "d322fc83681a1ada4e5d36f002975ad7b389f909b117ae02b597340df50c95b4",
+      "bytes": 10951
+    },
+    {
+      "name": "linux-x64-native-proof.json",
+      "sha256": "7a5111c6b6bff5cd5ff31994b20632bdbc48cdce0cb37aa991d5809f21c9f2a8",
+      "bytes": 1508
+    },
+    {
+      "name": "macos-x64-distribution.json",
+      "sha256": "534fdb9c4cf14065bcef9d0f21f626596ba2073402d3d4276c16be647969f3dc",
+      "bytes": 10638
+    },
+    {
+      "name": "macos-x64-native-proof.json",
+      "sha256": "b6379684b88c39dc86e5871cc03ac25c4a0601e11b67c1821e9ec3460c4063c4",
+      "bytes": 1347
+    },
+    {
+      "name": "windows-x64-distribution.json",
+      "sha256": "9d7b1900962a589fc94d48bfa6c3125f2702231d8fa4bd3e908cf26d7232b071",
+      "bytes": 11472
+    },
+    {
+      "name": "windows-x64-native-proof.json",
+      "sha256": "a2303bb0a7f0fc399425026aff6fc2bb18ddd153c9529f064ef32eb8afdcc321",
+      "bytes": 1508
+    }
+  ],
+  "certification_required": false,
+  "verified_environments": [
+    "windows-x64",
+    "macos-x64",
+    "linux-x64",
+    "wsl2-linux-x64"
+  ],
+  "limitations": [
+    "Mac ARM excluded.",
+    "Licensed AI host applications are not claimed exercised.",
+    "Mac Intel native package/entrypoint/install-plan and installed MCP/core CI passed; full desktop service registration/apply is not inferred from this runner.",
+    "Use the extracted Windows/Linux CLI for management; optional user-PATH entrypoint installers are explicit actions. Embedded local channels are offline verified descriptions; signed automatic update feeds remain separate.",
+    "Default static-analysis profile remains bounded; a single-line C# namespace-plus-class test fixture was not resolved as a class. Multiline real-source watcher/query passed."
+  ]
+}
