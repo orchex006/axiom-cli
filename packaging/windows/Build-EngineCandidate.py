@@ -207,7 +207,8 @@ def build(args: argparse.Namespace) -> dict:
         if len(metadata) != 1:
             raise ValueError("MCP wheel metadata is missing or ambiguous")
         fields = email.message_from_bytes(wheel.read(metadata[0]))
-        if fields.get("Name") != "axiom-mcp" or fields.get("Version") != "0.1.1":
+        mcp_version = fields.get("Version")
+        if fields.get("Name") != "axiom-mcp" or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(mcp_version)):
             raise ValueError("MCP wheel name or version differs from the candidate")
     outputs = [release / "channel.json", release / "skills-manifest.json"]
     for path in outputs:
@@ -247,7 +248,7 @@ def build(args: argparse.Namespace) -> dict:
                 ),
                 component(
                     "axiom-mcp",
-                    "0.1.1",
+                    mcp_version,
                     args.mcp_revision,
                     release / args.mcp_wheel.name,
                 ),

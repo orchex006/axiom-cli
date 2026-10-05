@@ -1,3 +1,7 @@
+## 0.1.2 — K-615
+
+- Compose exact published 0.1.2 core, portable MCP/skills and pinned native Python/dependency inputs into checked Windows/Mac Intel/Linux GitHub distribution archives; preserve engine ownership and user approval. WSL reuses Linux artifacts with separate real verification.
+
 # 0.1.1 MacIntel test release
 
 Owner-authorized publication of current code; see release/v0.1.1-notes.md.
