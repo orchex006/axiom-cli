@@ -657,27 +657,55 @@ fn engine_stand_in() -> PathBuf {
 /// Returns `None` (and prints why) when this host offers no usable `sh`, so a host without one
 /// skips the test instead of failing it.
 fn shell_engine(dir: &Path, name: &str, body: &str) -> Option<PathBuf> {
-    let sh_works = Command::new("sh")
-        .arg("-c")
-        .arg("exit 0")
-        .status()
-        .map(|status| status.success())
-        .unwrap_or(false);
-    if !sh_works {
-        eprintln!("skipping: this host has no usable `sh` to build an engine stand-in");
-        return None;
-    }
-    std::fs::create_dir_all(dir).expect("the engine stand-in directory must be creatable");
-    let path = dir.join(name);
-    std::fs::write(&path, format!("#!/bin/sh\n{body}\n"))
-        .expect("the engine stand-in script must be writable");
-    #[cfg(unix)]
+    #[cfg(windows)]
     {
-        use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755))
-            .expect("the engine stand-in must be executable");
+        static NATIVE: std::sync::OnceLock<PathBuf> = std::sync::OnceLock::new();
+        let native = NATIVE.get_or_init(|| {
+            let output = std::env::temp_dir().join(format!(
+                "axiom-cli-native-engine-fixture-{}.exe",
+                std::process::id()
+            ));
+            let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/native_engine_stub.rs");
+            let status = Command::new("rustc")
+                .args(["+1.85.0", "--edition=2021"])
+                .arg(source)
+                .arg("-o")
+                .arg(&output)
+                .status()
+                .expect("native fixture compiler");
+            assert!(status.success(), "native engine fixture must compile");
+            output
+        });
+        std::fs::create_dir_all(dir).expect("fixture directory");
+        let path = dir.join(format!("{name}.exe"));
+        std::fs::copy(native, &path).expect("native fixture executable");
+        std::fs::write(path.with_extension("fixture"), body).expect("fixture response body");
+        Some(path)
     }
-    Some(path)
+    #[cfg(not(windows))]
+    {
+        let sh_works = Command::new("sh")
+            .arg("-c")
+            .arg("exit 0")
+            .status()
+            .map(|status| status.success())
+            .unwrap_or(false);
+        if !sh_works {
+            eprintln!("skipping: this host has no usable `sh` to build an engine stand-in");
+            return None;
+        }
+        std::fs::create_dir_all(dir).expect("the engine stand-in directory must be creatable");
+        let path = dir.join(name);
+        std::fs::write(&path, format!("#!/bin/sh\n{body}\n"))
+            .expect("the engine stand-in script must be writable");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755))
+                .expect("the engine stand-in must be executable");
+        }
+        Some(path)
+    }
 }
 
 /// Assert `text` is exactly one JSON object and nothing else.

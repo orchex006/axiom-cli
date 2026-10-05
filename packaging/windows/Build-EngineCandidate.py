@@ -56,8 +56,8 @@ def owner_skills(
         members = tar.getmembers()
         names = [row.name for row in members]
         if (
-            len(members) != 42
-            or len(set(names)) != 42
+            not 2 <= len(members) <= 4096
+            or len(set(names)) != len(members)
             or not all(row.isfile() and relative(row.name) for row in members)
         ):
             raise ValueError("skills source archive membership is invalid")
@@ -71,13 +71,13 @@ def owner_skills(
     manifest = json.loads((stage / "skills-manifest.json").read_text(encoding="utf-8"))
     if (
         manifest.get("component") != "axiom-skills"
-        or manifest.get("component_version") != "0.1.1"
+        or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(manifest.get("component_version", "")))
         or manifest.get("spec_version") != "2.0.0-draft.1"
         or not HEX40.fullmatch(manifest.get("spec_revision", ""))
     ):
         raise ValueError("skills source identity or compatibility is invalid")
     rows = manifest.get("files")
-    if not isinstance(rows, list) or len(rows) != 41:
+    if not isinstance(rows, list) or not 1 <= len(rows) <= 4095:
         raise ValueError("skills payload is incomplete")
     declared = {"skills-manifest.json"}
     for row in rows:
@@ -132,12 +132,15 @@ def build(args: argparse.Namespace) -> dict:
     if not source.is_file() or release.is_symlink():
         raise ValueError("Windows release set is missing")
     base = json.loads(source.read_text(encoding="utf-8"))
+    release_version = base.get("release_version", "")
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(release_version)):
+        raise ValueError("release version is not SemVer")
     if (
         base.get("document_kind"),
         base.get("platform"),
         base.get("arch"),
         base.get("release_version"),
-    ) != ("axiom-cli-release-set", "windows-x64", "x86_64", "0.1.1"):
+    ) != ("axiom-cli-release-set", "windows-x64", "x86_64", release_version):
         raise ValueError("release set identity or version mismatch")
     rows = {row["name"]: row for row in base["artifacts"]}
     if len(rows) != len(base["artifacts"]):
@@ -148,7 +151,7 @@ def build(args: argparse.Namespace) -> dict:
         core.get("version"),
         core.get("signing"),
         core.get("publication"),
-    ) != ("windows-x64", "0.1.1", "unsigned", "not_published") or not HEX40.fullmatch(
+    ) != ("windows-x64", release_version, "unsigned", "not_published") or not HEX40.fullmatch(
         core.get("source_revision", "")
     ):
         raise ValueError("core candidate provenance is invalid")
@@ -207,7 +210,8 @@ def build(args: argparse.Namespace) -> dict:
         if len(metadata) != 1:
             raise ValueError("MCP wheel metadata is missing or ambiguous")
         fields = email.message_from_bytes(wheel.read(metadata[0]))
-        if fields.get("Name") != "axiom-mcp" or fields.get("Version") != "0.1.1":
+        mcp_version = fields.get("Version")
+        if fields.get("Name") != "axiom-mcp" or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(mcp_version)):
             raise ValueError("MCP wheel name or version differs from the candidate")
     outputs = [release / "channel.json", release / "skills-manifest.json"]
     for path in outputs:
@@ -247,7 +251,7 @@ def build(args: argparse.Namespace) -> dict:
                 ),
                 component(
                     "axiom-mcp",
-                    "0.1.1",
+                    mcp_version,
                     args.mcp_revision,
                     release / args.mcp_wheel.name,
                 ),

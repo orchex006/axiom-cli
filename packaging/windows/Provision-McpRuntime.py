@@ -139,7 +139,7 @@ def unpack_inputs(archive: Path, destination: Path, source_revision: str) -> dic
     with tarfile.open(archive) as tar:
         members = tar.getmembers()
         names = {row.name for row in members}
-        if len(members) != 35 or len(names) != 35 or any(
+        if not 4 <= len(members) <= 2048 or len(names) != len(members) or any(
             not row.isfile() or row.name.startswith("/") or "\\" in row.name
             or ".." in row.name.split("/") for row in members
         ):

@@ -1,0 +1,74 @@
+name: Native 0.1.2 distribution CI
+on:
+  push:
+    branches: [main, 'feature/**']
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  native:
+    name: native (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-x64
+            os: windows-2025
+          - platform: linux-x64
+            os: ubuntu-24.04
+          - platform: macos-x64
+            os: macos-15-intel
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Required owner Rust checks
+        shell: bash
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal --component rustfmt --component clippy
+          cargo +1.85.0 fmt --check
+          cargo +1.85.0 clippy --locked --all-targets -- -D warnings
+          cargo +1.85.0 test --locked
+          cargo +1.85.0 build --locked --release
+      - name: Native runtime regression checks
+        if: runner.os != 'Windows'
+        shell: bash
+        run: python -m unittest discover -s tests/macos -p test_runtime_rollback_preflight.py
+      - name: Compose actual published 0.1.2 owner bytes and verify native payload
+        shell: python
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          import os, pathlib, subprocess, sys
+          import json, time
+          deadline = time.monotonic() + 600
+          for repo in ('axiom-graphd', 'axiom-mcp', 'axiom-skills'):
+            while True:
+              result = subprocess.run(['gh', 'release', 'view', 'v0.1.2', '--repo', 'orchex006/' + repo, '--json', 'isDraft'], capture_output=True, text=True)
+              if result.returncode == 0 and json.loads(result.stdout)['isDraft'] is False:
+                break
+              assert time.monotonic() < deadline, 'verified owner Release unavailable: ' + repo
+              print('Waiting for published v0.1.2 owner: ' + repo, flush=True)
+              time.sleep(10)
+          output = pathlib.Path(os.environ['RUNNER_TEMP']) / 'distribution-assets'
+          subprocess.run([sys.executable, 'release/compose_012.py', '--platform', '${{ matrix.platform }}', '--out', str(output), '--source-revision', os.environ['GITHUB_SHA']], check=True)
+          subprocess.run([sys.executable, 'release/verify_distribution.py', '--release', str(output / 'assembled'), '--out', str(output / 'native-proof.json')], check=True)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distribution-${{ matrix.platform }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/distribution-assets/*.zip
+            ${{ runner.temp }}/distribution-assets/*.tar.gz
+            ${{ runner.temp }}/distribution-assets/*-distribution.json
+            ${{ runner.temp }}/distribution-assets/native-proof.json
+          if-no-files-found: error

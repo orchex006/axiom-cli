@@ -1,80 +1,13 @@
-# axiom-cli
+# Axiom CLI
 
-Component seed for Axiom Graph Ecosystem, specification `2.0.0-draft.1`. This directory contains development governance and co-located documentation/templates, not a finished executable or published package.
+The native distribution entrypoint for the Axiom ecosystem. The 0.1.2 test release combines `axiom-cli`, the core (`axiom` and `axiom-graphd`), one portable MCP wheel and one portable skills bundle, with source revisions and SHA-256 checksums.
 
-**Owner scope:** canonical distribution of the installed ecosystem — the distributed entrypoint, native installers, transactional install/update/uninstall, container image publication and the update channel manifest. The installation engine stays owned by `axiom-graphd` and is wrapped, never re-implemented.
+Download the matching Windows x64, Mac Intel or Linux x64 archive from [GitHub Releases](https://github.com/orchex006/axiom-cli/releases/tag/v0.1.2). WSL2 uses the identical Linux archive. Mac ARM is excluded from this test release. Follow the included README: extract to a new directory, verify SHA256SUMS, choose a fresh per-user root, preview the install plan, then apply its exact approval digest. No certification, signing, Docker, WSL-on-Windows, Bash or elevation is required for native delivery.
 
-## Start development
+The installer engine is owned by `axiom-graphd`; this repository composes and verifies owner payloads, and never forks that engine. MCP/skills stay portable. MCP stdio runs as an AI host child; optional HTTP is foreground. Configure scoped credentials separately; a bare gateway grants no tool authority.
 
-Obtain the `axiom-specs` repository and pin its immutable commit plus content digest in `spec.lock.json`, using `spec.lock.example.json` only as a shape example. The example deliberately has no invented revision. Resolve the source-of-truth and task ledger through that pin; do not rely on this seed's location in a ZIP or assume a sibling checkout path.
+The public entrypoint exposes `install`, `update`, `doctor`, `version` and `uninstall`. Existing retained-generation and data-preserving workflows remain. The packaged local channel is an offline verified payload description; existing signed automatic network update protocols are unchanged.
 
-Read [Development.md](Development.md), [AGENTS.md](AGENTS.md), [documentation](docs/README.md) and the owner spec `J-axiom-cli.md` in the pinned specification. Select bounded tasks whose `repo` equals `axiom-cli`; A–G and J IDs preserve workstream history and no longer encode repository membership.
+See [0.1.2 test release instructions](release/v0.1.2-notes.md), [development contract](Development.md) and [owner documentation](docs/README.md). Actual publication/source/platform results are recorded in `release/v0.1.2-receipt.json`; build success is not inferred as WSL or licensed AI host verification.
 
-## Repository boundary
-
-Code, installers, local tests, version/release manifests, [Changelog.md](Changelog.md) and docs move together. Shared schemas and public protocols change first through an approved spec revision. No separate bootstrap, docs or conformance repository is required.
-
-## Platform support status
-
-Windows x64, macOS x64 and the GitHub Container Registry image are the finish-first delivery tier; Linux x64 including the WSL2 lane and macOS arm64 are design-complete and stay unverified until a native run is recorded. No target is `certified` (all `false`), and the only native execution record for the lifecycle verbs in the current round is `macos-x64`. A release must carry target-specific evidence from the current platform matrix, not infer support from a cross-compile or from a published container image.
-
-## Implemented surface
-
-Card `J-003` added the argv surface: a Rust binary named `axiom-cli` builds from `Cargo.toml` with no
-third-party dependencies, and exposes the five contract verbs `install`, `update`, `doctor`,
-`version` and `uninstall` with the canonical exit vocabulary. All five now dispatch to real work;
-there is no "unbuilt verb" fallback. `install` and `uninstall` require an explicit mode: `--dry-run`
-reports the plan and changes nothing, `--apply` runs the transaction and requires an approved plan
-digest, and a bare verb is a validation error (`2`) because a mutating verb must not answer the
-success code for work it did not do (`axiom-specs/docs/16-CLI-AND-CONTROL-API.md` section 6 rule 4).
-`doctor` runs real checks and exits with the worst finding, and `version` always exits `0`, even with
-nothing installed. The two mutating verbs still stop at the engine
-handoff: `install --apply` refuses `4` `engine_bundle_not_assembled`, because this layer assembles no
-bundle for the engine's own `install plan --bundle <dir>` verb (a `bundle.json` manifest plus
-verified component payloads and a `skills/` bundle); `uninstall --apply` refuses `4`
-`engine_removal_unavailable` because the engine publishes no ecosystem removal verb; and either
-refuses `3` `engine_not_found` when no engine binary is present. See
-[docs/40-CLI-ARGV-SURFACE.md](docs/40-CLI-ARGV-SURFACE.md). The installation engine stays in
-`axiom-graphd`; this layer verifies the release set and reports the refusal rather than placing
-bytes itself.
-
-Card `J-006` added the container delivery channel (`container-linux-x64`): `containers/Dockerfile`
-with both base images pinned by digest, a non-root runtime user and a complete OCI label set;
-`containers/entrypoint.sh`, which forwards argv verbatim so the container exposes the same five
-verbs with the same exit codes; and `.github/workflows/publish-container.yml`, which builds with
-buildx, publishes immutable version and commit tags only, keeps pushing opt-in and records the
-resolved digest. See [docs/50-CONTAINER-CHANNEL.md](docs/50-CONTAINER-CHANNEL.md). The image is an
-additional channel and is never native runtime evidence for a target. The channel is defined and
-locally verified but **not published**: no image was pushed, no tag was created, and
-`distribution.container.published_image_digest` in the platform matrix is still `null`.
-
-Card `J-004` added the first real, executed distribution slice: a per-user Windows x64 installer and
-uninstaller plus the release-set packaging step, all runnable from the shipped Windows shell with no
-WSL, Bash, Docker or elevation. `installers/windows/` holds `AxiomCli.Windows.Common.ps1`,
-`Install-AxiomCli.ps1` and `Uninstall-AxiomCli.ps1`; `packaging/windows/Build-ReleaseSet.ps1` produces
-the release set whose sha256 is the single approval digest, and `packaging/install-result.schema.json`
-is the install-result envelope schema. `tests/windows/Invoke-AxiomCliWindowsDistributionTests.ps1`
-executes 32 legs and writes `evidence/J-004/`. See
-[docs/30-DISTRIBUTION-AND-INSTALLERS.md](docs/30-DISTRIBUTION-AND-INSTALLERS.md). The released
-`axiom-cli.exe` now dispatches all five verbs, but `install --apply` stops at the engine handoff
-rather than placing bytes; the installer scripts are what verify and install artifacts.
-`axiom-graphd` core artifacts are not built yet, so they stay recorded as unverified rather than
-installed. `windows-x64` is not certified.
-
-`spec.lock.json` is still unset: this seed ships only `spec.lock.example.json`, and a verified
-immutable `axiom-specs` pin has not been recorded.
-
-Card `J-008` added the **design-complete / test-later** delivery tiers. `installers/linux/` now
-contains a per-user, transactional Linux x64 install/update/uninstall path written in POSIX `sh`
-(no Bash, Docker, elevation or symlink), with a `systemd --user` registration step that degrades
-explicitly when no user manager is reachable, and `packaging/linux/` carries the release-set builder
-and the Linux profile of the shared 33-key `install-result` envelope. The WSL2 lane runs the same
-path as Linux and records the real kernel and distribution. `packaging/macos-arm64/` carries the one
-macOS recipe shared by `arm64` and `x64`, parameterised by `--arch`; the macOS arm64 artifact is
-**not built** on this host, so that leg stays `not_run` with `certified: false`. See
-[docs/60-LINUX-AND-MACOS-ARM64.md](docs/60-LINUX-AND-MACOS-ARM64.md).
-
-Both tiers remain `certified: false` and are never presented as finish-first. The executed evidence
-is a WSL2 run against a container-built Linux x64 artifact; a native distro-package run, signing,
-`linux/arm64` and the container image are not done, while the update channel (`J-007`) is implemented
-with publication still closed.
+The separate [container and air-gapped channel guide](docs/50-CONTAINER-CHANNEL.md) retains its own publication status; native Release archives do not imply a new OCI image was published.
