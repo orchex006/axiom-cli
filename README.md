@@ -9,3 +9,5 @@ The installer engine is owned by `axiom-graphd`; this repository composes and ve
 The public entrypoint exposes `install`, `update`, `doctor`, `version` and `uninstall`. Existing retained-generation and data-preserving workflows remain. The packaged local channel is an offline verified payload description; existing signed automatic network update protocols are unchanged.
 
 See [0.1.2 test release instructions](release/v0.1.2-notes.md), [development contract](Development.md) and [owner documentation](docs/README.md). Actual publication/source/platform results are recorded in `release/v0.1.2-receipt.json`; build success is not inferred as WSL or licensed AI host verification.
+
+The separate [container and air-gapped channel guide](docs/50-CONTAINER-CHANNEL.md) retains its own publication status; native Release archives do not imply a new OCI image was published.
