@@ -99,7 +99,9 @@ def owner(repo, directory):
 
 
 def compose(lane, output, cli_revision):
-    cli_revision = subprocess.check_output(["git", "rev-parse", cli_revision], cwd=ROOT, text=True).strip()
+    cli_revision = subprocess.check_output(
+        ["git", "rev-parse", cli_revision], cwd=ROOT, text=True
+    ).strip()
     if len(cli_revision) != 40:
         raise ValueError("immutable CLI revision required")
     if output.exists():
@@ -270,6 +272,9 @@ def compose(lane, output, cli_revision):
                 "files": {p.name: sha(p) for p in runtime_dir.iterdir()},
             }
             (runtime_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
+            for script in (ROOT / "installers/linux").glob("*.sh"):
+                shutil.copyfile(script, release / script.name)
+                (release / script.name).chmod(0o755)
         else:
             record = json.loads(
                 (ROOT / "packaging/windows/runtime-input.json").read_bytes()
