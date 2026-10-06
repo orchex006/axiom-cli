@@ -1,0 +1,43 @@
+{
+  "task_id": "L-006",
+  "status": "verified-pending-ledger",
+  "branch": "feature/l-006-adopt-legacy",
+  "base": "feature/l-005-one-command-update c45c722 (stacked)",
+  "spec_pin": "8eff6db51bfe3c4ca1940bd20555cb989641ce31",
+  "justified_path_changes": [
+    "src/update/state.rs: an installed bin/axiom-cli resolves its own root (needed so an adopted non-default root works without AXIOM_* variables)",
+    "src/runtime.rs, src/pathenv.rs: nested runtime and adopted PATH entry"
+  ],
+  "lanes": {
+    "windows-x64": "verified (real host; real 0.1.2 bootstrap root from the published bootstrap_windows.ps1, fixture 0.1.0 CLI store, redirected LOCALAPPDATA/USERPROFILE/PATH)",
+    "macos-x64": "not_run",
+    "linux-x64": "not_run",
+    "wsl2-linux-x64": "not_run"
+  },
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --locked",
+      "exit_code": 0,
+      "artifact": "evidence/L-006/cargo-test.txt"
+    },
+    {
+      "command": "python tests/l006_adopt_legacy.py --release <v0.1.2 windows-x64 extract> --cli target/release/axiom-cli.exe --work <short temp dir>",
+      "exit_code": 0,
+      "artifact": "evidence/L-006/windows-x64-adopt-legacy.json"
+    }
+  ],
+  "limitations": [
+    "the 0.1.0 CLI store is a fixture mirroring the J-004 layout (its executable is the published 0.1.2 CLI, so the PATH probe reports 0.1.2); the 0.1.2 bootstrap root is real",
+    "the operator's real %LOCALAPPDATA%\\Axiom and %USERPROFILE%\\axiom were only read, never adopted",
+    "leftover AXIOM_* user variables are reported, not removed (they belong to the user)",
+    "POSIX legacy layouts (bootstrap_linux.py roots, ~/.local/share/axiom stores) are classified by the same rules but not executed here"
+  ]
+}

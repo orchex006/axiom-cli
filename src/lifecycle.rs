@@ -65,6 +65,8 @@ pub struct InstallRequest {
     pub yes: bool,
     /// `false` with `--no-modify-path`: the interactive install leaves the user PATH alone.
     pub modify_path: bool,
+    /// `--adopt <path>`: turn a legacy bootstrap root into the install root, in place.
+    pub adopt: Option<String>,
 }
 
 /// A parsed `uninstall` request.
@@ -127,6 +129,35 @@ fn install(request: InstallRequest, json: bool) -> Result<Report, Refusal> {
     if request.mode != Mode::DryRun {
         if let Some(refusal) = crate::elevation::refusal() {
             return Err(refusal);
+        }
+    }
+    if let Some(target) = request.adopt.as_deref() {
+        let path = PathBuf::from(target);
+        match crate::legacy::classify(&path) {
+            Some(layout) if matches!(layout.kind, "bootstrap-root" | "cli-store") => {
+                // The adopted root is this process's install root for the whole transaction.
+                std::env::set_var(state::INSTALL_ROOT_ENV, &path);
+            }
+            Some(layout) => {
+                return Err(Refusal::validation(
+                    "adopt_target_unknown_layout",
+                    format!(
+                        "{} is not a recognised Axiom layout ({}); it was not modified",
+                        path.display(),
+                        layout.kind
+                    ),
+                ))
+            }
+            None => {
+                return Err(Refusal::validation(
+                    "adopt_target_not_legacy",
+                    format!(
+                        "{} is not a legacy Axiom installation (absent, empty or already an \
+                         ADR-0033 root); nothing was changed",
+                        path.display()
+                    ),
+                ))
+            }
         }
     }
     let path_change = (request.mode == Mode::Interactive).then_some(request.modify_path);
@@ -299,10 +330,17 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
              live and the engine has no `AXIOM_HOME`",
         )
     })?;
-    if !root.join(state::INSTALLED_FILE).is_file() {
+    let adopting: Vec<crate::legacy::Layout> = crate::legacy::classify(&root)
+        .filter(|layout| matches!(layout.kind, "cli-store" | "bootstrap-root"))
+        .into_iter()
+        .collect();
+    if !root.join(state::INSTALLED_FILE).is_file() && adopting.is_empty() {
         if let Some(refusal) = crate::layout::foreign_root_refusal(&root) {
             return Err(refusal);
         }
+    }
+    for layout in adopting.iter().filter(|layout| layout.kind == "cli-store") {
+        crate::legacy::backup_cli_store(layout)?;
     }
     let staging_root = root.join("staging").join("engine-bundle");
     if let (Some(bound), Some(inputs)) = (
@@ -413,6 +451,13 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         })?;
     report.detail("installed_record", recorded.to_json());
     if let Some(block) = set.plan.get("path_change") {
+        if block.get("action").and_then(Json::as_text) == Some("already-present")
+            && !adopting.is_empty()
+        {
+            // The legacy installer put this bin on the user PATH; the adopting install now owns
+            // the entry, so uninstall removes it.
+            crate::pathenv::adopt(&request.install_root, block)?;
+        }
         let change = crate::pathenv::apply(&request.install_root, block).map_err(|refusal| {
             Refusal::new(
                 refusal.class,
@@ -597,7 +642,17 @@ fn record_layout(
 /// Read a provisioned candidate runtime as a verified engine input. An absent
 /// runtime retains the pre-K-104 behavior; a present but changed record refuses.
 fn provisioned_mcp_runtime_bin(root: &Path) -> Result<Option<PathBuf>, Refusal> {
-    let runtime_root = root.join("mcp-runtime");
+    let mut runtime_root = root.join("mcp-runtime");
+    if !runtime_root.join("current.json").exists() {
+        // An adopted 0.1.2 Windows bootstrap root keeps its runtime at the nested location the
+        // old bootstrap produced; the venv holds absolute paths, so it is used where it is.
+        if let Some(pointer) = crate::legacy::nested_runtime_pointer(root) {
+            runtime_root = pointer
+                .parent()
+                .map(Path::to_path_buf)
+                .unwrap_or(runtime_root);
+        }
+    }
     let pointer = runtime_root.join("current.json");
     if !pointer.exists() {
         return Ok(None);
@@ -1233,6 +1288,26 @@ fn resolve_release_set(
         )
         .map_err(|error| Refusal::validation("plan_unbuildable", error))?;
     }
+    if let Some(root) = state::default_root() {
+        let legacy: Vec<Json> = crate::legacy::detect(&root)
+            .iter()
+            .map(|layout| {
+                let mut row = layout.to_json();
+                let action = match (crate::legacy::same_path(&layout.path, &root), layout.kind) {
+                    (true, "cli-store") => "adopt-in-place",
+                    (true, "bootstrap-root") => "adopt-in-place",
+                    (false, "cli-store" | "bootstrap-root") => "side-by-side",
+                    _ => "report-only",
+                };
+                let _ = row.set("action", Json::text(action));
+                row
+            })
+            .collect();
+        if !legacy.is_empty() {
+            plan.set("legacy", Json::array(legacy))
+                .map_err(|error| Refusal::validation("plan_unbuildable", error))?;
+        }
+    }
     let digest = plan_contract::digest(&plan).ok_or_else(|| {
         Refusal::validation("plan_unbuildable", "the install plan could not be digested")
     })?;
@@ -1532,6 +1607,42 @@ fn plan_lines(set: &ReleaseSet) -> Vec<String> {
     ));
     if let Some(block) = set.plan.get("path_change") {
         lines.push(crate::pathenv::plan_line(block));
+    }
+    for row in set
+        .plan
+        .get("legacy")
+        .and_then(Json::as_array)
+        .unwrap_or(&[])
+    {
+        let kind = row.get("kind").and_then(Json::as_text).unwrap_or("?");
+        let path = row.get("path").and_then(Json::as_text).unwrap_or("?");
+        let version = row
+            .get("version")
+            .and_then(Json::as_text)
+            .unwrap_or("unknown");
+        lines.push(match row.get("action").and_then(Json::as_text) {
+            Some("adopt-in-place") if kind == "cli-store" => format!(
+                "legacy: adopt the {version} CLI store at {path} in place (its axiom-cli is backed up under legacy\\, cli\\ and install-manifest.json are kept)"
+            ),
+            Some("adopt-in-place") => format!(
+                "legacy: adopt the {version} bootstrap root at {path} in place (engine ecosystem and MCP runtime reused, nothing reinstalled)"
+            ),
+            Some("side-by-side") => format!(
+                "legacy: {kind} {version} at {path} is left untouched (side by side); to adopt it instead run `axiom-cli install --adopt {path}`"
+            ),
+            _ => format!("legacy: unrecognised Axiom-like directory {path}; reported, not modified"),
+        });
+    }
+    if let Some(root) = set.plan.get("install_root").and_then(Json::as_text) {
+        for shadow in crate::legacy::shadows(&crate::layout::bin_dir(Path::new(root))) {
+            if shadow.before_root_bin {
+                lines.push(format!(
+                    "warning: {} ({}) comes earlier on PATH and will shadow the new axiom-cli until it is removed",
+                    shadow.path.display(),
+                    shadow.version
+                ));
+            }
+        }
     }
     lines.push(format!("plan digest: {}", set.plan_digest));
     lines

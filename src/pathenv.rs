@@ -125,6 +125,28 @@ pub fn apply(root: &Path, block: &Json) -> Result<Json, Refusal> {
     Ok(record)
 }
 
+/// Take ownership of a PATH entry a legacy installer added, so uninstall removes it.
+pub fn adopt(root: &Path, block: &Json) -> Result<(), Refusal> {
+    let path = root.join(RECORD_FILE);
+    if path.exists() || !cfg!(windows) {
+        return Ok(());
+    }
+    let entry = block.get("entry").and_then(Json::as_text).unwrap_or("");
+    let record = Json::from_pairs(vec![
+        ("platform", Json::text("windows")),
+        ("key", Json::text(&format!("HKCU\\{}", windows::key_name()))),
+        ("entry", Json::text(entry)),
+        ("adopted", Json::bool(true)),
+        ("value_existed", Json::bool(true)),
+        ("separator_added", Json::bool(true)),
+    ]);
+    state::write_atomic(
+        &path.with_extension("json.tmp"),
+        &path,
+        json::canonical_text(&record).as_bytes(),
+    )
+}
+
 /// Remove exactly the recorded change. Absent record: nothing to do.
 pub fn revert(root: &Path) -> Result<Option<Json>, Refusal> {
     let path = root.join(RECORD_FILE);
