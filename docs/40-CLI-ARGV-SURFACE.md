@@ -88,10 +88,12 @@ Every documented verb now dispatches to real work; `NotReady` is a conditional r
 universal answer. No verb returns `0` when it could not complete, and no refusal is an empty success
 envelope. What remains is the engine handoff:
 
-- `install --apply`: `4` `engine_bundle_not_assembled` when the engine is present but this layer
-  assembles no bundle input for the engine's `install plan --bundle <dir>` verb (a `bundle.json`
-  manifest plus verified component payloads and a `skills/` bundle), and `3` `engine_not_found` when
-  no engine binary is present. The engine verb exists; the shortfall is on this side.
+- `install --apply` (L-002): assembles the engine bundle, provisions the release's MCP runtime,
+  delegates placement to the engine (`install plan --bundle` / `install apply`), then places
+  `axiom-cli`, `axiom` and `axiom-graphd` in `<root>/bin` and writes `installed.json` last. Refusals:
+  `3` `engine_not_found` when no engine binary is present (nothing placed), `6`
+  `install_root_foreign` for a nonempty root holding non-Axiom entries, `2` `artifact_unverified:*`
+  for a tampered artifact (before any placement), and the engine's own code when it refuses.
 - `uninstall --apply`: `3` `nothing_installed`, `3` `engine_not_found`, or `4`
   `engine_removal_unavailable`, because the engine publishes no removal verb this layer can bind a
   plan to.
@@ -160,7 +162,7 @@ src/update/       the update channel: check / plan / apply / rollback
 |---|---|---|
 | `install` (bare) | Explicit mode required | `2` validation (`--dry-run` or `--apply` required) |
 | `install --dry-run` | Resolves the release set, verifies artifacts, changes nothing | `0` resolved; `4` `no_release_set`; `2` validation |
-| `install --apply` | Requires `--approve-digest`; verifies, then stops at the engine handoff | `2` missing or invalid digest; `3` `engine_not_found`; `4` `engine_bundle_not_assembled` / `no_release_set`; `6` conflict on a stale or mismatched approval |
+| `install --apply` | Requires `--approve-digest`; verifies, provisions the MCP runtime, delegates placement to the engine, fills `<root>/bin` and writes `installed.json` | `2` missing or invalid digest / unverified artifact; `3` `engine_not_found`; `4` `no_release_set`; `6` conflict on a stale or mismatched approval or a foreign root |
 | `uninstall` (bare) | Explicit mode required | `2` validation (`--dry-run` or `--apply` required) |
 | `uninstall --dry-run` | Reports the removal plan, changes nothing | `0`; `2` |
 | `uninstall --apply` | Requires `--approve-digest`; refuses at the engine handoff | `3` `nothing_installed` / `engine_not_found`; `4` `engine_removal_unavailable`; `6` conflict |

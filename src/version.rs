@@ -311,10 +311,21 @@ fn available_block(component: Option<&channel::Component>) -> Json {
     }
 }
 
+/// The one release version every recorded component shares, if they agree.
+fn release_version(generation: &Generation) -> Option<&str> {
+    let first = generation.entries.first()?.version.as_str();
+    generation
+        .entries
+        .iter()
+        .all(|entry| entry.version == first)
+        .then_some(first)
+}
+
 fn installed_lines(installed: &state::Installed, generation: &Generation) -> Vec<String> {
     let mut lines = vec![
         format!(
-            "installed: channel={} generation={} at={}",
+            "installed: {} channel={} generation={} at={}",
+            release_version(generation).unwrap_or("mixed"),
             installed.channel,
             installed.current_generation,
             installed.installed_at.format()

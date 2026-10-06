@@ -1,0 +1,170 @@
+{
+  "task_id": "L-002",
+  "host": {
+    "system": "Windows",
+    "machine": "AMD64",
+    "release": "11",
+    "python": "3.13.14"
+  },
+  "cli_sha256": "e7837be2fd1ae803a7bb42e4b2bd0abf8bbe80df58d2527b2390d8ec889ebb19",
+  "release": "<home>\\AppData\\Local\\Temp\\<session-tmp>\\scratchpad\\rel012\\x",
+  "cases": [
+    {
+      "case": "first_install",
+      "passed": true,
+      "plan_digest": "319dd842c04d8aaa4af453ef75a88e8634ccaff3e9ab7a69cdcfd1785fa06ef4",
+      "apply": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "319dd842c04d8aaa4af453ef75a88e8634ccaff3e9ab7a69cdcfd1785fa06ef4"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-319dd842c04d8aaa recorded in <home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom\\bin)\nplan digest: 319dd842c04d8aaa4af453ef75a88e8634ccaff3e9ab7a69cdcfd1785fa06ef4\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      },
+      "bin": [
+        "axiom-cli.exe",
+        "axiom-graphd.exe",
+        "axiom.exe"
+      ],
+      "installed_json_sha256": "18441c74f76416d4466c8561799c7f560c07c9f859ff3d3d39a1c6649a6c822e",
+      "components": [
+        {
+          "component": "axiom-graphd",
+          "sha256": "0fe0af8fddd2e6e70272b28687ad35755d2192c9d4d4bbc47558fcf9eb72fca0",
+          "version": "0.1.2"
+        },
+        {
+          "component": "axiom-mcp",
+          "sha256": "364a13ce07d3f79dc59cfe74e1192dd08f29ecac08ddbcde233e8a57013a1849",
+          "version": "0.1.2"
+        }
+      ],
+      "root": "<home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom"
+    },
+    {
+      "case": "version_reports_installed",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom\\bin\\axiom-cli.exe",
+          "version",
+          "--json"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "raph_schema\":1,\"queue_schema\":1,\"spec_version\":\"2.0.0-draft.1\",\"update_status\":\"unconfigured\",\"version\":\"0.1.2\"}]},\"source\":\"sibling\"},\"engine_owner\":\"axiom-graphd\",\"host\":{\"arch\":\"x86_64\",\"artifact_class\":\"per-user-installer\",\"evidence_target\":\"windows-x64\",\"host\":\"windows/x86_64\",\"os\":\"windows\",\"target\":\"windows-x64\",\"tier\":\"finish-first\"},\"install_root\":\"<home>\\\\AppData\\\\Local\\\\Temp\\\\axl\\\\u1\\\\Axiom\",\"installed\":{\"channel\":\"stable\",\"channel_manifest_sha256\":\"3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b\",\"components\":[{\"action\":\"install\",\"artifact_sha256\":\"0fe0af8fddd2e6e70272b28687ad35755d2192c9d4d4bbc47558fcf9eb72fca0\",\"available\":{\"revision\":\"9a847ec1d6d1cd96023435cf77d7f165720057f2\",\"status\":\"declared\",\"version\":\"0.1.2\"},\"component\":\"axiom-graphd\",\"needs_restart\":true,\"revision\":\"9a847ec1d6d1cd96023435cf77d7f165720057f2\",\"version\":\"0.1.2\"},{\"action\":\"install\",\"artifact_sha256\":\"364a13ce07d3f79dc59cfe74e1192dd08f29ecac08ddbcde233e8a57013a1849\",\"available\":{\"revision\":\"3c9f847addee0e8232e402474d455be3b92656bc\",\"status\":\"declared\",\"version\":\"0.1.2\"},\"component\":\"axiom-mcp\",\"needs_restart\":true,\"revision\":\"3c9f847addee0e8232e402474d455be3b92656bc\",\"version\":\"0.1.2\"}],\"generation\":\"install-319dd842c04d8aaa\",\"installed_at\":\"2026-10-06T10:23:27Z\",\"previous_generation\":null,\"recorded_manifest_verified\":true}},\"message\":\"reported installed and available versions\",\"request_id\":\"axiom-cli-update-5ee0-18dbe9ad7eb0e67c\",\"retryable\":false,\"status\":\"ok\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "doctor_finds_sibling_engine",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom\\bin\\axiom-cli.exe",
+          "doctor",
+          "--json"
+        ],
+        "exit_code": 4,
+        "stdout_tail": "xpected\":\"a Rust toolchain matching Cargo.lock (rust-version 1.85)\",\"mandatory\":true,\"message\":\"rustc 1.98.1 (48a229cea 2026-09-01) meets rust-version 1.85\",\"observed\":\"1.98.1\",\"satisfied\":true,\"status\":\"ok\"},{\"check\":\"python-interpreter\",\"expected\":\"Python >=3.13,<3.14\",\"mandatory\":true,\"message\":\"python reports Python 3.13.14\",\"observed\":\"3.13.14\",\"satisfied\":true,\"status\":\"ok\"},{\"check\":\"sqlite-driver\",\"mandatory\":true,\"message\":\"no owner manifest or document declares the SQLite driver version, so it cannot be verified\",\"needed_by\":\"axiom-graphd, axiom-cli\",\"observed\":\"owner release manifest / update channel declares no SQLite driver\",\"satisfied\":false,\"status\":\"unverified\",\"version_source\":\"undeclared\"}],\"message\":\"at least one mandatory prerequisite is not satisfied\",\"status\":\"fail\"},{\"check\":\"engine\",\"found\":true,\"message\":\"the axiom-graphd engine was found and answers a version query\",\"program\":\"<home>\\\\AppData\\\\Local\\\\Temp\\\\axl\\\\u1\\\\Axiom\\\\bin\\\\axiom.exe\",\"report\":{\"build_revision\":\"9a847ec1d6d1cd96023435cf77d7f165720057f2\",\"component\":\"axiom\",\"control_api\":1,\"graph_schema\":1,\"queue_schema\":1,\"spec_version\":\"2.0.0-draft.1\",\"update_status\":\"unconfigured\",\"version\":\"0.1.2\"},\"source\":\"sibling\",\"status\":\"ok\"}],\"worst_code\":4},\"message\":\"one or more required checks could not be verified; see `findings` for the exact item and the plain output for the missing prerequisite\",\"request_id\":\"axiom-cli-update-ccc-18dbe9ad944c52a0\",\"retryable\":true,\"status\":\"not_ready\"}\n",
+        "stderr_tail": ""
+      },
+      "note": "doctor exit code is recorded; the sqlite-driver item stays unverified (pre-existing, not L-002)"
+    },
+    {
+      "case": "rerun_idempotent",
+      "passed": true,
+      "apply": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "319dd842c04d8aaa4af453ef75a88e8634ccaff3e9ab7a69cdcfd1785fa06ef4"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-319dd842c04d8aaa recorded in <home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl\\u1\\Axiom\\bin)\nplan digest: 319dd842c04d8aaa4af453ef75a88e8634ccaff3e9ab7a69cdcfd1785fa06ef4\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom.exe` sibling) placed the approved bundle: status `already-installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "interrupted_install_recovers",
+      "passed": true,
+      "interrupted": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "db5e0aee49101d6c809f3960c7bc020d44355cf87d9984c0e06c61a8b99bc8d6"
+        ],
+        "exit_code": 8,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: error: the engine placed the approved bundle but the install record was not                      written, so the next run repeats the install: <home>\\AppData\\Local\\Temp\\axl\\u2\\Axiom\\installed.json.tmp: Access is denied. (os error 5)\n"
+      },
+      "recovered": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "db5e0aee49101d6c809f3960c7bc020d44355cf87d9984c0e06c61a8b99bc8d6"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-db5e0aee49101d6c recorded in <home>\\AppData\\Local\\Temp\\axl\\u2\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl\\u2\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl\\u2\\Axiom\\bin)\nplan digest: db5e0aee49101d6c809f3960c7bc020d44355cf87d9984c0e06c61a8b99bc8d6\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom.exe` sibling) placed the approved bundle: status `already-installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "tampered_artifact_refused",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel-tampered\\axiom-cli.exe",
+          "install",
+          "--dry-run",
+          "--json"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "{\"code\":2,\"details\":{\"engine_owner\":\"axiom-graphd\",\"reason\":\"artifact for `axiom-graphd` at <home>\\\\AppData\\\\Local\\\\Temp\\\\axl\\\\rel-tampered\\\\axiom-graphd.exe failed verification: <home>\\\\AppData\\\\Local\\\\Temp\\\\axl\\\\rel-tampered\\\\axiom-graphd.exe is 4171270 bytes but the recorded channel manifest declares 4171264\",\"reason_code\":\"artifact_unverified:axiom-graphd\"},\"message\":\"artifact for `axiom-graphd` at <home>\\\\AppData\\\\Local\\\\Temp\\\\axl\\\\rel-tampered\\\\axiom-graphd.exe failed verification: <home>\\\\AppData\\\\Local\\\\Temp\\\\axl\\\\rel-tampered\\\\axiom-graphd.exe is 4171270 bytes but the recorded channel manifest declares 4171264\",\"request_id\":\"axiom-cli-update-9070-18dbe9b94f0d2b40\",\"retryable\":false,\"status\":\"validation_error\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "foreign_root_refused",
+      "passed": true,
+      "apply": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "f714f5637a4adc171ebc534b27cac62548c8e1aceecf8ec170598258d3036865"
+        ],
+        "exit_code": 6,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: error: the install root <home>\\AppData\\Local\\Temp\\axl\\u4\\Axiom is not empty and holds entries no Axiom install writes (my-notes.txt); nothing was placed. Choose an empty root or move those entries\n"
+      }
+    },
+    {
+      "case": "missing_engine_not_found",
+      "passed": true,
+      "apply": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl\\rel-noengine\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "761685397bcd96569d5aa1820b53dad4fa32f0acecf7624c850d5f16ddc87894"
+        ],
+        "exit_code": 3,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: error: the `axiom` installation engine owned by axiom-graphd was not found, so no installation or removal could run. Searched beside the axiom-cli executable: <home>\\AppData\\Local\\Temp\\axl\\rel-noengine\\axiom.exe; beside the axiom-cli executable: <home>\\AppData\\Local\\Temp\\axl\\rel-noengine\\axiom; PATH: axiom. Place the engine beside the `axiom-cli` executable, install it on PATH, or name it with AXIOM_ENGINE_BIN.\n"
+      }
+    }
+  ],
+  "passed": true
+}

@@ -1,3 +1,7 @@
+## Unreleased — L-002 first install into one root
+
+- `axiom-cli install` completes a first install from an extracted release with no `--from` and no `AXIOM_*` variable: it provisions the release's MCP runtime (inputs bound into the plan digest), delegates placement to the engine, places `axiom-cli`, `axiom` and `axiom-graphd` in `<root>/bin` and writes one atomic `installed.json` with component versions, SHA-256 values and `bin` digests. A nonempty foreign root is refused (`6`), a re-run is idempotent, an interrupted record is repeated on the next run and an engine refusal records nothing. Fixes the nested `mcp-runtime/mcp-runtime` of the 0.1.2 Windows bootstrap. `version` now leads with `installed: X.Y.Z`. Real-host harness `tests/l002_first_install.py` (R15, R16, R22).
+
 ## 0.1.2 — K-615
 
 - Compose exact published 0.1.2 core, portable MCP/skills and pinned native Python/dependency inputs into checked Windows/Mac Intel/Linux GitHub distribution archives; preserve engine ownership and user approval. WSL reuses Linux artifacts with separate real verification.

@@ -118,7 +118,20 @@ pub struct Installed {
     pub previous_generation: Option<String>,
     /// When the active generation was recorded.
     pub installed_at: Stamp,
+    /// Further recorded fields (ADR-0033 `components`, `bin`, `layout`, `path_change`), kept
+    /// verbatim so a rewrite never drops what a newer writer recorded.
+    pub extra: std::collections::BTreeMap<String, Json>,
 }
+
+/// Keys [`Installed`] models itself; every other key is carried in `extra`.
+const INSTALLED_KEYS: [&str; 6] = [
+    "schema_version",
+    "channel",
+    "channel_manifest_sha256",
+    "current_generation",
+    "previous_generation",
+    "installed_at",
+];
 
 impl Installed {
     /// Parse and validate an `installed.json` document.
@@ -217,6 +230,11 @@ impl Installed {
             current_generation: current.to_string(),
             previous_generation: previous,
             installed_at,
+            extra: object
+                .iter()
+                .filter(|(key, _)| !INSTALLED_KEYS.contains(&key.as_str()))
+                .map(|(key, value)| (key.clone(), value.clone()))
+                .collect(),
         })
     }
 
@@ -238,6 +256,9 @@ impl Installed {
             },
         );
         let _ = object.set("installed_at", Json::text(&self.installed_at.format()));
+        for (key, value) in &self.extra {
+            let _ = object.set(key, value.clone());
+        }
         object
     }
 
@@ -457,6 +478,7 @@ mod tests {
             current_generation: "g-20260920t000000z-00000001".to_string(),
             previous_generation: None,
             installed_at: Stamp::from_seconds(1_789_000_000),
+            extra: Default::default(),
         }
     }
 
