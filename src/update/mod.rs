@@ -36,6 +36,7 @@ pub mod generation;
 pub mod health;
 pub mod journal;
 pub mod json;
+pub mod oneshot;
 pub mod plan;
 pub mod report;
 pub mod rules;

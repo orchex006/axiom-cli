@@ -191,6 +191,18 @@ fn execute(state: &State, request: &Request) -> Result<Report, Refusal> {
     // Refuse every update verb while the engine pointer exists, including read-only plans that
     // would otherwise offer an approval for an unsafe apply.
     let engine_pointer = state.root().join("installs/ecosystem/current");
+    if engine_pointer.exists()
+        && request.subcommand == Subcommand::Rollback
+        && request.transaction.as_deref() == Some("previous")
+        && state
+            .read_installed()
+            .map(|record| record.extra.contains_key("last_update"))
+            .unwrap_or(false)
+    {
+        // L-005: the one-command update recorded its engine transaction and the previous
+        // record, so `rollback --transaction previous` can restore the composite exactly.
+        return super::oneshot::rollback_last(state.root());
+    }
     if engine_pointer.exists() {
         return Err(Refusal::not_ready(
             "composite_activation_not_ready",

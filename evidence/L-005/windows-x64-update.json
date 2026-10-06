@@ -1,0 +1,221 @@
+{
+  "task_id": "L-005",
+  "lane": "windows-x64",
+  "host": {
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64"
+  },
+  "cli_sha256": "a3903b78585a13ceabc18f7585f5ba44a6c5daf2c5a8b2c185efc2a7456d64b9",
+  "release_b_sha256": "0d9a5dfadce1013a7d2a5d867cc87794bc40f8562d5bf7f59e390b2d989fc2c9",
+  "cases": [
+    {
+      "case": "install_a",
+      "passed": true,
+      "run": {
+        "argv": [
+          "install",
+          "--yes",
+          "--no-modify-path"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-a4ba2fc4d364737d recorded in <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl5\\rel-a\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom\\bin\\axiom-cli directly\nplan digest: a4ba2fc4d364737d7cb52c545874617ed90b2b158968ba3080dac4d317bb2d53\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl5\\rel-a\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "up_to_date",
+      "passed": true,
+      "run": {
+        "argv": [
+          "update",
+          "--channel",
+          "http://127.0.0.1:51376/same.json"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "up to date: 0.1.2\naxiom-cli: up to date: installed 0.1.2; channel `stable` offers 0.1.2\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "no_terminal_without_yes_changes_nothing",
+      "passed": true,
+      "run": {
+        "argv": [
+          "update",
+          "--channel",
+          "http://127.0.0.1:51376/b.json"
+        ],
+        "exit_code": 4,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: update: NotReady: the update plan was printed and nothing was changed: there is no terminal to confirm it. Re-run with `--yes` (or AXIOM_INSTALL_YES=1) to apply plan 182465c4282a6e08749d3a8c16a005e50c52e19b70925cba161a10f5500a5f8c, or use `--dry-run` / `--apply --approve-digest`\naxiom-cli: update 0.1.2 -> 0.1.3 (channel stable)\naxiom-cli: download: http://127.0.0.1:51376/v0.1.3/axiom-0.1.3-windows-x64.zip (33.5 MB, sha256 0d9a5dfadce1013a7d2a5d867cc87794bc40f8562d5bf7f59e390b2d989fc2c9)\naxiom-cli: install root: <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom\naxiom-cli: keep: user data, workspaces and graph output; the current version stays as the rollback generation\naxiom-cli: plan digest: 182465c4282a6e08749d3a8c16a005e50c52e19b70925cba161a10f5500a5f8c\n"
+      }
+    },
+    {
+      "case": "refuses_alias",
+      "passed": true,
+      "run": {
+        "argv": [
+          "--json",
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/alias.json"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "{\"code\":2,\"details\":{\"engine_owner\":\"axiom-graphd\",\"reason\":\"the channel offers `latest`, which is a moving reference, not a release\",\"reason_code\":\"forbidden_pin:latest\"},\"message\":\"the channel offers `latest`, which is a moving reference, not a release\",\"request_id\":\"axiom-cli-update-a090-18dbec7debffebec\",\"retryable\":false,\"status\":\"validation_error\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "refuses_branch",
+      "passed": true,
+      "run": {
+        "argv": [
+          "--json",
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/branch.json"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "{\"code\":2,\"details\":{\"engine_owner\":\"axiom-graphd\",\"reason\":\"archive URL `http://127.0.0.1:51376/main/axiom-0.1.3-windows-x64.zip` is not an exact URL under the pinned tag v0.1.3\",\"reason_code\":\"channel_archive_url_not_pinned\"},\"message\":\"archive URL `http://127.0.0.1:51376/main/axiom-0.1.3-windows-x64.zip` is not an exact URL under the pinned tag v0.1.3\",\"request_id\":\"axiom-cli-update-9794-18dbec7df08a73bc\",\"retryable\":false,\"status\":\"validation_error\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "refuses_star",
+      "passed": true,
+      "run": {
+        "argv": [
+          "--json",
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/star.json"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "{\"code\":2,\"details\":{\"engine_owner\":\"axiom-graphd\",\"reason\":\"the channel offers `*`, which is a moving reference, not a release\",\"reason_code\":\"forbidden_pin:*\"},\"message\":\"the channel offers `*`, which is a moving reference, not a release\",\"request_id\":\"axiom-cli-update-9eec-18dbec7df51ff03c\",\"retryable\":false,\"status\":\"validation_error\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "refuses_latest-url",
+      "passed": true,
+      "run": {
+        "argv": [
+          "--json",
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/latest-url.json"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "{\"code\":2,\"details\":{\"engine_owner\":\"axiom-graphd\",\"reason\":\"archive URL `http://127.0.0.1:51376/latest/download/axiom-0.1.3-windows-x64.zip` is not an exact URL under the pinned tag v0.1.3\",\"reason_code\":\"channel_archive_url_not_pinned\"},\"message\":\"archive URL `http://127.0.0.1:51376/latest/download/axiom-0.1.3-windows-x64.zip` is not an exact URL under the pinned tag v0.1.3\",\"request_id\":\"axiom-cli-update-5e7c-18dbec7df9b40048\",\"retryable\":false,\"status\":\"validation_error\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "corrupted_download_refused",
+      "passed": true,
+      "run": {
+        "argv": [
+          "--json",
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/corrupt.json"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "{\"code\":2,\"details\":{\"engine_owner\":\"axiom-graphd\",\"reason\":\"axiom-0.1.3-windows-x64.zip is 33540054 bytes with sha256 0d9a5dfadce1013a7d2a5d867cc87794bc40f8562d5bf7f59e390b2d989fc2c9, but the approved plan pins 33540054 bytes and bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb; the archive was not extracted and nothing was changed\",\"reason_code\":\"artifact_digest_mismatch\"},\"message\":\"axiom-0.1.3-windows-x64.zip is 33540054 bytes with sha256 0d9a5dfadce1013a7d2a5d867cc87794bc40f8562d5bf7f59e390b2d989fc2c9, but the approved plan pins 33540054 bytes and bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb; the archive was not extracted and nothing was changed\",\"request_id\":\"axiom-cli-update-6a0c-18dbec7e15c577f8\",\"retryable\":false,\"status\":\"validation_error\"}\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "failed_health_check_rolls_back",
+      "passed": true,
+      "run": {
+        "argv": [
+          "--json",
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/b.json"
+        ],
+        "exit_code": 8,
+        "stdout_tail": "{\"code\":8,\"details\":{\"confirmation\":\"pre-approved\",\"engine_owner\":\"axiom-graphd\",\"engine_transaction\":\"update-1791285307-e7cf4865e42db1ca\",\"plan_digest\":\"182465c4282a6e08749d3a8c16a005e50c52e19b70925cba161a10f5500a5f8c\",\"reason_code\":\"health_check_failed\",\"rolled_back\":true},\"message\":\"the 0.1.3 update failed its health check (forced by the test seam) and was rolled back to 0.1.2\",\"request_id\":\"axiom-cli-update-80ec-18dbec7f83abb858\",\"retryable\":false,\"status\":\"io_error\"}\n",
+        "stderr_tail": ""
+      },
+      "engine_current": "{\n  \"activated\": [\n    {\n      \"already_present\": false,\n      \"artifact\": \"bin/axiom-graphd\",\n      \"component\": \"axiom-graphd\",\n      \"destination\": \"<home>/AppData/Local/Temp/axl5/d1/Axiom/installs/ecosystem/versions/0.1.2/bin/axiom-graphd\",\n      \"sha256\": \"0fe0af8fddd2e6e70272b28687ad35755d2192c9d4d4bbc47558fcf9eb72fca0\",\n      \"version\": \"0.1.2\"\n    },\n    {\n      \"already_present\": false,\n      \"artifact\": \"python/axiom_mcp-0.1.2-py3-none-any.whl\",\n      \"component\": \"axiom-mcp\",\n      \"destination\": \"<home>/AppData/Local/Temp/axl5/d1/Axiom/installs/ecosystem/versions/0.1.2/python/axiom_mcp-0.1.2-py3-none-any.whl\",\n      \"sha256\": \"364a13ce07d3f79dc59cfe74e1192dd08f29ecac08ddbcde233e8a57013a1849\",\n      \"version\": \"0.1.2\"\n    }\n  ],\n  \"applied_at\": \"2026-10-06T11:14:59Z\",\n  \"plan_digest\": \"07e52c4bc8fd77594b738f894f39a847e4794a7446221968413a1bb44f81e712\",\n  \"plan_id\": \"install-1791285299-450a471dadedeb60\",\n  \"schema_version\": 1,\n  \"transaction_id\": \"ecosystem-1791285299-48430b57be14927b\"\n}"
+    },
+    {
+      "case": "update_applies_newer_release",
+      "passed": true,
+      "run": {
+        "argv": [
+          "update",
+          "--yes",
+          "--channel",
+          "http://127.0.0.1:51376/b.json"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "update 0.1.2 -> 0.1.3 (channel stable)\ndownload: http://127.0.0.1:51376/v0.1.3/axiom-0.1.3-windows-x64.zip (33.5 MB, sha256 0d9a5dfadce1013a7d2a5d867cc87794bc40f8562d5bf7f59e390b2d989fc2c9)\ninstall root: <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom\nkeep: user data, workspaces and graph output; the current version stays as the rollback generation\nplan digest: 182465c4282a6e08749d3a8c16a005e50c52e19b70925cba161a10f5500a5f8c\naxiom-cli: updated 0.1.2 -> 0.1.3; the previous version is kept for `axiom-cli update rollback --transaction previous`\n",
+        "stderr_tail": ""
+      },
+      "version": {
+        "argv": [
+          "version"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: 0.1.3 channel=stable generation=install-00a1cd1288492de6 at=2026-10-06T11:15:13Z\nprevious generation: install-a4ba2fc4d364737d\n  axiom-graphd 9a847ec1d6d1 version=0.1.3 action=install needs_restart\n  axiom-mcp 3c9f847addee version=0.1.2 action=install needs_restart\n  bin/axiom-cli  version=0.1.3 action=install\n  bin/axiom  version=0.1.3 action=install\n  bin/axiom-graphd  version=0.1.3 action=install\navailable: channel=stable published=false updated_at=2026-10-01T00:00:00Z\n  axiom-graphd available=0.1.3 status=declared\n  axiom-mcp available=0.1.2 status=declared\n  skills available=0.1.2 status=declared\naxiom-cli: reported installed and available versions\n",
+        "stderr_tail": ""
+      },
+      "engine_current": "{\n  \"activated\": [\n    {\n      \"already_present\": true,\n      \"artifact\": \"bin/axiom-graphd\",\n      \"component\": \"axiom-graphd\",\n      \"destination\": \"<home>/AppData/Local/Temp/axl5/d1/Axiom/installs/ecosystem/versions/0.1.3/bin/axiom-graphd\",\n      \"sha256\": \"0fe0af8fddd2e6e70272b28687ad35755d2192c9d4d4bbc47558fcf9eb72fca0\",\n      \"version\": \"0.1.3\"\n    },\n    {\n      \"already_present\": true,\n      \"artifact\": \"python/axiom_mcp-0.1.2-py3-none-any.whl\",\n      \"component\": \"axiom-mcp\",\n      \"destination\": \"<home>/AppData/Local/Temp/axl5/d1/Axiom/installs/ecosystem/versions/0.1.2/python/axiom_mcp-0.1.2-py3-none-any.whl\",\n      \"sha256\": \"364a13ce07d3f79dc59cfe74e1192dd08f29ecac08ddbcde233e8a57013a1849\",\n      \"version\": \"0.1.2\"\n    }\n  ],\n  \"applied_at\": \"2026-10-06T11:15:13Z\",\n  \"plan_digest\": \"c877d0f5cfbc2ca6574b2273651206890977ef65eee1f114162ef96d5afa513f\",\n  \"plan_id\": \"update-1791285313-c85bcb14177c4d11\",\n  \"schema_version\": 1,\n  \"transaction_id\": \"update-1791285313-a1908f9e350e2953\"\n}",
+      "last_update": {
+        "engine_transaction": "update-1791285313-a1908f9e350e2953",
+        "from_version": "0.1.2",
+        "manifest_sha256": "eed34046fedd92725d7732ee2a8a966a8a12c9595b755366a65c6705ecdd895a",
+        "previous_installed_sha256": "d0e726fdc9b422e68ece008869dda999ffdf592a46cb9b85cff326a0ec2d40af",
+        "to_version": "0.1.3"
+      }
+    },
+    {
+      "case": "user_data_unchanged_after_update",
+      "passed": true
+    },
+    {
+      "case": "rollback_restores_previous",
+      "passed": true,
+      "run": {
+        "argv": [
+          "update",
+          "rollback",
+          "--transaction",
+          "previous"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "axiom-cli: rolled back 0.1.3 -> 0.1.2\n",
+        "stderr_tail": ""
+      },
+      "engine_current": "{\n  \"activated\": [\n    {\n      \"already_present\": false,\n      \"artifact\": \"bin/axiom-graphd\",\n      \"component\": \"axiom-graphd\",\n      \"destination\": \"<home>/AppData/Local/Temp/axl5/d1/Axiom/installs/ecosystem/versions/0.1.2/bin/axiom-graphd\",\n      \"sha256\": \"0fe0af8fddd2e6e70272b28687ad35755d2192c9d4d4bbc47558fcf9eb72fca0\",\n      \"version\": \"0.1.2\"\n    },\n    {\n      \"already_present\": false,\n      \"artifact\": \"python/axiom_mcp-0.1.2-py3-none-any.whl\",\n      \"component\": \"axiom-mcp\",\n      \"destination\": \"<home>/AppData/Local/Temp/axl5/d1/Axiom/installs/ecosystem/versions/0.1.2/python/axiom_mcp-0.1.2-py3-none-any.whl\",\n      \"sha256\": \"364a13ce07d3f79dc59cfe74e1192dd08f29ecac08ddbcde233e8a57013a1849\",\n      \"version\": \"0.1.2\"\n    }\n  ],\n  \"applied_at\": \"2026-10-06T11:14:59Z\",\n  \"plan_digest\": \"07e52c4bc8fd77594b738f894f39a847e4794a7446221968413a1bb44f81e712\",\n  \"plan_id\": \"install-1791285299-450a471dadedeb60\",\n  \"schema_version\": 1,\n  \"transaction_id\": \"ecosystem-1791285299-48430b57be14927b\"\n}"
+    },
+    {
+      "case": "user_data_unchanged_after_rollback",
+      "passed": true
+    },
+    {
+      "case": "check_subcommand_still_answers",
+      "passed": true,
+      "run": {
+        "argv": [
+          "update",
+          "check"
+        ],
+        "exit_code": 4,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: update: NotReady: the installed engine ecosystem is active at <home>\\AppData\\Local\\Temp\\axl5\\d1\\Axiom\\installs/ecosystem/current; distribution update needs one approved composite activation transaction for CLI, core, MCP and skills\n"
+      }
+    }
+  ],
+  "passed": true
+}

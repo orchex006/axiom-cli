@@ -313,6 +313,13 @@ fn available_block(component: Option<&channel::Component>) -> Json {
 
 /// The one release version every recorded component shares, if they agree.
 fn release_version(generation: &Generation) -> Option<&str> {
+    if let Some(core) = generation
+        .entries
+        .iter()
+        .find(|entry| entry.component == "axiom-graphd")
+    {
+        return Some(core.version.as_str());
+    }
     let first = generation.entries.first()?.version.as_str();
     generation
         .entries

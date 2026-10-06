@@ -1,0 +1,46 @@
+{
+  "task_id": "L-005",
+  "status": "verified-pending-ledger",
+  "branch": "feature/l-005-one-command-update",
+  "base": "feature/l-004-bootstrappers d674f58 (stacked)",
+  "spec_pin": "8eff6db51bfe3c4ca1940bd20555cb989641ce31",
+  "justified_path_changes": [
+    "src/cli.rs: bare `update` argv and --channel",
+    "src/lifecycle.rs: engine-update mode re-provisions the MCP runtime; bin executables recorded in the generation payload; unconfirmed() shared",
+    "src/layout.rs: record channel_source",
+    "src/version.rs: release version = core version"
+  ],
+  "lanes": {
+    "windows-x64": "verified (real host; published 0.1.2 bytes as A and a staged 0.1.3 core relabel as B served over local HTTP; real engine update and rollback transactions)",
+    "macos-x64": "not_run",
+    "linux-x64": "not_run",
+    "wsl2-linux-x64": "not_run"
+  },
+  "channel_format": "channel.json release asset gains `release: {version, tag, archives:[{platform,url,sha256,size_bytes}]}`; publishing it is L-007",
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --locked",
+      "exit_code": 0,
+      "artifact": "evidence/L-005/cargo-test.txt"
+    },
+    {
+      "command": "python tests/l005_one_command_update.py --release <v0.1.2 windows-x64 extract> --cli target/release/axiom-cli.exe --work <short temp dir>",
+      "exit_code": 0,
+      "artifact": "evidence/L-005/windows-x64-update.json"
+    }
+  ],
+  "limitations": [
+    "B reuses the 0.1.2 graphd binary under a 0.1.3 label (the engine records versions by bundle label); a real 0.1.3 release is needed for L-009",
+    "the manifest-changed-after-planning case is covered by a Rust unit test (it needs a change between prompt and apply)",
+    "GitHub HTTPS download path is exercised by L-007; here curl fetched from a local HTTP server",
+    "on Windows the running old bin\\axiom-cli.exe is renamed aside during the update and cleaned on the next run"
+  ]
+}
