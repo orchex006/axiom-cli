@@ -160,10 +160,10 @@ src/update/       the update channel: check / plan / apply / rollback
 
 | Verb | Behaviour | Exit codes today |
 |---|---|---|
-| `install` (bare) | Explicit mode required | `2` validation (`--dry-run` or `--apply` required) |
+| `install` (bare) | Interactive (L-003): prints version, components, root, PATH change and size, asks `Proceed? [Y/n]` once, applies that plan's digest; `--yes` / `AXIOM_INSTALL_YES=1` skips the prompt; `--no-modify-path` skips the PATH change | `0` installed; `4` `confirmation_required` (no terminal, no `--yes`, nothing changed); `5` `confirmation_declined`; install refusals as `--apply` |
 | `install --dry-run` | Resolves the release set, verifies artifacts, changes nothing | `0` resolved; `4` `no_release_set`; `2` validation |
 | `install --apply` | Requires `--approve-digest`; verifies, provisions the MCP runtime, delegates placement to the engine, fills `<root>/bin` and writes `installed.json` | `2` missing or invalid digest / unverified artifact; `3` `engine_not_found`; `4` `no_release_set`; `6` conflict on a stale or mismatched approval or a foreign root |
-| `uninstall` (bare) | Explicit mode required | `2` validation (`--dry-run` or `--apply` required) |
+| `uninstall` (bare) | Interactive: prints what is removed and kept, asks once (`--yes` skips); removes the engine install, the owned `bin` files and exactly the recorded PATH entry, keeps user data | `0`; `4` `confirmation_required`; `5` `confirmation_declined`; uninstall refusals as `--apply` |
 | `uninstall --dry-run` | Reports the removal plan, changes nothing | `0`; `2` |
 | `uninstall --apply` | Requires `--approve-digest`; refuses at the engine handoff | `3` `nothing_installed` / `engine_not_found`; `4` `engine_removal_unavailable`; `6` conflict |
 | `update` | `check` / `plan` / `apply` / `rollback` through the update channel | see `docs/50-UPDATE-CHANNEL.md` |

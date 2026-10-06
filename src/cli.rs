@@ -158,13 +158,14 @@ GLOBAL OPTIONS:
     --verbose     Emit diagnostics on stderr
 
 VERB OPTIONS:
-    install      --dry-run | --apply, --approve-digest <sha256>, --from <path>
+    install      [--yes] [--no-modify-path] | --dry-run | --apply, --approve-digest <sha256>,
+                 --from <path>
     update       check [--all] | plan --to <version> [--out <file>] |
                  apply --plan <file> --approve-digest <sha256> |
                  rollback --transaction <id> [--approve-digest <sha256>]
     doctor       [--all]
     version      [--all]
-    uninstall    --dry-run | --apply, --approve-digest <sha256>, [--purge-data]
+    uninstall    [--yes] | --dry-run | --apply, --approve-digest <sha256>, [--purge-data]
 
 EXIT CODES:
 {USAGE_EXIT_CODES}
@@ -173,12 +174,11 @@ NOTES:
     answers its canonical failure code with a stated reason on stderr and exactly one
     JSON object on stdout; it never returns 0 and never emits an empty success
     envelope.
-    install and uninstall require an explicit mode: --dry-run reports the plan and
-    changes nothing, --apply runs the transaction. A bare verb is a validation error,
-    because a mutating verb must never answer the success code for work it did not do.
-    Any mutating install, update or uninstall needs its approval bound to the canonical
-    plan digest through --approve-digest <sha256>; supplying --plan or --from is not
-    approval.
+    A bare install or uninstall prints its plan and asks once (Proceed? [Y/n]); the
+    answer approves exactly that plan's digest. --yes (or AXIOM_INSTALL_YES=1) approves
+    without a prompt. Without a terminal and without --yes nothing changes and the exit
+    code is 4. --dry-run reports the plan; --apply needs --approve-digest <sha256> bound
+    to the canonical plan digest; supplying --plan or --from is not approval.
     The installation engine stays owned by {ENGINE_OWNER}; this layer wraps it.
 "
     )
@@ -192,7 +192,9 @@ NOTES:
 pub fn verb_help(verb: Verb) -> String {
     let options = match verb {
         Verb::Install => concat!(
-            "    One of --dry-run or --apply is required; a bare `install` is a validation error.\n",
+            "    A bare `install` prints the plan (version, components, root, PATH, size) and asks once.\n",
+            "    --yes, -y                  Approve the printed plan without a prompt (AXIOM_INSTALL_YES=1)\n",
+            "    --no-modify-path           Do not add the install's bin to the user PATH\n",
             "    --dry-run                  Validate and report the plan without changing the host\n",
             "    --apply                    Apply the transaction; requires --approve-digest\n",
             "    --approve-digest <sha256>  Approval bound to the canonical plan digest\n",
@@ -211,7 +213,8 @@ pub fn verb_help(verb: Verb) -> String {
             "    --all  Report every declared component, not only the installed set\n"
         }
         Verb::Uninstall => concat!(
-            "    One of --dry-run or --apply is required; a bare `uninstall` is a validation error.\n",
+            "    A bare `uninstall` prints what it removes and keeps, and asks once.\n",
+            "    --yes, -y                  Approve the printed plan without a prompt (AXIOM_INSTALL_YES=1)\n",
             "    --dry-run                  Report what would be removed without removing it\n",
             "    --apply                    Remove owned binaries and startup entries; requires --approve-digest\n",
             "    --approve-digest <sha256>  Approval bound to the canonical plan digest\n",
@@ -256,6 +259,8 @@ enum OptKind {
     Transaction,
     All,
     PurgeData,
+    Yes,
+    NoModifyPath,
 }
 
 impl OptKind {
@@ -271,6 +276,8 @@ impl OptKind {
             OptKind::Transaction => "--transaction",
             OptKind::All => "--all",
             OptKind::PurgeData => "--purge-data",
+            OptKind::Yes => "--yes",
+            OptKind::NoModifyPath => "--no-modify-path",
         }
     }
 }
@@ -520,12 +527,15 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
                 check_digest(&digest)?;
             }
             let mode = mode_of(verb, &flags)?;
+            interactive_only(verb, mode, &flags)?;
             let from = value(&values, OptKind::From).unwrap_or_else(|| "-".to_string());
             Ok(Invocation::install(
                 lifecycle::InstallRequest {
                     mode,
                     from: value(&values, OptKind::From),
                     approve_digest: value(&values, OptKind::ApproveDigest),
+                    yes: has(&flags, OptKind::Yes),
+                    modify_path: !has(&flags, OptKind::NoModifyPath),
                 },
                 format!("install mode={} from={from}", mode.name()),
             ))
@@ -552,11 +562,13 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
                 check_digest(&digest)?;
             }
             let mode = mode_of(verb, &flags)?;
+            interactive_only(verb, mode, &flags)?;
             Ok(Invocation::uninstall(
                 lifecycle::UninstallRequest {
                     mode,
                     approve_digest: value(&values, OptKind::ApproveDigest),
                     purge_data: purge,
+                    yes: has(&flags, OptKind::Yes),
                 },
                 format!("uninstall mode={} purge_data={purge}", mode.name()),
             ))
@@ -576,24 +588,36 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
 
 /// The transaction mode an `install` or `uninstall` invocation names.
 ///
-/// The mode is required, never inferred. `docs/16-CLI-AND-CONTROL-API.md` section 6 rule 4 makes a
-/// non-interactive command that writes or removes state carry either `--dry-run` or `--apply`, and
-/// this layer adds the reason: a bare verb would have to answer the success code for an install
-/// that never ran, which is indistinguishable from a real one to any argv-only consumer. Refusing
-/// the ambiguity is cheaper than a script that believes a preview installed the product.
-fn mode_of(verb: Verb, flags: &[OptKind]) -> Result<lifecycle::Mode, String> {
+/// `--dry-run` and `--apply` keep their automation meaning. A bare verb is the interactive
+/// single-confirmation mode of ADR-0033 decision 4 (distribution contract section 2 rule 4): it
+/// prints the plan and asks once, and without a terminal and without `--yes` it changes nothing
+/// and exits `4`. It never reports success for a transaction that did not run.
+fn mode_of(_verb: Verb, flags: &[OptKind]) -> Result<lifecycle::Mode, String> {
     if has(flags, OptKind::Apply) {
         Ok(lifecycle::Mode::Apply)
     } else if has(flags, OptKind::DryRun) {
         Ok(lifecycle::Mode::DryRun)
     } else {
-        Err(format!(
-            "`{}` requires an explicit mode: `--dry-run` reports the plan and changes nothing, \
-             `--apply --approve-digest <sha256>` runs the transaction. Neither flag was supplied, \
-             and this layer never infers an intent to mutate or a success from a bare verb",
-            verb.name()
-        ))
+        Ok(lifecycle::Mode::Interactive)
     }
+}
+
+/// `--yes` and `--no-modify-path` belong to the interactive mode only.
+fn interactive_only(verb: Verb, mode: lifecycle::Mode, flags: &[OptKind]) -> Result<(), String> {
+    if mode == lifecycle::Mode::Interactive {
+        return Ok(());
+    }
+    for kind in [OptKind::Yes, OptKind::NoModifyPath] {
+        if has(flags, kind) {
+            return Err(format!(
+                "`{}` applies to the interactive `{}` (no `--dry-run` / `--apply`); \
+                 `--apply` is already approved by `--approve-digest`",
+                kind.flag(),
+                verb.name()
+            ));
+        }
+    }
+    Ok(())
 }
 
 fn parse_update(
@@ -761,6 +785,8 @@ fn option_spec(verb: Verb, token: &str) -> Option<(OptKind, bool)> {
         "--transaction" => (OptKind::Transaction, true),
         "--all" => (OptKind::All, false),
         "--purge-data" => (OptKind::PurgeData, false),
+        "--yes" | "-y" => (OptKind::Yes, false),
+        "--no-modify-path" => (OptKind::NoModifyPath, false),
         _ => return None,
     };
     let allowed = match kind {
@@ -772,6 +798,8 @@ fn option_spec(verb: Verb, token: &str) -> Option<(OptKind, bool)> {
         }
         OptKind::All => matches!(verb, Verb::Update | Verb::Doctor | Verb::Version),
         OptKind::PurgeData => matches!(verb, Verb::Uninstall),
+        OptKind::Yes => matches!(verb, Verb::Install | Verb::Uninstall | Verb::Update),
+        OptKind::NoModifyPath => matches!(verb, Verb::Install),
     };
     if allowed {
         Some((kind, needs_value))

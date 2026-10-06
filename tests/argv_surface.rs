@@ -25,6 +25,9 @@ struct Outcome {
     stderr: String,
 }
 
+/// A well-formed approval digest for argv-only validation cases.
+const DIGEST: &str = "0000000000000000000000000000000000000000000000000000000000000000";
+
 fn run(args: &[&str]) -> Outcome {
     let output = Command::new(env!("CARGO_BIN_EXE_axiom-cli"))
         .args(args)
@@ -322,11 +325,21 @@ fn validation_defects_exit_two() {
             vec!["update", "apply", "--plan", "plan.json"],
         ),
         ("unexpected positional", vec!["doctor", "extra"]),
-        ("install without a mode", vec!["install"]),
-        ("uninstall without a mode", vec!["uninstall"]),
         (
-            "install without a mode but with a flag",
-            vec!["install", "--from", "/does/not/exist"],
+            "--yes outside the interactive mode",
+            vec!["install", "--apply", "--yes", "--approve-digest", DIGEST],
+        ),
+        (
+            "--yes with --dry-run",
+            vec!["uninstall", "--dry-run", "--yes"],
+        ),
+        (
+            "--no-modify-path on uninstall",
+            vec!["uninstall", "--no-modify-path"],
+        ),
+        (
+            "--no-modify-path outside the interactive mode",
+            vec!["install", "--dry-run", "--no-modify-path"],
         ),
         (
             "malformed digest",
@@ -358,12 +371,7 @@ fn validation_in_json_mode_carries_the_canonical_envelope() {
         vec!["--json", "frobnicate"],
         vec!["--json", "install", "--apply"],
         vec!["--json", "install", "--approve-digest"],
-        // A bare mutating verb is the newest validation path, so it must carry the same canonical
-        // envelope as the older ones: `status:"validation_error"`, `code` equal to the exit, and a
-        // message that teaches the missing mode rather than a bare "invalid".
-        vec!["--json", "install"],
-        vec!["--json", "uninstall"],
-        vec!["--json", "install", "--from", "/does/not/exist"],
+        vec!["--json", "install", "--dry-run", "--yes"],
     ];
     for argv in paths {
         let outcome = run(&argv);
@@ -531,26 +539,38 @@ fn help_option_blocks_are_indented_and_name_the_required_mode() {
 }
 
 #[test]
-fn a_bare_mutating_verb_teaches_the_mode_it_requires() {
-    // Exit 2 alone does not teach anyone what to type next. The validation envelope for a bare
-    // `install`/`uninstall` must name both modes, because the missing mode is the whole defect.
+fn a_bare_mutating_verb_is_interactive_and_never_mutates_without_a_terminal() {
+    // ADR-0033 decision 4 / distribution contract section 2 rule 4: a bare `install` or
+    // `uninstall` prints its plan and asks once. Without a terminal (stdin is not a TTY here, and
+    // `--json` never prompts) and without `--yes`, it changes nothing and exits `4`; it never
+    // answers the success code for a transaction that did not run.
+    let root = std::env::temp_dir().join(format!("axiom-argv-bare-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).expect("temp root");
     for verb in ["install", "uninstall"] {
-        let outcome = run(&["--json", verb]);
-        assert_eq!(outcome.code, VALIDATION, "verb={verb}");
-        assert_single_json_object(&outcome.stdout);
-        let message = json_string_field(&outcome.stdout, "message").unwrap_or_default();
-        for flag in ["--dry-run", "--apply"] {
-            assert!(
-                message.contains(flag),
-                "`{verb}` must name {flag} in its refusal; message={message}"
-            );
-        }
-        assert!(
-            !outcome.stdout.contains("\"details\":{}"),
-            "a validation envelope must not be empty; verb={verb} stdout={}",
-            outcome.stdout
-        );
+        let output = Command::new(env!("CARGO_BIN_EXE_axiom-cli"))
+            .args(["--json", verb])
+            .env("AXIOM_CLI_INSTALL_ROOT", &root)
+            .env_remove("AXIOM_ENGINE_BIN")
+            .env_remove("AXIOM_INSTALL_YES")
+            .env_remove("AXIOM_CLI_CHANNEL_MANIFEST")
+            .output()
+            .expect("the built axiom-cli binary must be runnable");
+        let stdout = String::from_utf8(output.stdout).expect("utf-8");
+        assert_eq!(output.status.code(), Some(4), "verb={verb} stdout={stdout}");
+        assert_single_json_object(&stdout);
+        assert_eq!(json_number_field(&stdout, "code"), Some(4));
     }
+    let left: Vec<_> = std::fs::read_dir(&root)
+        .expect("root readable")
+        .filter_map(Result::ok)
+        .map(|entry| entry.file_name())
+        .filter(|name| name != "state")
+        .collect();
+    assert!(
+        left.is_empty(),
+        "a bare verb without a terminal must not change the root: {left:?}"
+    );
 }
 
 #[test]

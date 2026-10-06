@@ -1,0 +1,39 @@
+{
+  "task_id": "L-003",
+  "status": "verified-pending-ledger",
+  "branch": "feature/l-003-confirm-and-path",
+  "base": "feature/l-002-first-install e30b933 (stacked; L-002 not yet integrated)",
+  "spec_pin": "8eff6db51bfe3c4ca1940bd20555cb989641ce31",
+  "lanes": {
+    "windows-x64": "verified (real host; PATH target redirected to HKCU\\Software\\AxiomCliTest\\L003; real HKCU\\Environment Path verified unchanged)",
+    "macos-x64": "not_run",
+    "linux-x64": "not_run",
+    "wsl2-linux-x64": "not_run"
+  },
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --locked",
+      "exit_code": 0,
+      "artifact": "evidence/L-003/cargo-test.txt"
+    },
+    {
+      "command": "python tests/l003_confirm_and_path.py --release <v0.1.2 windows-x64 extract> --cli target/release/axiom-cli.exe --work <short temp dir>",
+      "exit_code": 0,
+      "artifact": "evidence/L-003/windows-x64-confirm-and-path.json"
+    }
+  ],
+  "limitations": [
+    "The real HKCU\\Environment Path was deliberately not modified on the operator's machine; the identical code path ran against a redirected HKCU test key, so the WM_SETTINGCHANGE effect on a new terminal is not observed here",
+    "On Windows the running bin\u0007xiom-cli.exe is moved aside as axiom-cli.exe.uninstalled and must be deleted after exit",
+    "POSIX profile path implemented and unit-tested only on Windows build; not executed on macOS/Linux",
+    "Bare `update` (one-command update) is L-005"
+  ]
+}

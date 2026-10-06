@@ -571,6 +571,7 @@ struct Run<'a> {
     engine: Option<&'a Path>,
     engine_bin_absent: bool,
     empty_path: bool,
+    extra_env: Vec<(&'static str, &'static str)>,
 }
 
 impl<'a> Run<'a> {
@@ -582,7 +583,13 @@ impl<'a> Run<'a> {
             engine: None,
             engine_bin_absent: false,
             empty_path: false,
+            extra_env: Vec::new(),
         }
+    }
+
+    fn with_env(mut self, key: &'static str, value: &'static str) -> Run<'a> {
+        self.extra_env.push((key, value));
+        self
     }
 
     fn with_candidate_manifest(mut self, manifest: &'a Path, cache: &'a Path) -> Run<'a> {
@@ -609,7 +616,30 @@ impl<'a> Run<'a> {
         command.env_remove("AXIOM_CLI_CHANNEL_MANIFEST");
         command.env_remove("AXIOM_CLI_ARTIFACT_CACHE");
         command.env_remove("AXIOM_ENGINE_BIN");
+        command.env_remove("AXIOM_INSTALL_YES");
         command.env("AXIOM_CLI_INSTALL_ROOT", self.root);
+        // Never let a test reach the real user PATH: Windows writes below a per-fixture
+        // HKCU\Software\AxiomCliTest key, POSIX writes the profile of a per-fixture HOME.
+        let tag = self
+            .root
+            .to_string_lossy()
+            .bytes()
+            .fold(0u64, |hash, byte| {
+                hash.wrapping_mul(31).wrapping_add(u64::from(byte))
+            });
+        command.env(
+            "AXIOM_CLI_TEST_USER_ENV_KEY",
+            format!("Software\\AxiomCliTest\\{tag:x}"),
+        );
+        if let Some(parent) = self.root.parent() {
+            let home = parent.join("home");
+            let _ = std::fs::create_dir_all(&home);
+            command.env("HOME", &home);
+            command.env("SHELL", "/bin/sh");
+        }
+        for (key, value) in &self.extra_env {
+            command.env(key, value);
+        }
         if let Some(manifest) = self.manifest {
             command.env("AXIOM_CLI_CHANNEL_MANIFEST", manifest);
         }
@@ -1386,22 +1416,121 @@ fn install_plan_digest(out: &Outcome) -> String {
 }
 
 #[test]
-fn install_without_a_mode_is_validation_and_changes_nothing() {
-    // A mutating verb must not infer an intent. Answering exit 0 for a bare `install` is
-    // indistinguishable from a real install to an argv-only consumer, so the missing mode is a
-    // validation error, raised before the release set is even resolved.
+fn install_without_a_mode_or_terminal_prints_the_plan_and_changes_nothing() {
+    // ADR-0033 decision 4: a bare `install` is the interactive single confirmation. Without a
+    // terminal (and `--json` never prompts) and without `--yes` it prints the plan, changes nothing
+    // and exits `4`; it never answers success for an install that did not run.
     let fx = Fixture::new("install-no-mode", Mode::Present);
     let out =
         Run::new(&fx.root).out(&["install", "--from", fx.release.to_str().unwrap(), "--json"]);
-    assert_refusal(&out, VALIDATION, "validation_error", "");
+    assert_single_json_object(&out.stdout);
+    assert_eq!(
+        out.code, NOT_READY,
+        "stdout={} stderr={}",
+        out.stdout, out.stderr
+    );
+    assert_eq!(
+        json_string_field(&out.stdout, "reason_code").as_deref(),
+        Some("confirmation_required")
+    );
     assert!(
         json_string_field(&out.stdout, "message")
             .unwrap_or_default()
-            .contains("--dry-run"),
-        "the refusal must name the modes it accepts: {}",
+            .contains("--yes"),
+        "the refusal must teach `--yes`: {}",
         out.stdout
     );
-    assert_root_untouched(&fx, "`install` without a mode");
+    assert!(
+        out.stdout.contains("\"plan_digest\""),
+        "the plan is reported: {}",
+        out.stdout
+    );
+    assert_root_untouched(&fx, "`install` without a mode or terminal");
+}
+
+#[test]
+fn install_yes_applies_the_printed_plan_and_announces_the_path_change() {
+    let fx = Fixture::new("install-yes", Mode::Present);
+    fx.seed_engine_release();
+    let Some(engine) = shell_engine(&fx.dir, "engine", &engine_accepting_body()) else {
+        return;
+    };
+    let release = fx.release.to_str().unwrap().to_string();
+    let out = Run::new(&fx.root).with_engine(&engine).out(&[
+        "install",
+        "--yes",
+        "--from",
+        release.as_str(),
+        "--json",
+    ]);
+    assert_eq!(
+        out.code, SUCCESS,
+        "stdout={} stderr={}",
+        out.stdout, out.stderr
+    );
+    assert_eq!(
+        json_string_field(&out.stdout, "confirmation").as_deref(),
+        Some("pre-approved")
+    );
+    assert!(
+        out.stdout.contains("\"path_change\"") && out.stdout.contains("\"action\":\"add\""),
+        "the PATH change is part of the approved plan: {}",
+        out.stdout
+    );
+    assert!(fx.root.join("installed.json").is_file());
+    assert!(
+        fx.root.join("path-change.json").is_file(),
+        "the applied PATH change is recorded for uninstall"
+    );
+}
+
+#[test]
+fn install_yes_with_no_modify_path_leaves_the_path_alone() {
+    let fx = Fixture::new("install-yes-no-path", Mode::Present);
+    fx.seed_engine_release();
+    let Some(engine) = shell_engine(&fx.dir, "engine", &engine_accepting_body()) else {
+        return;
+    };
+    let release = fx.release.to_str().unwrap().to_string();
+    let out = Run::new(&fx.root)
+        .with_engine(&engine)
+        .with_env("AXIOM_INSTALL_YES", "1")
+        .out(&[
+            "install",
+            "--no-modify-path",
+            "--from",
+            release.as_str(),
+            "--json",
+        ]);
+    assert_eq!(
+        out.code, SUCCESS,
+        "stdout={} stderr={}",
+        out.stdout, out.stderr
+    );
+    assert!(
+        out.stdout.contains("\"action\":\"skipped\""),
+        "the skipped PATH change is shown in the plan: {}",
+        out.stdout
+    );
+    assert!(!fx.root.join("path-change.json").exists());
+}
+
+#[test]
+fn the_interactive_plan_digest_differs_from_the_automation_plan() {
+    // `--dry-run` / `--apply --approve-digest` behave as before: their plan carries no PATH
+    // change, so an approval for one can never be replayed as the other.
+    let fx = Fixture::new("install-digests", Mode::Present);
+    let release = fx.release.to_str().unwrap().to_string();
+    let dry =
+        Run::new(&fx.root).out(&["install", "--dry-run", "--from", release.as_str(), "--json"]);
+    let bare = Run::new(&fx.root).out(&["install", "--from", release.as_str(), "--json"]);
+    assert_eq!(dry.code, SUCCESS, "stdout={}", dry.stdout);
+    assert!(!dry.stdout.contains("\"path_change\""));
+    assert!(bare.stdout.contains("\"path_change\""));
+    assert_ne!(
+        json_string_field(&dry.stdout, "plan_digest"),
+        json_string_field(&bare.stdout, "plan_digest")
+    );
 }
 
 #[test]
@@ -1836,18 +1965,20 @@ fn uninstall_dry_run_changes_nothing() {
 }
 
 #[test]
-fn uninstall_without_a_mode_is_validation_and_changes_nothing() {
+fn uninstall_without_a_mode_or_terminal_prints_the_plan_and_changes_nothing() {
     let fx = Fixture::new("uninstall-no-mode", Mode::Present);
     let out = Run::new(&fx.root).out(&["uninstall", "--json"]);
-    assert_refusal(&out, VALIDATION, "validation_error", "");
-    assert!(
-        json_string_field(&out.stdout, "message")
-            .unwrap_or_default()
-            .contains("--dry-run"),
-        "the refusal must name the modes it accepts: {}",
-        out.stdout
+    assert_single_json_object(&out.stdout);
+    assert_eq!(
+        out.code, NOT_READY,
+        "stdout={} stderr={}",
+        out.stdout, out.stderr
     );
-    assert_root_untouched(&fx, "`uninstall` without a mode");
+    assert_eq!(
+        json_string_field(&out.stdout, "reason_code").as_deref(),
+        Some("confirmation_required")
+    );
+    assert_root_untouched(&fx, "`uninstall` without a mode or terminal");
 }
 
 #[test]

@@ -1,3 +1,8 @@
+## Unreleased — L-003 one confirmation and user PATH
+
+- A bare `install` / `uninstall` prints the plan and asks `Proceed? [Y/n]` once, approving exactly that plan's digest; `--yes` / `-y` / `AXIOM_INSTALL_YES=1` pre-approve; no terminal and no `--yes` prints the plan, changes nothing and exits `4`; a declined prompt exits `5`. `--dry-run` and `--apply --approve-digest` are unchanged.
+- The interactive install adds only `<root>/bin` to the user PATH (HKCU `Path` with its registry type preserved and a settings broadcast on Windows; one marked profile line on POSIX), shown in the plan and skippable with `--no-modify-path`. Uninstall removes exactly the recorded entry (byte-for-byte), the owned `bin` files and keeps user data. Real-host harness `tests/l003_confirm_and_path.py` (R15, R16, R22).
+
 ## Unreleased — L-002 first install into one root
 
 - `axiom-cli install` completes a first install from an extracted release with no `--from` and no `AXIOM_*` variable: it provisions the release's MCP runtime (inputs bound into the plan digest), delegates placement to the engine, places `axiom-cli`, `axiom` and `axiom-graphd` in `<root>/bin` and writes one atomic `installed.json` with component versions, SHA-256 values and `bin` digests. A nonempty foreign root is refused (`6`), a re-run is idempotent, an interrupted record is repeated on the next run and an engine refusal records nothing. Fixes the nested `mcp-runtime/mcp-runtime` of the 0.1.2 Windows bootstrap. `version` now leads with `installed: X.Y.Z`. Real-host harness `tests/l002_first_install.py` (R15, R16, R22).
