@@ -1,0 +1,99 @@
+#!/bin/sh
+# Axiom one-line installer for macOS x64, Linux x64 and WSL2 (ADR-0033). Generated for @@TAG@@; do not edit.
+#
+#   curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
+#   curl -fsSL https://github.com/orchex006/axiom-cli/releases/download/@@TAG@@/install.sh | sh -s -- --yes --no-modify-path
+#
+# This script only downloads the @@TAG@@ archive for this host, checks its SHA-256, extracts it to
+# a temporary directory and hands off to `axiom-cli install`, which prints the plan and asks once.
+# It never resolves `latest` itself, never runs as root and contains no installation logic.
+# Options: --yes, --no-modify-path, --version X.Y.Z (also AXIOM_INSTALL_YES=1, AXIOM_NO_MODIFY_PATH=1, AXIOM_VERSION).
+set -eu
+
+AXIOM_TAG='@@TAG@@'
+AXIOM_BASE_URL='@@BASE_URL@@'
+AXIOM_CLI='@@CLI_PATH_POSIX@@'
+
+fail() {
+    echo "axiom install: $*" >&2
+    exit 1
+}
+
+yes=''
+modify_path=''
+version="${AXIOM_VERSION:-}"
+[ "${AXIOM_NO_MODIFY_PATH:-}" = 1 ] && modify_path='--no-modify-path'
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --yes|-y) yes='--yes' ;;
+        --no-modify-path) modify_path='--no-modify-path' ;;
+        --version) [ $# -ge 2 ] || fail '--version needs a value'; version="$2"; shift ;;
+        --version=*) version="${1#--version=}" ;;
+        *) fail "unknown option '$1' (supported: --yes, --no-modify-path, --version X.Y.Z)" ;;
+    esac
+    shift
+done
+
+if [ "$(id -u)" = 0 ]; then
+    fail 'refusing to run as root: Axiom installs per user. Re-run as your normal user without sudo.'
+fi
+
+case "$(uname -s) $(uname -m)" in
+    'Linux x86_64'|'Linux amd64') asset='@@LINUX_ASSET@@'; expected='@@LINUX_SHA256@@' ;;
+    'Darwin x86_64') asset='@@MACOS_ASSET@@'; expected='@@MACOS_SHA256@@' ;;
+    *) fail "unsupported platform '$(uname -s) $(uname -m)': published for Linux x64 (incl. WSL2) and macOS x64; on Windows use install.ps1" ;;
+esac
+
+if command -v curl >/dev/null 2>&1; then
+    fetch() { curl -fsSL --retry 2 -o "$2" "$1"; }
+elif command -v wget >/dev/null 2>&1; then
+    fetch() { wget -q -O "$2" "$1"; }
+else
+    fail 'curl or wget is required'
+fi
+if command -v sha256sum >/dev/null 2>&1; then
+    digest() { sha256sum "$1" | cut -d' ' -f1; }
+elif command -v shasum >/dev/null 2>&1; then
+    digest() { shasum -a 256 "$1" | cut -d' ' -f1; }
+else
+    fail 'sha256sum or shasum is required'
+fi
+
+if [ -n "$version" ]; then
+    wanted="v${version#v}"
+    case "$wanted" in
+        v[0-9]*.[0-9]*.[0-9]*) ;;
+        *) fail "invalid version '$version'; use X.Y.Z" ;;
+    esac
+    if [ "$wanted" != "$AXIOM_TAG" ]; then
+        # A pinned version runs that tag's own immutable installer; `latest` is never resolved here.
+        pinned_dir=$(mktemp -d 2>/dev/null || mktemp -d -t axiom-install)
+        trap 'rm -rf "$pinned_dir"' EXIT INT TERM
+        fetch "$AXIOM_BASE_URL/$wanted/install.sh" "$pinned_dir/install.sh" ||
+            fail "could not download the $wanted installer; nothing was changed"
+        sh "$pinned_dir/install.sh" ${yes:+"$yes"} ${modify_path:+"$modify_path"} --version "$wanted"
+        exit $?
+    fi
+fi
+
+tmp=$(mktemp -d 2>/dev/null || mktemp -d -t axiom-install)
+trap 'rm -rf "$tmp"' EXIT INT TERM
+echo "axiom install: downloading $AXIOM_TAG ($asset)"
+fetch "$AXIOM_BASE_URL/$AXIOM_TAG/$asset" "$tmp/$asset" ||
+    fail "download failed for $AXIOM_BASE_URL/$AXIOM_TAG/$asset; nothing was changed"
+actual=$(digest "$tmp/$asset")
+[ "$actual" = "$expected" ] ||
+    fail "SHA-256 mismatch for $asset (expected $expected, got $actual); the archive was not extracted and nothing was changed"
+mkdir "$tmp/release"
+tar -xzf "$tmp/$asset" -C "$tmp/release" ||
+    fail 'the verified archive could not be extracted; nothing was changed'
+[ -f "$tmp/release/$AXIOM_CLI" ] || fail "the archive does not contain $AXIOM_CLI; nothing was changed"
+
+# `curl | sh` feeds this script on stdin, so the single confirmation reads the terminal instead.
+status=0
+if [ -z "$yes" ] && [ -r /dev/tty ] && (: </dev/tty) 2>/dev/null; then
+    "$tmp/release/$AXIOM_CLI" install ${modify_path:+"$modify_path"} </dev/tty || status=$?
+else
+    "$tmp/release/$AXIOM_CLI" install ${yes:+"$yes"} ${modify_path:+"$modify_path"} || status=$?
+fi
+exit "$status"

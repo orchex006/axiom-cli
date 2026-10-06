@@ -1,0 +1,46 @@
+{
+  "task_id": "L-004",
+  "status": "verified-pending-ledger",
+  "branch": "feature/l-004-bootstrappers",
+  "base": "feature/l-003-confirm-and-path 1125cf0 (stacked)",
+  "spec_pin": "8eff6db51bfe3c4ca1940bd20555cb989641ce31",
+  "justified_path_changes": [
+    "src/elevation.rs, src/lifecycle.rs, src/main.rs: distribution contract section 12 (L-001) requires the CLI as well as the script to refuse elevation; L-004 AC2 covers an elevated run"
+  ],
+  "lanes": {
+    "windows-x64": "verified for the exact `irm <url>/install.ps1 | iex` one-liner against a staged release served over local HTTP (real host); elevated run not_run (UAC prompt cannot be scripted)",
+    "macos-x64": "not_run",
+    "linux-x64": "not_run",
+    "wsl2-linux-x64": "not_run (install.sh only checked with `sh -n` and its unsupported-OS refusal under Git Bash)"
+  },
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --locked",
+      "exit_code": 0,
+      "artifact": "evidence/L-004/cargo-test.txt"
+    },
+    {
+      "command": "python -m pytest -q tests/test_bootstrappers.py",
+      "exit_code": 0,
+      "artifact": "evidence/L-004/generator-tests.txt"
+    },
+    {
+      "command": "python tests/l004_bootstrappers.py --release <v0.1.2 windows-x64 extract> --cli target/release/axiom-cli.exe --work <short temp dir>",
+      "exit_code": 0,
+      "artifact": "evidence/L-004/windows-x64-oneliner.json"
+    }
+  ],
+  "limitations": [
+    "GitHub-hosted download (TLS, redirect from releases/latest/download) is exercised only by L-007 on fresh runners; this lane used a local HTTP server with the same URL layout",
+    "install.sh has not run on macOS x64 or Linux x64 here",
+    "elevated run not executed (needs an interactive UAC elevation)"
+  ]
+}
