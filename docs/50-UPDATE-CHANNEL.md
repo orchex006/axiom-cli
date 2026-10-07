@@ -33,6 +33,40 @@ channels/stable.json     the channel manifest this repository publishes
 tests/update_channel.rs  the acceptance and boundary suite (23 legs)
 ```
 
+## One-command update (ADR-0033, L-005)
+
+```text
+axiom-cli update [--yes] [--dry-run] [--channel <url|path>]
+```
+
+A bare `update` is the human path for an installation made by the one-line installer (or by
+`axiom-cli install`, which records `channel_source` in `installed.json`):
+
+1. read the installed core version (`axiom-graphd`; MCP and skills version independently) and the
+   recorded channel source (default
+   `https://github.com/orchex006/axiom-cli/releases/latest/download/channel.json`);
+2. fetch the channel manifest; its `release` block must pin `version`, `tag` = `v<version>` and,
+   per platform, an exact archive `url` under that tag with `sha256` and `size_bytes`. A tag alias
+   (`latest`), a branch tip, `*` or a `releases/latest` archive URL is refused (`2`);
+3. answer `up to date` (`0`) when the offer is not newer; otherwise build a plan that pins the
+   version, archive URL, SHA-256 and the manifest digest, print it and ask once (`--yes`
+   pre-approves; no terminal and no `--yes`: exit `4`, nothing changed; declined: `5`);
+4. re-fetch the manifest and refuse if its digest changed after planning (`6`), download the
+   archive with the OS `curl`, verify length and SHA-256 before use (`2` on mismatch), extract it
+   with the OS `tar` into `staging/update`;
+5. hand the extracted release to its own `axiom-cli install` in engine-update mode, so the graphd
+   engine runs `update plan` / `update apply` (keeping its rollback journal), the MCP runtime of the
+   new release is provisioned, and the new `bin` and `installed.json` are recorded with the old
+   generation as `previous_generation`;
+6. health-check the new `bin/axiom-cli version` and `bin/axiom version`; on failure roll back the
+   engine transaction, the `bin` files (from the previous generation's payload), the MCP runtime
+   pointer and `installed.json` byte for byte, and exit `8`.
+
+`axiom-cli update rollback --transaction previous` reverses the last one-command update the same
+way. User data, workspaces and the graph output root are never written. The real-host harness is
+`tests/l005_one_command_update.py`; `--channel` accepts a local path or `http://127.0.0.1` for
+tests and `https://` otherwise.
+
 ## The four verbs
 
 For an installation with an active `installs/ecosystem/current` engine pointer

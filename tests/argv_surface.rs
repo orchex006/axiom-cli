@@ -318,7 +318,18 @@ fn validation_defects_exit_two() {
         ),
         ("flag not valid for verb", vec!["version", "--dry-run"]),
         ("unknown option", vec!["install", "--bogus"]),
-        ("update without subcommand", vec!["update"]),
+        (
+            "bare update with a subcommand-only flag",
+            vec!["update", "--all"],
+        ),
+        (
+            "bare update with --yes and --dry-run",
+            vec!["update", "--yes", "--dry-run"],
+        ),
+        (
+            "--channel on a subcommand",
+            vec!["update", "check", "--channel", "x.json"],
+        ),
         ("unknown update subcommand", vec!["update", "frobnicate"]),
         (
             "update apply without digest",

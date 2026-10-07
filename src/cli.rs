@@ -160,7 +160,8 @@ GLOBAL OPTIONS:
 VERB OPTIONS:
     install      [--yes] [--no-modify-path] | --dry-run | --apply, --approve-digest <sha256>,
                  --from <path>
-    update       check [--all] | plan --to <version> [--out <file>] |
+    update       [--yes] [--dry-run] [--channel <url|path>] |
+                 check [--all] | plan --to <version> [--out <file>] |
                  apply --plan <file> --approve-digest <sha256> |
                  rollback --transaction <id> [--approve-digest <sha256>]
     doctor       [--all]
@@ -201,6 +202,7 @@ pub fn verb_help(verb: Verb) -> String {
             "    --from <path>              Read the release set from a local path instead of the channel\n",
         ),
         Verb::Update => concat!(
+            "    update [--yes] [--dry-run] [--channel <src>]          Check the channel, show the plan, ask once, apply with rollback\n",
             "    update check [--all]                                  Report available transitions\n",
             "    update plan --to <version> [--out <file>]             Write the canonical plan\n",
             "    update apply --plan <file> --approve-digest <sha256>  Apply the approved plan\n",
@@ -261,6 +263,7 @@ enum OptKind {
     PurgeData,
     Yes,
     NoModifyPath,
+    Channel,
 }
 
 impl OptKind {
@@ -278,6 +281,7 @@ impl OptKind {
             OptKind::PurgeData => "--purge-data",
             OptKind::Yes => "--yes",
             OptKind::NoModifyPath => "--no-modify-path",
+            OptKind::Channel => "--channel",
         }
     }
 }
@@ -290,6 +294,8 @@ impl OptKind {
 enum Action {
     /// `update check|plan|apply|rollback`.
     Update(Request),
+    /// Bare `update`: the one-command update of ADR-0033 decision 6.
+    UpdateOneShot(update::oneshot::Request),
     /// `install`.
     Install(lifecycle::InstallRequest),
     /// `uninstall`.
@@ -470,6 +476,7 @@ where
     }
     match invocation.action {
         Action::Update(request) => update::run_update(request, json, verbose),
+        Action::UpdateOneShot(request) => update::oneshot::run(request, json, verbose),
         Action::Install(request) => lifecycle::run_install(request, json, verbose),
         Action::Uninstall(request) => lifecycle::run_uninstall(request, json, verbose),
         Action::Doctor { all } => doctor::run_doctor(all, json, verbose),
@@ -627,9 +634,38 @@ fn parse_update(
 ) -> Result<Invocation, String> {
     let subcommand = match positionals.len() {
         0 => {
-            return Err(
-                "`update` requires a subcommand: one of check, plan, apply or rollback".into(),
-            )
+            // ADR-0033 decision 6: bare `update` checks the recorded channel, prints the plan,
+            // asks once and applies with rollback.
+            for flag in flags {
+                if !matches!(flag, OptKind::Yes | OptKind::DryRun) {
+                    return Err(format!(
+                        "option `{}` is not valid for bare `update`",
+                        flag.flag()
+                    ));
+                }
+            }
+            for (kind, _) in values {
+                if *kind != OptKind::Channel {
+                    return Err(format!(
+                        "option `{}` is not valid for bare `update`",
+                        kind.flag()
+                    ));
+                }
+            }
+            if has(flags, OptKind::Yes) && has(flags, OptKind::DryRun) {
+                return Err("`--yes` and `--dry-run` are mutually exclusive on `update`".into());
+            }
+            let request = update::oneshot::Request {
+                channel: value(values, OptKind::Channel),
+                yes: has(flags, OptKind::Yes),
+                dry_run: has(flags, OptKind::DryRun),
+            };
+            let detail = format!("update one-shot dry_run={}", request.dry_run);
+            return Ok(Invocation {
+                verb: Verb::Update,
+                detail,
+                action: Action::UpdateOneShot(request),
+            });
         }
         1 => positionals[0].as_str(),
         count => {
@@ -787,10 +823,12 @@ fn option_spec(verb: Verb, token: &str) -> Option<(OptKind, bool)> {
         "--purge-data" => (OptKind::PurgeData, false),
         "--yes" | "-y" => (OptKind::Yes, false),
         "--no-modify-path" => (OptKind::NoModifyPath, false),
+        "--channel" => (OptKind::Channel, true),
         _ => return None,
     };
     let allowed = match kind {
-        OptKind::DryRun | OptKind::Apply => matches!(verb, Verb::Install | Verb::Uninstall),
+        OptKind::DryRun => matches!(verb, Verb::Install | Verb::Uninstall | Verb::Update),
+        OptKind::Apply => matches!(verb, Verb::Install | Verb::Uninstall),
         OptKind::ApproveDigest => matches!(verb, Verb::Install | Verb::Update | Verb::Uninstall),
         OptKind::From => matches!(verb, Verb::Install),
         OptKind::Plan | OptKind::To | OptKind::Out | OptKind::Transaction => {
@@ -800,6 +838,7 @@ fn option_spec(verb: Verb, token: &str) -> Option<(OptKind, bool)> {
         OptKind::PurgeData => matches!(verb, Verb::Uninstall),
         OptKind::Yes => matches!(verb, Verb::Install | Verb::Uninstall | Verb::Update),
         OptKind::NoModifyPath => matches!(verb, Verb::Install),
+        OptKind::Channel => matches!(verb, Verb::Update),
     };
     if allowed {
         Some((kind, needs_value))

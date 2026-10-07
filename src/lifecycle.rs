@@ -213,7 +213,7 @@ fn install(request: InstallRequest, json: bool) -> Result<Report, Refusal> {
 ///
 /// No terminal and no `--yes`: the plan is printed, nothing changes, exit `4`. Declined at the
 /// prompt: nothing changes, exit `5` (authorization).
-fn unconfirmed(
+pub(crate) fn unconfirmed(
     subject: &'static str,
     answer: crate::confirm::Decision,
     plan: &Json,
@@ -309,7 +309,9 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         set.plan.get("mcp_runtime"),
         set.local_root.as_deref().and_then(crate::runtime::locate),
     ) {
-        if !crate::runtime::provisioned(&root) {
+        let composite = std::env::var_os("AXIOM_CLI_COMPOSITE_UPDATE").as_deref()
+            == Some(std::ffi::OsStr::new("1"));
+        if composite || !crate::runtime::provisioned(&root) {
             let version = set
                 .plan
                 .get("components")
@@ -504,6 +506,16 @@ fn record_layout(
         });
     }
     let bin = layout::place_bin(root, &sources)?;
+    let bin_payloads: Vec<(String, PathBuf, String)> = sources
+        .iter()
+        .map(|item| {
+            (
+                format!("bin/{}", item.name),
+                layout::bin_dir(root).join(layout::program_file(item.name)),
+                item.sha256.clone(),
+            )
+        })
+        .collect();
 
     let manifest_path = Path::new(&set.manifest_source);
     let manifest_bytes = state::read_bytes(manifest_path, "manifest_unreadable")?;
@@ -550,6 +562,22 @@ fn record_layout(
                 .and_then(|item| item.get("needs_restart"))
                 .and_then(Json::as_bool)
                 .unwrap_or(false),
+        ));
+    }
+    let release_version = components
+        .iter()
+        .find(|item| item.0 == "axiom-graphd")
+        .or_else(|| components.first())
+        .map(|item| item.1.clone())
+        .unwrap_or_default();
+    for (component, path, digest) in bin_payloads {
+        components.push((
+            component,
+            release_version.clone(),
+            String::new(),
+            digest,
+            path,
+            false,
         ));
     }
     layout::record(

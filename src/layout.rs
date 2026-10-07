@@ -316,6 +316,12 @@ pub fn record(root: &Path, record: &Record) -> Result<Installed, Refusal> {
     installed
         .extra
         .insert("layout".to_string(), Json::text("adr-0033-single-root"));
+    let source = st
+        .read_installed()
+        .ok()
+        .and_then(|old| old.extra.get("channel_source").cloned())
+        .unwrap_or_else(|| Json::text(crate::update::oneshot::CANONICAL_CHANNEL_SOURCE));
+    installed.extra.insert("channel_source".to_string(), source);
     st.write_installed(&installed)?;
     Ok(installed)
 }

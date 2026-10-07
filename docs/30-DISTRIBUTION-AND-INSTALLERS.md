@@ -73,6 +73,8 @@ The real-host harness `tests/l004_bootstrappers.py` serves staged releases from 
 
 ## ## Update
 
+One-command update (ADR-0033, L-005): `axiom-cli update` checks the recorded channel, shows the plan, asks once, applies through the engine's update transaction and keeps a rollback generation; see `docs/50-UPDATE-CHANNEL.md`.
+
 J-007 implements the update path in `src/update/` with the channel manifest in `channels/stable.json`; `docs/50-UPDATE-CHANNEL.md` records what runs today and what does not. Implemented now:
 
 - `update check`, `update plan`, `update apply` and `update rollback` resolve a version only from the channel manifest the installed release recorded; a branch tip, a tag alias, a network `latest` and an unsigned channel are refused.
