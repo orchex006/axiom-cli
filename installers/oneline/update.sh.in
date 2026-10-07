@@ -1,0 +1,131 @@
+#!/bin/sh
+# Axiom one-line updater for macOS x64, Linux x64 and WSL2 (ADR-0035). Generated for @@TAG@@; do not edit.
+#
+#   curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/update.sh | sh
+#   curl -fsSL https://github.com/orchex006/axiom-cli/releases/download/@@TAG@@/update.sh | sh -s -- --yes
+#
+# This script contains no update logic:
+#   * Axiom installed (an installed.json root): run that installation's own `axiom-cli update`,
+#     which reads the recorded channel, prints the plan and asks once.
+#   * Axiom 0.1.0/0.1.2 layout (no installed.json): the same verified hand-off as install.sh -
+#     download the @@TAG@@ archive for this host, check its SHA-256, extract it to a temporary
+#     directory and run `axiom-cli install`, which shows the adoption plan and asks once.
+#   * Nothing installed: change nothing and print the install command.
+# It never resolves `latest` itself, never runs as root and stops while leftover AXIOM_* variables
+# from the 0.1.2 procedure are set. Options: --yes, --no-modify-path (also AXIOM_INSTALL_YES=1,
+# AXIOM_NO_MODIFY_PATH=1; the latter only matters for a 0.1.0/0.1.2 layout).
+set -eu
+
+AXIOM_TAG='@@TAG@@'
+AXIOM_BASE_URL='@@BASE_URL@@'
+AXIOM_CLI='@@CLI_PATH_POSIX@@'
+
+fail() {
+    echo "axiom update: $*" >&2
+    exit 1
+}
+
+yes=''
+modify_path=''
+[ "${AXIOM_INSTALL_YES:-}" = 1 ] && yes='--yes'
+[ "${AXIOM_NO_MODIFY_PATH:-}" = 1 ] && modify_path='--no-modify-path'
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --yes|-y) yes='--yes' ;;
+        --no-modify-path) modify_path='--no-modify-path' ;;
+        *) fail "unknown option '$1' (supported: --yes, --no-modify-path)" ;;
+    esac
+    shift
+done
+
+if [ "$(id -u)" = 0 ]; then
+    fail 'refusing to run as root: Axiom installs per user. Re-run as your normal user without sudo; nothing was changed.'
+fi
+
+# Leftover variables from the 0.1.2 procedure send axiom-cli to another root or an old engine.
+leftover=''
+for name in AXIOM_CLI_INSTALL_ROOT AXIOM_ENGINE_BIN AXIOM_HOME; do
+    eval "value=\${$name:-}"
+    [ -n "$value" ] && leftover="$leftover $name=$value"
+done
+if [ -n "$leftover" ]; then
+    fail "leftover variables from the 0.1.2 procedure are set:$leftover. They redirect axiom-cli to another folder or an old engine, so nothing was changed. Remove their export lines from your shell profile, open a new terminal (or run: unset AXIOM_CLI_INSTALL_ROOT AXIOM_ENGINE_BIN AXIOM_HOME) and run this command again."
+fi
+
+data="${XDG_DATA_HOME:-$HOME/.local/share}"
+root=''
+for candidate in "$(command -v axiom-cli 2>/dev/null | sed 's#/bin/[^/]*$##')" "$data/axiom" "$HOME/axiom"; do
+    [ -n "$candidate" ] || continue
+    if [ -f "$candidate/installed.json" ] && [ -x "$candidate/bin/$AXIOM_CLI" ]; then
+        root="$candidate"
+        break
+    fi
+done
+
+# `curl | sh` feeds this script on stdin, so the single confirmation reads the terminal instead.
+run_cli() {
+    status=0
+    if [ -z "$yes" ] && [ -r /dev/tty ] && (: </dev/tty) 2>/dev/null; then
+        "$@" </dev/tty || status=$?
+    else
+        "$@" ${yes:+"$yes"} || status=$?
+    fi
+    return "$status"
+}
+
+if [ -n "$root" ]; then
+    echo "axiom update: found the installation at $root; running its axiom-cli update"
+    status=0
+    run_cli "$root/bin/$AXIOM_CLI" update || status=$?
+    exit "$status"
+fi
+
+legacy=''
+if [ -f "$data/axiom/install-manifest.json" ] || [ -x "$data/axiom/bin/$AXIOM_CLI" ]; then
+    legacy="Axiom CLI store at $data/axiom"
+fi
+if [ -f "$HOME/axiom/installs/ecosystem/current" ]; then
+    legacy="${legacy:+$legacy and }Axiom 0.1.2 bootstrap root at $HOME/axiom"
+fi
+if [ -z "$legacy" ]; then
+    fail "Axiom is not installed for this user, so there is nothing to update; nothing was changed. Install it with: curl -fsSL $AXIOM_BASE_URL/$AXIOM_TAG/install.sh | sh"
+fi
+echo "axiom update: found $legacy (Axiom 0.1.0/0.1.2, no one-command update); upgrading through the $AXIOM_TAG installer"
+
+case "$(uname -s) $(uname -m)" in
+    'Linux x86_64'|'Linux amd64') asset='@@LINUX_ASSET@@'; expected='@@LINUX_SHA256@@' ;;
+    'Darwin x86_64') asset='@@MACOS_ASSET@@'; expected='@@MACOS_SHA256@@' ;;
+    *) fail "unsupported platform '$(uname -s) $(uname -m)': published for Linux x64 (incl. WSL2) and macOS x64; on Windows use update.ps1" ;;
+esac
+
+if command -v curl >/dev/null 2>&1; then
+    fetch() { curl -fsSL --retry 2 -o "$2" "$1"; }
+elif command -v wget >/dev/null 2>&1; then
+    fetch() { wget -q -O "$2" "$1"; }
+else
+    fail 'curl or wget is required'
+fi
+if command -v sha256sum >/dev/null 2>&1; then
+    digest() { sha256sum "$1" | cut -d' ' -f1; }
+elif command -v shasum >/dev/null 2>&1; then
+    digest() { shasum -a 256 "$1" | cut -d' ' -f1; }
+else
+    fail 'sha256sum or shasum is required'
+fi
+
+tmp=$(mktemp -d 2>/dev/null || mktemp -d -t axiom-update)
+trap 'rm -rf "$tmp"' EXIT INT TERM
+echo "axiom update: downloading $AXIOM_TAG ($asset)"
+fetch "$AXIOM_BASE_URL/$AXIOM_TAG/$asset" "$tmp/$asset" ||
+    fail "download failed for $AXIOM_BASE_URL/$AXIOM_TAG/$asset; nothing was changed"
+actual=$(digest "$tmp/$asset")
+[ "$actual" = "$expected" ] ||
+    fail "SHA-256 mismatch for $asset (expected $expected, got $actual); the archive was not extracted and nothing was changed"
+mkdir "$tmp/release"
+tar -xzf "$tmp/$asset" -C "$tmp/release" ||
+    fail 'the verified archive could not be extracted; nothing was changed'
+[ -f "$tmp/release/$AXIOM_CLI" ] || fail "the archive does not contain $AXIOM_CLI; nothing was changed"
+
+status=0
+run_cli "$tmp/release/$AXIOM_CLI" install ${modify_path:+"$modify_path"} || status=$?
+exit "$status"

@@ -40,7 +40,11 @@ Open a normal PowerShell window (not "Run as administrator") and run:
 powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
 ```
 
-To update later: `axiom-cli update` ([details](#update)).
+To update later, run the [update command](#update):
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/update.ps1 | iex"
+```
 
 ### macOS, Linux and WSL2 (not as root)
 
@@ -50,7 +54,11 @@ Open a terminal and run:
 curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
 ```
 
-To update later: `axiom-cli update` ([details](#update)).
+To update later, run the [update command](#update):
+
+```sh
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/update.sh | sh
+```
 
 ### What happens
 
@@ -139,7 +147,28 @@ The PATH change applies to your user only:
 
 ## Update
 
-The same command works on Windows, macOS, Linux and WSL2:
+Use the update command for your system (published from 0.1.4):
+
+```powershell
+# Windows
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/update.ps1 | iex"
+```
+
+```sh
+# Linux, WSL2 or macOS
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/update.sh | sh
+```
+
+The update script decides what to do from what is on your machine. It changes nothing by itself:
+
+| Found | What the update script does |
+|---|---|
+| Axiom 0.1.3 or newer | Runs that installation's own `axiom-cli update`. |
+| Axiom 0.1.0 or 0.1.2 | Downloads the release, checks its SHA-256 and runs the installer, which upgrades the old installation ([details](#upgrading-from-010-or-012)). |
+| Nothing | Stops and prints the install command. It never installs from scratch. |
+| Old `AXIOM_CLI_INSTALL_ROOT`, `AXIOM_ENGINE_BIN` or `AXIOM_HOME` variables | Stops, names them and shows how to remove them. |
+
+If `axiom-cli` is on your PATH, you can also run it directly. The same command works on every system:
 
 ```sh
 axiom-cli update
@@ -148,10 +177,10 @@ axiom-cli update
 If a newer release exists, `update` shows the plan and asks once. It then downloads and verifies the release and keeps the previous version so it can roll back. If nothing is newer, it prints `up to date`.
 
 - `axiom-cli update --dry-run`: show the plan only.
-- `axiom-cli update --yes`: update without asking.
+- `axiom-cli update --yes`: update without asking. For the update script, set `AXIOM_INSTALL_YES=1`, or use `sh -s -- --yes` on Linux / macOS.
 - `axiom-cli update rollback --transaction previous`: go back to the version before the last update.
 
-Use `update`, not the install command, to move an existing installation to a newer release. On 0.1.2 or older, `axiom-cli` has no one-command update. Follow [Upgrading from 0.1.0 or 0.1.2](#upgrading-from-010-or-012) once; after that, `axiom-cli update` works.
+Use an update command, not the install command, to move an existing installation to a newer release.
 
 ## Uninstall
 
@@ -179,7 +208,7 @@ On Linux or macOS, delete any `export AXIOM_CLI_INSTALL_ROOT=...`, `AXIOM_ENGINE
 
 Why: `AXIOM_CLI_INSTALL_ROOT` changes where Axiom installs, and `AXIOM_ENGINE_BIN` makes `axiom-cli` keep running the old 0.1.2 engine.
 
-**2. Run the normal [install](#install) command.** The plan says what it found and what it will do:
+**2. Run the [update](#update) command** (from 0.1.4) **or the [install](#install) command.** Both reach the same installer, which says what it found and what it will do:
 
 | Found | What the installer does |
 |---|---|
@@ -206,6 +235,8 @@ Most people should keep this default. If you would rather turn the 0.1.2 bootstr
 | `axiom-cli` shows old help text, or answers `NotReady` to every command | An older `axiom-cli` comes first on your PATH | Find it with `Get-Command axiom-cli -All` (Windows) or `which -a axiom-cli`. `axiom-cli doctor` also names it. Remove the old folder from your PATH. |
 | `axiom-cli version` says `installed: no` | A leftover `AXIOM_CLI_INSTALL_ROOT` points to another folder | Remove the variable ([Upgrading](#upgrading-from-010-or-012), step 1) and open a new terminal. |
 | `refusing to run elevated` or `refusing to run as root` | The terminal runs as Administrator, or you used `sudo` | Run it again from a normal-user terminal. |
+| `axiom update: leftover variables from the 0.1.2 procedure are set` | `AXIOM_CLI_INSTALL_ROOT`, `AXIOM_ENGINE_BIN` or `AXIOM_HOME` is still set | Remove them ([Upgrading](#upgrading-from-010-or-012), step 1), open a new terminal and run the update command again. |
+| `axiom update: Axiom is not installed for this user, so there is nothing to update` | Nothing is installed (or it was uninstalled) | Use the [install](#install) command. |
 | `download failed ...` or `SHA-256 mismatch ...; nothing was changed` | Network or proxy problem, or a damaged download | Try again. Nothing was installed. |
 | `a host python3 is required` (Linux / macOS) | `python3` is not installed | Install it with your package manager, for example `sudo apt install python3`, then run the install command again as your normal user. |
 | `unsupported platform` or `unsupported architecture` | arm64 is not published yet | See [Before you start](#before-you-start). |

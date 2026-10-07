@@ -76,7 +76,8 @@ jobs:
           if-no-files-found: error
   oneliner:
     # ADR-0033 / L-007: the exact documented one-liner on a fresh hosted runner against the
-    # candidate built above, then version, doctor (exit 0), update, uninstall and reinstall.
+    # candidate built above, then version, doctor (exit 0), update, uninstall and reinstall, plus
+    # the ADR-0035 / L-013 update one-liner (installed, leftover variable, nothing installed, 0.1.2 layout).
     # macOS x64 is outside the current owner scope (2026-10-07) and is not run here.
     name: one-line install (${{ matrix.platform }})
     needs: native
@@ -101,7 +102,10 @@ jobs:
         with:
           name: distribution-${{ matrix.platform }}-${{ github.sha }}
           path: ${{ runner.temp }}/candidate
-      - name: Documented one-liner, version, doctor, update, uninstall, reinstall
+      - name: Bootstrapper generator and update.sh behaviour tests (L-004, L-013)
+        shell: bash
+        run: python -m unittest tests.test_bootstrappers -v
+      - name: Documented install and update one-liners, version, doctor, update, uninstall, reinstall
         shell: bash
         run: python tests/l007_fresh_runner.py --artifacts "$RUNNER_TEMP/candidate" --platform ${{ matrix.platform }} --out "$RUNNER_TEMP/oneliner/oneliner-${{ matrix.platform }}.json"
       - uses: actions/upload-artifact@v4

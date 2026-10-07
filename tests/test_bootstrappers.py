@@ -65,9 +65,113 @@ class GeneratorTests(unittest.TestCase):
         sh = shutil.which("sh")
         if not sh:
             self.skipTest("no sh on this host")
-        script = gen.generate("v1.2.3", SUMS)["install.sh"]
-        result = subprocess.run([sh, "-n"], input=script, capture_output=True)
-        self.assertEqual(result.returncode, 0, result.stderr)
+        for name in ("install.sh", "update.sh"):
+            script = gen.generate("v1.2.3", SUMS)[name]
+            result = subprocess.run([sh, "-n"], input=script, capture_output=True)
+            self.assertEqual(result.returncode, 0, (name, result.stderr))
+
+
+class UpdateBootstrapperTests(unittest.TestCase):
+    """L-013 (ADR-0035): update.ps1 / update.sh are pinned, logic-free and state-aware."""
+
+    def test_update_scripts_are_generated_with_the_install_scripts(self):
+        scripts = gen.generate("v1.2.3", SUMS)
+        self.assertEqual(set(scripts), {"install.ps1", "install.sh", "update.ps1", "update.sh"})
+        ps1 = scripts["update.ps1"].decode()
+        sh = scripts["update.sh"].decode()
+        self.assertIn("$AxiomTag = 'v1.2.3'", ps1)
+        self.assertIn("$AxiomSha256 = '" + "1" * 64 + "'", ps1)
+        self.assertIn("AXIOM_TAG='v1.2.3'", sh)
+        self.assertIn("2" * 64, sh)
+        self.assertIn("3" * 64, sh)
+        for text in (ps1, sh):
+            self.assertNotRegex(text, r"@@[A-Z_]+@@")
+            code = [line for line in text.splitlines() if not line.lstrip().startswith("#")]
+            self.assertFalse([line for line in code if "latest" in line], "the update script must never resolve latest")
+            # The installed case delegates to the installation's own CLI; the script has no version option.
+            self.assertIn("update", "\n".join(code))
+            self.assertNotIn("--version", "\n".join(code))
+            for name in ("AXIOM_CLI_INSTALL_ROOT", "AXIOM_ENGINE_BIN", "AXIOM_HOME"):
+                self.assertIn(name, text)
+        self.assertIn("IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)", ps1)
+        self.assertIn("[Environment]::GetEnvironmentVariable($name, 'User')", ps1)
+        self.assertIn('id -u', sh)
+
+    def test_update_generation_is_deterministic(self):
+        first = gen.generate("v1.2.3", SUMS)
+        self.assertEqual(first["update.ps1"], gen.generate("v1.2.3", SUMS.replace("\n", "\r\n"))["update.ps1"])
+        self.assertNotIn(b"\r\n", first["update.sh"])
+
+
+@unittest.skipUnless(shutil.which("sh"), "no sh on this host")
+class UpdateShBehaviourTests(unittest.TestCase):
+    """Run the generated update.sh against fixture homes; nothing is downloaded or installed."""
+
+    def setUp(self):
+        import tempfile
+        self.home = Path(tempfile.mkdtemp(prefix="axiom-update-test-"))
+        self.script = self.home / "update.sh"
+        self.script.write_bytes(gen.generate("v1.2.3", SUMS, "http://127.0.0.1:9")["update.sh"])
+
+    def tearDown(self):
+        shutil.rmtree(self.home, ignore_errors=True)
+
+    def run_update(self, *args, extra=None):
+        import os
+        env = {k: v for k, v in os.environ.items() if not k.upper().startswith("AXIOM")}
+        env.update({"HOME": str(self.home), "XDG_DATA_HOME": str(self.home / "data"),
+                    "PATH": os.environ.get("PATH", "")})
+        env.update(extra or {})
+        return subprocess.run([shutil.which("sh"), str(self.script), *args], env=env, capture_output=True,
+                              text=True, stdin=subprocess.DEVNULL, timeout=60)
+
+    def tree(self):
+        return sorted(p.relative_to(self.home).as_posix() for p in self.home.rglob("*"))
+
+    def test_nothing_installed_refuses_without_change(self):
+        before = self.tree()
+        result = self.run_update()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("not installed", result.stderr)
+        self.assertIn("http://127.0.0.1:9/v1.2.3/install.sh", result.stderr)
+        self.assertEqual(self.tree(), before)
+
+    def test_leftover_variables_refuse_without_change(self):
+        for name in ("AXIOM_CLI_INSTALL_ROOT", "AXIOM_ENGINE_BIN", "AXIOM_HOME"):
+            result = self.run_update(extra={name: "/somewhere"})
+            self.assertEqual(result.returncode, 1, name)
+            self.assertIn("leftover variables", result.stderr)
+            self.assertIn(name + "=/somewhere", result.stderr)
+
+    def test_installed_root_runs_its_own_axiom_cli_update(self):
+        root = self.home / "data" / "axiom"
+        (root / "bin").mkdir(parents=True)
+        (root / "installed.json").write_text("{}", encoding="utf-8")
+        stub = root / "bin" / "axiom-cli"
+        stub.write_bytes(b'#!/bin/sh\necho "stub axiom-cli $*"\nexit 7\n')
+        stub.chmod(0o755)
+        result = self.run_update("--yes")
+        self.assertIn("running its axiom-cli update", result.stdout)
+        self.assertIn("stub axiom-cli update --yes", result.stdout)
+        self.assertEqual(result.returncode, 7, "the installed CLI's exit code is passed through")
+
+    def test_legacy_bootstrap_root_takes_the_verified_install_path(self):
+        current = self.home / "axiom" / "installs" / "ecosystem" / "current"
+        current.parent.mkdir(parents=True)
+        current.write_text("{}", encoding="utf-8")
+        before = self.tree()
+        result = self.run_update("--yes")
+        self.assertIn("Axiom 0.1.2 bootstrap root", result.stdout)
+        self.assertEqual(result.returncode, 1)
+        # Either the host is not a published platform or the fixture URL cannot be fetched; both stop
+        # before extraction, so nothing outside the temporary directory changed.
+        self.assertRegex(result.stderr, r"unsupported platform|download failed|curl or wget|sha256sum")
+        self.assertEqual(self.tree(), before)
+
+    def test_unknown_option_is_refused(self):
+        result = self.run_update("--version", "1.2.3")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("unknown option '--version'", result.stderr)
 
 
 if __name__ == "__main__":

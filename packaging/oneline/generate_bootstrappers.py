@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate the per-release one-line bootstrappers `install.ps1` and `install.sh` (ADR-0033, L-004).
+"""Generate the per-release one-line bootstrappers `install.ps1`/`install.sh` and `update.ps1`/`update.sh` (ADR-0033 L-004, ADR-0035 L-013).
 
-The generator fills `installers/oneline/install.{ps1,sh}.in` with one release's exact tag, archive
+The generator fills `installers/oneline/{install,update}.{ps1,sh}.in` with one release's exact tag, archive
 names and SHA-256 values taken from that release's `SHA256SUMS`. It is deterministic: the same
 inputs produce byte-identical scripts (LF line endings, no timestamps, no environment input).
 
@@ -24,6 +24,7 @@ TEMPLATES = ROOT / "installers" / "oneline"
 CANONICAL_BASE_URL = "https://github.com/orchex006/axiom-cli/releases/download"
 TAG = re.compile(r"^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$")
 DIGEST = re.compile(r"^[0-9a-f]{64}$")
+SCRIPTS = ("install.ps1", "install.sh", "update.ps1", "update.sh")
 PLATFORMS = {
     "WINDOWS": ("windows-x64", "zip"),
     "LINUX": ("linux-x64", "tar.gz"),
@@ -77,7 +78,7 @@ def generate(tag: str, sums_text: str, base_url: str = CANONICAL_BASE_URL) -> di
     mapping = values(tag, read_sums(sums_text), base_url)
     return {
         name: render((TEMPLATES / f"{name}.in").read_text(encoding="utf-8"), mapping).encode("utf-8")
-        for name in ("install.ps1", "install.sh")
+        for name in SCRIPTS
     }
 
 

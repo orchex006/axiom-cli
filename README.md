@@ -19,7 +19,7 @@ powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cl
 Update:
 
 ```powershell
-axiom-cli update
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/update.ps1 | iex"
 ```
 
 ### macOS, Linux and WSL2 (not as root)
@@ -33,12 +33,12 @@ curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/insta
 Update:
 
 ```sh
-axiom-cli update
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/update.sh | sh
 ```
 
 The install script checks the download's SHA-256, shows what it will install and asks once. After installing, open a new terminal and check the result with `axiom-cli version` and `axiom-cli doctor`.
 
-`axiom-cli update` shows the plan, asks once and keeps the previous version for rollback. It prints `up to date` when nothing is newer. On 0.1.2 or older, `axiom-cli` has no one-command update; run the install command instead, after the steps in [Upgrading from 0.1.0 or 0.1.2](docs/INSTALL.md#upgrading-from-010-or-012).
+The update script finds your installation and runs its `axiom-cli update`, which shows the plan, asks once and keeps the previous version for rollback; it prints `up to date` when nothing is newer. If `axiom-cli` is on your PATH, `axiom-cli update` does the same. The update script also upgrades a 0.1.0/0.1.2 installation, but first remove the old `AXIOM_*` variables ([Upgrading from 0.1.0 or 0.1.2](docs/INSTALL.md#upgrading-from-010-or-012)). The update script is published from 0.1.4.
 
 **Full guide:** [docs/INSTALL.md](docs/INSTALL.md) covers requirements, options, where files go, update, uninstall, upgrading from 0.1.0/0.1.2 and troubleshooting.
 
