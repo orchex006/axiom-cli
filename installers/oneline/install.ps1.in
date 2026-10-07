@@ -1,0 +1,101 @@
+# Axiom one-line installer for Windows x64 (ADR-0033). Generated for @@TAG@@; do not edit.
+#
+#   powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
+#   & ([scriptblock]::Create((irm https://github.com/orchex006/axiom-cli/releases/download/@@TAG@@/install.ps1))) -Yes -NoModifyPath
+#
+# This script only downloads the @@TAG@@ archive named below, checks its SHA-256, extracts it to
+# a temporary directory and hands off to `axiom-cli install`, which prints the plan and asks once.
+# It never resolves `latest` itself, never runs elevated and contains no installation logic.
+# Environment equivalents for `irm | iex`: AXIOM_INSTALL_YES=1, AXIOM_NO_MODIFY_PATH=1, AXIOM_VERSION=X.Y.Z.
+param(
+    [switch]$Yes,
+    [switch]$NoModifyPath,
+    [string]$Version
+)
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version 2
+
+$AxiomTag = '@@TAG@@'
+$AxiomBaseUrl = '@@BASE_URL@@'
+$AxiomAsset = '@@WINDOWS_ASSET@@'
+$AxiomSha256 = '@@WINDOWS_SHA256@@'
+$AxiomCli = '@@CLI_PATH_WINDOWS@@'
+
+# Failures throw instead of calling `exit`: under `irm | iex` an `exit` would close the
+# user's PowerShell session. Under `powershell -c` an unhandled throw exits non-zero.
+function Stop-AxiomInstall([string]$Message) {
+    throw "axiom install: $Message"
+}
+
+if (-not $Version -and $env:AXIOM_VERSION) { $Version = $env:AXIOM_VERSION }
+if (-not $NoModifyPath -and $env:AXIOM_NO_MODIFY_PATH -eq '1') { $NoModifyPath = $true }
+
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Stop-AxiomInstall 'refusing to run elevated: Axiom installs per user. Re-run from a normal (non-Administrator) PowerShell.'
+}
+if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
+    Stop-AxiomInstall 'this installer is for Windows; on macOS, Linux or WSL2 use install.sh'
+}
+$arch = $env:PROCESSOR_ARCHITEW6432
+if (-not $arch) { $arch = $env:PROCESSOR_ARCHITECTURE }
+if ($arch -ne 'AMD64') {
+    Stop-AxiomInstall "unsupported architecture '$arch': only Windows x64 (AMD64) is published"
+}
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
+$cliArgs = @('install')
+if ($Yes) { $cliArgs += '--yes' }
+if ($NoModifyPath) { $cliArgs += '--no-modify-path' }
+
+if ($Version) {
+    $wanted = 'v' + $Version.TrimStart('v')
+    if ($wanted -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$') {
+        Stop-AxiomInstall "invalid version '$Version'; use X.Y.Z"
+    }
+    if ($wanted -ne $AxiomTag) {
+        # A pinned version runs that tag's own immutable installer; `latest` is never resolved here.
+        $pinned = "$AxiomBaseUrl/$wanted/install.ps1"
+        Write-Host "axiom install: using the $wanted installer from $pinned"
+        try { $text = Invoke-RestMethod -UseBasicParsing -Uri $pinned }
+        catch { Stop-AxiomInstall "could not download $pinned ($($_.Exception.Message)); nothing was changed" }
+        # Release assets are served as application/octet-stream; decode bytes if they arrive as such.
+        if ($text -is [byte[]]) { $text = [Text.Encoding]::UTF8.GetString($text) }
+        $forward = @{ Version = $wanted.TrimStart('v') }
+        if ($Yes) { $forward.Yes = $true }
+        if ($NoModifyPath) { $forward.NoModifyPath = $true }
+        & ([scriptblock]::Create($text)) @forward
+        return
+    }
+}
+
+$temp = Join-Path ([IO.Path]::GetTempPath()) ('axiom-install-' + [Guid]::NewGuid().ToString('N').Substring(0, 12))
+$code = 1
+try {
+    New-Item -ItemType Directory -Path $temp | Out-Null
+    $archive = Join-Path $temp $AxiomAsset
+    $url = "$AxiomBaseUrl/$AxiomTag/$AxiomAsset"
+    Write-Host "axiom install: downloading $AxiomTag ($AxiomAsset)"
+    try { Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile $archive }
+    catch { Stop-AxiomInstall "download failed for $url ($($_.Exception.Message)); nothing was changed" }
+    $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actual -ne $AxiomSha256) {
+        Stop-AxiomInstall "SHA-256 mismatch for $AxiomAsset (expected $AxiomSha256, got $actual); the archive was not extracted and nothing was changed"
+    }
+    $extract = Join-Path $temp 'release'
+    try { Expand-Archive -LiteralPath $archive -DestinationPath $extract }
+    catch { Stop-AxiomInstall "the verified archive could not be extracted ($($_.Exception.Message)); nothing was changed" }
+    $cli = Join-Path $extract $AxiomCli
+    if (-not (Test-Path -LiteralPath $cli -PathType Leaf)) {
+        Stop-AxiomInstall "the archive does not contain $AxiomCli; nothing was changed"
+    }
+    & $cli @cliArgs
+    $code = $LASTEXITCODE
+}
+finally {
+    if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue }
+}
+$global:LASTEXITCODE = $code
+if ($code -ne 0) { Stop-AxiomInstall "axiom-cli install exited $code" }

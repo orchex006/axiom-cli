@@ -11,6 +11,7 @@ mod bundle;
 mod cli;
 mod confirm;
 mod doctor;
+mod elevation;
 mod engine;
 mod layout;
 mod lifecycle;

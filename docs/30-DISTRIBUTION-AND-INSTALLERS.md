@@ -55,6 +55,22 @@ The interactive plan adds only `<root>/bin`, only to the user PATH, and says so 
 
 `--no-modify-path` skips it. The exact change is recorded in `<root>/path-change.json`; `axiom-cli uninstall` removes exactly that entry (byte-for-byte restoration when nothing else edited the value), removes the owned `bin` files whose digests still match `installed.json`, and keeps user data. On Windows the running `bin\axiom-cli.exe` cannot delete itself, so it is moved aside as `axiom-cli.exe.uninstalled`. The real-host harness is `tests/l003_confirm_and_path.py`; it redirects the PATH target to `HKCU\Software\AxiomCliTest` (or a work `HOME`) so the operator's real PATH is never changed.
 
+### One-line bootstrappers (ADR-0033, L-004)
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
+```
+
+```sh
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
+```
+
+`installers/oneline/install.ps1.in` and `install.sh.in` are templates; `packaging/oneline/generate_bootstrappers.py --tag vX.Y.Z --sums <SHA256SUMS> --out <dir>` fills them with that release's tag, archive names and SHA-256 values. The output is deterministic (LF, no timestamps), so the same inputs give byte-identical scripts. The `latest` URL only selects which immutable script runs; the scripts download only their own tag's archive (or, with a version pin, that tag's own script) and never resolve `latest`.
+
+Each script refuses an elevated run (Administrator / root), an unsupported OS or architecture, a download failure, a SHA-256 mismatch (checked before extraction) and an archive that cannot be extracted, each before any change. It extracts into a temporary directory that is always removed, then runs `axiom-cli install` (which prints the plan and asks once). Options: `-Yes` / `--yes`, `-NoModifyPath` / `--no-modify-path`, `-Version` / `--version X.Y.Z`; under `irm | iex` use `AXIOM_INSTALL_YES=1`, `AXIOM_NO_MODIFY_PATH=1` or `AXIOM_VERSION`, or `& ([scriptblock]::Create((irm <url>))) -Yes`. `install.sh` reads the confirmation from `/dev/tty` because `curl | sh` occupies stdin. The Windows script uses only Windows PowerShell 5.1; failures `throw` rather than `exit` so `irm | iex` never closes the user's session. `axiom-cli install`/`uninstall` also refuse to run elevated themselves.
+
+The real-host harness `tests/l004_bootstrappers.py` serves staged releases from a local HTTP server laid out like GitHub release downloads and runs the exact one-liner through Windows PowerShell; `tests/test_bootstrappers.py` covers the generator.
+
 ## ## Update
 
 J-007 implements the update path in `src/update/` with the channel manifest in `channels/stable.json`; `docs/50-UPDATE-CHANNEL.md` records what runs today and what does not. Implemented now:

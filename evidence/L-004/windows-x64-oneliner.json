@@ -1,0 +1,169 @@
+{
+  "task_id": "L-004",
+  "lane": "windows-x64",
+  "host": {
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64"
+  },
+  "cli_sha256": "a0df32007a94ac13cea0c6d03f7458d67a9b1be1d20da21efb17c2910b661b89",
+  "staged_archive_sha256": "240ec18a9a84fab41e6c91bf148699af73a7031b7a935613f4b830cc53dc5d5a",
+  "cases": [
+    {
+      "case": "oneliner_installs_embedded_version",
+      "passed": true,
+      "run": {
+        "command": "irm http://127.0.0.1:62295/v0.1.3-l004.1/install.ps1 | iex",
+        "exit_code": 0,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.1 (axiom-0.1.3-l004.1-windows-x64.zip)\nPATH: added <home>\\AppData\\Local\\Temp\\axl4\\oneliner\\Axiom\\bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-a580b6942ca8783f recorded in <home>\\AppData\\Local\\Temp\\axl4\\oneliner\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl4\\tmp-oneliner\\axiom-install-040dae68c3f8\\release\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl4\\oneliner\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl4\\oneliner\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: add <home>\\AppData\\Local\\Temp\\axl4\\oneliner\\Axiom\\bin to the user PATH (HKCU\\Software\\AxiomCliTest\\L004) (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: a580b6942ca8783f622ad3ccb2b15580c0890e96e67066b0c436a74c158d7b39\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl4\\tmp-oneliner\\axiom-install-040dae68c3f8\\release\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": "",
+        "installed": true,
+        "root_exists": true,
+        "path_record": true,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "yes_and_no_modify_path_pass_through",
+      "passed": true,
+      "run": {
+        "command": "& ([scriptblock]::Create((irm http://127.0.0.1:62295/v0.1.3-l004.1/install.ps1))) -Yes -NoModifyPath",
+        "exit_code": 0,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.1 (axiom-0.1.3-l004.1-windows-x64.zip)\ninstalled: generation install-d6350f5809f7550f recorded in <home>\\AppData\\Local\\Temp\\axl4\\switches\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl4\\tmp-switches\\axiom-install-3dc914466c65\\release\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl4\\switches\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl4\\switches\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl4\\switches\\Axiom\\bin\\axiom-cli directly\nplan digest: d6350f5809f7550f5153adefa935255de91b56e318df81f32ee11c147f14606e\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl4\\tmp-switches\\axiom-install-3dc914466c65\\release\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": "",
+        "installed": true,
+        "root_exists": true,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "version_pin_runs_that_tags_installer",
+      "passed": true,
+      "run": {
+        "command": "& ([scriptblock]::Create((irm http://127.0.0.1:62295/v0.1.3-l004.1/install.ps1))) -Yes -NoModifyPath -Version 0.1.3-l004.2",
+        "exit_code": 0,
+        "stdout_tail": "axiom install: using the v0.1.3-l004.2 installer from http://127.0.0.1:62295/v0.1.3-l004.2/install.ps1\naxiom install: downloading v0.1.3-l004.2 (axiom-0.1.3-l004.2-windows-x64.zip)\ninstalled: generation install-68d0f36eca34373a recorded in <home>\\AppData\\Local\\Temp\\axl4\\pin\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl4\\tmp-pin\\axiom-install-407be5ba52fc\\release\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl4\\pin\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl4\\pin\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl4\\pin\\Axiom\\bin\\axiom-cli directly\nplan digest: 68d0f36eca34373a63a259c7757bb163d62f6cfa2a794315b7446ef7c3aebf9e\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl4\\tmp-pin\\axiom-install-407be5ba52fc\\release\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": "",
+        "installed": true,
+        "root_exists": true,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "no_terminal_without_yes_changes_nothing",
+      "passed": true,
+      "run": {
+        "command": "irm http://127.0.0.1:62295/v0.1.3-l004.1/install.ps1 | iex",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.1 (axiom-0.1.3-l004.1-windows-x64.zip)\n",
+        "stderr_tail": " confirm it. Re-run with `--yes` (or AXIOM_INSTALL_YES=1) to apply plan d99a13409af04e4ff58fe149811806b7d55e8ef7049922a130e91cb5c75da4b0, or use `--dry-run` / `--apply --approve-digest`\naxiom-cli: target: windows-x64 (evidence target windows-x64)\naxiom-cli: release set: <home>\\AppData\\Local\\Temp\\axl4\\tmp-noyes\\axiom-install-d19171bab7b7\\release\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\naxiom-cli: channel: stable published=false\naxiom-cli:   axiom-graphd 0.1.2 - artifact declared\naxiom-cli:   axiom-mcp 0.1.2 - artifact declared\naxiom-cli:   skills 0.1.2 - no artifact for this host\naxiom-cli:   mcp runtime - provisioned from the release (windows-embedded-python)\naxiom-cli: install root: <home>\\AppData\\Local\\Temp\\axl4\\noyes\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl4\\noyes\\Axiom\\bin)\naxiom-cli: size: 4.4 MB of verified artifacts\naxiom-cli: PATH: add <home>\\AppData\\Local\\Temp\\axl4\\noyes\\Axiom\\bin to the user PATH (HKCU\\Software\\AxiomCliTest\\L004) (undo: axiom-cli uninstall; skip: --no-modify-path)\naxiom-cli: plan digest: d99a13409af04e4ff58fe149811806b7d55e8ef7049922a130e91cb5c75da4b0\naxiom install: axiom-cli install exited 4\nAt line:28 char:5\n+     throw \"axiom install: $Message\"\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : OperationStopped: (axiom install: ...nstall exited 4:String) [], RuntimeException\n    + FullyQualifiedErrorId : axiom install: axiom-cli install exited 4\n \n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "tampered_archive_refused",
+      "passed": true,
+      "run": {
+        "command": "irm http://127.0.0.1:62295/v0.1.3-l004.3/install.ps1 | iex",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.3 (axiom-0.1.3-l004.3-windows-x64.zip)\n",
+        "stderr_tail": "axiom install: SHA-256 mismatch for axiom-0.1.3-l004.3-windows-x64.zip (expected \n240ec18a9a84fab41e6c91bf148699af73a7031b7a935613f4b830cc53dc5d5a, got \nd78e048ef29d6a30e19012d6300f0dcd5a3ce1aa2fae8fb1797fb463f124b882); the archive was not extracted and nothing was \nchanged\nAt line:28 char:5\n+     throw \"axiom install: $Message\"\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : OperationStopped: (axiom install: ...ing was changed:String) [], RuntimeException\n    + FullyQualifiedErrorId : axiom install: SHA-256 mismatch for axiom-0.1.3-l004.3-windows-x64.zip (expected 240ec18 \n   a9a84fab41e6c91bf148699af73a7031b7a935613f4b830cc53dc5d5a, got d78e048ef29d6a30e19012d6300f0dcd5a3ce1aa2fae8fb1797  \n  fb463f124b882); the archive was not extracted and nothing was changed\n \n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "truncated_archive_refused",
+      "passed": true,
+      "run": {
+        "command": "irm http://127.0.0.1:62295/v0.1.3-l004.4/install.ps1 | iex",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.4 (axiom-0.1.3-l004.4-windows-x64.zip)\n",
+        "stderr_tail": "axiom install: SHA-256 mismatch for axiom-0.1.3-l004.4-windows-x64.zip (expected \n240ec18a9a84fab41e6c91bf148699af73a7031b7a935613f4b830cc53dc5d5a, got \n96f70bcc86935bdd2c4a2ec90645239678ad14aad5c7a75b116fb178f27c08f5); the archive was not extracted and nothing was \nchanged\nAt line:28 char:5\n+     throw \"axiom install: $Message\"\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : OperationStopped: (axiom install: ...ing was changed:String) [], RuntimeException\n    + FullyQualifiedErrorId : axiom install: SHA-256 mismatch for axiom-0.1.3-l004.4-windows-x64.zip (expected 240ec18 \n   a9a84fab41e6c91bf148699af73a7031b7a935613f4b830cc53dc5d5a, got 96f70bcc86935bdd2c4a2ec90645239678ad14aad5c7a75b116  \n  fb178f27c08f5); the archive was not extracted and nothing was changed\n \n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "unextractable_archive_refused",
+      "passed": true,
+      "run": {
+        "command": "irm http://127.0.0.1:62295/v0.1.3-l004.5/install.ps1 | iex",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.5 (axiom-0.1.3-l004.5-windows-x64.zip)\n",
+        "stderr_tail": "axiom install: the verified archive could not be extracted (Exception calling \".ctor\" with \"3\" argument(s): \"End of \nCentral Directory record could not be found.\"); nothing was changed\nAt line:28 char:5\n+     throw \"axiom install: $Message\"\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : OperationStopped: (axiom install: ...ing was changed:String) [], RuntimeException\n    + FullyQualifiedErrorId : axiom install: the verified archive could not be extracted (Exception calling \".ctor\" wi \n   th \"3\" argument(s): \"End of Central Directory record could not be found.\"); nothing was changed\n \n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "network_failure_refused",
+      "passed": true,
+      "run": {
+        "command": "& ([scriptblock]::Create((Get-Content -Raw '<home>/AppData/Local/Temp/axl4/srv-dead/v0.1.3-l004.9/install.ps1'))) -Yes",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004.9 (axiom-0.1.3-l004.9-windows-x64.zip)\n",
+        "stderr_tail": "axiom install: download failed for http://127.0.0.1:9/v0.1.3-l004.9/axiom-0.1.3-l004.9-windows-x64.zip (Unable to \nconnect to the remote server); nothing was changed\nAt line:28 char:5\n+     throw \"axiom install: $Message\"\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : OperationStopped: (axiom install: ...ing was changed:String) [], RuntimeException\n    + FullyQualifiedErrorId : axiom install: download failed for http://127.0.0.1:9/v0.1.3-l004.9/axiom-0.1.3-l004.9-w \n   indows-x64.zip (Unable to connect to the remote server); nothing was changed\n \n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "unsupported_architecture_refused",
+      "passed": true,
+      "run": {
+        "command": "irm http://127.0.0.1:62295/v0.1.3-l004.1/install.ps1 | iex",
+        "exit_code": 1,
+        "stdout_tail": "",
+        "stderr_tail": "axiom install: unsupported architecture '': only Windows x64 (AMD64) is published\nAt line:28 char:5\n+     throw \"axiom install: $Message\"\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : OperationStopped: (axiom install: ...4) is published:String) [], RuntimeException\n    + FullyQualifiedErrorId : axiom install: unsupported architecture '': only Windows x64 (AMD64) is published\n \n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "install_sh_refuses_unsupported_os",
+      "passed": true,
+      "run": {
+        "exit_code": 1,
+        "stderr_tail": "axiom install: unsupported platform 'MINGW64_NT-10.0-26200 x86_64': published for Linux x64 (incl. WSL2) and macOS x64; on Windows use install.ps1\n"
+      }
+    },
+    {
+      "case": "generator_is_deterministic",
+      "passed": true,
+      "sha256": {
+        "install.ps1": "c742ca26a948600f1848aef76b2c868207eeb79d0e14bbeeb462656ccd2d97c4",
+        "install.sh": "d76f4e7e1b2aa563c2fc3b9feda503676d85eaa28f451547500f8dd92cf5571c"
+      }
+    },
+    {
+      "case": "elevated_run_refused",
+      "passed": null,
+      "status": "not_run",
+      "reason": "an elevated PowerShell cannot be started non-interactively on this host (UAC); the script checks WindowsBuiltInRole::Administrator and the CLI checks TokenElevation before any change"
+    },
+    {
+      "case": "real_user_path_untouched",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "not_run": [
+    "elevated_run_refused"
+  ]
+}

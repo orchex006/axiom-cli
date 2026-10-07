@@ -1,3 +1,7 @@
+## Unreleased — L-004 one-line bootstrappers
+
+- Add `installers/oneline/install.ps1.in` / `install.sh.in` and the deterministic generator `packaging/oneline/generate_bootstrappers.py`, which embeds one release's tag, archive names and SHA-256 values. The scripts refuse elevation, unsupported OS/architecture, network failure, SHA-256 mismatch and unextractable archives before any change, extract to a temporary directory that is always removed, and hand off to `axiom-cli install`; `--yes`, `--no-modify-path` and a version pin pass through, and `latest` is never resolved by the scripts. `axiom-cli install`/`uninstall` now refuse an elevated run (`6` `elevated_refused`). Harnesses `tests/l004_bootstrappers.py` (exact `irm | iex` on Windows) and `tests/test_bootstrappers.py` (R15, R16, R22).
+
 ## Unreleased — L-003 one confirmation and user PATH
 
 - A bare `install` / `uninstall` prints the plan and asks `Proceed? [Y/n]` once, approving exactly that plan's digest; `--yes` / `-y` / `AXIOM_INSTALL_YES=1` pre-approve; no terminal and no `--yes` prints the plan, changes nothing and exits `4`; a declined prompt exits `5`. `--dry-run` and `--apply --approve-digest` are unchanged.

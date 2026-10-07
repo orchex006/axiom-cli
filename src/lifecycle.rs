@@ -124,6 +124,11 @@ struct ReleaseSet {
 }
 
 fn install(request: InstallRequest, json: bool) -> Result<Report, Refusal> {
+    if request.mode != Mode::DryRun {
+        if let Some(refusal) = crate::elevation::refusal() {
+            return Err(refusal);
+        }
+    }
     let path_change = (request.mode == Mode::Interactive).then_some(request.modify_path);
     let set = resolve_release_set(request.from.as_deref(), path_change)?;
 
@@ -706,6 +711,11 @@ fn install_engine(verified: &[Json]) -> Result<engine::Engine, Refusal> {
 
 /// Run `uninstall`.
 fn uninstall(request: UninstallRequest, json: bool) -> Result<Report, Refusal> {
+    if request.mode != Mode::DryRun {
+        if let Some(refusal) = crate::elevation::refusal() {
+            return Err(refusal);
+        }
+    }
     if request.purge_data {
         return Err(Refusal::validation(
             "purge_data_unsupported",
