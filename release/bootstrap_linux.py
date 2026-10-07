@@ -52,7 +52,7 @@ def main():
     ).hexdigest()
     if args.dry_run:
         print(
-            json.dumps({"status": "planned", "plan_digest": digest, "version": "0.1.2"})
+            json.dumps({"status": "planned", "plan_digest": digest, "version": "0.1.3"})
         )
         return 0
     if args.approve_digest != digest:
@@ -71,14 +71,14 @@ def main():
         "--root",
         root / "mcp-runtime",
         "--version",
-        "0.1.2",
+        "0.1.3",
         "--source-revision",
         manifest["mcp_revision"],
     ]
     for key, name in [
         ("runtime", "python.tar.gz"),
         ("wheelhouse", "wheelhouse.tar.gz"),
-        ("wheel", "axiom_mcp-0.1.2-py3-none-any.whl"),
+        ("wheel", "axiom_mcp-0.1.3-py3-none-any.whl"),
         ("lock", "requirements.txt"),
     ]:
         runtime_args += [
@@ -111,7 +111,7 @@ def main():
         json.dumps(
             {
                 "status": "installed",
-                "version": "0.1.2",
+                "version": "0.1.3",
                 "root": str(root),
                 "runtime": runtime,
                 "engine": applied,

@@ -85,7 +85,10 @@ pub fn run_doctor(all: bool, json: bool, verbose: bool) -> i32 {
     }
 
     // The distribution-owned prerequisite table from the contract's section 7.
-    let (prerequisite_finding, prerequisite_lines, prerequisite_worst) = prerequisites(all);
+    let installed_root =
+        state::default_root().filter(|root| State::new(root.clone()).has_installed());
+    let (prerequisite_finding, prerequisite_lines, prerequisite_worst) =
+        prerequisites(all, installed_root.as_deref());
     findings.push(prerequisite_finding);
     lines.extend(prerequisite_lines);
     worst = worst.max(prerequisite_worst);
@@ -356,26 +359,70 @@ fn journal_entries(state: &State) -> Vec<String> {
 }
 
 /// Evaluate the distribution contract's section 7 dependency table.
-fn prerequisites(all: bool) -> (Json, Vec<String>, i32) {
+fn prerequisites(all: bool, installed: Option<&std::path::Path>) -> (Json, Vec<String>, i32) {
     let mut lines = vec!["prerequisites (distribution contract section 7):".to_string()];
     let mut items: Vec<Json> = Vec::new();
     let mut worst = crate::cli::exit::SUCCESS;
 
-    // Rust toolchain - needed by the axiom-graphd core release and by axiom-cli itself.
+    // Rust toolchain - needed to *build* the core release and axiom-cli. Section 7 forbids
+    // requiring a compiler at install time, so for an installed release it is informational.
     let rust = probe_rust();
-    lines.push(format!("  rust toolchain: {}", rust.summary));
-    if !rust.satisfied {
-        worst = worst.max(crate::cli::exit::NOT_READY);
+    if installed.is_some() {
+        lines.push(format!(
+            "  rust toolchain: not required by an installed release (build-time only; observed: {})",
+            rust.summary
+        ));
+        items.push(finding(
+            "rust-toolchain",
+            "ok",
+            "build-time prerequisite; installed binaries need no compiler",
+            vec![
+                ("mandatory", Json::bool(false)),
+                ("observed", Json::text(&rust.summary)),
+            ],
+        ));
+    } else {
+        lines.push(format!("  rust toolchain: {}", rust.summary));
+        if !rust.satisfied {
+            worst = worst.max(crate::cli::exit::NOT_READY);
+        }
+        items.push(rust.to_json("rust-toolchain", true));
     }
-    items.push(rust.to_json("rust-toolchain", true));
 
-    // Python interpreter - needed by axiom-mcp. The contract fixes the range the owner declares.
-    let python = probe_python();
-    lines.push(format!("  python interpreter: {}", python.summary));
-    if !python.satisfied {
-        worst = worst.max(crate::cli::exit::NOT_READY);
+    // Python interpreter - needed by axiom-mcp. An installed release carries its own provisioned,
+    // digest-checked runtime, which satisfies section 7 ("provision an approved runtime").
+    let provisioned = installed.and_then(|root| {
+        [
+            "mcp-runtime/current.json",
+            "mcp-runtime/mcp-runtime/current.json",
+        ]
+        .iter()
+        .map(|rel| root.join(rel))
+        .find(|path| path.is_file())
+    });
+    if let Some(pointer) = provisioned {
+        lines.push(format!(
+            "  python interpreter: provisioned MCP runtime ({})",
+            pointer.display()
+        ));
+        items.push(finding(
+            "python-interpreter",
+            "ok",
+            "satisfied by the installed, provisioned MCP runtime",
+            vec![
+                ("mandatory", Json::bool(true)),
+                ("satisfied", Json::bool(true)),
+                ("source", Json::text(&pointer.display().to_string())),
+            ],
+        ));
+    } else {
+        let python = probe_python();
+        lines.push(format!("  python interpreter: {}", python.summary));
+        if !python.satisfied {
+            worst = worst.max(crate::cli::exit::NOT_READY);
+        }
+        items.push(python.to_json("python-interpreter", true));
     }
-    items.push(python.to_json("python-interpreter", true));
 
     // SQLite driver - bundled or explicitly declared by the engine's owner manifest.
     //
@@ -383,12 +430,12 @@ fn prerequisites(all: bool) -> (Json, Vec<String>, i32) {
     // proves its version, and forbids guessing one. Neither the engine's published surface nor the
     // channel manifest declares a SQLite driver today, so the honest state is `unverified` (recorded
     // as undeclared), never `ok`: merely locating a binary named `axiom-graphd` proves nothing about
-    // the driver it bundles. An unverified mandatory prerequisite keeps its not-ready class.
+    // the driver it bundles. ADR-0033 / spec L goal: a remaining `unverified` item is non-blocking
+    // and named with the task that owns its declaration.
     lines.push(
-        "  sqlite driver: unverified: no owner manifest declares the bundled SQLite driver version"
+        "  sqlite driver: unverified (non-blocking; owner task J-007): no owner manifest declares the bundled SQLite driver version"
             .to_string(),
     );
-    worst = worst.max(crate::cli::exit::NOT_READY);
     items.push(finding(
         "sqlite-driver",
         "unverified",
@@ -398,6 +445,8 @@ fn prerequisites(all: bool) -> (Json, Vec<String>, i32) {
             ("mandatory", Json::bool(true)),
             ("satisfied", Json::bool(false)),
             ("version_source", Json::text("undeclared")),
+            ("blocking", Json::bool(false)),
+            ("owner_task", Json::text("J-007")),
             ("observed", Json::text("owner release manifest / update channel declares no SQLite driver")),
         ],
     ));
