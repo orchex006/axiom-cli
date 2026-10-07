@@ -48,6 +48,8 @@ jobs:
         shell: python
         env:
           GH_TOKEN: ${{ github.token }}
+          # Hosted Windows runners are elevated; real installs refuse elevation (ADR-0033).
+          AXIOM_CLI_TEST_ALLOW_ELEVATED: '1'
         run: |
           import os, pathlib, subprocess, sys
           import json, time

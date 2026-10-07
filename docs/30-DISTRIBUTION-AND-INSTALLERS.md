@@ -71,6 +71,18 @@ Each script refuses an elevated run (Administrator / root), an unsupported OS or
 
 The real-host harness `tests/l004_bootstrappers.py` serves staged releases from a local HTTP server laid out like GitHub release downloads and runs the exact one-liner through Windows PowerShell; `tests/test_bootstrappers.py` covers the generator.
 
+### Legacy installations (ADR-0033, L-006)
+
+`axiom-cli doctor` names, without changing anything: a J-004 **CLI store** (`bin/axiom-cli`, `cli/`, `install-manifest.json`, 0.1.0 or 0.1.2), a 0.1.2 **bootstrap root** (`installs/ecosystem/current`, the nested `mcp-runtime/mcp-runtime` of the 0.1.2 Windows bootstrap, no `installed.json`), any Axiom-like directory it cannot classify (`unknown`, never modified), every other `axiom-cli` on PATH with its version and whether it shadows this install, and leftover `AXIOM_CLI_INSTALL_ROOT` / `AXIOM_ENGINE_BIN` / `AXIOM_HOME` variables. It inspects the target root, the platform default root, `%USERPROFILE%\axiom` (`~/axiom`) and any root those variables name.
+
+`axiom-cli install` shows each in its plan:
+
+- a CLI store at the target root is adopted in place: its `bin/axiom-cli` is backed up to `legacy/cli-store-<version>/`, `cli/` and `install-manifest.json` are kept, and a PATH entry the old installer added becomes owned by this install (uninstall removes it);
+- a bootstrap root elsewhere is left untouched (side by side); `axiom-cli install --adopt <path>` adopts it in place instead: the engine reports `already-installed`, the nested MCP runtime is reused where it is (its venv holds absolute paths), user data and graph output are kept, and `bin` + `installed.json` are written there;
+- an `axiom-cli` running from an installed `<root>/bin` resolves that root itself, so an adopted non-default root needs no environment variable.
+
+The real-host harness `tests/l006_adopt_legacy.py` rebuilds the 2026-10-06 Windows state (fixture CLI store first on PATH, a real 0.1.2 bootstrap root made by the published `bootstrap_windows.ps1`, leftover variables).
+
 ## ## Update
 
 One-command update (ADR-0033, L-005): `axiom-cli update` checks the recorded channel, shows the plan, asks once, applies through the engine's update transaction and keeps a rollback generation; see `docs/50-UPDATE-CHANNEL.md`.

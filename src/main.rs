@@ -14,6 +14,7 @@ mod doctor;
 mod elevation;
 mod engine;
 mod layout;
+mod legacy;
 mod lifecycle;
 mod pathenv;
 mod runtime;

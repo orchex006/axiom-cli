@@ -128,10 +128,10 @@ def skills_bundle(
     if owner_source:
         if data.get("manifest_version") != 1 or data.get("component") != "axiom-skills":
             raise ValueError("owner skills source schema or component is incompatible")
-        if (
-            data.get("spec_revision")
-            != json.loads((ROOT / "spec.lock.json").read_text())["spec_revision"]
-        ):
+        lock = json.loads((ROOT / "spec.lock.json").read_text())
+        compatible = json.loads((ROOT / "packaging" / "compatible-spec-revisions.json").read_text())
+        accepted = {lock["spec_revision"], *(row["revision"] for row in compatible["revisions"])}
+        if data.get("spec_revision") not in accepted:
             raise ValueError("owner skills spec revision differs from the CLI pin")
         if revision is None:
             raise ValueError("owner skills source needs an immutable revision")

@@ -91,6 +91,7 @@ pub fn run_doctor(all: bool, json: bool, verbose: bool) -> i32 {
     worst = worst.max(prerequisite_worst);
 
     findings.push(engine_finding(&mut lines, &mut worst));
+    findings.push(legacy_finding(&mut lines));
 
     if let Some((code, reason, message)) = integrity_failure {
         let mut failure = Report::new(code, class_status(code), message).subject("doctor");
@@ -118,6 +119,87 @@ pub fn run_doctor(all: bool, json: bool, verbose: bool) -> i32 {
     report.detail("findings", Json::array(findings));
     report.lines(lines);
     report.emit(json, verbose)
+}
+
+/// L-006: name every legacy layout, every `axiom-cli` that shadows this root's `bin` on PATH and
+/// every leftover `AXIOM_*` variable. Informational: it never changes the exit code and never
+/// modifies anything.
+fn legacy_finding(lines: &mut Vec<String>) -> Json {
+    let Some(root) = state::default_root() else {
+        return finding(
+            "legacy",
+            "ok",
+            "no install root to compare against",
+            Vec::new(),
+        );
+    };
+    let layouts = crate::legacy::detect(&root);
+    let shadows = crate::legacy::shadows(&crate::layout::bin_dir(&root));
+    let env = crate::legacy::leftover_env();
+    for layout in &layouts {
+        lines.push(format!("legacy layout: {}", layout.describe()));
+    }
+    for shadow in &shadows {
+        lines.push(format!(
+            "axiom-cli on PATH: {} ({}){}",
+            shadow.path.display(),
+            shadow.version,
+            if shadow.before_root_bin {
+                " - shadows this install"
+            } else {
+                ""
+            }
+        ));
+    }
+    for (name, value) in &env {
+        lines.push(format!(
+            "leftover environment: {name}={value} (not needed by an ADR-0033 install)"
+        ));
+    }
+    let clean = layouts.is_empty() && shadows.iter().all(|s| !s.before_root_bin) && env.is_empty();
+    finding(
+        "legacy",
+        if clean { "ok" } else { "warn" },
+        if clean {
+            "no legacy layout, PATH shadowing or leftover environment"
+        } else {
+            "legacy installations or leftovers were found; see the lines above (nothing was changed)"
+        },
+        vec![
+            (
+                "layouts",
+                Json::array(layouts.iter().map(crate::legacy::Layout::to_json).collect()),
+            ),
+            (
+                "path_shadowing",
+                Json::array(
+                    shadows
+                        .iter()
+                        .map(|shadow| {
+                            Json::from_pairs(vec![
+                                ("path", Json::text(&shadow.path.display().to_string())),
+                                ("version", Json::text(&shadow.version)),
+                                ("before_this_install", Json::bool(shadow.before_root_bin)),
+                            ])
+                        })
+                        .collect(),
+                ),
+            ),
+            (
+                "environment",
+                Json::array(
+                    env.iter()
+                        .map(|(name, value)| {
+                            Json::from_pairs(vec![
+                                ("name", Json::text(name)),
+                                ("value", Json::text(value)),
+                            ])
+                        })
+                        .collect(),
+                ),
+            ),
+        ],
+    )
 }
 
 fn class_status(code: i32) -> &'static str {

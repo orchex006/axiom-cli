@@ -1,0 +1,157 @@
+{
+  "task_id": "L-006",
+  "lane": "windows-x64",
+  "host": {
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64"
+  },
+  "cli_sha256": "5a0c3e5531417f83eeff9e0758b716304d90c243cbbd99aa7227d56383b3c651",
+  "cases": [
+    {
+      "case": "bootstrap_fixture_built",
+      "passed": true,
+      "run": {
+        "exit_code": 0,
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "doctor_names_legacy_state",
+      "passed": true,
+      "finding": {
+        "check": "legacy",
+        "environment": [
+          {
+            "name": "AXIOM_CLI_INSTALL_ROOT",
+            "value": "<home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom"
+          },
+          {
+            "name": "AXIOM_ENGINE_BIN",
+            "value": "<home>\\AppData\\Local\\Temp\\<session-tmp>\\scratchpad\\rel012\\x\\axiom.exe"
+          }
+        ],
+        "layouts": [
+          {
+            "kind": "bootstrap-root",
+            "nested_mcp_runtime": true,
+            "path": "<home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom",
+            "version": "0.1.2"
+          },
+          {
+            "kind": "cli-store",
+            "nested_mcp_runtime": false,
+            "path": "<home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom",
+            "version": "0.1.0"
+          }
+        ],
+        "message": "legacy installations or leftovers were found; see the lines above (nothing was changed)",
+        "path_shadowing": [
+          {
+            "before_this_install": true,
+            "path": "<home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom\\bin\\axiom-cli.exe",
+            "version": "0.1.2"
+          },
+          {
+            "before_this_install": true,
+            "path": "<home>\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe",
+            "version": "0.1.2"
+          }
+        ],
+        "status": "warn"
+      },
+      "exit_code": 4
+    },
+    {
+      "case": "cli_store_adopted_in_place",
+      "passed": true,
+      "run": {
+        "argv": [
+          "install",
+          "--yes",
+          "--no-modify-path"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-131b195c484929b3 recorded in <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl6\\rel-new\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom\\bin\\axiom-cli directly\nlegacy: adopt the 0.1.0 CLI store at <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom in place (its axiom-cli is backed up under legacy\\, cli\\ and install-manifest.json are kept)\nlegacy: bootstrap-root 0.1.2 at <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom is left untouched (side by side); to adopt it instead run `axiom-cli install --adopt <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom`\nplan digest: 131b195c484929b32af37f7b7f42c8deb0fc355941e13caa3b473c795dd2672e\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl6\\rel-new\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "bootstrap_root_untouched_side_by_side",
+      "passed": true
+    },
+    {
+      "case": "interrupted_adoption_recovers",
+      "passed": true,
+      "interrupted": {
+        "argv": [
+          "install",
+          "--yes",
+          "--no-modify-path",
+          "--adopt",
+          "<home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom"
+        ],
+        "exit_code": 8,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: error: the engine placed the approved bundle but the install record was not                      written, so the next run repeats the install: <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\installed.json.tmp: Access is denied. (os error 5)\n"
+      },
+      "recovered": {
+        "argv": [
+          "install",
+          "--yes",
+          "--no-modify-path",
+          "--adopt",
+          "<home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-89f21851d9eff510 recorded in <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl6\\rel-new\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom (bin: <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\bin\\axiom-cli directly\nlegacy: adopt the 0.1.2 bootstrap root at <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom in place (engine ecosystem and MCP runtime reused, nothing reinstalled)\nwarning: <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom\\bin\\axiom-cli.exe (0.1.2) comes earlier on PATH and will shadow the new axiom-cli until it is removed\nwarning: <home>\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe (0.1.2) comes earlier on PATH and will shadow the new axiom-cli until it is removed\nplan digest: 89f21851d9eff5109296b1452ff8deb528651da46794e02a58cde9d3b302595b\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl6\\rel-new\\axiom.exe` sibling) placed the approved bundle: status `already-installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "bootstrap_root_adopted_without_reinstall",
+      "passed": true,
+      "run": {
+        "argv": [
+          "install",
+          "--yes",
+          "--no-modify-path",
+          "--adopt",
+          "<home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-89f21851d9eff510 recorded in <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl6\\rel-new\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom (bin: <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom\\bin\\axiom-cli directly\nlegacy: adopt the 0.1.2 bootstrap root at <home>\\AppData\\Local\\Temp\\axl6\\Profile\\axiom in place (engine ecosystem and MCP runtime reused, nothing reinstalled)\nwarning: <home>\\AppData\\Local\\Temp\\axl6\\Local\\Axiom\\bin\\axiom-cli.exe (0.1.2) comes earlier on PATH and will shadow the new axiom-cli until it is removed\nwarning: <home>\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe (0.1.2) comes earlier on PATH and will shadow the new axiom-cli until it is removed\nplan digest: 89f21851d9eff5109296b1452ff8deb528651da46794e02a58cde9d3b302595b\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl6\\rel-new\\axiom.exe` sibling) placed the approved bundle: status `already-installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "adopted_root_found_without_env",
+      "passed": true,
+      "run": {
+        "argv": [
+          "version"
+        ],
+        "exit_code": 0,
+        "stdout_tail": "installed: 0.1.2 channel=stable generation=install-89f21851d9eff510 at=2026-10-06T11:25:56Z\nprevious generation: none retained\n  axiom-graphd 9a847ec1d6d1 version=0.1.2 action=install needs_restart\n  axiom-mcp 3c9f847addee version=0.1.2 action=install needs_restart\n  bin/axiom-cli  version=0.1.2 action=install\n  bin/axiom  version=0.1.2 action=install\n  bin/axiom-graphd  version=0.1.2 action=install\navailable: channel=stable published=false updated_at=2026-10-01T00:00:00Z\n  axiom-graphd available=0.1.2 status=declared\n  axiom-mcp available=0.1.2 status=declared\n  skills available=0.1.2 status=declared\naxiom-cli: reported installed and available versions\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "unknown_layout_reported_not_modified",
+      "passed": true,
+      "doctor_exit": 4,
+      "refused": {
+        "argv": [
+          "install",
+          "--yes",
+          "--adopt",
+          "<home>\\AppData\\Local\\Temp\\axl6\\odd"
+        ],
+        "exit_code": 2,
+        "stdout_tail": "",
+        "stderr_tail": "axiom-cli: error: <home>\\AppData\\Local\\Temp\\axl6\\odd is not a recognised Axiom layout (unknown); it was not modified\n"
+      }
+    }
+  ],
+  "passed": true
+}

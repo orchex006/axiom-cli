@@ -158,8 +158,8 @@ GLOBAL OPTIONS:
     --verbose     Emit diagnostics on stderr
 
 VERB OPTIONS:
-    install      [--yes] [--no-modify-path] | --dry-run | --apply, --approve-digest <sha256>,
-                 --from <path>
+    install      [--yes] [--no-modify-path] [--adopt <path>] | --dry-run |
+                 --apply, --approve-digest <sha256>, --from <path>
     update       [--yes] [--dry-run] [--channel <url|path>] |
                  check [--all] | plan --to <version> [--out <file>] |
                  apply --plan <file> --approve-digest <sha256> |
@@ -196,6 +196,7 @@ pub fn verb_help(verb: Verb) -> String {
             "    A bare `install` prints the plan (version, components, root, PATH, size) and asks once.\n",
             "    --yes, -y                  Approve the printed plan without a prompt (AXIOM_INSTALL_YES=1)\n",
             "    --no-modify-path           Do not add the install's bin to the user PATH\n",
+            "    --adopt <path>             Adopt a legacy 0.1.x root in place instead of side by side\n",
             "    --dry-run                  Validate and report the plan without changing the host\n",
             "    --apply                    Apply the transaction; requires --approve-digest\n",
             "    --approve-digest <sha256>  Approval bound to the canonical plan digest\n",
@@ -264,6 +265,7 @@ enum OptKind {
     Yes,
     NoModifyPath,
     Channel,
+    Adopt,
 }
 
 impl OptKind {
@@ -282,6 +284,7 @@ impl OptKind {
             OptKind::Yes => "--yes",
             OptKind::NoModifyPath => "--no-modify-path",
             OptKind::Channel => "--channel",
+            OptKind::Adopt => "--adopt",
         }
     }
 }
@@ -543,6 +546,7 @@ fn parse_invocation(verb: Verb, rest: &[String]) -> Result<Invocation, String> {
                     approve_digest: value(&values, OptKind::ApproveDigest),
                     yes: has(&flags, OptKind::Yes),
                     modify_path: !has(&flags, OptKind::NoModifyPath),
+                    adopt: value(&values, OptKind::Adopt),
                 },
                 format!("install mode={} from={from}", mode.name()),
             ))
@@ -824,6 +828,7 @@ fn option_spec(verb: Verb, token: &str) -> Option<(OptKind, bool)> {
         "--yes" | "-y" => (OptKind::Yes, false),
         "--no-modify-path" => (OptKind::NoModifyPath, false),
         "--channel" => (OptKind::Channel, true),
+        "--adopt" => (OptKind::Adopt, true),
         _ => return None,
     };
     let allowed = match kind {
@@ -839,6 +844,7 @@ fn option_spec(verb: Verb, token: &str) -> Option<(OptKind, bool)> {
         OptKind::Yes => matches!(verb, Verb::Install | Verb::Uninstall | Verb::Update),
         OptKind::NoModifyPath => matches!(verb, Verb::Install),
         OptKind::Channel => matches!(verb, Verb::Update),
+        OptKind::Adopt => matches!(verb, Verb::Install),
     };
     if allowed {
         Some((kind, needs_value))

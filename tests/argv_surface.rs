@@ -562,6 +562,7 @@ fn a_bare_mutating_verb_is_interactive_and_never_mutates_without_a_terminal() {
         let output = Command::new(env!("CARGO_BIN_EXE_axiom-cli"))
             .args(["--json", verb])
             .env("AXIOM_CLI_INSTALL_ROOT", &root)
+            .env("AXIOM_CLI_TEST_ALLOW_ELEVATED", "1")
             .env_remove("AXIOM_ENGINE_BIN")
             .env_remove("AXIOM_INSTALL_YES")
             .env_remove("AXIOM_CLI_CHANNEL_MANIFEST")

@@ -77,6 +77,16 @@ pub fn default_root() -> Option<PathBuf> {
             return Some(PathBuf::from(value));
         }
     }
+    // ADR-0033 / L-006: an `axiom-cli` that runs from an installed `<root>/bin` belongs to that
+    // root, so an adopted non-default root needs no environment variable.
+    if let Some(root) = std::env::current_exe().ok().and_then(|exe| {
+        let bin = exe.parent()?;
+        let root = bin.parent()?;
+        (bin.file_name()? == "bin" && root.join(INSTALLED_FILE).is_file())
+            .then(|| root.to_path_buf())
+    }) {
+        return Some(root);
+    }
     if cfg!(windows) {
         if let Ok(local) = std::env::var("LOCALAPPDATA") {
             if !local.trim().is_empty() {
