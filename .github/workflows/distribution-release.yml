@@ -27,6 +27,8 @@ jobs:
       - name: Verify source and publish new immutable distribution
         env:
           GH_TOKEN: ${{ github.token }}
+          # Hosted Windows runners are elevated; real installs refuse elevation (ADR-0033).
+          AXIOM_CLI_TEST_ALLOW_ELEVATED: '1'
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
