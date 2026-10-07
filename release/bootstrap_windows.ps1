@@ -16,14 +16,14 @@ foreach ($row in $inventory.files) {
 $seal = $target + "`n" + (Digest (Join-Path $release 'DISTRIBUTION-FILES.json'))
 $hasher=[Security.Cryptography.SHA256]::Create()
 try { $digest=[BitConverter]::ToString($hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($seal))).Replace('-','').ToLowerInvariant() } finally { $hasher.Dispose() }
-if ($DryRun) { @{status='planned';version='0.1.3';plan_digest=$digest} | ConvertTo-Json -Compress; exit 0 }
+if ($DryRun) { @{status='planned';version='0.1.4';plan_digest=$digest} | ConvertTo-Json -Compress; exit 0 }
 if ($ApproveDigest -cne $digest) { throw 'exact reviewed distribution approval required' }
 $runtimeInputs = Get-Content -LiteralPath (Join-Path $release 'runtime-input.json') -Raw | ConvertFrom-Json
 $runtime = & (Join-Path $release 'Provision-McpRuntime.ps1') -Action provision -Root (Join-Path $target 'mcp-runtime') `
     -RuntimeArchive (Join-Path $release 'python-3.13.15-embed-amd64.zip') -RuntimeSha256 $runtimeInputs.python.sha256 `
     -PipWheel (Join-Path $release 'pip-26.1.2-py3-none-any.whl') -PipSha256 $runtimeInputs.pip.sha256 `
     -Inputs (Join-Path $release 'windows-x64-py313-inputs.tar') -InputsSha256 $runtimeInputs.mcp_inputs.sha256 `
-    -SourceRevision $runtimeInputs.mcp_inputs.source_revision -Version '0.1.3'
+    -SourceRevision $runtimeInputs.mcp_inputs.source_revision -Version '0.1.4'
 if ($LASTEXITCODE -ne 0) { throw 'runtime provision failed' }
 $env:AXIOM_HOME=$target
 $env:AXIOM_CLI_INSTALL_ROOT=$target
