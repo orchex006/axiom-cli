@@ -1,0 +1,9 @@
+{
+  "purpose": "Earlier verified axiom-specs revisions an owner input (e.g. the skills bundle) may still be pinned to while spec.lock.json moves forward. Only additive spec changes may be listed.",
+  "revisions": [
+    {
+      "revision": "2564d53d6a39f7a9b4b1c99528387807eee7b73d",
+      "reason": "K-615 published 0.1.2 pin; L-001 (ADR-0033) is additive to it"
+    }
+  ]
+}

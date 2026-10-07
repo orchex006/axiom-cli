@@ -617,6 +617,8 @@ impl<'a> Run<'a> {
         command.env_remove("AXIOM_CLI_ARTIFACT_CACHE");
         command.env_remove("AXIOM_ENGINE_BIN");
         command.env_remove("AXIOM_INSTALL_YES");
+        // CI runners (GitHub Windows) run elevated; the refusal itself is unit-tested.
+        command.env("AXIOM_CLI_TEST_ALLOW_ELEVATED", "1");
         command.env("AXIOM_CLI_INSTALL_ROOT", self.root);
         // Never let a test reach the real user PATH: Windows writes below a per-fixture
         // HKCU\Software\AxiomCliTest key, POSIX writes the profile of a per-fixture HOME.

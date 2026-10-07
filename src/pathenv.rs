@@ -23,6 +23,7 @@ use crate::update::state;
 /// Record of the change, inside the install root.
 pub const RECORD_FILE: &str = "path-change.json";
 /// Test seam: registry key below HKCU used instead of `Environment`.
+#[cfg_attr(not(windows), allow(dead_code))]
 pub const TEST_KEY_ENV: &str = "AXIOM_CLI_TEST_USER_ENV_KEY";
 /// The marker comment written above the POSIX profile line.
 pub const PROFILE_MARKER: &str =
