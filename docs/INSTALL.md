@@ -32,19 +32,27 @@ You do not need Administrator or root rights, and you do not copy any checksums 
 
 ## Install
 
-**Windows.** Open a normal PowerShell window (not "Run as administrator") and run:
+### Windows (PowerShell 5.1+, no Administrator)
+
+Open a normal PowerShell window (not "Run as administrator") and run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
 ```
 
-**Linux, WSL2 or macOS.** Open a terminal and run:
+To update later: `axiom-cli update` ([details](#update)).
+
+### macOS, Linux and WSL2 (not as root)
+
+Open a terminal and run:
 
 ```sh
 curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
 ```
 
-What happens:
+To update later: `axiom-cli update` ([details](#update)).
+
+### What happens
 
 1. The script downloads the release archive for your system from GitHub.
 2. It checks the archive's SHA-256 before unpacking. If the check fails, it stops, and nothing on your machine has changed.
@@ -131,6 +139,8 @@ The PATH change applies to your user only:
 
 ## Update
 
+The same command works on Windows, macOS, Linux and WSL2:
+
 ```sh
 axiom-cli update
 ```
@@ -140,6 +150,8 @@ If a newer release exists, `update` shows the plan and asks once. It then downlo
 - `axiom-cli update --dry-run`: show the plan only.
 - `axiom-cli update --yes`: update without asking.
 - `axiom-cli update rollback --transaction previous`: go back to the version before the last update.
+
+Use `update`, not the install command, to move an existing installation to a newer release. On 0.1.2 or older, `axiom-cli` has no one-command update. Follow [Upgrading from 0.1.0 or 0.1.2](#upgrading-from-010-or-012) once; after that, `axiom-cli update` works.
 
 ## Uninstall
 

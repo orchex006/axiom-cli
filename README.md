@@ -6,26 +6,39 @@
 - The graph engine, `axiom` and `axiom-graphd`.
 - The MCP server and the skills bundle.
 
-## Install
+## Install and update
 
-Windows (normal PowerShell, not Administrator):
+### Windows (PowerShell 5.1+, no Administrator)
+
+Install:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
 ```
 
-Linux, WSL2 or macOS Intel (normal user, not `sudo`):
+Update:
+
+```powershell
+axiom-cli update
+```
+
+### macOS, Linux and WSL2 (not as root)
+
+Install:
 
 ```sh
 curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
 ```
 
-The script checks the download's SHA-256, shows what it will install and asks once. Then open a new terminal and run:
+Update:
 
 ```sh
-axiom-cli version
-axiom-cli doctor
+axiom-cli update
 ```
+
+The install script checks the download's SHA-256, shows what it will install and asks once. After installing, open a new terminal and check the result with `axiom-cli version` and `axiom-cli doctor`.
+
+`axiom-cli update` shows the plan, asks once and keeps the previous version for rollback. It prints `up to date` when nothing is newer. On 0.1.2 or older, `axiom-cli` has no one-command update; run the install command instead, after the steps in [Upgrading from 0.1.0 or 0.1.2](docs/INSTALL.md#upgrading-from-010-or-012).
 
 **Full guide:** [docs/INSTALL.md](docs/INSTALL.md) covers requirements, options, where files go, update, uninstall, upgrading from 0.1.0/0.1.2 and troubleshooting.
 

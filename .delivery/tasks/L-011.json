@@ -25,7 +25,13 @@
     {
       "command": "cargo test --locked --offline --test container_distribution --test argv_surface",
       "exit_code": 0,
-      "artifact": "evidence/L-011/cargo-test.txt"
+      "artifact": "evidence/L-011/cargo-test.txt",
+      "note": "rerun after the update-commands edit: first full run had 1 flaky failure in usage_text_and_dispatcher_cannot_drift (uninstall --dry-run exit 2); it passed alone and in 3 consecutive full runs with no source change; see evidence/L-011/flaky-argv-surface.txt"
+    },
+    {
+      "command": "flaky argv_surface record",
+      "exit_code": 0,
+      "artifact": "evidence/L-011/flaky-argv-surface.txt"
     },
     {
       "command": "curl -fsSL .../releases/download/v0.1.3/install.sh | sh -s -- --bogus  (and -- --yes --no-modify-path) on Git Bash",
@@ -38,6 +44,7 @@
     "documentation only: no install was run for this task; every documented behaviour was checked against source (src/cli.rs, src/lifecycle.rs, src/update/state.rs, src/legacy.rs, src/runtime.rs, src/elevation.rs, installers/oneline/*.in) and the L-007 fresh-runner evidence",
     "the --adopt procedure follows the L-006 harness, which ran the extracted release axiom-cli.exe; adopting with an already installed bin/axiom-cli is not documented because it was not tested",
     "macOS x64 is described as published but untested, per ADR-0034",
-    "Development.md still says 'No curl | sh' although ADR-0033 permits the hosted bootstrapper; left for a governance change"
+    "Development.md still says 'No curl | sh' although ADR-0033 permits the hosted bootstrapper; left for a governance change",
+    "tests/argv_surface.rs usage_text_and_dispatcher_cannot_drift failed once (1 of 5 runs) with no source change; not fixed here (out of scope)"
   ]
 }

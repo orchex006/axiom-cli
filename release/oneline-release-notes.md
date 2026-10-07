@@ -2,16 +2,22 @@
 
 Install with one command (ADR-0033). Each script is pinned to this release's tag and archive SHA-256 values, refuses to run elevated, verifies the archive before extracting and then runs `axiom-cli install`, which shows the plan and asks once.
 
-Windows (PowerShell 5.1+):
+Windows (PowerShell 5.1+, no Administrator):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
 ```
 
-macOS, Linux and WSL2:
+macOS, Linux and WSL2 (not as root):
 
 ```sh
 curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
+```
+
+Already installed (0.1.3 or newer)? Update with the same command on every system:
+
+```sh
+axiom-cli update
 ```
 
 Pinned to this version: replace `latest/download` with `download/<tag>`.

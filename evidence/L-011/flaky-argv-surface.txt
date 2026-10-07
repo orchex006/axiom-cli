@@ -1,0 +1,9 @@
+# Run 2 of L-011 (after the update-commands edit; Markdown only). First full run had 1 flaky failure:
+test usage_text_and_dispatcher_cannot_drift ... FAILED
+---- usage_text_and_dispatcher_cannot_drift stdout ----
+thread 'usage_text_and_dispatcher_cannot_drift' (40248) panicked at tests\argv_surface.rs:212:9:
+  left: 2
+ right: 2
+    usage_text_and_dispatcher_cannot_drift
+test result: FAILED. 13 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.14s
+# The same test then passed alone and in 3 consecutive full argv_surface runs; no source changed. Not caused by this change (no source or test changed); likely cause, not proven: `uninstall --dry-run` reads the real per-user root while tests run in parallel.
