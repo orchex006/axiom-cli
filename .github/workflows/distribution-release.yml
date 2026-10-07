@@ -36,8 +36,9 @@ jobs:
           test "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")" = "$GITHUB_SHA"
           test "$RELEASE_TAG" = "v$(cat VERSION | tr -d '\r\n')"
           python release/collect_distribution.py --input checked-assets --source-revision "$GITHUB_SHA" --out release-assets
+          python release/oneline_assets.py --assets release-assets --tag "$RELEASE_TAG"
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             echo 'Existing Release is immutable' >&2
             exit 1
           fi
-          gh release create "$RELEASE_TAG" release-assets/* --verify-tag --title "Axiom $RELEASE_TAG" --notes-file release/v0.1.2-notes.md
+          gh release create "$RELEASE_TAG" release-assets/* --verify-tag --title "Axiom $RELEASE_TAG" --notes-file release/oneline-release-notes.md

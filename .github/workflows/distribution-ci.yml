@@ -74,3 +74,38 @@ jobs:
             ${{ runner.temp }}/distribution-assets/*-distribution.json
             ${{ runner.temp }}/distribution-assets/native-proof.json
           if-no-files-found: error
+  oneliner:
+    # ADR-0033 / L-007: the exact documented one-liner on a fresh hosted runner against the
+    # candidate built above, then version, doctor (exit 0), update, uninstall and reinstall.
+    # macOS x64 is outside the current owner scope (2026-10-07) and is not run here.
+    name: one-line install (${{ matrix.platform }})
+    needs: native
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-x64
+            os: windows-2025
+          - platform: linux-x64
+            os: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: distribution-${{ matrix.platform }}-${{ github.sha }}
+          path: ${{ runner.temp }}/candidate
+      - name: Documented one-liner, version, doctor, update, uninstall, reinstall
+        shell: bash
+        run: python tests/l007_fresh_runner.py --artifacts "$RUNNER_TEMP/candidate" --platform ${{ matrix.platform }} --out "$RUNNER_TEMP/oneliner/oneliner-${{ matrix.platform }}.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: oneliner-${{ matrix.platform }}-${{ github.sha }}
+          path: ${{ runner.temp }}/oneliner/*.json

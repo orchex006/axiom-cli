@@ -1,5 +1,23 @@
 # Axiom CLI
 
+## Install
+
+Windows (PowerShell 5.1+, no Administrator):
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
+```
+
+macOS, Linux and WSL2 (not as root):
+
+```sh
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
+```
+
+A specific version: use `https://github.com/orchex006/axiom-cli/releases/download/vX.Y.Z/install.ps1` (or `install.sh`). The script verifies the release archive's SHA-256, then `axiom-cli install` shows the plan (version, components, install root, PATH change, size) and asks once. Afterwards, in a new terminal: `axiom-cli version`, `axiom-cli doctor`, `axiom-cli update`, `axiom-cli uninstall` (keeps user data). Options: `-Yes` / `--yes`, `-NoModifyPath` / `--no-modify-path`, `-Version` / `--version`. Existing 0.1.x installations are detected and adopted; see [docs/30](docs/30-DISTRIBUTION-AND-INSTALLERS.md).
+
+## About
+
 The native distribution entrypoint for the Axiom ecosystem. The 0.1.2 test release combines `axiom-cli`, the core (`axiom` and `axiom-graphd`), one portable MCP wheel and one portable skills bundle, with source revisions and SHA-256 checksums.
 
 Download the matching Windows x64, Mac Intel or Linux x64 archive from [GitHub Releases](https://github.com/orchex006/axiom-cli/releases/tag/v0.1.2). WSL2 uses the identical Linux archive. Mac ARM is excluded from this test release. Follow the included README: extract to a new directory, verify SHA256SUMS, choose a fresh per-user root, preview the install plan, then apply its exact approval digest. No certification, signing, Docker, WSL-on-Windows, Bash or elevation is required for native delivery.

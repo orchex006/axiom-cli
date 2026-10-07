@@ -32,7 +32,8 @@ if (-not $Version -and $env:AXIOM_VERSION) { $Version = $env:AXIOM_VERSION }
 if (-not $NoModifyPath -and $env:AXIOM_NO_MODIFY_PATH -eq '1') { $NoModifyPath = $true }
 
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+# AXIOM_CLI_TEST_ALLOW_ELEVATED exists only for hosted CI runners, which are always elevated.
+if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and $env:AXIOM_CLI_TEST_ALLOW_ELEVATED -ne '1') {
     Stop-AxiomInstall 'refusing to run elevated: Axiom installs per user. Re-run from a normal (non-Administrator) PowerShell.'
 }
 if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
