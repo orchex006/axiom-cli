@@ -32,7 +32,17 @@ Design-complete, verification later: Linux x64 including the WSL2 lane, and macO
 
 Installing is transactional and reversible. Verify release provenance and the per-artifact SHA256 before unpacking; unpack into a user-writable install directory; never require root, never bypass Gatekeeper, never mutate a global PATH and never use `curl | sh`. Then delegate to the engine to register the solution, bind logical repositories to native absolute paths and apply managed bootstrap with an approved plan digest. Re-running install must be idempotent.
 
-The `axiom-cli` binary itself stops at that delegation point today: `install --dry-run` resolves and verifies the release set (a bare `install` is `2` validation, because an explicit mode is required), then `install --apply` refuses `4` `engine_bundle_not_assembled` because this layer does not assemble the bundle the engine's `install plan --bundle <dir>` verb needs (a `bundle.json` manifest plus verified component payloads and a `skills/` bundle), or `3` `engine_not_found` when no engine is present, instead of placing bytes. The installed PowerShell and POSIX-sh installer scripts are what actually verify and write files; the CLI never fabricates a placement the engine did not perform.
+### First install through `axiom-cli` (ADR-0033, L-002)
+
+Run from an extracted release, `axiom-cli install --dry-run` resolves the `channel.json` beside the executable (no `--from`, no environment variable), verifies every artifact and prints the plan; `--apply --approve-digest <plan digest>` then:
+
+1. refuses a nonempty root that holds entries no Axiom install writes (`6`), and a missing engine (`3`), before changing anything;
+2. provisions the MCP runtime with the release's own provisioner and pinned inputs (`Provision-McpRuntime.ps1` + `runtime-input.json` on Windows; `runtime/provision.py` + `runtime/manifest.json` with the host `python3` on POSIX), whose digests are bound into the plan;
+3. assembles the engine bundle and delegates placement to `axiom` (`install plan --bundle` / `install apply`);
+4. places `axiom-cli`, `axiom` and `axiom-graphd` side by side in `<root>/bin` (idempotent, digest-checked);
+5. copies the verified artifacts into `generations/<id>/`, records the manifest bytes and writes `installed.json` last and atomically, with every component version and SHA-256 and the `bin` digests.
+
+The root is `%LOCALAPPDATA%\Axiom` on Windows and `$XDG_DATA_HOME/axiom`, else `~/.local/share/axiom`, on POSIX. `version`, `doctor`, `update` and `uninstall` read that one `installed.json`; the engine is found as a sibling in `bin`. A crash before `installed.json` is written leaves an unfinished install that the next run repeats. The real-host harness is `tests/l002_first_install.py`.
 
 ## ## Update
 

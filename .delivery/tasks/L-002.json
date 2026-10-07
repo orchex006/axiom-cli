@@ -1,0 +1,45 @@
+{
+  "task_id": "L-002",
+  "status": "verified-pending-ledger",
+  "branch": "feature/l-002-first-install",
+  "base_revision": "3584a26660d08902ce502fd3adf81c8b0d5cbee9",
+  "spec_pin": "8eff6db51bfe3c4ca1940bd20555cb989641ce31",
+  "dependencies": {
+    "L-001": "done on axiom-specs feature/l-001-one-line-install 8eff6db (not yet merged to main)"
+  },
+  "lanes": {
+    "windows-x64": "verified (real host, Windows 11 Pro 10.0.26200, published 0.1.2 release bytes + this CLI)",
+    "macos-x64": "not_run",
+    "linux-x64": "not_run",
+    "wsl2-linux-x64": "not_run"
+  },
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --locked",
+      "exit_code": 0,
+      "artifact": "evidence/L-002/cargo-test.txt"
+    },
+    {
+      "command": "python tests/l002_first_install.py --release <v0.1.2 windows-x64 extract> --cli target/release/axiom-cli.exe --work <short temp dir>",
+      "exit_code": 0,
+      "artifact": "evidence/L-002/windows-x64-first-install.json"
+    },
+    {
+      "command": "python <axiom-specs>/tools/spec-lock-check.py --lock spec.lock.json --spec-root <axiom-specs>",
+      "exit_code": 0
+    }
+  ],
+  "limitations": [
+    "doctor still exits 4 on this host because the sqlite-driver prerequisite is 'unverified' (pre-existing doctor policy; goal-level item for L-009)",
+    "the 0.1.2 channel.json lists no axiom-cli/axiom components, so bin/axiom-cli and bin/axiom are taken from the running executable and the sibling engine with digests recorded; L-007 release composition should list them",
+    "POSIX provisioning path (runtime/provision.py via host python3) is implemented but not executed here"
+  ]
+}

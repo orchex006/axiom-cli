@@ -221,7 +221,31 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
              live and the engine has no `AXIOM_HOME`",
         )
     })?;
+    if !root.join(state::INSTALLED_FILE).is_file() {
+        if let Some(refusal) = crate::layout::foreign_root_refusal(&root) {
+            return Err(refusal);
+        }
+    }
     let staging_root = root.join("staging").join("engine-bundle");
+    if let (Some(bound), Some(inputs)) = (
+        set.plan.get("mcp_runtime"),
+        set.local_root.as_deref().and_then(crate::runtime::locate),
+    ) {
+        if !crate::runtime::provisioned(&root) {
+            let version = set
+                .plan
+                .get("components")
+                .and_then(Json::as_array)
+                .unwrap_or(&[])
+                .iter()
+                .find(|item| item.get("component").and_then(Json::as_text) == Some("axiom-mcp"))
+                .and_then(|item| item.get("version"))
+                .and_then(Json::as_text)
+                .unwrap_or("")
+                .to_string();
+            crate::runtime::provision(&inputs, bound, &root, &version)?;
+        }
+    }
     let mcp_runtime_bin = if matches!(
         set.plan.get("host").and_then(Json::as_text),
         Some("macos-x64" | "linux-x64" | "windows-x64")
@@ -282,6 +306,37 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
             ),
         )
     })?;
+    if report.code() != 0 {
+        // The engine refused or did not finish: nothing is recorded, so the next run repeats the
+        // install instead of trusting a placement that did not happen.
+        report.detail(
+            "staging_root",
+            Json::text(&staging_root.display().to_string()),
+        );
+        report.detail(
+            "engine_program",
+            Json::text(&engine.program().display().to_string()),
+        );
+        report.detail("engine_source", Json::text(engine.source()));
+        return Ok(report);
+    }
+    let recorded = record_layout(set, request.verified, &request.install_root, &engine)
+        .map_err(|refusal| {
+            Refusal::new(
+                refusal.class,
+                refusal.reason,
+                format!(
+                    "the engine placed the approved bundle but the install record was not                      written, so the next run repeats the install: {}",
+                    refusal.message
+                ),
+            )
+        })?;
+    report.detail("installed_record", recorded.to_json());
+    report.line(format!(
+        "installed: generation {} recorded in {}",
+        recorded.current_generation,
+        request.install_root.join(state::INSTALLED_FILE).display()
+    ));
     report.detail(
         "staging_root",
         Json::text(&staging_root.display().to_string()),
@@ -295,6 +350,121 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
         report.detail("mcp_runtime_bin", Json::text(&bin.display().to_string()));
     }
     Ok(report)
+}
+
+/// Put `axiom-cli`, `axiom` and `axiom-graphd` side by side in `<root>/bin` and write the single
+/// `installed.json` record (ADR-0033 decision 3, task L-002) after the engine placed the bundle.
+fn record_layout(
+    set: &ReleaseSet,
+    verified: &[Json],
+    root: &Path,
+    engine: &engine::Engine,
+) -> Result<state::Installed, Refusal> {
+    use crate::layout::{self, BinSource};
+    let resolved_of = |component: &str| -> Option<(PathBuf, String)> {
+        verified
+            .iter()
+            .find(|entry| entry.get("component").and_then(Json::as_text) == Some(component))
+            .and_then(|entry| {
+                Some((
+                    PathBuf::from(entry.get("resolved").and_then(Json::as_text)?),
+                    entry.get("sha256").and_then(Json::as_text)?.to_string(),
+                ))
+            })
+    };
+    let mut sources = Vec::new();
+    let cli = match resolved_of("axiom-cli") {
+        Some(found) => found,
+        None => {
+            let exe = std::env::current_exe()
+                .map_err(|error| Refusal::io("current_exe_unresolved", "axiom-cli", &error))?;
+            let digest = layout::file_digest(&exe)?;
+            (exe, digest)
+        }
+    };
+    sources.push(BinSource {
+        name: "axiom-cli",
+        source: cli.0,
+        sha256: cli.1,
+    });
+    let engine_program = engine.program().to_path_buf();
+    let engine_digest = match resolved_of("axiom") {
+        Some((_, digest)) => digest,
+        None => layout::file_digest(&engine_program)?,
+    };
+    sources.push(BinSource {
+        name: "axiom",
+        source: engine_program,
+        sha256: engine_digest,
+    });
+    if let Some((path, digest)) = resolved_of("axiom-graphd") {
+        sources.push(BinSource {
+            name: "axiom-graphd",
+            source: path,
+            sha256: digest,
+        });
+    }
+    let bin = layout::place_bin(root, &sources)?;
+
+    let manifest_path = Path::new(&set.manifest_source);
+    let manifest_bytes = state::read_bytes(manifest_path, "manifest_unreadable")?;
+    if crate::update::sha256::hex(&crate::update::sha256::digest(&manifest_bytes))
+        != set.manifest_sha256
+    {
+        return Err(Refusal::validation(
+            "manifest_changed_after_plan",
+            format!(
+                "the channel manifest {} changed after the plan was approved",
+                manifest_path.display()
+            ),
+        ));
+    }
+    let plan_components = set
+        .plan
+        .get("components")
+        .and_then(Json::as_array)
+        .unwrap_or(&[]);
+    let mut components = Vec::new();
+    for entry in verified {
+        let component = entry.get("component").and_then(Json::as_text).unwrap_or("");
+        let planned = plan_components
+            .iter()
+            .find(|item| item.get("component").and_then(Json::as_text) == Some(component));
+        let field = |key: &str| {
+            planned
+                .and_then(|item| item.get(key))
+                .and_then(Json::as_text)
+                .unwrap_or("")
+                .to_string()
+        };
+        components.push((
+            component.to_string(),
+            field("version"),
+            field("revision"),
+            entry
+                .get("sha256")
+                .and_then(Json::as_text)
+                .unwrap_or("")
+                .to_string(),
+            PathBuf::from(entry.get("resolved").and_then(Json::as_text).unwrap_or("")),
+            planned
+                .and_then(|item| item.get("needs_restart"))
+                .and_then(Json::as_bool)
+                .unwrap_or(false),
+        ));
+    }
+    layout::record(
+        root,
+        &layout::Record {
+            channel: &set.manifest.channel,
+            host: set.plan.get("host").and_then(Json::as_text).unwrap_or(""),
+            manifest_bytes: &manifest_bytes,
+            manifest_sha256: &set.manifest_sha256,
+            plan_digest: &set.plan_digest,
+            components,
+            bin,
+        },
+    )
 }
 
 /// Read a provisioned candidate runtime as a verified engine input. An absent
@@ -713,7 +883,16 @@ fn resolve_release_set(from: Option<&str>) -> Result<ReleaseSet, Refusal> {
                 )
             })?;
             let st = state::State::new(root);
-            if st.has_installed() {
+            let sibling = sibling_release_manifest();
+            if let Some(sibling) =
+                sibling.filter(|_| std::env::var_os(state::CHANNEL_MANIFEST_ENV).is_none())
+            {
+                // ADR-0033: an extracted release carries its channel manifest beside the
+                // executable, so a first install (or a repair from that release) needs neither
+                // `--from` nor an environment variable.
+                let loaded = state::State::load_manifest_file(&sibling)?;
+                (loaded, sibling.parent().map(Path::to_path_buf))
+            } else if st.has_installed() {
                 let record = st.read_installed()?;
                 (st.load_recorded_manifest(&record)?, None)
             } else if let Ok(candidate) = std::env::var(state::CHANNEL_MANIFEST_ENV) {
@@ -730,6 +909,10 @@ fn resolve_release_set(from: Option<&str>) -> Result<ReleaseSet, Refusal> {
     };
 
     let mut plan = build_plan(host, &loaded.manifest, &loaded.path, &loaded.sha256)?;
+    if let Some(inputs) = local_root.as_deref().and_then(crate::runtime::locate) {
+        plan.set("mcp_runtime", crate::runtime::plan_block(&inputs)?)
+            .map_err(|error| Refusal::validation("plan_unbuildable", error))?;
+    }
     let digest = plan_contract::digest(&plan).ok_or_else(|| {
         Refusal::validation("plan_unbuildable", "the install plan could not be digested")
     })?;
@@ -742,6 +925,25 @@ fn resolve_release_set(from: Option<&str>) -> Result<ReleaseSet, Refusal> {
         plan,
         plan_digest: digest,
     })
+}
+
+/// The channel manifest shipped beside this executable in an extracted release, if any.
+///
+/// Only an executable that is *not* the installed `bin/axiom-cli` qualifies: the installed copy
+/// resolves from the recorded manifest instead.
+fn sibling_release_manifest() -> Option<PathBuf> {
+    let exe = std::env::current_exe().ok()?;
+    let directory = exe.parent()?;
+    if directory.file_name().and_then(|n| n.to_str()) == Some(crate::layout::BIN_DIR)
+        && directory
+            .parent()
+            .map(|p| p.join(state::INSTALLED_FILE).is_file())
+            == Some(true)
+    {
+        return None;
+    }
+    let candidate = directory.join("channel.json");
+    candidate.is_file().then_some(candidate)
 }
 
 fn no_release_set() -> Refusal {
@@ -885,16 +1087,18 @@ fn verify_artifacts(set: &ReleaseSet) -> Result<Vec<Json>, Refusal> {
             .get("component")
             .and_then(Json::as_text)
             .unwrap_or("?");
-        let path = resolve_local(set.local_root.as_deref(), url).ok_or_else(|| {
-            Refusal::not_ready(
-                "artifact_unreachable",
-                format!(
+        let path = resolve_local(set.local_root.as_deref(), url)
+            .or_else(|| installed_payload(component))
+            .ok_or_else(|| {
+                Refusal::not_ready(
+                    "artifact_unreachable",
+                    format!(
                     "artifact for `{component}` ({url}) is not available locally for host {host}; \
                      this wave resolves artifacts from a local release set or the local artifact \
                      cache and never fetches from the network"
                 ),
-            )
-        })?;
+                )
+            })?;
         fetch::verify_file(&path, digest, size).map_err(|refusal| {
             Refusal::validation(
                 format!("artifact_unverified:{component}"),
@@ -915,6 +1119,18 @@ fn verify_artifacts(set: &ReleaseSet) -> Result<Vec<Json>, Refusal> {
         ]));
     }
     Ok(verified)
+}
+
+/// The verified payload of `component` in the active generation, so the installed
+/// `bin/axiom-cli` can repair from the bytes it already recorded.
+fn installed_payload(component: &str) -> Option<PathBuf> {
+    let st = state::State::new(state::default_root()?);
+    let installed = st.read_installed().ok()?;
+    let generation =
+        crate::update::generation::Generation::read(&st, &installed.current_generation).ok()?;
+    let path =
+        generation.payload_path(&st.generation_dir(&installed.current_generation), component)?;
+    path.is_file().then_some(path)
 }
 
 /// Resolve one artifact URL to a local file: the release-set directory first, then the cache.
@@ -969,6 +1185,18 @@ fn plan_lines(set: &ReleaseSet) -> Vec<String> {
                 .unwrap_or("no artifact for this host");
             lines.push(format!("  {component} {version} - {artifact}"));
         }
+    }
+    if let Some(runtime) = set.plan.get("mcp_runtime") {
+        lines.push(format!(
+            "  mcp runtime - provisioned from the release ({})",
+            runtime.get("kind").and_then(Json::as_text).unwrap_or("?")
+        ));
+    }
+    if let Some(root) = set.plan.get("install_root").and_then(Json::as_text) {
+        lines.push(format!(
+            "install root: {root} (bin: {root}{}bin)",
+            std::path::MAIN_SEPARATOR
+        ));
     }
     lines.push(format!("plan digest: {}", set.plan_digest));
     lines
