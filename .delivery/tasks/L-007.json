@@ -1,0 +1,30 @@
+{
+  "task_id": "L-007",
+  "status": "verified",
+  "branch": "feature/l-007-release-oneliner",
+  "ci": {
+    "run": "https://github.com/orchex006/axiom-cli/actions/runs/37583651524",
+    "jobs": "native windows/linux/macos success; one-line install windows-x64 and linux-x64 success"
+  },
+  "owner_releases": {
+    "axiom-graphd": "v0.1.3",
+    "axiom-mcp": "v0.1.3",
+    "axiom-skills": "v0.1.3"
+  },
+  "commands": [
+    {
+      "command": "CI one-line install (windows-x64)",
+      "exit_code": 0,
+      "artifact": "evidence/L-007/oneliner-windows-x64.json"
+    },
+    {
+      "command": "CI one-line install (linux-x64)",
+      "exit_code": 0,
+      "artifact": "evidence/L-007/oneliner-linux-x64.json"
+    }
+  ],
+  "limitations": [
+    "Hosted Windows runners are elevated, so the Windows job sets the documented CI seam AXIOM_CLI_TEST_ALLOW_ELEVATED; no other AXIOM_* variable is set",
+    "macOS out of scope (ADR-0034, workstream M)"
+  ]
+}

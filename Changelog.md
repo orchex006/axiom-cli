@@ -1,3 +1,7 @@
+## 0.1.3 — L-007 one-line install release
+
+- Release assets gain `install.ps1`, `install.sh` and a pinned `channel.json` (`release/oneline_assets.py`), all in `SHA256SUMS`; notes template states the release must not be a prerelease. CI job `one-line install` runs the documented one-liner on fresh windows-2025 and ubuntu-24.04 runners, then `version`, `doctor` (exit 0), `update`, `uninstall` and reinstall. README leads with the one-liners. `doctor` treats build-time Rust as not required for an installed release, accepts the provisioned MCP runtime for Python and keeps SQLite `unverified` but non-blocking (J-007). One version 0.1.3 across core, MCP, skills and CLI; the composer accepts annotated owner tags. macOS is out of L scope (ADR-0034).
+
 ## Unreleased — L-006 adopt legacy installations
 
 - `doctor` names 0.1.0/0.1.2 CLI stores, 0.1.2 bootstrap roots (including the nested `mcp-runtime/mcp-runtime`), unknown Axiom-like directories, `axiom-cli` executables that shadow this install on PATH (with version) and leftover `AXIOM_*` variables, without modifying anything. `install` adopts a CLI store at the target root in place (old executable backed up under `legacy/`, its PATH entry taken over), leaves a bootstrap root elsewhere side by side, and `install --adopt <path>` adopts a bootstrap root in place without reinstalling (engine already installed, nested MCP runtime reused, user data and graph output kept). An installed `bin/axiom-cli` resolves its own root. Real-host harness `tests/l006_adopt_legacy.py` (R15, R16, R22).

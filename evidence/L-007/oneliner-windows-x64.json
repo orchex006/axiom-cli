@@ -1,0 +1,128 @@
+{
+  "task_id": "L-007",
+  "lane": "windows-x64",
+  "run_url": "https://github.com/orchex006/axiom-cli/actions/runs/37583651524",
+  "source_revision": "dae8be4d2f99c7e65f112d8f9fd415b2e4c40ba3",
+  "host": {
+    "system": "Windows",
+    "release": "2025Server",
+    "machine": "AMD64"
+  },
+  "assets": {
+    "axiom-0.1.3-windows-x64.zip": "d521052466fe5a73a96cfc22bb8a8249d521ec6bb3a35e8fbbd66e8abf864056",
+    "channel.json": "f85fdf7c94ae3430bd2bca9b5e93bbb58e039462d2e87bae7daa49c6398f5e43",
+    "install.ps1": "440a91ec987c66e7e0f3166313f4279d7e9643918020f871d893bde018befd6f",
+    "install.sh": "37fb47fef1dbfb634a272094599a3142967149638141ee31a8ffde6d4a939c77",
+    "SHA256SUMS": "6280047d6937d6caaefe3e137116e3c61c0ed82a3d73a3b5d329a7d68e03babd"
+  },
+  "axiom_env_set": [
+    "AXIOM_CLI_TEST_ALLOW_ELEVATED"
+  ],
+  "steps": [
+    {
+      "step": "one-liner install",
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-c",
+        "& ([scriptblock]::Create((irm http://127.0.0.1:53778/v0.1.3/install.ps1))) -Yes"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "axiom install: downloading v0.1.3 (axiom-0.1.3-windows-x64.zip)\nPATH: added C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-f79566ff05c1f790 recorded in C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\axiom-install-e80ba632b862\\release\\channel.json (sha256 e0970f157086b07d04d95f63d63ecc1f6618e04a6537a047001575975a2d6a83)\nchannel: stable published=false\n  axiom-graphd 0.1.3 - artifact declared\n  axiom-mcp 0.1.3 - artifact declared\n  skills 0.1.3 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: C:\\Users\\runneradmin\\AppData\\Local\\Axiom (bin: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: add C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin to the user PATH (HKCU\\Environment) (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: f79566ff05c1f79068f5d30d6f630fad8efe9a3aa389e8a8200b93d65f723c48\naxiom-cli: the engine (`C:\\Users\\runneradmin\\AppData\\Local\\Temp\\axiom-install-e80ba632b862\\release\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "PATH announced and added",
+      "passed": true
+    },
+    {
+      "step": "version",
+      "argv": [
+        "C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe",
+        "version"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "installed: 0.1.3 channel=stable generation=install-f79566ff05c1f790 at=2026-10-07T06:53:00Z\nprevious generation: none retained\n  axiom-graphd d44b20963916 version=0.1.3 action=install needs_restart\n  axiom-mcp 2a702a2fc7d5 version=0.1.3 action=install needs_restart\n  bin/axiom-cli  version=0.1.3 action=install\n  bin/axiom  version=0.1.3 action=install\n  bin/axiom-graphd  version=0.1.3 action=install\navailable: channel=stable published=false updated_at=2026-10-01T00:00:00Z\n  axiom-graphd available=0.1.3 status=declared\n  axiom-mcp available=0.1.3 status=declared\n  skills available=0.1.3 status=declared\naxiom-cli: reported installed and available versions\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "doctor",
+      "argv": [
+        "C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe",
+        "doctor"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "target: windows-x64 tier=finish-first evidence_target=windows-x64\ninstall root: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\ninstalled release: channel=stable generation=install-f79566ff05c1f790 components=5\nrecorded channel manifest: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\recorded-manifest.json verified sha256=e0970f157086b07d04d95f63d63ecc1f6618e04a6537a047001575975a2d6a83\nrecovery journal: 0 interrupted transaction(s)\ncoordinator lock: free\nprerequisites (distribution contract section 7):\n  rust toolchain: not required by an installed release (build-time only; observed: rustc 1.98.1 (48a229cea 2026-09-01) meets rust-version 1.85)\n  python interpreter: provisioned MCP runtime (C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\mcp-runtime/current.json)\n  sqlite driver: unverified (non-blocking; owner task J-007): no owner manifest declares the bundled SQLite driver version\nengine: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom.exe (sibling)\naxiom-cli: every reported check is satisfied\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "update (channel offers the installed release)",
+      "argv": [
+        "C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe",
+        "update",
+        "--yes",
+        "--channel",
+        "http://127.0.0.1:53778/v0.1.3/channel.json"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "up to date: 0.1.3\naxiom-cli: up to date: installed 0.1.3; channel `stable` offers 0.1.3\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "uninstall",
+      "argv": [
+        "C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe",
+        "uninstall",
+        "--yes"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe is running; moved aside to C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe.uninstalled (delete it after this command exits)\nPATH: entry-removed (C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin)\nremoved 3 owned executable(s)\nuser data, workspaces and graph output were kept\naxiom-cli: engine-owned uninstall completed; distribution approval b5f52c26f97a312a7a176ddc7e6376785cd9b3f9e5a47f8ba6a39de7e0f32b2b bound the request\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "PATH entry removed by uninstall",
+      "passed": true
+    },
+    {
+      "step": "reinstall with the same one-liner",
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-c",
+        "& ([scriptblock]::Create((irm http://127.0.0.1:53778/v0.1.3/install.ps1))) -Yes"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "axiom install: downloading v0.1.3 (axiom-0.1.3-windows-x64.zip)\nPATH: added C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-07cdc514d4f8872e recorded in C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\axiom-install-b45213fb2e91\\release\\channel.json (sha256 e0970f157086b07d04d95f63d63ecc1f6618e04a6537a047001575975a2d6a83)\nchannel: stable published=false\n  axiom-graphd 0.1.3 - artifact declared\n  axiom-mcp 0.1.3 - artifact declared\n  skills 0.1.3 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: C:\\Users\\runneradmin\\AppData\\Local\\Axiom (bin: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: add C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin to the user PATH (HKCU\\Environment) (undo: axiom-cli uninstall; skip: --no-modify-path)\nlegacy: unrecognised Axiom-like directory C:\\Users\\runneradmin\\AppData\\Local\\Axiom; reported, not modified\nplan digest: 07cdc514d4f8872eecb6618f4ff7f352b32f3bd6ea3d050e5cf3e3e8f1a97ebd\naxiom-cli: the engine (`C:\\Users\\runneradmin\\AppData\\Local\\Temp\\axiom-install-b45213fb2e91\\release\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "doctor after reinstall",
+      "argv": [
+        "C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom-cli.exe",
+        "doctor"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "target: windows-x64 tier=finish-first evidence_target=windows-x64\ninstall root: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\ninstalled release: channel=stable generation=install-07cdc514d4f8872e components=5\nrecorded channel manifest: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\recorded-manifest.json verified sha256=e0970f157086b07d04d95f63d63ecc1f6618e04a6537a047001575975a2d6a83\nrecovery journal: 0 interrupted transaction(s)\ncoordinator lock: free\nprerequisites (distribution contract section 7):\n  rust toolchain: not required by an installed release (build-time only; observed: rustc 1.98.1 (48a229cea 2026-09-01) meets rust-version 1.85)\n  python interpreter: provisioned MCP runtime (C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\mcp-runtime/current.json)\n  sqlite driver: unverified (non-blocking; owner task J-007): no owner manifest declares the bundled SQLite driver version\nengine: C:\\Users\\runneradmin\\AppData\\Local\\Axiom\\bin\\axiom.exe (sibling)\naxiom-cli: every reported check is satisfied\n",
+      "stderr_tail": ""
+    }
+  ],
+  "passed": true
+}

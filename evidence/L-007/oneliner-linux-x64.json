@@ -1,0 +1,120 @@
+{
+  "task_id": "L-007",
+  "lane": "linux-x64",
+  "run_url": "https://github.com/orchex006/axiom-cli/actions/runs/37583651524",
+  "source_revision": "dae8be4d2f99c7e65f112d8f9fd415b2e4c40ba3",
+  "host": {
+    "system": "Linux",
+    "release": "6.17.0-1022-azure",
+    "machine": "x86_64"
+  },
+  "assets": {
+    "SHA256SUMS": "25dad77c09591632cd3115ab517382b4fd931296a67f416a748f3fedb14a7820",
+    "axiom-0.1.3-linux-x64.tar.gz": "91fe7e63e17bbda199294b3a6e19cbb21a7443e58b5dd8f336647cafb5714544",
+    "channel.json": "7213192a7c3834b1a90568af9e265e9573ac7371fca2443645ea1f6c45aa28b0",
+    "install.ps1": "04365fb98f37761660a7bdd5ed04f6938a5b20f4d6aac36d45d1189e54460de0",
+    "install.sh": "b76c58334a06b99b5d3e51c929fea571db82c77339d424c210b3412666a6f3f0"
+  },
+  "axiom_env_set": [],
+  "steps": [
+    {
+      "step": "one-liner install",
+      "argv": [
+        "sh",
+        "-c",
+        "curl -fsSL http://127.0.0.1:43665/v0.1.3/install.sh | sh -s -- --yes"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "axiom install: downloading v0.1.3 (axiom-0.1.3-linux-x64.tar.gz)\nPATH: added /home/runner/.local/share/axiom/bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-f04eb515f83421e4 recorded in /home/runner/.local/share/axiom/installed.json\ntarget: linux-x64 (evidence target linux-x64)\nrelease set: /tmp/tmp.UoF6dyXaO9/release/channel.json (sha256 bf0abea7b5a1d19f86801176b486d6f32a40a50875b27d1b001f8d6e3eb16af5)\nchannel: stable published=false\n  axiom-graphd 0.1.3 - artifact declared\n  axiom-mcp 0.1.3 - artifact declared\n  skills 0.1.3 - no artifact for this host\n  mcp runtime - provisioned from the release (posix-python-provision)\ninstall root: /home/runner/.local/share/axiom (bin: /home/runner/.local/share/axiom/bin)\nsize: 5.0 MB of verified artifacts\nPATH: add /home/runner/.local/share/axiom/bin to the login profile /home/runner/.bash_profile (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: f04eb515f83421e44bb986b33c0126fa8a7a2f1c8ec68be86976cca4a54fdb0a\naxiom-cli: the engine (`/tmp/tmp.UoF6dyXaO9/release/axiom` sibling) placed the approved bundle: status `installed`\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "PATH announced and added",
+      "passed": true
+    },
+    {
+      "step": "version",
+      "argv": [
+        "/home/runner/.local/share/axiom/bin/axiom-cli",
+        "version"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "installed: 0.1.3 channel=stable generation=install-f04eb515f83421e4 at=2026-10-07T06:52:29Z\nprevious generation: none retained\n  axiom-graphd d44b20963916 version=0.1.3 action=install needs_restart\n  axiom-mcp 2a702a2fc7d5 version=0.1.3 action=install needs_restart\n  bin/axiom-cli  version=0.1.3 action=install\n  bin/axiom  version=0.1.3 action=install\n  bin/axiom-graphd  version=0.1.3 action=install\navailable: channel=stable published=false updated_at=2026-10-05T00:00:00Z\n  axiom-graphd available=0.1.3 status=declared\n  axiom-mcp available=0.1.3 status=declared\n  skills available=0.1.3 status=declared\naxiom-cli: reported installed and available versions\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "doctor",
+      "argv": [
+        "/home/runner/.local/share/axiom/bin/axiom-cli",
+        "doctor"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "target: linux-x64 tier=design-complete/test-later evidence_target=linux-x64\ninstall root: /home/runner/.local/share/axiom\ninstalled release: channel=stable generation=install-f04eb515f83421e4 components=5\nrecorded channel manifest: /home/runner/.local/share/axiom/recorded-manifest.json verified sha256=bf0abea7b5a1d19f86801176b486d6f32a40a50875b27d1b001f8d6e3eb16af5\nrecovery journal: 0 interrupted transaction(s)\ncoordinator lock: free\nprerequisites (distribution contract section 7):\n  rust toolchain: not required by an installed release (build-time only; observed: rustc 1.99.0 (b940084d7 2026-09-28) meets rust-version 1.85)\n  python interpreter: provisioned MCP runtime (/home/runner/.local/share/axiom/mcp-runtime/current.json)\n  sqlite driver: unverified (non-blocking; owner task J-007): no owner manifest declares the bundled SQLite driver version\nengine: /home/runner/.local/share/axiom/bin/axiom (sibling)\naxiom-cli: every reported check is satisfied\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "update (channel offers the installed release)",
+      "argv": [
+        "/home/runner/.local/share/axiom/bin/axiom-cli",
+        "update",
+        "--yes",
+        "--channel",
+        "http://127.0.0.1:43665/v0.1.3/channel.json"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "up to date: 0.1.3\naxiom-cli: up to date: installed 0.1.3; channel `stable` offers 0.1.3\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "uninstall",
+      "argv": [
+        "/home/runner/.local/share/axiom/bin/axiom-cli",
+        "uninstall",
+        "--yes"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "PATH: line-removed (recorded entry)\nremoved 3 owned executable(s)\nuser data, workspaces and graph output were kept\naxiom-cli: engine-owned uninstall completed; distribution approval 2968049cf7ede1c615b6d38c0adafe1028bfd4291e4b0e39a04cfb6c946bf7e4 bound the request\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "PATH entry removed by uninstall",
+      "passed": true
+    },
+    {
+      "step": "reinstall with the same one-liner",
+      "argv": [
+        "sh",
+        "-c",
+        "curl -fsSL http://127.0.0.1:43665/v0.1.3/install.sh | sh -s -- --yes"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "axiom install: downloading v0.1.3 (axiom-0.1.3-linux-x64.tar.gz)\nPATH: added /home/runner/.local/share/axiom/bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-83d39efce8ce5022 recorded in /home/runner/.local/share/axiom/installed.json\ntarget: linux-x64 (evidence target linux-x64)\nrelease set: /tmp/tmp.tR1jF2OeDg/release/channel.json (sha256 bf0abea7b5a1d19f86801176b486d6f32a40a50875b27d1b001f8d6e3eb16af5)\nchannel: stable published=false\n  axiom-graphd 0.1.3 - artifact declared\n  axiom-mcp 0.1.3 - artifact declared\n  skills 0.1.3 - no artifact for this host\n  mcp runtime - provisioned from the release (posix-python-provision)\ninstall root: /home/runner/.local/share/axiom (bin: /home/runner/.local/share/axiom/bin)\nsize: 5.0 MB of verified artifacts\nPATH: add /home/runner/.local/share/axiom/bin to the login profile /home/runner/.bash_profile (undo: axiom-cli uninstall; skip: --no-modify-path)\nlegacy: unrecognised Axiom-like directory /home/runner/.local/share/axiom; reported, not modified\nplan digest: 83d39efce8ce50229234111f72b9b89cc3ba1fbbcba3a6eb93b2faee4c3b5f36\naxiom-cli: the engine (`/tmp/tmp.tR1jF2OeDg/release/axiom` sibling) placed the approved bundle: status `installed`\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "doctor after reinstall",
+      "argv": [
+        "/home/runner/.local/share/axiom/bin/axiom-cli",
+        "doctor"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout_tail": "target: linux-x64 tier=design-complete/test-later evidence_target=linux-x64\ninstall root: /home/runner/.local/share/axiom\ninstalled release: channel=stable generation=install-83d39efce8ce5022 components=5\nrecorded channel manifest: /home/runner/.local/share/axiom/recorded-manifest.json verified sha256=bf0abea7b5a1d19f86801176b486d6f32a40a50875b27d1b001f8d6e3eb16af5\nrecovery journal: 0 interrupted transaction(s)\ncoordinator lock: free\nprerequisites (distribution contract section 7):\n  rust toolchain: not required by an installed release (build-time only; observed: rustc 1.99.0 (b940084d7 2026-09-28) meets rust-version 1.85)\n  python interpreter: provisioned MCP runtime (/home/runner/.local/share/axiom/mcp-runtime/current.json)\n  sqlite driver: unverified (non-blocking; owner task J-007): no owner manifest declares the bundled SQLite driver version\nengine: /home/runner/.local/share/axiom/bin/axiom (sibling)\naxiom-cli: every reported check is satisfied\n",
+      "stderr_tail": ""
+    }
+  ],
+  "passed": true
+}
