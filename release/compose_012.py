@@ -1,4 +1,4 @@
-"""Compose 0.1.2 native distributions from actual checksum-verified owner Releases."""
+"""Compose 0.1.3 native distributions from actual checksum-verified owner Releases."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 
 
 def sha(path):
@@ -378,7 +378,7 @@ def compose(lane, output, cli_revision):
         pins["axiom-cli"] = cli_revision
         (release / "RELEASE-SOURCES.json").write_text(json.dumps(pins, indent=2))
         (release / "README.md").write_bytes(
-            (ROOT / "release/v0.1.2-notes.md").read_bytes()
+            (ROOT / "release/oneline-release-notes.md").read_bytes()
         )
         manifest = {
             "version": VERSION,
