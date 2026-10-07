@@ -9,10 +9,12 @@
 
 mod bundle;
 mod cli;
+mod confirm;
 mod doctor;
 mod engine;
 mod layout;
 mod lifecycle;
+mod pathenv;
 mod runtime;
 mod target;
 mod update;

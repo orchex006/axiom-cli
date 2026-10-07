@@ -1,0 +1,148 @@
+{
+  "task_id": "L-003",
+  "host": {
+    "system": "Windows",
+    "machine": "AMD64",
+    "release": "11",
+    "python": "3.13.14"
+  },
+  "cli_sha256": "05793aac4c5035f4d5ad5f75dbec331933652adbecef4ae84a34c15d4e9f4209",
+  "path_target": "HKCU\\Software\\AxiomCliTest\\L003",
+  "cases": [
+    {
+      "case": "no_terminal_exit_4_no_change",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom-cli.exe",
+          "install"
+        ],
+        "stdin": null,
+        "exit_code": 4,
+        "stdout_tail": "",
+        "stderr_tail": "nstall plan was printed and nothing was changed: there is no terminal to confirm it. Re-run with `--yes` (or AXIOM_INSTALL_YES=1) to apply plan de248e7055dcf30061e23b822eab0fea827d9e24057ee6478691f0f8a6b2b90a, or use `--dry-run` / `--apply --approve-digest`\naxiom-cli: target: windows-x64 (evidence target windows-x64)\naxiom-cli: release set: <home>\\AppData\\Local\\Temp\\axl3\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\naxiom-cli: channel: stable published=false\naxiom-cli:   axiom-graphd 0.1.2 - artifact declared\naxiom-cli:   axiom-mcp 0.1.2 - artifact declared\naxiom-cli:   skills 0.1.2 - no artifact for this host\naxiom-cli:   mcp runtime - provisioned from the release (windows-embedded-python)\naxiom-cli: install root: <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin)\naxiom-cli: size: 4.4 MB of verified artifacts\naxiom-cli: PATH: add <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin to the user PATH (HKCU\\Software\\AxiomCliTest\\L003) (undo: axiom-cli uninstall; skip: --no-modify-path)\naxiom-cli: plan digest: de248e7055dcf30061e23b822eab0fea827d9e24057ee6478691f0f8a6b2b90a\n"
+      }
+    },
+    {
+      "case": "declined_exit_5_no_change",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom-cli.exe",
+          "install"
+        ],
+        "stdin": "n\n",
+        "exit_code": 5,
+        "stdout_tail": "target: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl3\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: add <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin to the user PATH (HKCU\\Software\\AxiomCliTest\\L003) (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: de248e7055dcf30061e23b822eab0fea827d9e24057ee6478691f0f8a6b2b90a\nProceed? [Y/n] ",
+        "stderr_tail": "axiom-cli: error: install declined at the confirmation prompt; nothing was changed\n"
+      }
+    },
+    {
+      "case": "confirmed_installs_and_adds_path",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom-cli.exe",
+          "install"
+        ],
+        "stdin": "\n",
+        "exit_code": 0,
+        "stdout_tail": "target: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl3\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: add <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin to the user PATH (HKCU\\Software\\AxiomCliTest\\L003) (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: de248e7055dcf30061e23b822eab0fea827d9e24057ee6478691f0f8a6b2b90a\nProceed? [Y/n] PATH: added <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-de248e7055dcf300 recorded in <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\installed.json\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      },
+      "path_during": {
+        "type": "REG_EXPAND_SZ",
+        "value": "%USERPROFILE%\\tools;C:\\Program Files\\Example;<home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin"
+      }
+    },
+    {
+      "case": "uninstall_restores_path_byte_for_byte",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin\\axiom-cli.exe",
+          "uninstall",
+          "--yes"
+        ],
+        "stdin": null,
+        "exit_code": 0,
+        "stdout_tail": "<home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin\\axiom-cli.exe is running; moved aside to <home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin\\axiom-cli.exe.uninstalled (delete it after this command exits)\nPATH: entry-removed (<home>\\AppData\\Local\\Temp\\axl3\\d1\\Axiom\\bin)\nremoved 3 owned executable(s)\nuser data, workspaces and graph output were kept\naxiom-cli: engine-owned uninstall completed; distribution approval 9efd170a00ffe3a6edc22ed30771d87811ccf7d2b3df192ea0f251fad8392803 bound the request\n",
+        "stderr_tail": ""
+      },
+      "path_before": {
+        "type": "REG_EXPAND_SZ",
+        "value": "%USERPROFILE%\\tools;C:\\Program Files\\Example"
+      },
+      "path_after": {
+        "type": "REG_EXPAND_SZ",
+        "value": "%USERPROFILE%\\tools;C:\\Program Files\\Example"
+      },
+      "bin_leftovers": [
+        "axiom-cli.exe.uninstalled"
+      ]
+    },
+    {
+      "case": "yes_no_modify_path",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom-cli.exe",
+          "install",
+          "--yes",
+          "--no-modify-path"
+        ],
+        "stdin": null,
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-dc7e41716ac9f80e recorded in <home>\\AppData\\Local\\Temp\\axl3\\d2\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl3\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl3\\d2\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl3\\d2\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run <home>\\AppData\\Local\\Temp\\axl3\\d2\\Axiom\\bin\\axiom-cli directly\nplan digest: dc7e41716ac9f80ea34202f3dcaa865c1d6e00af1624ea9fa6e435f494038c45\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "env_yes_equals_flag",
+      "passed": true,
+      "install": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom-cli.exe",
+          "install"
+        ],
+        "stdin": null,
+        "exit_code": 0,
+        "stdout_tail": "PATH: added <home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-580eccc1f81fadd5 recorded in <home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl3\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nPATH: add <home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin to the user PATH (HKCU\\Software\\AxiomCliTest\\L003) (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: 580eccc1f81fadd5b9b83d747965e839f12d2ec68746fba465995e3bbd1c3357\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      },
+      "uninstall": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin\\axiom-cli.exe",
+          "uninstall",
+          "--yes"
+        ],
+        "stdin": null,
+        "exit_code": 0,
+        "stdout_tail": "<home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin\\axiom-cli.exe is running; moved aside to <home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin\\axiom-cli.exe.uninstalled (delete it after this command exits)\nPATH: entry-removed (<home>\\AppData\\Local\\Temp\\axl3\\d3\\Axiom\\bin)\nremoved 3 owned executable(s)\nuser data, workspaces and graph output were kept\naxiom-cli: engine-owned uninstall completed; distribution approval 3346c7a846d21e755c80606dd65e086297d422897a62609a51be4a4d8b4e72ab bound the request\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "automation_unchanged",
+      "passed": true,
+      "run": {
+        "argv": [
+          "<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom-cli.exe",
+          "install",
+          "--apply",
+          "--approve-digest",
+          "e1daa0e603f9990feb6bce73c9c8762133b2d69c8d78626ca0044f6c542492c5"
+        ],
+        "stdin": null,
+        "exit_code": 0,
+        "stdout_tail": "installed: generation install-e1daa0e603f9990f recorded in <home>\\AppData\\Local\\Temp\\axl3\\d4\\Axiom\\installed.json\ntarget: windows-x64 (evidence target windows-x64)\nrelease set: <home>\\AppData\\Local\\Temp\\axl3\\rel\\channel.json (sha256 3b4aebcbdd3ef5c576c27755787cd454cc900f909a4d83a754c26554cdda0e1b)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (windows-embedded-python)\ninstall root: <home>\\AppData\\Local\\Temp\\axl3\\d4\\Axiom (bin: <home>\\AppData\\Local\\Temp\\axl3\\d4\\Axiom\\bin)\nsize: 4.4 MB of verified artifacts\nplan digest: e1daa0e603f9990feb6bce73c9c8762133b2d69c8d78626ca0044f6c542492c5\naxiom-cli: the engine (`<home>\\AppData\\Local\\Temp\\axl3\\rel\\axiom.exe` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "real_user_path_untouched",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

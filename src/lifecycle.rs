@@ -29,13 +29,16 @@ use crate::update::json::Json;
 use crate::update::report::Report;
 use crate::update::{fetch, plan as plan_contract, state, time::Stamp};
 
-/// The two mutating modes of the distribution transaction.
+/// The modes of the distribution transaction.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Mode {
     /// `--dry-run`: report the plan without changing the host.
     DryRun,
     /// `--apply`: run the transaction; requires an approval digest bound to the plan digest.
     Apply,
+    /// Bare verb (ADR-0033 decision 4): print the plan, ask once (or `--yes`), then apply that
+    /// exact plan with its own digest. Without a terminal and without `--yes`: exit `4`, no change.
+    Interactive,
 }
 
 impl Mode {
@@ -44,6 +47,7 @@ impl Mode {
         match self {
             Mode::DryRun => "dry-run",
             Mode::Apply => "apply",
+            Mode::Interactive => "interactive",
         }
     }
 }
@@ -57,6 +61,10 @@ pub struct InstallRequest {
     pub from: Option<String>,
     /// `--approve-digest <sha256>`.
     pub approve_digest: Option<String>,
+    /// `--yes` / `-Yes`: pre-approve the interactive plan.
+    pub yes: bool,
+    /// `false` with `--no-modify-path`: the interactive install leaves the user PATH alone.
+    pub modify_path: bool,
 }
 
 /// A parsed `uninstall` request.
@@ -68,11 +76,13 @@ pub struct UninstallRequest {
     pub approve_digest: Option<String>,
     /// `--purge-data`: additionally delete workspace data, which needs the engine.
     pub purge_data: bool,
+    /// `--yes`: pre-approve the interactive plan.
+    pub yes: bool,
 }
 
 /// Run `install`.
 pub fn run_install(request: InstallRequest, json: bool, verbose: bool) -> i32 {
-    match install(request) {
+    match install(request, json) {
         Ok(report) => report.emit(json, verbose),
         Err(refusal) => refusal_report("install", &refusal).emit(json, verbose),
     }
@@ -80,7 +90,7 @@ pub fn run_install(request: InstallRequest, json: bool, verbose: bool) -> i32 {
 
 /// Run `uninstall`.
 pub fn run_uninstall(request: UninstallRequest, json: bool, verbose: bool) -> i32 {
-    match uninstall(request) {
+    match uninstall(request, json) {
         Ok(report) => report.emit(json, verbose),
         Err(refusal) => refusal_report("uninstall", &refusal).emit(json, verbose),
     }
@@ -113,8 +123,9 @@ struct ReleaseSet {
     plan_digest: String,
 }
 
-fn install(request: InstallRequest) -> Result<Report, Refusal> {
-    let set = resolve_release_set(request.from.as_deref())?;
+fn install(request: InstallRequest, json: bool) -> Result<Report, Refusal> {
+    let path_change = (request.mode == Mode::Interactive).then_some(request.modify_path);
+    let set = resolve_release_set(request.from.as_deref(), path_change)?;
 
     if request.mode == Mode::Apply {
         let approval = plan_contract::approval_reasons(
@@ -144,11 +155,29 @@ fn install(request: InstallRequest) -> Result<Report, Refusal> {
         return Err(nothing_to_install(&set));
     }
 
-    let mut report = if request.mode == Mode::Apply {
+    let mut decision = None;
+    if request.mode == Mode::Interactive {
+        let answer = crate::confirm::decide(request.yes, json, &plan_lines(&set));
+        decision = Some(answer);
+        if let Some(report) = unconfirmed(
+            "install",
+            answer,
+            &set.plan,
+            &set.plan_digest,
+            plan_lines(&set),
+        ) {
+            return Ok(report);
+        }
+    }
+
+    let mut report = if matches!(request.mode, Mode::Apply | Mode::Interactive) {
         apply_install(&set, &verified)?
     } else {
         Report::ok("ok", "install plan reported; nothing was changed").subject("install")
     };
+    if let Some(answer) = decision {
+        report.detail("confirmation", Json::text(answer.name()));
+    }
     report.detail("mode", Json::text(request.mode.name()));
     report.detail("generated_at", Json::text(&Stamp::now().format()));
     report.detail(
@@ -166,10 +195,54 @@ fn install(request: InstallRequest) -> Result<Report, Refusal> {
     report.detail("plan", set.plan.clone());
     report.detail("plan_digest", Json::text(&set.plan_digest));
     report.detail("verified_artifacts", Json::array(verified));
-    for line in plan_lines(&set) {
-        report.line(line);
+    if decision != Some(crate::confirm::Decision::Confirmed) {
+        // A confirmed plan was already printed above the prompt.
+        for line in plan_lines(&set) {
+            report.line(line);
+        }
     }
     Ok(report)
+}
+
+/// The report for an interactive plan that was not confirmed, or `None` to proceed.
+///
+/// No terminal and no `--yes`: the plan is printed, nothing changes, exit `4`. Declined at the
+/// prompt: nothing changes, exit `5` (authorization).
+fn unconfirmed(
+    subject: &'static str,
+    answer: crate::confirm::Decision,
+    plan: &Json,
+    digest: &str,
+    lines: Vec<String>,
+) -> Option<Report> {
+    let mut report = match answer {
+        crate::confirm::Decision::NoTerminal => {
+            let mut report = Report::not_ready(format!(
+                "the {subject} plan was printed and nothing was changed: there is no terminal to \
+                 confirm it. Re-run with `--yes` (or AXIOM_INSTALL_YES=1) to apply plan {digest}, \
+                 or use `--dry-run` / `--apply --approve-digest`"
+            ))
+            .subject(subject);
+            report.detail("reason_code", Json::text("confirmation_required"));
+            report.lines(lines);
+            report
+        }
+        crate::confirm::Decision::Declined => {
+            let mut report = Report::new(
+                crate::cli::exit::AUTHORIZATION,
+                "authorization",
+                format!("{subject} declined at the confirmation prompt; nothing was changed"),
+            )
+            .subject(subject);
+            report.detail("reason_code", Json::text("confirmation_declined"));
+            report
+        }
+        crate::confirm::Decision::PreApproved | crate::confirm::Decision::Confirmed => return None,
+    };
+    report.detail("plan", plan.clone());
+    report.detail("plan_digest", Json::text(digest));
+    report.detail("confirmation", Json::text(answer.name()));
+    Some(report)
 }
 
 /// Build the plan, and - for `--apply` - hand the engine-owned placement to the engine.
@@ -332,6 +405,27 @@ fn apply_install(set: &ReleaseSet, verified: &[Json]) -> Result<Report, Refusal>
             )
         })?;
     report.detail("installed_record", recorded.to_json());
+    if let Some(block) = set.plan.get("path_change") {
+        let change = crate::pathenv::apply(&request.install_root, block).map_err(|refusal| {
+            Refusal::new(
+                refusal.class,
+                refusal.reason,
+                format!(
+                    "Axiom is installed and recorded, but the announced PATH change failed, so \
+                     run {} directly or add it to PATH yourself: {}",
+                    crate::layout::bin_dir(&request.install_root).display(),
+                    refusal.message
+                ),
+            )
+        })?;
+        report.detail("path_change", change);
+        if block.get("action").and_then(Json::as_text) == Some("add") {
+            report.line(format!(
+                "PATH: added {} for this user; open a new terminal to use `axiom-cli`",
+                crate::layout::bin_dir(&request.install_root).display()
+            ));
+        }
+    }
     report.line(format!(
         "installed: generation {} recorded in {}",
         recorded.current_generation,
@@ -611,7 +705,7 @@ fn install_engine(verified: &[Json]) -> Result<engine::Engine, Refusal> {
 }
 
 /// Run `uninstall`.
-fn uninstall(request: UninstallRequest) -> Result<Report, Refusal> {
+fn uninstall(request: UninstallRequest, json: bool) -> Result<Report, Refusal> {
     if request.purge_data {
         return Err(Refusal::validation(
             "purge_data_unsupported",
@@ -649,6 +743,10 @@ fn uninstall(request: UninstallRequest) -> Result<Report, Refusal> {
             .map_err(|e| Refusal::validation("installed_marker", e))?;
         }
     }
+    if let Some(block) = owned_removals(&root)? {
+        plan.set("owned_removals", block)
+            .map_err(|e| Refusal::validation("owned_removals", e))?;
+    }
     let digest = plan_contract::digest(&plan).ok_or_else(|| {
         Refusal::validation(
             "plan_unbuildable",
@@ -656,6 +754,16 @@ fn uninstall(request: UninstallRequest) -> Result<Report, Refusal> {
         )
     })?;
     seal(&mut plan, &digest)?;
+
+    let mut decision = None;
+    if request.mode == Mode::Interactive {
+        let lines = uninstall_lines(&plan, &root);
+        let answer = crate::confirm::decide(request.yes, json, &lines);
+        decision = Some(answer);
+        if let Some(report) = unconfirmed("uninstall", answer, &plan, &digest, lines) {
+            return Ok(report);
+        }
+    }
 
     if request.mode == Mode::Apply {
         let reasons =
@@ -671,11 +779,17 @@ fn uninstall(request: UninstallRequest) -> Result<Report, Refusal> {
         }
     }
 
-    let mut report = if request.mode == Mode::Apply {
+    let mut report = if matches!(request.mode, Mode::Apply | Mode::Interactive) {
         apply_uninstall(&plan, &digest, request.purge_data)?
     } else {
-        Report::ok("ok", "uninstall plan reported; nothing was removed").subject("uninstall")
+        let mut report =
+            Report::ok("ok", "uninstall plan reported; nothing was removed").subject("uninstall");
+        report.lines(uninstall_lines(&plan, &root));
+        report
     };
+    if let Some(answer) = decision {
+        report.detail("confirmation", Json::text(answer.name()));
+    }
     report.detail("mode", Json::text(request.mode.name()));
     report.detail("generated_at", Json::text(&Stamp::now().format()));
     report.detail("purge_data", Json::bool(request.purge_data));
@@ -754,13 +868,171 @@ fn apply_uninstall(plan: &Json, digest: &str, _purge_data: bool) -> Result<Repor
         std::path::Path::new(root),
         plan.get("installed_marker_sha256").and_then(Json::as_text),
     )?;
-    Ok(Report::ok(
+    let mut report = Report::ok(
         "ok",
         format!(
             "engine-owned uninstall completed; distribution approval {digest} bound the request"
         ),
     )
-    .subject("uninstall"))
+    .subject("uninstall");
+    if let Some(block) = plan.get("owned_removals") {
+        let removed = remove_owned(std::path::Path::new(root), block)?;
+        for line in removed
+            .get("lines")
+            .and_then(Json::as_array)
+            .unwrap_or(&[])
+            .iter()
+            .filter_map(Json::as_text)
+        {
+            report.line(line.to_string());
+        }
+        report.detail("owned_removals", removed);
+    }
+    report.line("user data, workspaces and graph output were kept".to_string());
+    Ok(report)
+}
+
+/// What uninstall removes beyond the engine plan: this layout's `bin` entries (only when their
+/// bytes still match `installed.json`) and the PATH entry recorded in `path-change.json`.
+fn owned_removals(root: &Path) -> Result<Option<Json>, Refusal> {
+    let mut bin = Vec::new();
+    if let Ok(text) = std::fs::read_to_string(root.join(state::INSTALLED_FILE)) {
+        if let Ok(record) = crate::update::json::parse(&text) {
+            for item in record.get("bin").and_then(Json::as_array).unwrap_or(&[]) {
+                if let (Some(path), Some(digest)) = (
+                    item.get("path").and_then(Json::as_text),
+                    item.get("sha256").and_then(Json::as_text),
+                ) {
+                    bin.push(Json::from_pairs(vec![
+                        ("path", Json::text(path)),
+                        ("sha256", Json::text(digest)),
+                    ]));
+                }
+            }
+        }
+    }
+    let path_record = root.join(crate::pathenv::RECORD_FILE);
+    let path_entry = if path_record.is_file() {
+        let text = std::fs::read_to_string(&path_record).map_err(|error| {
+            Refusal::io(
+                "path_record_unreadable",
+                &path_record.display().to_string(),
+                &error,
+            )
+        })?;
+        crate::update::json::parse(&text)
+            .ok()
+            .and_then(|record| record.get("entry").cloned())
+    } else {
+        None
+    };
+    if bin.is_empty() && path_entry.is_none() {
+        return Ok(None);
+    }
+    Ok(Some(Json::from_pairs(vec![
+        ("bin", Json::array(bin)),
+        ("path_entry", path_entry.unwrap_or(Json::Null)),
+    ])))
+}
+
+/// Remove the owned `bin` entries and revert the recorded PATH change.
+fn remove_owned(root: &Path, block: &Json) -> Result<Json, Refusal> {
+    let mut lines = Vec::new();
+    let mut removed = Vec::new();
+    let running = std::env::current_exe()
+        .ok()
+        .and_then(|exe| exe.canonicalize().ok());
+    for item in block.get("bin").and_then(Json::as_array).unwrap_or(&[]) {
+        let relative = item.get("path").and_then(Json::as_text).unwrap_or("");
+        let expected = item.get("sha256").and_then(Json::as_text).unwrap_or("");
+        if !crate::update::rules::is_relative_path(relative) || !relative.starts_with("bin/") {
+            continue;
+        }
+        let path = root.join(relative.replace('/', std::path::MAIN_SEPARATOR_STR));
+        if !path.is_file() {
+            continue;
+        }
+        if crate::layout::file_digest(&path)? != expected {
+            lines.push(format!("kept {} (changed since install)", path.display()));
+            continue;
+        }
+        let is_running = running.is_some() && path.canonicalize().ok() == running;
+        if std::fs::remove_file(&path).is_ok() {
+            removed.push(Json::text(relative));
+            continue;
+        }
+        if is_running {
+            // Windows cannot delete a running executable; move it aside so the name is free and
+            // the leftover is obviously stale. It is removed by the next install or by hand.
+            let aside = path.with_extension("exe.uninstalled");
+            if std::fs::rename(&path, &aside).is_ok() {
+                lines.push(format!(
+                    "{} is running; moved aside to {} (delete it after this command exits)",
+                    path.display(),
+                    aside.display()
+                ));
+                removed.push(Json::text(relative));
+                continue;
+            }
+        }
+        lines.push(format!("could not remove {}", path.display()));
+    }
+    let path_change = crate::pathenv::revert(root)?;
+    if let Some(change) = &path_change {
+        lines.push(format!(
+            "PATH: {} ({})",
+            change.get("action").and_then(Json::as_text).unwrap_or("?"),
+            change
+                .get("entry")
+                .and_then(Json::as_text)
+                .unwrap_or("recorded entry")
+        ));
+    }
+    let bin = crate::layout::bin_dir(root);
+    let _ = std::fs::remove_dir(&bin);
+    lines.push(format!("removed {} owned executable(s)", removed.len()));
+    Ok(Json::from_pairs(vec![
+        ("bin_removed", Json::array(removed)),
+        ("path_change", path_change.unwrap_or(Json::Null)),
+        (
+            "lines",
+            Json::array(lines.iter().map(|line| Json::text(line)).collect()),
+        ),
+    ]))
+}
+
+/// The printed uninstall plan.
+fn uninstall_lines(plan: &Json, root: &Path) -> Vec<String> {
+    let mut lines = vec![format!("uninstall from {}", root.display())];
+    if plan.get("installed").and_then(Json::as_bool) != Some(true) {
+        lines.push("nothing is installed here".to_string());
+    } else {
+        lines.push(
+            "remove: the installed ecosystem and its service registration (engine plan)"
+                .to_string(),
+        );
+    }
+    if let Some(block) = plan.get("owned_removals") {
+        let count = block
+            .get("bin")
+            .and_then(Json::as_array)
+            .map_or(0, <[Json]>::len);
+        lines.push(format!(
+            "remove: {count} executable(s) in {}",
+            crate::layout::bin_dir(root).display()
+        ));
+        if let Some(entry) = block.get("path_entry").and_then(Json::as_text) {
+            lines.push(format!("PATH: remove {entry} from the user PATH"));
+        }
+    }
+    lines.push("keep: user data, workspaces and graph output".to_string());
+    lines.push(format!(
+        "plan digest: {}",
+        plan.get("plan_digest")
+            .and_then(Json::as_text)
+            .unwrap_or("?")
+    ));
+    lines
 }
 
 fn clear_installed_marker(root: &std::path::Path, expected: Option<&str>) -> Result<(), Refusal> {
@@ -840,7 +1112,10 @@ fn uninstall_plan(st: &state::State, purge_data: bool) -> Result<Json, Refusal> 
 }
 
 /// Resolve the release set: an explicit local set, else the recorded channel manifest.
-fn resolve_release_set(from: Option<&str>) -> Result<ReleaseSet, Refusal> {
+fn resolve_release_set(
+    from: Option<&str>,
+    path_change: Option<bool>,
+) -> Result<ReleaseSet, Refusal> {
     let host = target::host_id().ok_or_else(|| {
         Refusal::new(
             Class::Incompatible,
@@ -912,6 +1187,13 @@ fn resolve_release_set(from: Option<&str>) -> Result<ReleaseSet, Refusal> {
     if let Some(inputs) = local_root.as_deref().and_then(crate::runtime::locate) {
         plan.set("mcp_runtime", crate::runtime::plan_block(&inputs)?)
             .map_err(|error| Refusal::validation("plan_unbuildable", error))?;
+    }
+    if let (Some(modify), Some(root)) = (path_change, state::default_root()) {
+        plan.set(
+            "path_change",
+            crate::pathenv::plan_block(&crate::layout::bin_dir(&root), modify),
+        )
+        .map_err(|error| Refusal::validation("plan_unbuildable", error))?;
     }
     let digest = plan_contract::digest(&plan).ok_or_else(|| {
         Refusal::validation("plan_unbuildable", "the install plan could not be digested")
@@ -1197,6 +1479,21 @@ fn plan_lines(set: &ReleaseSet) -> Vec<String> {
             "install root: {root} (bin: {root}{}bin)",
             std::path::MAIN_SEPARATOR
         ));
+    }
+    let bytes: i64 = set
+        .plan
+        .get("components")
+        .and_then(Json::as_array)
+        .unwrap_or(&[])
+        .iter()
+        .filter_map(|item| item.get("artifact")?.get("size_bytes")?.as_int())
+        .sum();
+    lines.push(format!(
+        "size: {:.1} MB of verified artifacts",
+        bytes as f64 / 1_000_000.0
+    ));
+    if let Some(block) = set.plan.get("path_change") {
+        lines.push(crate::pathenv::plan_line(block));
     }
     lines.push(format!("plan digest: {}", set.plan_digest));
     lines

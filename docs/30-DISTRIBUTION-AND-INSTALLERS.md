@@ -44,6 +44,17 @@ Run from an extracted release, `axiom-cli install --dry-run` resolves the `chann
 
 The root is `%LOCALAPPDATA%\Axiom` on Windows and `$XDG_DATA_HOME/axiom`, else `~/.local/share/axiom`, on POSIX. `version`, `doctor`, `update` and `uninstall` read that one `installed.json`; the engine is found as a sibling in `bin`. A crash before `installed.json` is written leaves an unfinished install that the next run repeats. The real-host harness is `tests/l002_first_install.py`.
 
+### One confirmation and the user PATH (ADR-0033, L-003)
+
+A bare `axiom-cli install` is the human path. It prints the plan (version, components, root, the PATH change and the size) and asks `Proceed? [Y/n]` once; the answer approves exactly that plan's canonical digest. `--yes` (or `AXIOM_INSTALL_YES=1`) approves without a prompt. Without a terminal (or with `--json`) and without `--yes` it prints the plan, changes nothing and exits `4`; a declined prompt exits `5`. `--dry-run` and `--apply --approve-digest` are unchanged for automation and never touch the PATH.
+
+The interactive plan adds only `<root>/bin`, only to the user PATH, and says so before asking:
+
+- Windows: the `Path` value of `HKCU\Environment`, keeping its registry type (`REG_EXPAND_SZ` stays expandable) and broadcasting the change to new terminals. The machine PATH is never opened.
+- POSIX: one marked `export PATH=...` line appended to the login profile (`~/.zprofile` for zsh, `~/.bash_profile` when it exists for bash, else `~/.profile`).
+
+`--no-modify-path` skips it. The exact change is recorded in `<root>/path-change.json`; `axiom-cli uninstall` removes exactly that entry (byte-for-byte restoration when nothing else edited the value), removes the owned `bin` files whose digests still match `installed.json`, and keeps user data. On Windows the running `bin\axiom-cli.exe` cannot delete itself, so it is moved aside as `axiom-cli.exe.uninstalled`. The real-host harness is `tests/l003_confirm_and_path.py`; it redirects the PATH target to `HKCU\Software\AxiomCliTest` (or a work `HOME`) so the operator's real PATH is never changed.
+
 ## ## Update
 
 J-007 implements the update path in `src/update/` with the channel manifest in `channels/stable.json`; `docs/50-UPDATE-CHANNEL.md` records what runs today and what does not. Implemented now:
