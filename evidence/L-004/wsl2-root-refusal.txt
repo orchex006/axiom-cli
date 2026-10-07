@@ -1,0 +1,4 @@
+uid=0
+axiom install: refusing to run as root: Axiom installs per user. Re-run as your normal user without sudo.
+exit=1
+data_created=no

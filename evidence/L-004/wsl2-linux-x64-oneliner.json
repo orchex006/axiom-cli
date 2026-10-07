@@ -1,0 +1,128 @@
+{
+  "task_id": "L-004",
+  "lane": "wsl2-linux-x64",
+  "host": {
+    "system": "Linux",
+    "release": "6.18.40.1-microsoft-standard-WSL2",
+    "machine": "x86_64",
+    "uid": 1000
+  },
+  "archive_sha256": "98988c591fe40826ded8235585b65ddf2626445e5921627fbe316118d20a1623",
+  "cases": [
+    {
+      "case": "oneliner_installs_embedded_version",
+      "passed": true,
+      "run": {
+        "command": "curl -fsSL http://127.0.0.1:42809/v0.1.3-l004w.1/install.sh | sh -s -- --yes",
+        "exit_code": 0,
+        "stdout_tail": "tar.gz)\nPATH: added /home/axiomtest/l004w/oneliner/data/axiom/bin for this user; open a new terminal to use `axiom-cli`\ninstalled: generation install-46cb82ef2ff0a56f recorded in /home/axiomtest/l004w/oneliner/data/axiom/installed.json\ntarget: linux-x64 (evidence target linux-x64)\nrelease set: /home/axiomtest/l004w/tmp-oneliner/tmp.ncXefFZfdX/release/channel.json (sha256 62102cdab5ccf1905f89d32f97f573c6de7a307e77ae3845ed982ea0c62e4c77)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (posix-python-provision)\ninstall root: /home/axiomtest/l004w/oneliner/data/axiom (bin: /home/axiomtest/l004w/oneliner/data/axiom/bin)\nsize: 5.0 MB of verified artifacts\nPATH: add /home/axiomtest/l004w/oneliner/data/axiom/bin to the login profile /home/axiomtest/l004w/oneliner/.profile (undo: axiom-cli uninstall; skip: --no-modify-path)\nplan digest: 46cb82ef2ff0a56f3d32a3053bff5d1964e34ae8b967084a915111101381cd27\naxiom-cli: the engine (`/home/axiomtest/l004w/tmp-oneliner/tmp.ncXefFZfdX/release/axiom` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": "",
+        "installed": true,
+        "root_exists": true,
+        "path_record": true,
+        "profile": "# Added by axiom-cli install (ADR-0033); removed by axiom-cli uninstall\nexport PATH=\"/home/axiomtest/l004w/oneliner/data/axiom/bin:$PATH\"\n",
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "installed_version_answers",
+      "passed": true,
+      "stdout_tail": "art\n  bin/axiom-cli  version=0.1.2 action=install\n  bin/axiom  version=0.1.2 action=install\n  bin/axiom-graphd  version=0.1.2 action=install\navailable: channel=stable published=false updated_at=2026-10-05T00:00:00Z\n  axiom-graphd available=0.1.2 status=declared\n  axiom-mcp available=0.1.2 status=declared\n  skills available=0.1.2 status=declared\naxiom-cli: reported installed and available versions\n"
+    },
+    {
+      "case": "yes_and_no_modify_path_pass_through",
+      "passed": true,
+      "run": {
+        "command": "curl -fsSL http://127.0.0.1:42809/v0.1.3-l004w.1/install.sh | sh -s -- --yes --no-modify-path",
+        "exit_code": 0,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004w.1 (axiom-0.1.3-l004w.1-linux-x64.tar.gz)\ninstalled: generation install-e2d2e3238fd1c408 recorded in /home/axiomtest/l004w/switches/data/axiom/installed.json\ntarget: linux-x64 (evidence target linux-x64)\nrelease set: /home/axiomtest/l004w/tmp-switches/tmp.K1jYikXPhW/release/channel.json (sha256 62102cdab5ccf1905f89d32f97f573c6de7a307e77ae3845ed982ea0c62e4c77)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (posix-python-provision)\ninstall root: /home/axiomtest/l004w/switches/data/axiom (bin: /home/axiomtest/l004w/switches/data/axiom/bin)\nsize: 5.0 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run /home/axiomtest/l004w/switches/data/axiom/bin/axiom-cli directly\nplan digest: e2d2e3238fd1c40899b6f957cc4d06c3e6bf86ef76b8c5f0c218e95aef8a2a8e\naxiom-cli: the engine (`/home/axiomtest/l004w/tmp-switches/tmp.K1jYikXPhW/release/axiom` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": "",
+        "installed": true,
+        "root_exists": true,
+        "path_record": false,
+        "profile": null,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "version_pin_runs_that_tags_installer",
+      "passed": true,
+      "run": {
+        "command": "curl -fsSL http://127.0.0.1:42809/v0.1.3-l004w.1/install.sh | sh -s -- --yes --no-modify-path --version 0.1.3-l004w.2",
+        "exit_code": 0,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004w.2 (axiom-0.1.3-l004w.2-linux-x64.tar.gz)\ninstalled: generation install-f0bd7bde20e90458 recorded in /home/axiomtest/l004w/pin/data/axiom/installed.json\ntarget: linux-x64 (evidence target linux-x64)\nrelease set: /home/axiomtest/l004w/tmp-pin/tmp.h6K3oFvWnx/release/channel.json (sha256 62102cdab5ccf1905f89d32f97f573c6de7a307e77ae3845ed982ea0c62e4c77)\nchannel: stable published=false\n  axiom-graphd 0.1.2 - artifact declared\n  axiom-mcp 0.1.2 - artifact declared\n  skills 0.1.2 - no artifact for this host\n  mcp runtime - provisioned from the release (posix-python-provision)\ninstall root: /home/axiomtest/l004w/pin/data/axiom (bin: /home/axiomtest/l004w/pin/data/axiom/bin)\nsize: 5.0 MB of verified artifacts\nPATH: unchanged (--no-modify-path); run /home/axiomtest/l004w/pin/data/axiom/bin/axiom-cli directly\nplan digest: f0bd7bde20e904585c7d416b3a22dd62265abe68814bde5a6bcf77e2e0210ecc\naxiom-cli: the engine (`/home/axiomtest/l004w/tmp-pin/tmp.h6K3oFvWnx/release/axiom` sibling) placed the approved bundle: status `installed`\n",
+        "stderr_tail": "",
+        "installed": true,
+        "root_exists": true,
+        "path_record": false,
+        "profile": null,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "no_terminal_without_yes_changes_nothing",
+      "passed": true,
+      "run": {
+        "command": "curl -fsSL http://127.0.0.1:42809/v0.1.3-l004w.1/install.sh | sh",
+        "exit_code": 4,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004w.1 (axiom-0.1.3-l004w.1-linux-x64.tar.gz)\n",
+        "stderr_tail": ": NotReady: the install plan was printed and nothing was changed: there is no terminal to confirm it. Re-run with `--yes` (or AXIOM_INSTALL_YES=1) to apply plan 3973ca4cac374d1708f31099cf5627a0a054a0d5ba3b7cc067a80f842d3e242f, or use `--dry-run` / `--apply --approve-digest`\naxiom-cli: target: linux-x64 (evidence target linux-x64)\naxiom-cli: release set: /home/axiomtest/l004w/tmp-noyes/tmp.3cTBncYPB7/release/channel.json (sha256 62102cdab5ccf1905f89d32f97f573c6de7a307e77ae3845ed982ea0c62e4c77)\naxiom-cli: channel: stable published=false\naxiom-cli:   axiom-graphd 0.1.2 - artifact declared\naxiom-cli:   axiom-mcp 0.1.2 - artifact declared\naxiom-cli:   skills 0.1.2 - no artifact for this host\naxiom-cli:   mcp runtime - provisioned from the release (posix-python-provision)\naxiom-cli: install root: /home/axiomtest/l004w/noyes/data/axiom (bin: /home/axiomtest/l004w/noyes/data/axiom/bin)\naxiom-cli: size: 5.0 MB of verified artifacts\naxiom-cli: PATH: add /home/axiomtest/l004w/noyes/data/axiom/bin to the login profile /home/axiomtest/l004w/noyes/.profile (undo: axiom-cli uninstall; skip: --no-modify-path)\naxiom-cli: plan digest: 3973ca4cac374d1708f31099cf5627a0a054a0d5ba3b7cc067a80f842d3e242f\n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "profile": null,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "tampered_archive_refused",
+      "passed": true,
+      "run": {
+        "command": "curl -fsSL http://127.0.0.1:42809/v0.1.3-l004w.3/install.sh | sh -s -- --yes",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004w.3 (axiom-0.1.3-l004w.3-linux-x64.tar.gz)\n",
+        "stderr_tail": "axiom install: SHA-256 mismatch for axiom-0.1.3-l004w.3-linux-x64.tar.gz (expected 98988c591fe40826ded8235585b65ddf2626445e5921627fbe316118d20a1623, got 40850ec52c88c27c498bddef63b9dd143635db2c47dd89a8c8b7a1674ac0f813); the archive was not extracted and nothing was changed\n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "profile": null,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "truncated_archive_refused",
+      "passed": true,
+      "run": {
+        "command": "curl -fsSL http://127.0.0.1:42809/v0.1.3-l004w.4/install.sh | sh -s -- --yes",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004w.4 (axiom-0.1.3-l004w.4-linux-x64.tar.gz)\n",
+        "stderr_tail": "axiom install: SHA-256 mismatch for axiom-0.1.3-l004w.4-linux-x64.tar.gz (expected 98988c591fe40826ded8235585b65ddf2626445e5921627fbe316118d20a1623, got 952cf1b9514ef942bf4a2534fcaeac5f37487a2f7881b306d4365c006bbe6b1f); the archive was not extracted and nothing was changed\n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "profile": null,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "network_failure_refused",
+      "passed": true,
+      "run": {
+        "command": "sh /home/axiomtest/l004w/dead/v0.1.3-l004w.9/install.sh --yes",
+        "exit_code": 1,
+        "stdout_tail": "axiom install: downloading v0.1.3-l004w.9 (axiom-0.1.3-l004w.9-linux-x64.tar.gz)\n",
+        "stderr_tail": "curl: (7) Failed to connect to 127.0.0.1 port 9 after 0 ms: Couldn't connect to server\naxiom install: download failed for http://127.0.0.1:9/v0.1.3-l004w.9/axiom-0.1.3-l004w.9-linux-x64.tar.gz; nothing was changed\n",
+        "installed": false,
+        "root_exists": false,
+        "path_record": false,
+        "profile": null,
+        "temp_leftovers": []
+      }
+    },
+    {
+      "case": "generator_is_deterministic",
+      "passed": true
+    }
+  ],
+  "passed": true
+}
