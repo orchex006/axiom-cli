@@ -17,9 +17,8 @@ The entrypoint is the distribution layer, and it owns real logic: it resolves th
 verifies every artifact's length and sha256, builds and seals the canonical approval plan, reads and
 validates the channel manifest, and runs the transactional update. The installation engine,
 bootstrap rules, service lifecycle and per-component placement stay owned by `axiom-graphd` and are
-invoked through their published argv surface; this repository re-implements none of them. Because the
-engine owns placement, `install --apply` and `uninstall --apply` currently refuse at that handoff
-instead of placing bytes themselves.
+invoked through their published argv surface; this repository re-implements none of them.
+`install` and `uninstall` hand placement and removal to the engine and report its result (L-002).
 
 ## Invocation
 
@@ -27,27 +26,30 @@ instead of placing bytes themselves.
 axiom-cli [GLOBAL OPTIONS] <verb> [verb options]
 ```
 
-| Verb | Options implemented in this slice |
+| Verb | Options |
 |---|---|
-| `install` | `--dry-run` \| `--apply`, `--approve-digest <sha256>`, `--from <path>` |
-| `update` | `check [--all]`, `plan --to <version> [--out <file>]`, `apply --plan <file> --approve-digest <sha256>`, `rollback --transaction <id> [--approve-digest <sha256>]` |
+| `install` | `[--yes] [--no-modify-path] [--adopt <path>]` \| `--dry-run` \| `--apply`, `--approve-digest <sha256>`, `--from <path>` |
+| `update` | `[--yes] [--dry-run] [--channel <url\|path>]` \| `check [--all]` \| `plan --to <version> [--out <file>]` \| `apply --plan <file> --approve-digest <sha256>` \| `rollback --transaction <id> [--approve-digest <sha256>]` |
 | `doctor` | `[--all]` |
 | `version` | `[--all]` |
-| `uninstall` | `--dry-run` \| `--apply`, `--approve-digest <sha256>`, `[--purge-data]` |
+| `uninstall` | `[--yes]` \| `--dry-run` \| `--apply`, `--approve-digest <sha256>`, `[--purge-data]` |
 
-`install` and `uninstall` require an explicit mode: a bare verb is `2` validation, with
-`status:"validation_error"` and a message naming `--dry-run` and `--apply`. This follows
-`axiom-specs/docs/16-CLI-AND-CONTROL-API.md` section 6 rule 4, which requires a non-interactive
-command that writes or removes state to carry `--dry-run` or `plan`/`apply`; otherwise a bare verb
-could answer `0` for an install that never ran, and an argv-only consumer could not distinguish it
-from a real one. `--dry-run` (token `"dry-run"`) reports the plan and changes nothing; `--apply`
-(token `"apply"`) runs the transaction and requires `--approve-digest`.
+A bare `install`, `uninstall` or `update` is the interactive human path (ADR-0033, L-003/L-005). It
+prints the plan and asks `Proceed? [Y/n]` once, and the answer approves exactly that plan's canonical
+digest. `--yes` (`-y`, or `AXIOM_INSTALL_YES=1`) approves without a prompt. Without a terminal (or
+with `--json`) and without `--yes`, it prints the plan, changes nothing and exits `4`
+(`confirmation_required`), so an argv-only consumer can never mistake an unperformed install for a
+real one. A declined prompt exits `5`. `--dry-run` (token `"dry-run"`) reports the plan and changes
+nothing; `--apply` (token `"apply"`) runs the transaction and requires `--approve-digest`. These two
+automation modes never touch the PATH.
 
 Global options: `-h`/`--help` (exit 0), `--json` (machine-readable mode) and `--verbose`
 (diagnostics on stderr). `--json` may appear before or after the verb.
 
 Invocation is program plus argv. No verb builds a shell string, requires Bash, WSL, Docker,
-elevation or Node.js, mutates `PATH` or performs a silent auto-update.
+elevation or Node.js, or performs a silent auto-update. The only PATH change is the interactive
+install's per-user entry, which is shown in the plan, skippable with `--no-modify-path` and removed
+by uninstall. `install` and `uninstall` refuse to run elevated (`6` `elevated_refused`).
 
 ## Machine-readable mode
 
@@ -94,9 +96,9 @@ envelope. What remains is the engine handoff:
   `3` `engine_not_found` when no engine binary is present (nothing placed), `6`
   `install_root_foreign` for a nonempty root holding non-Axiom entries, `2` `artifact_unverified:*`
   for a tampered artifact (before any placement), and the engine's own code when it refuses.
-- `uninstall --apply`: `3` `nothing_installed`, `3` `engine_not_found`, or `4`
-  `engine_removal_unavailable`, because the engine publishes no removal verb this layer can bind a
-  plan to.
+- `uninstall --apply`: invokes the engine's removal plan embedded in the approved uninstall plan,
+  removes the owned `bin` files and the recorded PATH entry, and keeps user data. Refusals: `3`
+  `nothing_installed` when no `installed.json` is recorded and `3` `engine_not_found`.
 - `install --dry-run` or `install --apply` with no release set: `4` `no_release_set`.
 
 An engine refusal means nothing was installed, updated or removed. The engine stays owned by
@@ -165,7 +167,7 @@ src/update/       the update channel: check / plan / apply / rollback
 | `install --apply` | Requires `--approve-digest`; verifies, provisions the MCP runtime, delegates placement to the engine, fills `<root>/bin` and writes `installed.json` | `2` missing or invalid digest / unverified artifact; `3` `engine_not_found`; `4` `no_release_set`; `6` conflict on a stale or mismatched approval or a foreign root |
 | `uninstall` (bare) | Interactive: prints what is removed and kept, asks once (`--yes` skips); removes the engine install, the owned `bin` files and exactly the recorded PATH entry, keeps user data | `0`; `4` `confirmation_required`; `5` `confirmation_declined`; uninstall refusals as `--apply` |
 | `uninstall --dry-run` | Reports the removal plan, changes nothing | `0`; `2` |
-| `uninstall --apply` | Requires `--approve-digest`; refuses at the engine handoff | `3` `nothing_installed` / `engine_not_found`; `4` `engine_removal_unavailable`; `6` conflict |
+| `uninstall --apply` | Requires `--approve-digest`; runs the embedded engine removal plan, removes owned `bin` files and the recorded PATH entry, keeps user data | `3` `nothing_installed` / `engine_not_found`; `6` conflict on a stale or mismatched approval |
 | `update` | `check` / `plan` / `apply` / `rollback` through the update channel | see `docs/50-UPDATE-CHANNEL.md` |
 | `doctor` | Runs target, install root, integrity, prerequisite and engine checks | `0` clean; `4` a required check is unverified; `2` an installed generation fails integrity |
 | `version` | Reports installed and available versions | always `0`; `installed:false` and `available:null` with nothing installed |

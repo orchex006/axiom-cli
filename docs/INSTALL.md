@@ -1,0 +1,204 @@
+# Installing Axiom
+
+One command installs Axiom for your user account:
+
+- `axiom-cli`: the installer and manager.
+- `axiom` and `axiom-graphd`: the graph engine.
+- The MCP server and the skills bundle.
+
+You do not need Administrator or root rights, and you do not copy any checksums by hand.
+
+- [Before you start](#before-you-start)
+- [Install](#install)
+- [Check that it worked](#check-that-it-worked)
+- [Install options](#install-options)
+- [Where files go](#where-files-go)
+- [Update](#update)
+- [Uninstall](#uninstall)
+- [Upgrading from 0.1.0 or 0.1.2](#upgrading-from-010-or-012)
+- [Troubleshooting](#troubleshooting)
+
+## Before you start
+
+| Platform | You need | Status |
+|---|---|---|
+| Windows 10/11 x64 | Windows PowerShell 5.1 (built in) | Supported and tested |
+| Linux x64, including WSL2 | `curl` or `wget`, `sha256sum` or `shasum`, `tar`, `python3` | Supported and tested |
+| macOS Intel (x64) | Same as Linux | Published but not yet tested |
+| macOS Apple silicon, Linux arm64 | — | Not available yet |
+
+- **Run as your normal user.** The installer refuses to run as Administrator (Windows) or root (`sudo`).
+- **Upgrading?** If you installed 0.1.0 or 0.1.2 before, read [Upgrading from 0.1.0 or 0.1.2](#upgrading-from-010-or-012) first.
+
+## Install
+
+**Windows.** Open a normal PowerShell window (not "Run as administrator") and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
+```
+
+**Linux, WSL2 or macOS.** Open a terminal and run:
+
+```sh
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
+```
+
+What happens:
+
+1. The script downloads the release archive for your system from GitHub.
+2. It checks the archive's SHA-256 before unpacking. If the check fails, it stops, and nothing on your machine has changed.
+3. `axiom-cli install` shows a plan and asks once:
+
+   ```text
+   channel: stable
+     axiom-graphd 0.1.3 - artifact declared
+     axiom-mcp 0.1.3 - artifact declared
+     skills 0.1.3 - ...
+     mcp runtime - provisioned from the release
+   install root: C:\Users\you\AppData\Local\Axiom (bin: C:\Users\you\AppData\Local\Axiom\bin)
+   size: 4.4 MB of verified artifacts
+   PATH: add C:\Users\you\AppData\Local\Axiom\bin to the user PATH (undo: axiom-cli uninstall; skip: --no-modify-path)
+   Proceed? [Y/n]
+   ```
+
+4. Press Enter (or type `Y`). Axiom installs and adds its `bin` folder to **your** PATH.
+
+**Open a new terminal** afterwards, because the terminal you installed from does not see the new PATH yet.
+
+## Check that it worked
+
+In a new terminal:
+
+```sh
+axiom-cli version
+```
+
+The first line shows the installed version, for example `installed: 0.1.3 channel=stable ...`.
+
+```sh
+axiom-cli doctor
+```
+
+The exit code is `0` when everything is fine. The line `sqlite driver: unverified (non-blocking ...)` is expected and is not an error.
+
+## Install options
+
+| Environment variable (any system) | Linux / macOS option | Effect |
+|---|---|---|
+| `AXIOM_INSTALL_YES=1` | `--yes` | Install without asking (for scripts and CI) |
+| `AXIOM_NO_MODIFY_PATH=1` | `--no-modify-path` | Do not change your PATH |
+| `AXIOM_VERSION=0.1.3` | `--version 0.1.3` | Install a specific version |
+
+The Windows one-line command cannot take options, so use the environment variables there:
+
+```powershell
+# Windows: set the environment variable, then run the normal command
+$env:AXIOM_INSTALL_YES = '1'
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/install.ps1 | iex"
+```
+
+```sh
+# Linux / macOS: put the options after `sh -s --`
+curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh -s -- --yes
+```
+
+To pin a version in the URL itself, replace `latest/download` with `download/v0.1.3`.
+
+If you run without a terminal (for example in CI) and do not pass `--yes`, the installer prints the plan, changes nothing and exits with code `4`.
+
+## Where files go
+
+| System | Install folder |
+|---|---|
+| Windows | `%LOCALAPPDATA%\Axiom` |
+| Linux / macOS | `$XDG_DATA_HOME/axiom`, or `~/.local/share/axiom` if that variable is not set |
+
+Inside the install folder:
+
+| Path | Contents |
+|---|---|
+| `bin/` | `axiom-cli`, `axiom`, `axiom-graphd` |
+| `mcp-runtime/` | The Python runtime for the MCP server |
+| `generations/` | The installed release, kept so an update can roll back |
+| `installed.json` | What is installed (read by `version`, `doctor`, `update`, `uninstall`) |
+| `path-change.json` | The exact PATH change, so uninstall can undo it |
+
+The PATH change applies to your user only:
+
+- **Windows:** the user `Path` value under `HKCU\Environment`. The system PATH is never changed.
+- **Linux / macOS:** one marked `export PATH=...` line in `~/.zprofile` (zsh), `~/.bash_profile` (bash, if it exists), or `~/.profile`.
+
+## Update
+
+```sh
+axiom-cli update
+```
+
+If a newer release exists, `update` shows the plan and asks once. It then downloads and verifies the release and keeps the previous version so it can roll back. If nothing is newer, it prints `up to date`.
+
+- `axiom-cli update --dry-run`: show the plan only.
+- `axiom-cli update --yes`: update without asking.
+- `axiom-cli update rollback --transaction previous`: go back to the version before the last update.
+
+## Uninstall
+
+```sh
+axiom-cli uninstall
+```
+
+`uninstall` shows the plan and asks once. It removes the Axiom programs, the background service registration and the PATH entry it added. **Your data, workspaces and graph output are kept.**
+
+On Windows, the running `axiom-cli.exe` cannot delete itself, so it is renamed to `axiom-cli.exe.uninstalled`. You can delete that file afterwards.
+
+## Upgrading from 0.1.0 or 0.1.2
+
+The 0.1.2 instructions used two scripts and asked you to set environment variables. Those variables now get in the way, so remove them first.
+
+**1. Remove the old environment variables** (Windows, in PowerShell):
+
+```powershell
+foreach ($name in 'AXIOM_CLI_INSTALL_ROOT', 'AXIOM_ENGINE_BIN', 'AXIOM_HOME') {
+    [Environment]::SetEnvironmentVariable($name, $null, 'User')
+}
+```
+
+On Linux or macOS, delete any `export AXIOM_CLI_INSTALL_ROOT=...`, `AXIOM_ENGINE_BIN` or `AXIOM_HOME` lines from your shell profile. Then **open a new terminal**.
+
+Why: `AXIOM_CLI_INSTALL_ROOT` changes where Axiom installs, and `AXIOM_ENGINE_BIN` makes `axiom-cli` keep running the old 0.1.2 engine.
+
+**2. Run the normal [install](#install) command.** The plan says what it found and what it will do:
+
+| Found | What the installer does |
+|---|---|
+| An old `axiom-cli` (0.1.0 or 0.1.2) in the default install folder, `%LOCALAPPDATA%\Axiom` | Upgrades it in place. The old program is backed up to `legacy\cli-store-<version>\`, and the PATH entry the old installer added is taken over. |
+| A 0.1.2 bootstrap folder elsewhere (for example `%USERPROFILE%\axiom`) | Leaves it untouched and installs to the default folder next to it. |
+
+Most people should keep this default. If you would rather turn the 0.1.2 bootstrap folder into your install, do this instead of the one-line command:
+
+1. Download `axiom-<version>-windows-x64.zip` and `SHA256SUMS` from the [latest release](https://github.com/orchex006/axiom-cli/releases/latest).
+2. Check the archive: the output of `Get-FileHash <zip> -Algorithm SHA256` must match the zip's line in `SHA256SUMS`.
+3. Extract the zip to a new folder. In that folder, run:
+
+   ```powershell
+   .\axiom-cli.exe install --adopt "<path to the 0.1.2 bootstrap folder>"
+   ```
+
+**3. Run `axiom-cli doctor`.** It lists any old layouts, any older `axiom-cli` that is still earlier on your PATH, and any leftover variables. `doctor` only reports and never changes anything.
+
+## Troubleshooting
+
+| What you see | Cause | Fix |
+|---|---|---|
+| `axiom-cli` is not recognized after installing | The terminal was opened before the PATH changed | Open a new terminal. If you used `--no-modify-path`, run `<install folder>/bin/axiom-cli` directly. |
+| `axiom-cli` shows old help text, or answers `NotReady` to every command | An older `axiom-cli` comes first on your PATH | Find it with `Get-Command axiom-cli -All` (Windows) or `which -a axiom-cli`. `axiom-cli doctor` also names it. Remove the old folder from your PATH. |
+| `axiom-cli version` says `installed: no` | A leftover `AXIOM_CLI_INSTALL_ROOT` points to another folder | Remove the variable ([Upgrading](#upgrading-from-010-or-012), step 1) and open a new terminal. |
+| `refusing to run elevated` or `refusing to run as root` | The terminal runs as Administrator, or you used `sudo` | Run it again from a normal-user terminal. |
+| `download failed ...` or `SHA-256 mismatch ...; nothing was changed` | Network or proxy problem, or a damaged download | Try again. Nothing was installed. |
+| `a host python3 is required` (Linux / macOS) | `python3` is not installed | Install it with your package manager, for example `sudo apt install python3`, then run the install command again as your normal user. |
+| `unsupported platform` or `unsupported architecture` | arm64 is not published yet | See [Before you start](#before-you-start). |
+| The installer exits with code `4` without asking | No terminal is attached (CI or a pipe) | Set `AXIOM_INSTALL_YES=1`, or add `--yes` on Linux / macOS. |
+| Exit code `5` | You answered `n` | Run it again and answer `Y`. |
+| `the install root ... holds entries no Axiom install writes` (exit code `6`) | The install folder contains files that Axiom did not create | Remove a leftover `AXIOM_CLI_INSTALL_ROOT`, or move those files out. |
+
+For the meaning of every exit code, run `axiom-cli --help`. For details on how installation, updates and verification work, see [Distribution and installers](30-DISTRIBUTION-AND-INSTALLERS.md).

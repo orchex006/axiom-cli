@@ -18,4 +18,6 @@ Pinned to this version: replace `latest/download` with `download/<tag>`.
 
 Then `axiom-cli version`, `axiom-cli doctor`, `axiom-cli update` and `axiom-cli uninstall` (user data is kept). Every asset is listed in `SHA256SUMS`; `channel.json` is the update channel for `axiom-cli update`.
 
+Full guide, covering options, upgrading from 0.1.0/0.1.2 and troubleshooting: https://github.com/orchex006/axiom-cli/blob/main/docs/INSTALL.md
+
 Release maintainers: `releases/latest/download/…` resolves only to the newest release that is neither a draft nor a prerelease. A release meant for the one-line install MUST NOT be marked prerelease; otherwise users need the pinned `releases/download/<tag>/…` form.

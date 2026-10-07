@@ -1,3 +1,7 @@
+## Unreleased — L-011 user install guide
+
+- Add `docs/INSTALL.md`, a plain-language user guide covering requirements, the one-line install, checks, options, file locations, update, uninstall, upgrading from 0.1.0/0.1.2 (remove leftover `AXIOM_*` variables first; adoption and side-by-side behaviour) and troubleshooting. The README now leads with the install and a command table instead of the stale 0.1.2 two-script text, and the docs index separates user and maintainer guides. Correct stale statements in `docs/30` (header, `curl | sh`, update and uninstall sections; the J-004 runbook is marked historical) and `docs/40` (bare-verb interactive mode, options, `uninstall --apply`, PATH). The release-notes template links the guide. No code change.
+
 ## 0.1.3 — L-007 one-line install release
 
 - Release assets gain `install.ps1`, `install.sh` and a pinned `channel.json` (`release/oneline_assets.py`), all in `SHA256SUMS`; notes template states the release must not be a prerelease. CI job `one-line install` runs the documented one-liner on fresh windows-2025 and ubuntu-24.04 runners, then `version`, `doctor` (exit 0), `update`, `uninstall` and reinstall. README leads with the one-liners. `doctor` treats build-time Rust as not required for an installed release, accepts the provisioned MCP runtime for Python and keeps SQLite `unverified` but non-blocking (J-007). One version 0.1.3 across core, MCP, skills and CLI; the composer accepts annotated owner tags. macOS is out of L scope (ADR-0034).

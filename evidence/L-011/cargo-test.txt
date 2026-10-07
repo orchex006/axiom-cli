@@ -1,0 +1,38 @@
+cargo 1.98.1 (797e8a9bc 2026-08-05)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests\argv_surface.rs (target\debug\deps\argv_surface-b8f40ad7b4752866.exe)
+
+running 14 tests
+test help_lists_exactly_the_documented_verbs ... ok
+test a_bare_mutating_verb_is_interactive_and_never_mutates_without_a_terminal ... ok
+test the_machine_readable_contract_does_not_depend_on_flag_order ... ok
+test approve_digest_boundary_is_enforced ... ok
+test help_freezes_the_canonical_exit_vocabulary ... ok
+test validation_in_json_mode_carries_the_canonical_envelope ... ok
+test help_option_blocks_are_indented_and_name_the_required_mode ... ok
+test help_exits_zero_and_is_available_per_verb ... ok
+test json_mode_writes_exactly_one_object_on_every_path ... ok
+test every_documented_verb_is_reachable_from_argv ... ok
+test every_verb_reports_a_real_result_and_never_an_empty_success ... ok
+test validation_defects_exit_two ... ok
+test usage_text_and_dispatcher_cannot_drift ... ok
+test json_flag_is_accepted_before_and_after_the_verb ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.60s
+
+     Running tests\container_distribution.rs (target\debug\deps\container_distribution-0fcb4d44c3e77344.exe)
+
+running 9 tests
+test dockerfile_version_default_matches_the_version_file ... ok
+test entrypoint_forwards_the_argv_vector_unchanged ... ok
+test oci_label_set_is_complete ... ok
+test runtime_user_is_non_root_and_the_revision_is_not_invented ... ok
+test owner_documentation_covers_the_channel_and_the_air_gapped_variant ... ok
+test the_container_is_declared_a_non_native_channel ... ok
+test workflow_builds_with_buildx_and_publishes_immutable_tags_only ... ok
+test every_base_image_is_pinned_by_digest ... ok
+test workflow_records_the_digest_and_keeps_publication_opt_in ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit=0
