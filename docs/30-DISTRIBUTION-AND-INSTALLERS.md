@@ -1,6 +1,6 @@
 # Distribution and installers — axiom-cli
 
-Owner: axiom-cli. **Intended distribution contract; no downloadable runtime release is included in this seed.** The normative rules live in `axiom-specs/contracts/axiom-cli-distribution-contract.md`; this guide is the owner-side runbook and must not restate a shared schema or protocol.
+Owner: axiom-cli. **Maintainer guide.** To install Axiom, follow [INSTALL](INSTALL.md); this page explains how that works and how it is tested. The normative rules live in `axiom-specs/contracts/axiom-cli-distribution-contract.md`; this guide is the owner-side runbook and must not restate a shared schema or protocol.
 
 ## Scope
 
@@ -30,7 +30,9 @@ Design-complete, verification later: Linux x64 including the WSL2 lane, and macO
 
 ## Install
 
-Installing is transactional and reversible. Verify release provenance and the per-artifact SHA256 before unpacking; unpack into a user-writable install directory; never require root, never bypass Gatekeeper, never mutate a global PATH and never use `curl | sh`. Then delegate to the engine to register the solution, bind logical repositories to native absolute paths and apply managed bootstrap with an approved plan digest. Re-running install must be idempotent.
+Installing is transactional and reversible. Verify release provenance and the per-artifact SHA256 before unpacking; unpack into a user-writable install directory; never require root, never bypass Gatekeeper and never mutate the machine PATH. The only hosted script is the versioned one-line bootstrapper below, which ADR-0033 permits because it embeds its release's exact tag and SHA-256 values and contains no installation logic. Then delegate to the engine to register the solution, bind logical repositories to native absolute paths and apply managed bootstrap with an approved plan digest. Re-running install must be idempotent.
+
+The user-facing steps are in [INSTALL](INSTALL.md). The sections below describe each mechanism in the order a one-line install exercises it.
 
 ### First install through `axiom-cli` (ADR-0033, L-002)
 
@@ -83,20 +85,22 @@ The real-host harness `tests/l004_bootstrappers.py` serves staged releases from 
 
 The real-host harness `tests/l006_adopt_legacy.py` rebuilds the 2026-10-06 Windows state (fixture CLI store first on PATH, a real 0.1.2 bootstrap root made by the published `bootstrap_windows.ps1`, leftover variables).
 
-## ## Update
+## Update
 
-One-command update (ADR-0033, L-005): `axiom-cli update` checks the recorded channel, shows the plan, asks once, applies through the engine's update transaction and keeps a rollback generation; see `docs/50-UPDATE-CHANNEL.md`.
+One-command update (ADR-0033, L-005): `axiom-cli update` checks the recorded channel, shows the plan, asks once, applies through the engine's update transaction and keeps a rollback generation; see [50-UPDATE-CHANNEL](50-UPDATE-CHANNEL.md#one-command-update-adr-0033-l-005).
 
-J-007 implements the update path in `src/update/` with the channel manifest in `channels/stable.json`; `docs/50-UPDATE-CHANNEL.md` records what runs today and what does not. Implemented now:
+The older J-007 subcommands (`check`, `plan`, `apply`, `rollback`) live in `src/update/` with the channel manifest in `channels/stable.json`; [50-UPDATE-CHANNEL](50-UPDATE-CHANNEL.md) records what runs today and what does not. For those subcommands:
 
 - `update check`, `update plan`, `update apply` and `update rollback` resolve a version only from the channel manifest the installed release recorded; a branch tip, a tag alias, a network `latest` and an unsigned channel are refused.
 - Every artifact's length and sha256 are verified before it is used, and `axiom-cli` self-updates inside the same transaction under one approval digest.
 - The swap keeps the previous generation until the new one passes its health probe; a failed verification or health check restores the previous generation, and an interrupted apply is recovered from the journal. Every changed component is reported under `needs_restart`.
 - An update is never applied without an explicit approved request.
 
-The engine now implements local ecosystem activation, owned-service coordination and rollback (ADR-0014). This distribution channel still uses a separate delivery generation store; its bridge to that engine transaction remains unfinished. A signed channel with published artifacts remains release-gated.
+The engine implements local ecosystem activation, owned-service coordination and rollback (ADR-0014). The bare one-command `update` uses that engine transaction. The J-007 subcommands still use a separate delivery generation store; for an installation with an active engine pointer they refuse with `composite_activation_not_ready` unless an explicit local kit is supplied (see 50-UPDATE-CHANNEL).
 
-Uninstall
+## Uninstall
+
+A bare `axiom-cli uninstall` prints what it removes and keeps, asks once (`--yes` skips the prompt), removes the engine install, the owned `bin` files and exactly the recorded PATH entry, and keeps user data (L-003).
 
 Uninstall removes only owned executables and startup entries by default. Workspace data, checkpoints and private state require a separate, explicit deletion approval. Never recursively delete `.axiom`.
 
@@ -110,10 +114,12 @@ Installation dependencies and their version manifest are owned by the distributi
 
 Record, per target: the actual OS/architecture, the artifact digest, the installer and update transcript, the rollback result and the unverified remainder. Compiling for a target, publishing a container image or passing spec unit tests does not certify any platform. No platform is certified by this guide.
 
-## Windows x64 per-user install (card J-004 — implemented and executed)
+## Windows x64 per-user install (card J-004 — historical)
 
-This section is the owner-side runbook for the one native target that is implemented and has actually
-been executed. Sources: `installers/windows/`, `packaging/windows/` and `tests/windows/` in this
+> **Historical maintainer runbook (0.1.0 era).** Users do not follow these steps; they use the one-line install in [INSTALL](INSTALL.md). `Install-AxiomCli.ps1` installs only the CLI store, which `axiom-cli install` now detects and adopts (L-006). Keep this section to reproduce the J-004 evidence.
+
+This section is the owner-side runbook for the first native target that was implemented and actually
+executed. Sources: `installers/windows/`, `packaging/windows/` and `tests/windows/` in this
 repository. The card proposed exactly these paths; no path change was needed. Everything here runs in
 the Windows PowerShell that ships with Windows — no WSL, Bash, Docker, Node.js or elevation.
 
