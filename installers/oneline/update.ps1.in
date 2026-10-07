@@ -1,0 +1,153 @@
+# Axiom one-line updater for Windows x64 (ADR-0035). Generated for @@TAG@@; do not edit.
+#
+#   powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/update.ps1 | iex"
+#   & ([scriptblock]::Create((irm https://github.com/orchex006/axiom-cli/releases/download/@@TAG@@/update.ps1))) -Yes
+#
+# This script contains no update logic:
+#   * Axiom installed (an installed.json root): run that installation's own `axiom-cli update`,
+#     which reads the recorded channel, prints the plan and asks once.
+#   * Axiom 0.1.0/0.1.2 layout (no installed.json): the same verified hand-off as install.ps1 -
+#     download the @@TAG@@ archive, check its SHA-256, extract it to a temporary directory and run
+#     `axiom-cli install`, which shows the adoption plan and asks once.
+#   * Nothing installed: change nothing and print the install command.
+# It never resolves `latest` itself, never runs elevated and stops while leftover AXIOM_* variables
+# from the 0.1.2 procedure are set. Environment equivalents for `irm | iex`: AXIOM_INSTALL_YES=1,
+# AXIOM_NO_MODIFY_PATH=1 (the latter only matters for a 0.1.0/0.1.2 layout).
+param(
+    [switch]$Yes,
+    [switch]$NoModifyPath
+)
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version 2
+
+$AxiomTag = '@@TAG@@'
+$AxiomBaseUrl = '@@BASE_URL@@'
+$AxiomAsset = '@@WINDOWS_ASSET@@'
+$AxiomSha256 = '@@WINDOWS_SHA256@@'
+$AxiomCli = '@@CLI_PATH_WINDOWS@@'
+
+# Failures throw instead of calling `exit`: under `irm | iex` an `exit` would close the
+# user's PowerShell session. Under `powershell -c` an unhandled throw exits non-zero.
+function Stop-AxiomUpdate([string]$Message) {
+    throw "axiom update: $Message"
+}
+
+if (-not $Yes -and $env:AXIOM_INSTALL_YES -eq '1') { $Yes = $true }
+if (-not $NoModifyPath -and $env:AXIOM_NO_MODIFY_PATH -eq '1') { $NoModifyPath = $true }
+
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+# AXIOM_CLI_TEST_ALLOW_ELEVATED exists only for hosted CI runners, which are always elevated.
+if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and $env:AXIOM_CLI_TEST_ALLOW_ELEVATED -ne '1') {
+    Stop-AxiomUpdate 'refusing to run elevated: Axiom installs per user. Re-run from a normal (non-Administrator) PowerShell; nothing was changed.'
+}
+if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
+    Stop-AxiomUpdate 'this updater is for Windows; on macOS, Linux or WSL2 use update.sh'
+}
+
+# Leftover variables from the 0.1.2 procedure send axiom-cli to another root or an old engine.
+$leftover = @()
+foreach ($name in 'AXIOM_CLI_INSTALL_ROOT', 'AXIOM_ENGINE_BIN', 'AXIOM_HOME') {
+    $value = [Environment]::GetEnvironmentVariable($name, 'Process')
+    if (-not $value) { $value = [Environment]::GetEnvironmentVariable($name, 'User') }
+    if ($value) { $leftover += "$name=$value" }
+}
+if ($leftover.Count -gt 0) {
+    Stop-AxiomUpdate ("leftover variables from the 0.1.2 procedure are set (" + ($leftover -join '; ') + "). " +
+        "They redirect axiom-cli to another folder or an old engine, so nothing was changed. Remove them, open a new PowerShell and run this command again: " +
+        "foreach (`$n in 'AXIOM_CLI_INSTALL_ROOT','AXIOM_ENGINE_BIN','AXIOM_HOME') { [Environment]::SetEnvironmentVariable(`$n, `$null, 'User') }")
+}
+
+function Get-AxiomInstalledRoot {
+    $candidates = @()
+    $onPath = Get-Command axiom-cli -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($onPath) { $candidates += (Split-Path -Parent (Split-Path -Parent $onPath.Source)) }
+    if ($env:LOCALAPPDATA) { $candidates += (Join-Path $env:LOCALAPPDATA 'Axiom') }
+    if ($env:USERPROFILE) { $candidates += (Join-Path $env:USERPROFILE 'axiom') }
+    foreach ($root in $candidates) {
+        if ((Test-Path -LiteralPath (Join-Path $root 'installed.json') -PathType Leaf) -and
+            (Test-Path -LiteralPath (Join-Path (Join-Path $root 'bin') $AxiomCli) -PathType Leaf)) {
+            return $root
+        }
+    }
+    return $null
+}
+
+function Get-AxiomLegacyLayouts {
+    $found = @()
+    if ($env:LOCALAPPDATA) {
+        $store = Join-Path $env:LOCALAPPDATA 'Axiom'
+        if ((Test-Path -LiteralPath (Join-Path $store 'install-manifest.json') -PathType Leaf) -or
+            (Test-Path -LiteralPath (Join-Path (Join-Path $store 'bin') $AxiomCli) -PathType Leaf)) {
+            $found += "Axiom CLI store at $store"
+        }
+    }
+    if ($env:USERPROFILE) {
+        $boot = Join-Path $env:USERPROFILE 'axiom'
+        if (Test-Path -LiteralPath (Join-Path $boot 'installs\ecosystem\current') -PathType Leaf) {
+            $found += "Axiom 0.1.2 bootstrap root at $boot"
+        }
+    }
+    return ,$found
+}
+
+$root = Get-AxiomInstalledRoot
+if ($root) {
+    $cli = Join-Path (Join-Path $root 'bin') $AxiomCli
+    Write-Host "axiom update: found the installation at $root; running its axiom-cli update"
+    $cliArgs = @('update')
+    if ($Yes) { $cliArgs += '--yes' }
+    & $cli @cliArgs
+    $code = $LASTEXITCODE
+    $global:LASTEXITCODE = $code
+    if ($code -ne 0) { Stop-AxiomUpdate "axiom-cli update exited $code" }
+    return
+}
+
+$legacy = Get-AxiomLegacyLayouts
+if ($legacy.Count -eq 0) {
+    Stop-AxiomUpdate ("Axiom is not installed for this user, so there is nothing to update; nothing was changed. " +
+        "Install it with: powershell -ExecutionPolicy Bypass -c `"irm $AxiomBaseUrl/$AxiomTag/install.ps1 | iex`"")
+}
+Write-Host ("axiom update: found " + ($legacy -join ' and ') + " (Axiom 0.1.0/0.1.2, no one-command update); upgrading through the $AxiomTag installer")
+
+$arch = $env:PROCESSOR_ARCHITEW6432
+if (-not $arch) { $arch = $env:PROCESSOR_ARCHITECTURE }
+if ($arch -ne 'AMD64') {
+    Stop-AxiomUpdate "unsupported architecture '$arch': only Windows x64 (AMD64) is published"
+}
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
+$cliArgs = @('install')
+if ($Yes) { $cliArgs += '--yes' }
+if ($NoModifyPath) { $cliArgs += '--no-modify-path' }
+
+$temp = Join-Path ([IO.Path]::GetTempPath()) ('axiom-update-' + [Guid]::NewGuid().ToString('N').Substring(0, 12))
+$code = 1
+try {
+    New-Item -ItemType Directory -Path $temp | Out-Null
+    $archive = Join-Path $temp $AxiomAsset
+    $url = "$AxiomBaseUrl/$AxiomTag/$AxiomAsset"
+    Write-Host "axiom update: downloading $AxiomTag ($AxiomAsset)"
+    try { Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile $archive }
+    catch { Stop-AxiomUpdate "download failed for $url ($($_.Exception.Message)); nothing was changed" }
+    $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actual -ne $AxiomSha256) {
+        Stop-AxiomUpdate "SHA-256 mismatch for $AxiomAsset (expected $AxiomSha256, got $actual); the archive was not extracted and nothing was changed"
+    }
+    $extract = Join-Path $temp 'release'
+    try { Expand-Archive -LiteralPath $archive -DestinationPath $extract }
+    catch { Stop-AxiomUpdate "the verified archive could not be extracted ($($_.Exception.Message)); nothing was changed" }
+    $cli = Join-Path $extract $AxiomCli
+    if (-not (Test-Path -LiteralPath $cli -PathType Leaf)) {
+        Stop-AxiomUpdate "the archive does not contain $AxiomCli; nothing was changed"
+    }
+    & $cli @cliArgs
+    $code = $LASTEXITCODE
+}
+finally {
+    if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue }
+}
+$global:LASTEXITCODE = $code
+if ($code -ne 0) { Stop-AxiomUpdate "axiom-cli install exited $code" }

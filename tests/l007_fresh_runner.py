@@ -5,7 +5,10 @@ Run by `.github/workflows/distribution-ci.yml` on fresh hosted runners. The cand
 served from a local HTTP server with the GitHub release-download layout (`<base>/<tag>/<asset>`),
 `release/oneline_assets.py` generates `install.ps1` / `install.sh` / `channel.json` for it, and then
 the exact documented command runs, followed by `version`, `doctor` (must exit 0), `update`,
-`uninstall` and a reinstall. No `AXIOM_*` variable is set except, on Windows, the elevated-runner
+`uninstall` and a reinstall. L-013 (ADR-0035) adds the documented update one-liner: with an
+installed release it runs the installation's own `axiom-cli update`; with a leftover `AXIOM_*`
+variable or with nothing installed it refuses without change; on a 0.1.2 bootstrap layout it makes
+the verified install hand-off. No `AXIOM_*` variable is set except, on Windows, the elevated-runner
 seam `AXIOM_CLI_TEST_ALLOW_ELEVATED` that hosted runners require.
 
     python tests/l007_fresh_runner.py --artifacts <dir with axiom-X.Y.Z-<platform>.*> --platform windows-x64 --out <evidence.json>
@@ -64,15 +67,20 @@ def main() -> int:
         root = Path(os.environ["LOCALAPPDATA"]) / "Axiom"
         oneliner = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-c",
                     f"& ([scriptblock]::Create((irm {base}/{tag}/install.ps1))) -Yes"]
+        update_oneliner = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-c",
+                           f"& ([scriptblock]::Create((irm {base}/{tag}/update.ps1))) -Yes"]
+        legacy_root = Path(os.environ["USERPROFILE"]) / "axiom"
     else:
         data = os.environ.get("XDG_DATA_HOME") or str(Path.home() / ".local" / "share")
         root = Path(data) / "axiom"
         oneliner = ["sh", "-c", f"curl -fsSL {base}/{tag}/install.sh | sh -s -- --yes"]
+        update_oneliner = ["sh", "-c", f"curl -fsSL {base}/{tag}/update.sh | sh -s -- --yes"]
+        legacy_root = Path.home() / "axiom"
     cli = root / "bin" / ("axiom-cli.exe" if WINDOWS else "axiom-cli")
     steps = []
 
-    def step(name, argv, expect=0, check=None):
-        proc = subprocess.run([str(a) for a in argv], env=env, capture_output=True, text=True,
+    def step(name, argv, expect=0, check=None, extra_env=None):
+        proc = subprocess.run([str(a) for a in argv], env={**env, **(extra_env or {})}, capture_output=True, text=True,
                               stdin=subprocess.DEVNULL, timeout=1800)
         ok = proc.returncode == expect and (check is None or check(proc.stdout + proc.stderr))
         steps.append({"step": name, "argv": [str(a) for a in argv], "exit_code": proc.returncode,
@@ -96,14 +104,32 @@ def main() -> int:
     step("doctor", [cli, "doctor"])
     step("update (channel offers the installed release)", [cli, "update", "--yes", "--channel", f"{base}/{tag}/channel.json"],
          check=lambda t: "up to date" in t)
+    installed_json = root / "installed.json"
+    step("update one-liner with an installed release (runs its axiom-cli update)", update_oneliner,
+         check=lambda t: "running its axiom-cli update" in t and "up to date" in t)
+    before = sha(installed_json)
+    step("update one-liner refuses a leftover AXIOM_ENGINE_BIN", update_oneliner, expect=1,
+         check=lambda t: "leftover variables" in t and "AXIOM_ENGINE_BIN" in t,
+         extra_env={"AXIOM_ENGINE_BIN": str(root / "elsewhere" / "axiom")})
+    steps.append({"step": "leftover refusal changed nothing", "passed": sha(installed_json) == before})
     step("uninstall", [cli, "uninstall", "--yes"])
     steps.append({"step": "PATH entry removed by uninstall", "passed": not on_path()})
+    step("update one-liner with nothing installed refuses", update_oneliner, expect=1,
+         check=lambda t: "not installed" in t)
+    steps.append({"step": "nothing-installed refusal changed nothing", "passed": not installed_json.exists()})
+    current = legacy_root / "installs" / "ecosystem" / "current"
+    current.parent.mkdir(parents=True, exist_ok=True)
+    current.write_text("{}", encoding="utf-8")
+    step("update one-liner on a 0.1.2 bootstrap layout takes the verified install hand-off", update_oneliner,
+         check=lambda t: "bootstrap root" in t and "installed: generation" in t)
+    steps.append({"step": "legacy update recorded installed.json", "passed": installed_json.is_file()})
+    shutil.rmtree(legacy_root, ignore_errors=True)
     step("reinstall with the same one-liner", oneliner)
     step("doctor after reinstall", [cli, "doctor"])
     server.shutdown()
     run_url = "{}/{}/actions/runs/{}".format(os.environ.get("GITHUB_SERVER_URL", ""), os.environ.get("GITHUB_REPOSITORY", ""),
                                               os.environ.get("GITHUB_RUN_ID", "local"))
-    doc = {"task_id": "L-007", "lane": args.platform, "run_url": run_url, "source_revision": os.environ.get("GITHUB_SHA"),
+    doc = {"task_id": "L-007", "tasks": ["L-007", "L-013"], "lane": args.platform, "run_url": run_url, "source_revision": os.environ.get("GITHUB_SHA"),
            "host": {"system": host.system(), "release": host.release(), "machine": host.machine()},
            "assets": {p.name: sha(p) for p in sorted((srv / tag).iterdir())},
            "axiom_env_set": sorted(k for k in env if k.upper().startswith("AXIOM")),
