@@ -550,6 +550,8 @@ fn record_layout(
             sha256: digest,
         });
     }
+    // ADR-0036: `axm` is the short name of `axiom-cli`, a verified copy of the same bytes.
+    layout::with_short_command(&mut sources);
     let bin = layout::place_bin(root, &sources)?;
     let bin_payloads: Vec<(String, PathBuf, String)> = sources
         .iter()

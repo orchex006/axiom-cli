@@ -1,0 +1,5 @@
+$ python -m unittest tests.test_bootstrappers -v
+Ran 11 tests in 2.339s
+
+OK
+exit=0

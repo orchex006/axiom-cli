@@ -54,7 +54,8 @@ fi
 
 data="${XDG_DATA_HOME:-$HOME/.local/share}"
 root=''
-for candidate in "$(command -v axiom-cli 2>/dev/null | sed 's#/bin/[^/]*$##')" "$data/axiom" "$HOME/axiom"; do
+# `axm` is the short name of axiom-cli from 0.1.5 (ADR-0036); either one on PATH names its root.
+for candidate in "$(command -v axiom-cli 2>/dev/null | sed 's#/bin/[^/]*$##')" "$(command -v axm 2>/dev/null | sed 's#/bin/[^/]*$##')" "$data/axiom" "$HOME/axiom"; do
     [ -n "$candidate" ] || continue
     if [ -f "$candidate/installed.json" ] && [ -x "$candidate/bin/$AXIOM_CLI" ]; then
         root="$candidate"

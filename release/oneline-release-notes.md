@@ -14,7 +14,7 @@ macOS, Linux and WSL2 (not as root):
 curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/install.sh | sh
 ```
 
-Update an existing installation (0.1.3 or newer runs its own `axiom-cli update`; 0.1.0/0.1.2 is upgraded through the installer; nothing installed stops without change):
+Update an existing installation (0.1.3 or newer runs its own `axiom-cli update`, from 0.1.5 also installed as `axm`; 0.1.0/0.1.2 is upgraded through the installer; nothing installed stops without change):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -c "irm https://github.com/orchex006/axiom-cli/releases/latest/download/update.ps1 | iex"
@@ -26,7 +26,7 @@ curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/updat
 
 Pinned to this version: replace `latest/download` with `download/<tag>`.
 
-Then `axiom-cli version`, `axiom-cli doctor`, `axiom-cli update` and `axiom-cli uninstall` (user data is kept). Every asset is listed in `SHA256SUMS`; `channel.json` is the update channel for `axiom-cli update`.
+Then `axm version`, `axm doctor`, `axm update` and `axm uninstall` (user data is kept); `axm` is the short name of `axiom-cli`. Every asset is listed in `SHA256SUMS`; `channel.json` is the update channel for `axiom-cli update`.
 
 Full guide, covering options, upgrading from 0.1.0/0.1.2 and troubleshooting: https://github.com/orchex006/axiom-cli/blob/main/docs/INSTALL.md
 

@@ -60,8 +60,11 @@ if ($leftover.Count -gt 0) {
 
 function Get-AxiomInstalledRoot {
     $candidates = @()
-    $onPath = Get-Command axiom-cli -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($onPath) { $candidates += (Split-Path -Parent (Split-Path -Parent $onPath.Source)) }
+    # `axm` is the short name of axiom-cli from 0.1.5 (ADR-0036); either one on PATH names its root.
+    foreach ($command in 'axiom-cli', 'axm') {
+        $onPath = Get-Command $command -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($onPath) { $candidates += (Split-Path -Parent (Split-Path -Parent $onPath.Source)) }
+    }
     if ($env:LOCALAPPDATA) { $candidates += (Join-Path $env:LOCALAPPDATA 'Axiom') }
     if ($env:USERPROFILE) { $candidates += (Join-Path $env:USERPROFILE 'axiom') }
     foreach ($root in $candidates) {

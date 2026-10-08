@@ -94,6 +94,9 @@ class UpdateBootstrapperTests(unittest.TestCase):
             for name in ("AXIOM_CLI_INSTALL_ROOT", "AXIOM_ENGINE_BIN", "AXIOM_HOME"):
                 self.assertIn(name, text)
         self.assertIn("IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)", ps1)
+        # ADR-0036: the short command `axm` on PATH also identifies an installed root.
+        self.assertIn("'axiom-cli', 'axm'", ps1)
+        self.assertIn("command -v axm", sh)
         self.assertIn("[Environment]::GetEnvironmentVariable($name, 'User')", ps1)
         self.assertIn('id -u', sh)
 

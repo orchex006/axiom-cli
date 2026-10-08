@@ -2,7 +2,7 @@
 
 One command installs Axiom for your user account:
 
-- `axiom-cli`: the installer and manager.
+- `axm`: the installer and manager. It is the short name of `axiom-cli`; both names are installed and behave the same.
 - `axiom` and `axiom-graphd`: the graph engine.
 - The MCP server and the skills bundle.
 
@@ -64,7 +64,7 @@ curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/updat
 
 1. The script downloads the release archive for your system from GitHub.
 2. It checks the archive's SHA-256 before unpacking. If the check fails, it stops, and nothing on your machine has changed.
-3. `axiom-cli install` shows a plan and asks once:
+3. `axm install` shows a plan and asks once:
 
    ```text
    channel: stable
@@ -84,16 +84,16 @@ curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/updat
 
 ## Check that it worked
 
-In a new terminal:
+In a new terminal (`axm` is the short name of `axiom-cli`; installations before 0.1.5 only have `axiom-cli`):
 
 ```sh
-axiom-cli version
+axm version
 ```
 
 The first line shows the installed version, for example `installed: 0.1.3 channel=stable ...`.
 
 ```sh
-axiom-cli doctor
+axm doctor
 ```
 
 The exit code is `0` when everything is fine. The line `sqlite driver: unverified (non-blocking ...)` is expected and is not an error.
@@ -134,7 +134,7 @@ Inside the install folder:
 
 | Path | Contents |
 |---|---|
-| `bin/` | `axiom-cli`, `axiom`, `axiom-graphd` |
+| `bin/` | `axm` and `axiom-cli` (the same program under two names), `axiom`, `axiom-graphd` |
 | `mcp-runtime/` | The Python runtime for the MCP server |
 | `generations/` | The installed release, kept so an update can roll back |
 | `installed.json` | What is installed (read by `version`, `doctor`, `update`, `uninstall`) |
@@ -163,34 +163,34 @@ The update script decides what to do from what is on your machine. It changes no
 
 | Found | What the update script does |
 |---|---|
-| Axiom 0.1.3 or newer | Runs that installation's own `axiom-cli update`. |
+| Axiom 0.1.3 or newer | Runs that installation's own `axm update`. |
 | Axiom 0.1.0 or 0.1.2 | Downloads the release, checks its SHA-256 and runs the installer, which upgrades the old installation ([details](#upgrading-from-010-or-012)). |
 | Nothing | Stops and prints the install command. It never installs from scratch. |
 | Old `AXIOM_CLI_INSTALL_ROOT`, `AXIOM_ENGINE_BIN` or `AXIOM_HOME` variables | Stops, names them and shows how to remove them. |
 
-If `axiom-cli` is on your PATH, you can also run it directly. The same command works on every system:
+If Axiom is on your PATH, you can also run it directly. The same command works on every system:
 
 ```sh
-axiom-cli update
+axm update
 ```
 
 If a newer release exists, `update` shows the plan and asks once. It then downloads and verifies the release and keeps the previous version so it can roll back. If nothing is newer, it prints `up to date`.
 
-- `axiom-cli update --dry-run`: show the plan only.
-- `axiom-cli update --yes`: update without asking. For the update script, set `AXIOM_INSTALL_YES=1`, or use `sh -s -- --yes` on Linux / macOS.
-- `axiom-cli update rollback --transaction previous`: go back to the version before the last update.
+- `axm update --dry-run`: show the plan only.
+- `axm update --yes`: update without asking. For the update script, set `AXIOM_INSTALL_YES=1`, or use `sh -s -- --yes` on Linux / macOS.
+- `axm update rollback --transaction previous`: go back to the version before the last update.
 
 Use an update command, not the install command, to move an existing installation to a newer release.
 
 ## Uninstall
 
 ```sh
-axiom-cli uninstall
+axm uninstall
 ```
 
 `uninstall` shows the plan and asks once. It removes the Axiom programs, the background service registration and the PATH entry it added. **Your data, workspaces and graph output are kept.**
 
-On Windows, the running `axiom-cli.exe` cannot delete itself, so it is renamed to `axiom-cli.exe.uninstalled`. You can delete that file afterwards.
+On Windows, the running program (`axm.exe` or `axiom-cli.exe`) cannot delete itself, so it is renamed to `<name>.exe.uninstalled`. You can delete that file afterwards.
 
 ## Upgrading from 0.1.0 or 0.1.2
 
@@ -225,15 +225,15 @@ Most people should keep this default. If you would rather turn the 0.1.2 bootstr
    .\axiom-cli.exe install --adopt "<path to the 0.1.2 bootstrap folder>"
    ```
 
-**3. Run `axiom-cli doctor`.** It lists any old layouts, any older `axiom-cli` that is still earlier on your PATH, and any leftover variables. `doctor` only reports and never changes anything.
+**3. Run `axm doctor`.** It lists any old layouts, any older `axiom-cli` that is still earlier on your PATH, and any leftover variables. `doctor` only reports and never changes anything.
 
 ## Troubleshooting
 
 | What you see | Cause | Fix |
 |---|---|---|
-| `axiom-cli` is not recognized after installing | The terminal was opened before the PATH changed | Open a new terminal. If you used `--no-modify-path`, run `<install folder>/bin/axiom-cli` directly. |
-| `axiom-cli` shows old help text, or answers `NotReady` to every command | An older `axiom-cli` comes first on your PATH | Find it with `Get-Command axiom-cli -All` (Windows) or `which -a axiom-cli`. `axiom-cli doctor` also names it. Remove the old folder from your PATH. |
-| `axiom-cli version` says `installed: no` | A leftover `AXIOM_CLI_INSTALL_ROOT` points to another folder | Remove the variable ([Upgrading](#upgrading-from-010-or-012), step 1) and open a new terminal. |
+| `axm` (or `axiom-cli`) is not recognized after installing | The terminal was opened before the PATH changed, or the installation is older than 0.1.5 (no `axm` yet) | Open a new terminal. If you used `--no-modify-path`, run `<install folder>/bin/axm` directly. On 0.1.4 or older, use `axiom-cli` or run the [update command](#update) once. |
+| `axiom-cli` shows old help text, or answers `NotReady` to every command | An older `axiom-cli` comes first on your PATH | Find it with `Get-Command axiom-cli -All` (Windows) or `which -a axiom-cli`. `axm doctor` also names it. Remove the old folder from your PATH. |
+| `axm version` says `installed: no` | A leftover `AXIOM_CLI_INSTALL_ROOT` points to another folder | Remove the variable ([Upgrading](#upgrading-from-010-or-012), step 1) and open a new terminal. |
 | `refusing to run elevated` or `refusing to run as root` | The terminal runs as Administrator, or you used `sudo` | Run it again from a normal-user terminal. |
 | `axiom update: leftover variables from the 0.1.2 procedure are set` | `AXIOM_CLI_INSTALL_ROOT`, `AXIOM_ENGINE_BIN` or `AXIOM_HOME` is still set | Remove them ([Upgrading](#upgrading-from-010-or-012), step 1), open a new terminal and run the update command again. |
 | `axiom update: Axiom is not installed for this user, so there is nothing to update` | Nothing is installed (or it was uninstalled) | Use the [install](#install) command. |
@@ -244,4 +244,4 @@ Most people should keep this default. If you would rather turn the 0.1.2 bootstr
 | Exit code `5` | You answered `n` | Run it again and answer `Y`. |
 | `the install root ... holds entries no Axiom install writes` (exit code `6`) | The install folder contains files that Axiom did not create | Remove a leftover `AXIOM_CLI_INSTALL_ROOT`, or move those files out. |
 
-For the meaning of every exit code, run `axiom-cli --help`. For details on how installation, updates and verification work, see [Distribution and installers](30-DISTRIBUTION-AND-INSTALLERS.md).
+For the meaning of every exit code, run `axm --help`. For details on how installation, updates and verification work, see [Distribution and installers](30-DISTRIBUTION-AND-INSTALLERS.md).
