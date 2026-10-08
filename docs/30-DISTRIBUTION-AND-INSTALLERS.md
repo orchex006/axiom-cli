@@ -73,6 +73,10 @@ Each script refuses an elevated run (Administrator / root), an unsupported OS or
 
 The real-host harness `tests/l004_bootstrappers.py` serves staged releases from a local HTTP server laid out like GitHub release downloads and runs the exact one-liner through Windows PowerShell; `tests/test_bootstrappers.py` covers the generator.
 
+### Short command `axm` (ADR-0036, L-016)
+
+`axm` is the short name of `axiom-cli`. `layout::with_short_command` adds `bin/axm` (`axm.exe`) as a second `BinSource` with the same verified bytes and SHA-256 as `axiom-cli`, so `place_bin`, the `installed.json` bin records, the generation payload, update, `update rollback` and uninstall handle it like every other owned executable. There is no symlink, `.cmd` shim or shell alias. A running `axm.exe` is moved aside on Windows exactly like `axiom-cli.exe`, and an `axm` running from `<root>/bin` resolves that root itself. The update scripts accept either name on PATH. Installations before 0.1.5 get `axm` from their next update or install.
+
 ### One-line update bootstrappers (ADR-0035, L-013)
 
 ```powershell

@@ -1,3 +1,7 @@
+## Unreleased — L-016 short command axm
+
+- Install `bin/axm` (`axm.exe`) as a byte-identical, digest-recorded copy of `axiom-cli` (ADR-0036) through `layout::with_short_command`; it is recorded in `installed.json` and the generation payload and handled by update, rollback and uninstall like the other owned executables (a running `axm.exe` is moved aside on Windows). `--help` names it; the update scripts accept `axm` on PATH. README, INSTALL.md, docs/30 and the release notes lead with `axm`. Fresh-runner CI runs `axm version`, `axm doctor` and uninstalls through `axm` (R06, R22).
+
 ## 0.1.4 — L-014 one-line update release
 
 - Compose and verify 0.1.4 from the published 0.1.4 owner releases (axiom-graphd, axiom-mcp, axiom-skills; version-only bumps) so the release carries the ADR-0035 `update.ps1` / `update.sh` next to `install.ps1` / `install.sh` and `channel.json`. One version 0.1.4 across core, MCP, skills and CLI (R22, R24).

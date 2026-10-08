@@ -98,6 +98,27 @@ pub struct BinSource {
     pub sha256: String,
 }
 
+/// The short name of `axiom-cli` (ADR-0036): a byte-identical, digest-recorded copy in `bin`.
+pub const SHORT_COMMAND: &str = "axm";
+
+/// Add `bin/axm` as a verified copy of the `axiom-cli` source, if one is being placed.
+///
+/// The alias is the same bytes under a second name, not a link or a shim, so it is placed,
+/// recorded, rolled back and removed exactly like every other owned executable.
+pub fn with_short_command(sources: &mut Vec<BinSource>) {
+    if sources.iter().any(|item| item.name == SHORT_COMMAND) {
+        return;
+    }
+    if let Some(cli) = sources.iter().find(|item| item.name == "axiom-cli") {
+        let alias = BinSource {
+            name: SHORT_COMMAND,
+            source: cli.source.clone(),
+            sha256: cli.sha256.clone(),
+        };
+        sources.push(alias);
+    }
+}
+
 /// Place each executable in `bin` atomically and idempotently.
 ///
 /// A destination already holding the verified bytes is left alone, which is also what lets a
@@ -355,6 +376,47 @@ mod tests {
         assert_eq!(refusal.reason, "install_root_foreign");
         assert!(refusal.message.contains("thesis.docx"));
         assert!(foreign_root_refusal(&root.join("absent")).is_none());
+    }
+
+    #[test]
+    fn short_command_is_a_verified_copy_of_axiom_cli() {
+        let root = temp("axm");
+        let source = root.join("src-axiom-cli");
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(&source, b"cli bytes").unwrap();
+        let digest = file_digest(&source).unwrap();
+        let mut sources = vec![BinSource {
+            name: "axiom-cli",
+            source: source.clone(),
+            sha256: digest.clone(),
+        }];
+        with_short_command(&mut sources);
+        with_short_command(&mut sources);
+        assert_eq!(sources.len(), 2, "the alias is added once");
+        let placed = place_bin(&root, &sources).unwrap();
+        let names: Vec<_> = placed
+            .iter()
+            .map(|item| {
+                item.get("name")
+                    .and_then(Json::as_text)
+                    .unwrap()
+                    .to_string()
+            })
+            .collect();
+        assert_eq!(names, ["axiom-cli", SHORT_COMMAND]);
+        let alias = bin_dir(&root).join(program_file(SHORT_COMMAND));
+        assert_eq!(file_digest(&alias).unwrap(), digest);
+        assert_eq!(
+            placed[1].get("path").and_then(Json::as_text),
+            Some(format!("bin/{}", program_file(SHORT_COMMAND)).as_str())
+        );
+        let mut without_cli = vec![BinSource {
+            name: "axiom",
+            source,
+            sha256: digest,
+        }];
+        with_short_command(&mut without_cli);
+        assert_eq!(without_cli.len(), 1, "no alias without an axiom-cli source");
     }
 
     #[test]

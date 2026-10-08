@@ -77,6 +77,7 @@ def main() -> int:
         update_oneliner = ["sh", "-c", f"curl -fsSL {base}/{tag}/update.sh | sh -s -- --yes"]
         legacy_root = Path.home() / "axiom"
     cli = root / "bin" / ("axiom-cli.exe" if WINDOWS else "axiom-cli")
+    axm = root / "bin" / ("axm.exe" if WINDOWS else "axm")  # ADR-0036 short command
     steps = []
 
     def step(name, argv, expect=0, check=None, extra_env=None):
@@ -102,6 +103,10 @@ def main() -> int:
     steps.append({"step": "PATH announced and added", "passed": on_path()})
     step("version", [cli, "version"], check=lambda t: f"installed: {version}" in t)
     step("doctor", [cli, "doctor"])
+    steps.append({"step": "bin/axm is a verified copy of bin/axiom-cli",
+                  "passed": axm.is_file() and sha(axm) == sha(cli)})
+    step("axm version", [axm, "version"], check=lambda t: f"installed: {version}" in t and "bin/axm" in t)
+    step("axm doctor", [axm, "doctor"])
     step("update (channel offers the installed release)", [cli, "update", "--yes", "--channel", f"{base}/{tag}/channel.json"],
          check=lambda t: "up to date" in t)
     installed_json = root / "installed.json"
@@ -112,7 +117,8 @@ def main() -> int:
          check=lambda t: "leftover variables" in t and "AXIOM_ENGINE_BIN" in t,
          extra_env={"AXIOM_ENGINE_BIN": str(root / "elsewhere" / "axiom")})
     steps.append({"step": "leftover refusal changed nothing", "passed": sha(installed_json) == before})
-    step("uninstall", [cli, "uninstall", "--yes"])
+    step("uninstall through axm", [axm, "uninstall", "--yes"])
+    steps.append({"step": "uninstall removed bin/axiom-cli and bin/axm", "passed": not cli.exists() and not axm.exists()})
     steps.append({"step": "PATH entry removed by uninstall", "passed": not on_path()})
     step("update one-liner with nothing installed refuses", update_oneliner, expect=1,
          check=lambda t: "not installed" in t)
@@ -129,7 +135,7 @@ def main() -> int:
     server.shutdown()
     run_url = "{}/{}/actions/runs/{}".format(os.environ.get("GITHUB_SERVER_URL", ""), os.environ.get("GITHUB_REPOSITORY", ""),
                                               os.environ.get("GITHUB_RUN_ID", "local"))
-    doc = {"task_id": "L-007", "tasks": ["L-007", "L-013"], "lane": args.platform, "run_url": run_url, "source_revision": os.environ.get("GITHUB_SHA"),
+    doc = {"task_id": "L-007", "tasks": ["L-007", "L-013", "L-016"], "lane": args.platform, "run_url": run_url, "source_revision": os.environ.get("GITHUB_SHA"),
            "host": {"system": host.system(), "release": host.release(), "machine": host.machine()},
            "assets": {p.name: sha(p) for p in sorted((srv / tag).iterdir())},
            "axiom_env_set": sorted(k for k in env if k.upper().startswith("AXIOM")),

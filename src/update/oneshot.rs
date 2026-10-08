@@ -736,6 +736,7 @@ fn restore(
         };
         let name: &'static str = match program {
             "axiom-cli" => "axiom-cli",
+            "axm" => crate::layout::SHORT_COMMAND,
             "axiom" => "axiom",
             "axiom-graphd" => "axiom-graphd",
             _ => continue,

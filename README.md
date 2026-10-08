@@ -1,8 +1,8 @@
 # Axiom CLI
 
-`axiom-cli` installs, checks, updates and removes the Axiom ecosystem on your machine:
+`axm` (short for `axiom-cli`) installs, checks, updates and removes the Axiom ecosystem on your machine:
 
-- `axiom-cli` itself.
+- `axm` / `axiom-cli` itself (two names for the same program).
 - The graph engine, `axiom` and `axiom-graphd`.
 - The MCP server and the skills bundle.
 
@@ -36,9 +36,9 @@ Update:
 curl -fsSL https://github.com/orchex006/axiom-cli/releases/latest/download/update.sh | sh
 ```
 
-The install script checks the download's SHA-256, shows what it will install and asks once. After installing, open a new terminal and check the result with `axiom-cli version` and `axiom-cli doctor`.
+The install script checks the download's SHA-256, shows what it will install and asks once. After installing, open a new terminal and check the result with `axm version` and `axm doctor`.
 
-The update script finds your installation and runs its `axiom-cli update`, which shows the plan, asks once and keeps the previous version for rollback; it prints `up to date` when nothing is newer. If `axiom-cli` is on your PATH, `axiom-cli update` does the same. The update script also upgrades a 0.1.0/0.1.2 installation, but first remove the old `AXIOM_*` variables ([Upgrading from 0.1.0 or 0.1.2](docs/INSTALL.md#upgrading-from-010-or-012)). The update script is published from 0.1.4.
+The update script finds your installation and runs its `axm update`, which shows the plan, asks once and keeps the previous version for rollback; it prints `up to date` when nothing is newer. If Axiom is on your PATH, `axm update` does the same. The update script also upgrades a 0.1.0/0.1.2 installation, but first remove the old `AXIOM_*` variables ([Upgrading from 0.1.0 or 0.1.2](docs/INSTALL.md#upgrading-from-010-or-012)). The update script is published from 0.1.4.
 
 **Full guide:** [docs/INSTALL.md](docs/INSTALL.md) covers requirements, options, where files go, update, uninstall, upgrading from 0.1.0/0.1.2 and troubleshooting.
 
@@ -46,13 +46,13 @@ The update script finds your installation and runs its `axiom-cli update`, which
 
 | Command | What it does |
 |---|---|
-| `axiom-cli install` | Install or repair Axiom (shows the plan, asks once) |
-| `axiom-cli version` | Show the installed and available versions |
-| `axiom-cli doctor` | Check the installation; changes nothing |
-| `axiom-cli update` | Update to the newest release (asks once; keeps a rollback) |
-| `axiom-cli uninstall` | Remove the programs and PATH entry; keeps your data |
+| `axm install` | Install or repair Axiom (shows the plan, asks once) |
+| `axm version` | Show the installed and available versions |
+| `axm doctor` | Check the installation; changes nothing |
+| `axm update` | Update to the newest release (asks once; keeps a rollback) |
+| `axm uninstall` | Remove the programs and PATH entry; keeps your data |
 
-Run `axiom-cli --help` for every option and exit code.
+Run `axm --help` for every option and exit code. `axm` is installed from 0.1.5; on 0.1.4 or older use `axiom-cli` (same verbs), or run the update script once to get `axm`.
 
 ## For maintainers
 
