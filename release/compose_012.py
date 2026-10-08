@@ -1,4 +1,4 @@
-"""Compose 0.1.3 native distributions from actual checksum-verified owner Releases."""
+"""Compose 0.1.4 native distributions from actual checksum-verified owner Releases."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 
 
 def sha(path):

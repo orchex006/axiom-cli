@@ -1,3 +1,7 @@
+## 0.1.4 — L-014 one-line update release
+
+- Compose and verify 0.1.4 from the published 0.1.4 owner releases (axiom-graphd, axiom-mcp, axiom-skills; version-only bumps) so the release carries the ADR-0035 `update.ps1` / `update.sh` next to `install.ps1` / `install.sh` and `channel.json`. One version 0.1.4 across core, MCP, skills and CLI (R22, R24).
+
 ## Unreleased — L-013 one-line update script
 
 - Add `installers/oneline/update.ps1.in` / `update.sh.in` (ADR-0035), generated with the install scripts for every release and published by `release/oneline_assets.py`. The update script runs the installed root's own `axiom-cli update` when an `installed.json` is found (PATH root, default root, `~/axiom`), makes the verified install hand-off for a 0.1.0/0.1.2 layout, and with nothing installed changes nothing and prints the install command. It refuses an elevated run and leftover `AXIOM_CLI_INSTALL_ROOT` / `AXIOM_ENGINE_BIN` / `AXIOM_HOME` (process and, on Windows, user environment) with the removal command. `--yes` / `AXIOM_INSTALL_YES=1`; `--no-modify-path` only for the legacy path; no version option. Tests: generator and `update.sh` fixture-home behaviour in `tests/test_bootstrappers.py` (now run in CI), and four update one-liner steps in the fresh-runner harness. README, INSTALL.md, docs/30 and the release-notes template show the update one-liners (R16, R22).
