@@ -1,0 +1,87 @@
+{
+  "tasks": [
+    "O-004",
+    "O-006"
+  ],
+  "scope": "User-authorized installed repair failure and concise doctor output; full dependent O acceptance remains pending",
+  "owner": "codex",
+  "branch": "feature/o-004-repair-and-doctor",
+  "base_revision": "a4a788f01def74bda069e239e54465d6abeb5cf7",
+  "spec_revision": "8eff6db51bfe3c4ca1940bd20555cb989641ce31",
+  "working_tree_review": "Clean main before this work; canonical origin verified",
+  "allowed_paths": [
+    "src/bundle.rs",
+    "src/doctor.rs",
+    "src/lifecycle.rs",
+    "tests/",
+    "docs/INSTALL.md",
+    "Changelog.md",
+    "evidence/O-004/"
+  ],
+  "preflight": [
+    "Read owner governance, O-004/O-006 scope and pinned contracts",
+    "No other worker; pending dependencies restrict full completion claims; user explicitly authorized this narrower repair/presentation work",
+    "Native macOS Intel with Rust/Cargo 1.98.0",
+    "Verify retained skills pointer, version/revision, manifest and payload hashes; refuse corrupt or linked input",
+    "Run fmt/clippy/tests plus native fresh install, remove extracted release, installed repair, failure and doctor concise/verbose/JSON tests",
+    "Keep runtime install records authoritative; no manual bin replacement or new release publication"
+  ],
+  "completion_status": "user_requested_repair_and_presentation_verified",
+  "verification": {
+    "rust_tests": {
+      "command": "cargo test --locked --all-targets",
+      "exit_code": 0,
+      "passed": 226
+    },
+    "format": {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    "clippy": {
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "cargo build --locked --release",
+      "exit_code": 0
+    },
+    "baseline_failure": "Two no-engine uninstall tests failed unchanged baseline because the real engine was on caller PATH; their fixtures now explicitly use without_engine()."
+  },
+  "source_file_sha256": {
+    "src/bundle.rs": "1fae1560bb60d7a593648535589690082012b545f6ed94d2518ab33ca1c32a4e",
+    "src/doctor.rs": "9a809408b29ba21acd942f30492dfefb646bc8c816ebdc9745d74c5f03166784",
+    "src/lifecycle.rs": "d02bfb8301b1a7b13de0dd0b6d008e923b2d0880cb394ab47839e37944ce936a",
+    "tests/cli_verbs.rs": "6166e97992636bf8a91fd2e37abc3cb1e770559b40cf5e3fa5dc84381cc9b8f4",
+    "tests/o004_installed_repair.py": "da2da8bf89c7abf6c2fcc79dd89315ef2b23d59c9ca95dd748aaa2c9d046070a"
+  },
+  "local_install": {
+    "method": "Native checked development build applied with install --yes --no-modify-path, then installed axm repair repeated without AXIOM_* overrides",
+    "cli_sha256": "4bf82a153735b0655ab9440f4c63e558913f589d81329191a71d243a72df8cce",
+    "published_release_changed": false,
+    "initial_apply_exit_code": 0,
+    "installed_repair_exit_code": 0,
+    "doctor_exit_code": 0,
+    "doctor_lines": [
+      "Axiom installation: OK",
+      "Note: bundled SQLite version is unverified (non-blocking).",
+      "Project and AI-host setup: not checked.",
+      "Details: axm doctor --verbose"
+    ],
+    "backup": "Existing CLI binaries and installation records saved in a private task-owned temporary backup before repair"
+  },
+  "native_verification": {
+    "platform": "Darwin x86_64",
+    "cases": 10,
+    "exit_code": 0,
+    "original_report_sha256": "094da3e8d3d2a0db483d485d665998861307938c51f1752fc0e07ba5fc99d88d",
+    "normalization": "Task isolated paths, caller home, checkout and canonical private prefix redacted in committed report",
+    "windows_linux": "not_run for this native repair harness"
+  },
+  "review": "Source scope reviewed; explicit release inputs unchanged; installed skills revision/hash enforced; refusal leaves active installation record intact; structured findings and failure exit codes preserved; user data not removed; no full O task or publication claim",
+  "artifacts": {
+    "native-repair-report.json": "dfedbc7202dd08d3836e2c7f94f234600ee3befa3f7c12e1edda71b313a30897",
+    "rust-tests.txt": "f0c7139244eed540a40f0ad783fe784cc39e75509bca18eefbcac399990c2725",
+    "clippy.txt": "fb9e2abeac0a7eee2c26ff7bed5585af55ca4d61975f94cff90fcca97f17b3fa",
+    "build.txt": "3f7a86b043c5ae28cdfe69a0cc94f742fbe42bcc28cb7b81be0cd01e6c23eca9"
+  }
+}

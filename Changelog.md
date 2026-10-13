@@ -1,3 +1,9 @@
+## Unreleased — O-004 / O-006 installed repair and concise doctor
+
+- Repair from the installed CLI after the extracted release and staging files are gone: reconstruct the engine skills bundle from the active owner pointer, matching approved version/revision and manifest/payload hashes. Refuse missing, mismatched, modified or linked inputs before activation; explicit release inputs keep their existing behavior.
+- Summarize doctor in plain mode, naming missing prerequisites and next steps. Keep complete findings in JSON and verbose mode, expose non-blocking SQLite uncertainty and make project/AI-host readiness limits explicit. Describe portable skills accurately in the install plan.
+- Add native repair/failure/presentation regression coverage. Isolate the two existing no-engine uninstall fixtures from the caller's installed engine on PATH. This user-requested slice does not close the broader O-004/O-006 readiness tasks or publish a release.
+
 ## Unreleased — O-008 README navigation
 
 - Add an ecosystem directory and task-oriented links to graphd, MCP, skills and the specification repository. Explain installation versus project/host setup, expose help in the command table and clarify the confirmation prompt. This owner-requested documentation slice does not complete O-008 or claim the pending O runtime fixes.

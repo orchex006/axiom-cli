@@ -96,7 +96,18 @@ The first line shows the installed version, for example `installed: 0.1.3 channe
 axm doctor
 ```
 
-The exit code is `0` when everything is fine. The line `sqlite driver: unverified (non-blocking ...)` is expected and is not an error.
+The default output summarizes the installation checks and names any missing or broken prerequisite. It does not establish project or AI-host readiness:
+
+```text
+Axiom installation: OK
+Note: bundled SQLite version is unverified (non-blocking).
+Project and AI-host setup: not checked.
+Details: axm doctor --verbose
+```
+
+Use `axm doctor --verbose` for target, paths, generation, hashes, journal and prerequisite details, or `axm doctor --json` for the complete structured findings. An unverified SQLite version is reported as a non-blocking note, not as a verified check.
+
+Running `axm install` from the installed program repairs using its verified core artifacts and the active skills bundle; it does not require the original extracted archive. Missing, changed or mismatched skills are refused. To restore unavailable or damaged release content, run the install URL again.
 
 ## Install options
 
