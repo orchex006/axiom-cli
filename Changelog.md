@@ -4,6 +4,10 @@ Changes are listed by release, newest first. For downloads, see [GitHub Releases
 
 ## Unreleased
 
+### Bug Fixes
+
+- Report preserved older installation files as information in `axm doctor`, with specific warnings for PATH shadowing and environment overrides so a healthy installation is clear.
+
 ## 0.1.9
 
 ### Bug Fixes

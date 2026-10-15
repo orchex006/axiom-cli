@@ -1,0 +1,66 @@
+{
+  "task_id": "W-017",
+  "checks": [
+    {
+      "id": "format",
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "id": "clippy",
+      "command": "cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "id": "rust-tests",
+      "command": "cargo test --locked",
+      "exit_code": 0
+    },
+    {
+      "id": "build",
+      "command": "cargo build --locked --release",
+      "exit_code": 0
+    },
+    {
+      "id": "public-docs",
+      "command": "python release/check_public_docs.py",
+      "exit_code": 0
+    },
+    {
+      "id": "editorial-tests",
+      "command": "python -m unittest tests.test_public_docs tests.test_bootstrappers -v",
+      "exit_code": 0
+    }
+  ],
+  "regression": "Preserved layout incorrectly had status warn before fix; assertion fails with exit 101, then passes with the fix",
+  "local_native": {
+    "binary_sha256": "9406c0b40096d89dd9a887c68c999fb6d3d82b634d5c88374073e3004f28c639",
+    "engine_sha256": "24f02c6e20d39a6e4415494e6cca6414229633273ca48a22e294d6a372085039",
+    "target": "windows-x64",
+    "execution": "Local native read-only doctor; new CLI and unchanged installed engine copied to a disposable sibling layout; existing installation read without modification",
+    "exit_code": 0,
+    "compact_output": [
+      "Axiom installation: OK",
+      "MCP runtime: OK",
+      "SQLite: OK",
+      "Info: older installation files were found and left unchanged.",
+      "Details: axm doctor --verbose"
+    ],
+    "json_exit_code": 0,
+    "legacy_status": "ok",
+    "layouts": [
+      {
+        "kind": "bootstrap-root",
+        "version": "0.1.2"
+      }
+    ],
+    "installed_record_unchanged": true,
+    "unassembled_cli_boundary": {
+      "exit_code": 4,
+      "result": "Missing sibling engine stays NotReady; legacy files are still informational"
+    },
+    "mutations": "Only disposable test copies; no production install, PATH, environment or legacy cleanup operation"
+  },
+  "compatibility": "Read-only discovery; report fields and exit codes preserved. Legacy status is ok when no PATH shadowing or environment overrides are found.",
+  "limitations": "Windows native local checks only at this point; hosted native CI pending. No release/tag, installed binary replacement, PATH/environment mutation or legacy cleanup."
+}
